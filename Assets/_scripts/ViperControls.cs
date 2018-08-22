@@ -84,7 +84,7 @@ public class ViperControls : MonoBehaviour {
 
         if (Input.GetKey(KeyCode.Space) || Input.GetKey(KeyCode.LeftBracket)) { lift = -2; }
         else if
-            (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightBracket))
+            (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightBracket))
         { lift = 2; }
         else { lift = 0; }
 
@@ -95,10 +95,10 @@ public class ViperControls : MonoBehaviour {
         //if (Input.GetKey(KeyCode.Q) || Input.GetKey(KeyCode.U)) { roll = (rollSpeed + rollMod); } else if (Input.GetKey(KeyCode.E) || Input.GetKey(KeyCode.O)) { roll = -(rollSpeed + rollMod); } else { roll = 0; }
       
 
-        if (Input.GetKeyDown(KeyCode.LeftShift))
-        {
+       // if (Input.GetKeyDown(KeyCode.LeftShift))
+        //{
             // ToggleGlide();
-        }
+        //}
 
         if (Input.GetKey(KeyCode.E)) { roll = -1; }
         else if (Input.GetKey(KeyCode.Q))
