@@ -49,7 +49,7 @@ public class Enemy : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
-        Attack();
+        if (mydradis.GetComponent<Dradis>().target != null) { Attack(); }
         if (gunCooldown > 0)
         { gunCooldown -= Time.deltaTime; }
         else
@@ -130,7 +130,7 @@ public class Enemy : MonoBehaviour {
         if (col.gameObject.tag == "Bullet")
         {
             Instantiate(explosion, transform.position, transform.rotation);
-            gameManager.GetComponent<GameManager>().RaiderDestroyed(value);
+           // gameManager.GetComponent<GameManager>().RaiderDestroyed(value);
             Destroy(this.gameObject);
 
         }
@@ -143,7 +143,7 @@ public class Enemy : MonoBehaviour {
         {
             other.gameObject.GetComponent<ShipPart>().TakeDamage(5);
             Instantiate(explosion, transform.position, transform.rotation);
-            gameManager.GetComponent<GameManager>().RaiderDestroyed(value);
+           // gameManager.GetComponent<GameManager>().RaiderDestroyed(value);
 
             Destroy(this.gameObject);
 
@@ -160,6 +160,7 @@ public class Enemy : MonoBehaviour {
     {
         if (aitest == true)
         {
+            GetComponent<AIattackpattern>().target = mydradis.GetComponent<Dradis>().target;
             if (GetComponent<AIattackpattern>().target != null)
             {
                 GetComponent<AIattackpattern>().GetFarAndComeBack(mydradis.GetComponent<Dradis>().target);

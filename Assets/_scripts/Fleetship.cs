@@ -51,7 +51,7 @@ public class Fleetship : MonoBehaviour {
         }
         if (value > 0)
         {
-            gameManager.GetComponent<GameManager>().RaiderDestroyed(value);
+           // gameManager.GetComponent<GameManager>().RaiderDestroyed(value);
         }
         Destroy(this.gameObject);
     }

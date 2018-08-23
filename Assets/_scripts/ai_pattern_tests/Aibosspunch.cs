@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Aibosspunch : MonoBehaviour {
-    public GameObject target;
+    public GameObject target,mydradis;
     public GameObject lefthand, righthand;
     public GameObject leftweapon, rightweapon, backvents,ventbullet;
     public float attackangle, weapondistance,attackcooldown, rotForce, accuracy;
@@ -15,6 +15,7 @@ public class Aibosspunch : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+        target = mydradis.GetComponent<Dradis>().target;
         if (target != null)
         {
             Attack();

@@ -19,7 +19,19 @@ public class Player : MonoBehaviour {
 	void Update () {
 		
 	}
+    public void SelectFighter(GameObject fighterselected)
+    {
+        myship = fighterselected;
+        myship.transform.parent = this.transform;
+            fighterselected.transform.position = playerSpawn.transform.position;
 
+        fighterselected.transform.rotation = playerSpawn.transform.rotation;
+        myship.GetComponent<ViperControls>().camerasphere = mycamera;
+        myship.GetComponent<ViperControls>().camforward = mycamera.GetComponent<ThirdPersonCamera>().myfwdobj;
+        myship.GetComponent<ViperControls>().myplayer = this.gameObject;
+        mycamera.GetComponent<ThirdPersonCamera>().target = myship;
+
+    }
     public void vehicletakingdamage(int dmgtaken)
     {
         shiphp = shiphp - dmgtaken;
@@ -42,6 +54,10 @@ public class Player : MonoBehaviour {
         while (count < shiphp)
         { tempstring += "I"; count++; }
         hpText.text = tempstring;
+    }
+    public void startnewlevel()
+    {
+        myship.active = true;
     }
     public void restartlevel() {
         //for web build
