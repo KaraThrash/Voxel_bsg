@@ -48,6 +48,8 @@ public class ViperControls : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
        //KeyboardFlightControls();
+
+
         thirdpersonflightcontrols();
 
 
@@ -207,4 +209,13 @@ public class ViperControls : MonoBehaviour {
         }
     }
 
+    public void OnTriggerEnter(Collider col)
+    {
+        if (col.gameObject.tag == "Exit")
+        {
+            myplayer.GetComponent<Player>().endLevel();
+
+        }
+
+    }
 }

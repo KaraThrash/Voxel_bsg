@@ -5,7 +5,8 @@ using UnityEngine.UI;
 public class Player : MonoBehaviour {
     public int hp;
     public int shiphp;
-    public Text hpText;
+    public int money;
+    public Text hpText,moneytext;
     public GameObject mycamera;
     public GameObject playerSpawn;
     public GameObject myship;
@@ -19,6 +20,16 @@ public class Player : MonoBehaviour {
 	void Update () {
 		
 	}
+    public bool SpendMoney(int cost)
+    {
+      
+        if (money > cost)
+        { money -= cost;
+            moneytext.text = money.ToString();
+            return true;
+        }
+        return false;
+    }
     public void SelectFighter(GameObject fighterselected)
     {
         myship = fighterselected;
@@ -58,6 +69,18 @@ public class Player : MonoBehaviour {
     public void startnewlevel()
     {
         myship.active = true;
+        mycamera.GetComponent<ThirdPersonCamera>().enabled = true;
+    }
+    public void endLevel()
+    {
+        mycamera.GetComponent<ThirdPersonCamera>().enabled = false;
+        if (myship != null)
+        { myship.active = false; }
+        gamemanager.TravelToHub();
+       
+       
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
     }
     public void restartlevel() {
         //for web build
