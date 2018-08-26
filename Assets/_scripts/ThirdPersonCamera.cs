@@ -24,6 +24,9 @@ public class ThirdPersonCamera : MonoBehaviour
     private Quaternion m_CameraTargetRot;
     private bool m_cursorIsLocked = true;
 
+    public bool useController;
+    public float xRot;
+    public float yRot;
     public void Start()
     {
         m_CharacterTargetRot = transform.rotation;
@@ -33,9 +36,16 @@ public class ThirdPersonCamera : MonoBehaviour
 
     {
         transform.position = target.transform.position;
-        float yRot = CrossPlatformInputManager.GetAxis("Mouse X") * XSensitivity;
-        float xRot = CrossPlatformInputManager.GetAxis("Mouse Y") * YSensitivity;
-
+        if (useController == false)
+        {
+             yRot = CrossPlatformInputManager.GetAxis("Mouse X") * XSensitivity;
+             xRot = CrossPlatformInputManager.GetAxis("Mouse Y") * YSensitivity;
+        }
+        else
+        {
+             yRot = Input.GetAxis("4th Axis") * XSensitivity;
+             xRot = Input.GetAxis("5th Axis") * -YSensitivity;
+        }
        
         m_CharacterTargetRot *= Quaternion.Euler(-xRot, yRot, rollz);
         //   m_CameraTargetRot *= Quaternion.Euler(-xRot, 0f, 0f);

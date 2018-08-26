@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class PickUp : MonoBehaviour {
-    public int type; 
+    public int type;
+    public int value, itemnumber; //if engine speed, if gun attack cooldown
 	// Use this for initialization
 	void Start () {
 		

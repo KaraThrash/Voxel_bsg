@@ -31,6 +31,7 @@ public class HangarManager : MonoBehaviour {
        // selectedFighterStats.text = gameManager.playermanager.myship.name;
         fighters.Remove(fighters[whichfighter]);
         SetHangarButtons();
+        gameManager.itemManager.ToggleHangarDisplay(1,2,3,3,3);
         //hangarbuttons[whichfighter].active = false;
     }
     public void SetHangarButtons()

@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour {
     public GameObject gameManager;
+    public NpcManager npcManager;
     public GameObject fwdObject;
     public GameObject mydradis;
     public GameObject patrolparent;
@@ -35,7 +36,7 @@ public class Enemy : MonoBehaviour {
     public float overShootCoolDown;
     public bool tieFighter;
     public int value = 1;
-    public bool aitest;
+    public bool aitest,stationary;
     // Use this for initialization
     void Start()
     {
@@ -49,13 +50,17 @@ public class Enemy : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
-        if (mydradis.GetComponent<Dradis>().target != null) { Attack(); }
-        if (gunCooldown > 0)
-        { gunCooldown -= Time.deltaTime; }
-        else
+        if (stationary == false)
         {
-            //FireGuns();
-           // gunCooldown = gunCost + Random.Range(0, 3.0f);
+
+            if (mydradis.GetComponent<Dradis>().target != null) { Attack(); } else { Patrol(); }
+            if (gunCooldown > 0)
+            { gunCooldown -= Time.deltaTime; }
+            else
+            {
+                //FireGuns();
+                // gunCooldown = gunCost + Random.Range(0, 3.0f);
+            }
         }
         //if (overShootCoolDown > 0)
         //{
@@ -130,9 +135,12 @@ public class Enemy : MonoBehaviour {
         if (col.gameObject.tag == "Bullet")
         {
             Instantiate(explosion, transform.position, transform.rotation);
-           // gameManager.GetComponent<GameManager>().RaiderDestroyed(value);
-            Destroy(this.gameObject);
-
+            // gameManager.GetComponent<GameManager>().RaiderDestroyed(value);
+            hp -= 1;
+            if (hp <= 0)
+            {
+                Die();
+            }
         }
      
 
@@ -143,9 +151,9 @@ public class Enemy : MonoBehaviour {
         {
             other.gameObject.GetComponent<ShipPart>().TakeDamage(5);
             Instantiate(explosion, transform.position, transform.rotation);
-           // gameManager.GetComponent<GameManager>().RaiderDestroyed(value);
+            // gameManager.GetComponent<GameManager>().RaiderDestroyed(value);
 
-            Destroy(this.gameObject);
+            Die();
 
         }
     }
@@ -155,7 +163,14 @@ public class Enemy : MonoBehaviour {
         Instantiate(bullet, gun2.transform.position, gun1.transform.rotation);
 
     }
-
+    public void Die()
+    {
+        if (npcManager != null)
+        {
+            npcManager.NPCkilled(value);
+        }
+        Destroy(this.gameObject);
+    }
     public void Attack()
     {
         if (aitest == true)

@@ -5,6 +5,7 @@ using UnityEngine;
 public class NpcManager : MonoBehaviour {
     public List<GameObject> npcs;
     public GameObject enemyparent;
+    public GameManager gameManager;
     // Use this for initialization
     void Start () {
 		
@@ -25,4 +26,10 @@ public class NpcManager : MonoBehaviour {
        
         return clone;
     }
+
+    public void NPCkilled(int moneyvalue)
+    {
+        gameManager.playermanager.SpendMoney(-moneyvalue) ;
+    }
+
 }

@@ -32,7 +32,7 @@ public class ViperControls : MonoBehaviour {
     public GameObject gun2;
     public GameObject bullet;
     public float guncooldown;
-
+    public float guncooldowntimer;
     public float cameraspeed;
     public float step;
 
@@ -51,7 +51,8 @@ public class ViperControls : MonoBehaviour {
 
 
         thirdpersonflightcontrols();
-
+       
+        // ControllerFlight();
 
     }
     public void thirdpersonflightcontrols()
@@ -74,14 +75,14 @@ public class ViperControls : MonoBehaviour {
         if (Input.GetMouseButton(0))
         {
 
-            if (guncooldown <= 0)
+            if (guncooldowntimer <= 0)
             {
 
                 RaycastShootGuns();
 
-                guncooldown = 0.2f;
+                guncooldowntimer = guncooldown;
             }
-            guncooldown -= Time.deltaTime;
+            guncooldowntimer -= Time.deltaTime;
         }
 
         if (Input.GetKey(KeyCode.Space) || Input.GetKey(KeyCode.LeftBracket)) { lift = -2; }
@@ -163,6 +164,74 @@ public class ViperControls : MonoBehaviour {
         // GetComponent<PhotonView>().RPC("flightControls", PhotonTargets.AllViaServer, vert, hort, roll, mouseX, mouseY, exit, lift);
         flightControls(vert, hort, roll, mouseX, mouseY, lift);
     }
+
+    public void ControllerFlight()
+    {
+        hort = Input.GetAxis("Horizontal");
+        vert = Input.GetAxis("Vertical");
+    
+        
+            camerasphere.transform.position = transform.position;
+            targetRotation = Quaternion.LookRotation(camforward.transform.position - transform.position);
+            step = Mathf.Min(4 * Time.deltaTime, 1.5f);
+            transform.rotation = Quaternion.Lerp(transform.rotation, camerasphere.transform.rotation, step);
+
+            camerasphere.GetComponent<ThirdPersonCamera>().rollz = roll * 20 * Time.deltaTime;
+        
+       
+        if (Input.GetAxis("3rd Axis") > 0)
+        {
+
+            if (guncooldowntimer <= 0)
+            {
+
+                RaycastShootGuns();
+
+                guncooldowntimer = guncooldown;
+            }
+            guncooldowntimer -= Time.deltaTime;
+        }
+
+        if (Input.GetKey(KeyCode.Joystick1Button8) || Input.GetKey(KeyCode.LeftBracket)) { lift = -2; }
+        else if
+            (Input.GetKey(KeyCode.Joystick1Button9) || Input.GetKey(KeyCode.RightBracket))
+        { lift = 2; }
+        else { lift = 0; }
+
+
+        //   if (Input.GetKeyDown(KeyCode.E)) { if (rollMod == -15) { rollMod = 0; } else { rollMod = -15; } }
+        //   if (Input.GetKeyDown(KeyCode.Q)) { if (rollMod == 15) { rollMod = 0; } else { rollMod = 15; } }
+
+        //if (Input.GetKey(KeyCode.Q) || Input.GetKey(KeyCode.U)) { roll = (rollSpeed + rollMod); } else if (Input.GetKey(KeyCode.E) || Input.GetKey(KeyCode.O)) { roll = -(rollSpeed + rollMod); } else { roll = 0; }
+
+
+        // if (Input.GetKeyDown(KeyCode.LeftShift))
+        //{
+        // ToggleGlide();
+        //}
+
+        if (Input.GetKey(KeyCode.Joystick1Button5)) { roll = -1; }
+        else if (Input.GetKey(KeyCode.Joystick1Button4))
+        { roll = 1; }
+        else { roll = 0; }
+        // if (roll != 0) { rb.AddTorque(transform.forward * roll * Time.deltaTime, ForceMode.Impulse); }
+        transform.Rotate(0, 0, roll * rollSpeed * Time.deltaTime);
+
+
+        //rb.AddTorque(transform.forward * roll * 15.0f * Time.deltaTime, ForceMode.Impulse);
+        // GetComponent<PhotonView>().RPC("flightControls", PhotonTargets.AllViaServer, vert, hort, roll, mouseX, mouseY, exit, lift);
+
+        Vector3 tempvel = transform.position - rgt.transform.position;
+        tempvel *= strafeSpeed * -hort;
+        Vector3 tempvel2 = transform.position - fwd.transform.position;
+        tempvel2 *= flySpeed * -vert;
+        Vector3 tempvel3 = transform.position - up.transform.position;
+        tempvel3 *= flySpeed * lift;
+
+        newvel = tempvel + tempvel2 + tempvel3;
+        rb.velocity = Vector3.Lerp(rb.velocity, newvel, 5.0f * Time.deltaTime);
+    }
+
     public void RaycastShootGuns()
     {
         Instantiate(bullet,gun1.transform.position,gun1.transform.rotation);

@@ -8,6 +8,7 @@ public class GameManager : MonoBehaviour {
     public MapManager mapManager;
     public HangarManager hangarManager;
     public NpcManager npcManager;
+    public ItemManager itemManager;
     public int killstoadvance;
     public int raidersdestroyed;
     public int currentwave;
