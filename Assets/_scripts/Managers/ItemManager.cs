@@ -80,29 +80,54 @@ public class ItemManager : MonoBehaviour {
     public void ToggleEquip(int whichitem)
     {
         Debug.Log("toggle equipt" + typedisplayed.ToString());
+        Fighter selectedFighter = gameManager.hangarManager.selectedFighterObj.GetComponent<Fighter>();
         switch (typedisplayed)
         {
             case 0:
-                if (gameManager.hangarManager.selectedFighterObj.GetComponent<Fighter>().weaponequipped.Count < gameManager.hangarManager.selectedFighterObj.GetComponent<Fighter>().weaponslots)
+                if (selectedFighter.weaponequipped.Count < gameManager.hangarManager.selectedFighterObj.GetComponent<Fighter>().weaponslots)
                 {
                     // gameManager.hangarManager.selectedFighterObj.GetComponent<Fighter>().weaponequipped.Add(whichitem);
-                    gameManager.hangarManager.selectedFighterObj.GetComponent<Fighter>().Equip(AllItems[(int)gunsInInventory[whichitem].x]);
-                    gunbuttons[whichitem].transform.GetChild(0).GetComponent<Text>().text = AllItems[(int)gunsInInventory[whichitem].x].name;
-                    gunsInInventory.Remove(gunsInInventory[whichitem]);
+                    selectedFighter.Equip(AllItems[(int)gunsInInventory[whichitem].x]);
+                    gunbuttons[selectedFighter.weaponequipped.Count - 1].transform.GetChild(0).GetComponent<Text>().text = AllItems[(int)gunsInInventory[whichitem].x].name;
+                    gunsInInventory[whichitem] = new Vector2( gunsInInventory[whichitem].x,gunsInInventory[whichitem].y - 1);
+                    if (gunsInInventory[whichitem].y <= 0)
+                    {
+                        gunsInInventory.Remove(gunsInInventory[whichitem]);
+                    }
                 }
 
                 break;
             case 1:
-                if (gameManager.hangarManager.selectedFighterObj.GetComponent<Fighter>().weaponequipped.Count < gameManager.hangarManager.selectedFighterObj.GetComponent<Fighter>().weaponslots)
+                if (selectedFighter.enginequipped.Count < gameManager.hangarManager.selectedFighterObj.GetComponent<Fighter>().engineslots)
                 {
                     // gameManager.hangarManager.selectedFighterObj.GetComponent<Fighter>().weaponequipped.Add(whichitem);
-                    gameManager.hangarManager.selectedFighterObj.GetComponent<Fighter>().Equip(AllItems[(int)enginesInInventory[whichitem].x]);
-                    enginebuttons[whichitem].transform.GetChild(0).GetComponent<Text>().text = AllItems[(int)enginesInInventory[whichitem].x].name;
-                    enginesInInventory.Remove(enginesInInventory[whichitem]);
+                    selectedFighter.Equip(AllItems[(int)enginesInInventory[whichitem].x]);
+                    enginebuttons[selectedFighter.enginequipped.Count - 1].transform.GetChild(0).GetComponent<Text>().text = AllItems[(int)enginesInInventory[whichitem].x].name;
+
+                    enginesInInventory[whichitem] = new Vector2(enginesInInventory[whichitem].x, enginesInInventory[whichitem].y - 1);
+                    if (enginesInInventory[whichitem].y <= 0)
+                    {
+                        enginesInInventory.Remove(enginesInInventory[whichitem]);
+                    }
+
+
                 }
                 break;
             case 2:
-              
+                if (selectedFighter.hullequipped.Count < gameManager.hangarManager.selectedFighterObj.GetComponent<Fighter>().hullslots)
+                {
+                    // gameManager.hangarManager.selectedFighterObj.GetComponent<Fighter>().weaponequipped.Add(whichitem);
+                    selectedFighter.Equip(AllItems[(int)hullsInInventory[whichitem].x]);
+                    hullbuttons[selectedFighter.hullequipped.Count - 1].transform.GetChild(0).GetComponent<Text>().text = AllItems[(int)hullsInInventory[whichitem].x].name;
+
+                    hullsInInventory[whichitem] = new Vector2(hullsInInventory[whichitem].x, hullsInInventory[whichitem].y - 1);
+                    if (hullsInInventory[whichitem].y <= 0)
+                    {
+                        hullsInInventory.Remove(hullsInInventory[whichitem]);
+                    }
+
+                }
+
                 break;
             case 3:
              
@@ -134,7 +159,7 @@ public class ItemManager : MonoBehaviour {
         Fighter selectedFighter = gameManager.hangarManager.selectedFighterObj.GetComponent<Fighter>();
 
         int count2 = 0;
-            while (count2 < weaponslots)
+            while (count2 < selectedFighter.weaponslots)
             {
                 gunbuttons[count2].gameObject.active = true;
             if (selectedFighter.weaponequipped.Count > count2)
@@ -145,10 +170,10 @@ public class ItemManager : MonoBehaviour {
                 count2++;
             }
             count2 = 0;
-        while (count2 < engineslots)
+        while (count2 < selectedFighter.engineslots)
         {
             enginebuttons[count2].gameObject.active = true;
-            if (selectedFighter.weaponequipped.Count > count2)
+            if (selectedFighter.enginequipped.Count > count2)
             {
                 enginebuttons[count2].transform.GetChild(0).GetComponent<Text>().text = AllItems[selectedFighter.enginequipped[count2]].name;
             }
@@ -156,9 +181,14 @@ public class ItemManager : MonoBehaviour {
             count2++;
         }
         count2 = 0;
-        while (count2 < hullslots)
+        while (count2 < selectedFighter.hullslots)
         {
             hullbuttons[count2].gameObject.active = true;
+            if (selectedFighter.hullequipped.Count > count2)
+            {
+                hullbuttons[count2].transform.GetChild(0).GetComponent<Text>().text = AllItems[selectedFighter.hullequipped[count2]].name;
+            }
+            else { hullbuttons[count2].transform.GetChild(0).GetComponent<Text>().text = "hull slot"; }
             count2++;
         }
         count2 = 0;
@@ -190,6 +220,7 @@ public class ItemManager : MonoBehaviour {
         switch (whattype)
         {
             case 0:
+                if(gunsInInventory.Count != 0) { 
                 foreach (Vector2 item in gunsInInventory)
                 {
                     inventoryselectbuttons[count].gameObject.active = true;
@@ -198,20 +229,26 @@ public class ItemManager : MonoBehaviour {
 
                     count++;
                 }
+                }
 
                 break;
             case 1:
-                foreach (Vector2 item in enginesInInventory)
+                if (enginesInInventory.Count != 0)
+                {
+                    foreach (Vector2 item in enginesInInventory)
                 {
                     inventoryselectbuttons[count].gameObject.active = true;
 
                     inventoryselectbuttons[count].transform.GetChild(0).GetComponent<Text>().text = AllItems[(int)item.x].name + " : " + item.y;
 
                     count++;
+                }
                 }
                 break;
             case 2:
-                foreach (Vector2 item in hullsInInventory)
+                if (hullsInInventory.Count != 0)
+                {
+                    foreach (Vector2 item in hullsInInventory)
                 {
                     inventoryselectbuttons[count].gameObject.active = true;
 
@@ -219,27 +256,33 @@ public class ItemManager : MonoBehaviour {
 
                     count++;
                 }
+                }
                 break;
             case 3:
-                foreach (Vector2 item in bulletsInInventory)
+                if (bulletsInInventory.Count != 0)
+                {
+                    foreach (Vector2 item in bulletsInInventory)
                 {
                     inventoryselectbuttons[count].gameObject.active = true;
 
                     inventoryselectbuttons[count].transform.GetChild(0).GetComponent<Text>().text = AllItems[(int)item.x].name + " : " + item.y;
 
                     count++;
+                }
                 }
                 break;
 
             default:
-                foreach (Vector2 item in consumablesInInventory)
-                {
-                    inventoryselectbuttons[count].gameObject.active = true;
+                     if (consumablesInInventory.Count != 0)
+                    {
+                        foreach (Vector2 item in consumablesInInventory)
+                        {
+                            inventoryselectbuttons[count].gameObject.active = true;
 
-                    inventoryselectbuttons[count].transform.GetChild(0).GetComponent<Text>().text = AllItems[(int)item.x].name + " : " + item.y;
+                            inventoryselectbuttons[count].transform.GetChild(0).GetComponent<Text>().text = AllItems[(int)item.x].name + " : " + item.y;
 
-                    count++;
-                }
+                            count++;
+                        } }
                 break;
 
         }

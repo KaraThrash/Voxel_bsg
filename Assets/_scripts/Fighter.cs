@@ -26,13 +26,16 @@ public class Fighter : MonoBehaviour {
         {
             case 0:
                 weaponequipped.Add(newitem.GetComponent<PickUp>().itemnumber);
-                GetComponent<ViperControls>().guncooldown -= 0.1f;
+                GetComponent<ViperControls>().guncooldown -= 0.2f;
                 break;
             case 1:
                 enginequipped.Add(newitem.GetComponent<PickUp>().itemnumber);
                 GetComponent<ViperControls>().flySpeed += 20;
                 break;
-                
+            case 2:
+                hullequipped.Add(newitem.GetComponent<PickUp>().itemnumber);
+                totalhp += 2; currenthp += 2;
+                break;
             default:
                 consumablequipped.Add(newitem.GetComponent<PickUp>().itemnumber);
                 break;
