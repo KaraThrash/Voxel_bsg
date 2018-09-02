@@ -22,8 +22,9 @@ public class HangarManager : MonoBehaviour {
     {
         if (gameManager.playermanager.myship != null)
         { addFighter(gameManager.playermanager.myship); }
+
         gameManager.playermanager.SelectFighter(fighters[whichfighter]);
-        selectedFighter.active = true;
+        selectedFighter.active = true; //image displaying the selected fighter
         selectedFighter.transform.GetChild(0).GetComponent<Text>().text = hangarbuttons[whichfighter].transform.GetChild(1).GetComponent<Text>().text;
         selectedFighterObj = fighters[whichfighter];
         selectedFighter.GetComponent<Image>().sprite = hangarbuttons[whichfighter].GetComponent<Image>().sprite;

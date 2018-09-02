@@ -80,68 +80,137 @@ public class ItemManager : MonoBehaviour {
     public void ToggleEquip(int whichitem)
     {
         Debug.Log("toggle equipt" + typedisplayed.ToString());
-        Fighter selectedFighter = gameManager.hangarManager.selectedFighterObj.GetComponent<Fighter>();
-        switch (typedisplayed)
+        if (gameManager.hangarManager.selectedFighterObj != null)
         {
-            case 0:
-                if (selectedFighter.weaponequipped.Count < gameManager.hangarManager.selectedFighterObj.GetComponent<Fighter>().weaponslots)
-                {
-                    // gameManager.hangarManager.selectedFighterObj.GetComponent<Fighter>().weaponequipped.Add(whichitem);
-                    selectedFighter.Equip(AllItems[(int)gunsInInventory[whichitem].x]);
-                    gunbuttons[selectedFighter.weaponequipped.Count - 1].transform.GetChild(0).GetComponent<Text>().text = AllItems[(int)gunsInInventory[whichitem].x].name;
-                    gunsInInventory[whichitem] = new Vector2( gunsInInventory[whichitem].x,gunsInInventory[whichitem].y - 1);
-                    if (gunsInInventory[whichitem].y <= 0)
+            Fighter selectedFighter = gameManager.hangarManager.selectedFighterObj.GetComponent<Fighter>();
+            switch (typedisplayed)
+            {
+                case 0:
+                    if (selectedFighter.weaponequipped.Count < gameManager.hangarManager.selectedFighterObj.GetComponent<Fighter>().weaponslots)
                     {
-                        gunsInInventory.Remove(gunsInInventory[whichitem]);
-                    }
-                }
-
-                break;
-            case 1:
-                if (selectedFighter.enginequipped.Count < gameManager.hangarManager.selectedFighterObj.GetComponent<Fighter>().engineslots)
-                {
-                    // gameManager.hangarManager.selectedFighterObj.GetComponent<Fighter>().weaponequipped.Add(whichitem);
-                    selectedFighter.Equip(AllItems[(int)enginesInInventory[whichitem].x]);
-                    enginebuttons[selectedFighter.enginequipped.Count - 1].transform.GetChild(0).GetComponent<Text>().text = AllItems[(int)enginesInInventory[whichitem].x].name;
-
-                    enginesInInventory[whichitem] = new Vector2(enginesInInventory[whichitem].x, enginesInInventory[whichitem].y - 1);
-                    if (enginesInInventory[whichitem].y <= 0)
-                    {
-                        enginesInInventory.Remove(enginesInInventory[whichitem]);
+                        // gameManager.hangarManager.selectedFighterObj.GetComponent<Fighter>().weaponequipped.Add(whichitem);
+                        selectedFighter.Equip(AllItems[(int)gunsInInventory[whichitem].x]);
+                        gunbuttons[selectedFighter.weaponequipped.Count - 1].transform.GetChild(0).GetComponent<Text>().text = AllItems[(int)gunsInInventory[whichitem].x].name;
+                        gunsInInventory[whichitem] = new Vector2(gunsInInventory[whichitem].x, gunsInInventory[whichitem].y - 1);
+                        if (gunsInInventory[whichitem].y <= 0)
+                        {
+                            gunsInInventory.Remove(gunsInInventory[whichitem]);
+                        }
                     }
 
-
-                }
-                break;
-            case 2:
-                if (selectedFighter.hullequipped.Count < gameManager.hangarManager.selectedFighterObj.GetComponent<Fighter>().hullslots)
-                {
-                    // gameManager.hangarManager.selectedFighterObj.GetComponent<Fighter>().weaponequipped.Add(whichitem);
-                    selectedFighter.Equip(AllItems[(int)hullsInInventory[whichitem].x]);
-                    hullbuttons[selectedFighter.hullequipped.Count - 1].transform.GetChild(0).GetComponent<Text>().text = AllItems[(int)hullsInInventory[whichitem].x].name;
-
-                    hullsInInventory[whichitem] = new Vector2(hullsInInventory[whichitem].x, hullsInInventory[whichitem].y - 1);
-                    if (hullsInInventory[whichitem].y <= 0)
+                    break;
+                case 1:
+                    if (selectedFighter.enginequipped.Count < gameManager.hangarManager.selectedFighterObj.GetComponent<Fighter>().engineslots)
                     {
-                        hullsInInventory.Remove(hullsInInventory[whichitem]);
+                        // gameManager.hangarManager.selectedFighterObj.GetComponent<Fighter>().weaponequipped.Add(whichitem);
+                        selectedFighter.Equip(AllItems[(int)enginesInInventory[whichitem].x]);
+                        enginebuttons[selectedFighter.enginequipped.Count - 1].transform.GetChild(0).GetComponent<Text>().text = AllItems[(int)enginesInInventory[whichitem].x].name;
+
+                        enginesInInventory[whichitem] = new Vector2(enginesInInventory[whichitem].x, enginesInInventory[whichitem].y - 1);
+                        if (enginesInInventory[whichitem].y <= 0)
+                        {
+                            enginesInInventory.Remove(enginesInInventory[whichitem]);
+                        }
+
+
                     }
+                    break;
+                case 2:
 
-                }
 
-                break;
-            case 3:
-             
-                break;
+                    break;
+                case 3:
+                    if (selectedFighter.hullequipped.Count < gameManager.hangarManager.selectedFighterObj.GetComponent<Fighter>().hullslots)
+                    {
+                        // gameManager.hangarManager.selectedFighterObj.GetComponent<Fighter>().weaponequipped.Add(whichitem);
+                        selectedFighter.Equip(AllItems[(int)hullsInInventory[whichitem].x]);
+                        hullbuttons[selectedFighter.hullequipped.Count - 1].transform.GetChild(0).GetComponent<Text>().text = AllItems[(int)hullsInInventory[whichitem].x].name;
 
-            default:
-               
-                break;
+                        hullsInInventory[whichitem] = new Vector2(hullsInInventory[whichitem].x, hullsInInventory[whichitem].y - 1);
+                        if (hullsInInventory[whichitem].y <= 0)
+                        {
+                            hullsInInventory.Remove(hullsInInventory[whichitem]);
+                        }
 
+                    }
+                    break;
+
+                default:
+
+                    break;
+
+            }
         }
-
         showtypeavailable(typedisplayed);
     }
+    public void ToggleUnequip(int whichtype)
+    {
+        if (gameManager.hangarManager.selectedFighterObj != null)
+        {
+            Fighter selectedFighter = gameManager.hangarManager.selectedFighterObj.GetComponent<Fighter>();
+            int whichitem = selectedFighter.UnEquip(whichtype);
+            if (whichitem != -1)
+            {
 
+
+                int count = 0;
+                bool founditem = false;
+                switch (whichtype)
+                {
+                    case 0:
+                        while (count < gunsInInventory.Count)
+                        {
+                            if (gunsInInventory[count].x == whichitem)
+                            {
+                                gunsInInventory[count] = new Vector2(gunsInInventory[count].x, gunsInInventory[count].y + 1);
+                                founditem = true;
+                            }
+                            count++;
+
+                        }
+                        if (founditem == false) { gunsInInventory.Add(new Vector2(whichitem, 1)); }
+                        gunbuttons[selectedFighter.weaponequipped.Count].transform.GetChild(0).GetComponent<Text>().text = "Gun Slot";
+                        break;
+                    case 1:
+                        while (count < enginesInInventory.Count)
+                        {
+                            if (enginesInInventory[count].x == whichitem)
+                            {
+                                enginesInInventory[count] = new Vector2(enginesInInventory[count].x, enginesInInventory[count].y + 1);
+                                founditem = true;
+                            }
+                            count++;
+
+                        }
+                        if (founditem == false) { enginesInInventory.Add(new Vector2(whichitem, 1)); }
+                        enginebuttons[selectedFighter.enginequipped.Count].transform.GetChild(0).GetComponent<Text>().text = "Engine Slot";
+                        break;
+                    case 2:
+
+                        break;
+                    case 3:
+                        while (count < hullsInInventory.Count)
+                        {
+                            if (hullsInInventory[count].x == whichitem)
+                            {
+                                hullsInInventory[count] = new Vector2(hullsInInventory[count].x, hullsInInventory[count].y + 1);
+                                founditem = true;
+                            }
+                            count++;
+
+                        }
+                        if (founditem == false) { gunsInInventory.Add(new Vector2(whichitem, 1)); }
+                        hullbuttons[selectedFighter.hullequipped.Count].transform.GetChild(0).GetComponent<Text>().text = "Hull Slot";
+                        break;
+
+                    default:
+
+                        break;
+
+                }
+            }
+        }
+    }
     public void ToggleHangarDisplay(int weaponslots,int engineslots,int hullslots,int bulletslots,int consumableslots)
     {
 
@@ -192,13 +261,13 @@ public class ItemManager : MonoBehaviour {
             count2++;
         }
         count2 = 0;
-        while (count2 < bulletslots)
+        while (count2 < selectedFighter.bulleteslots)
         {
             bulletbuttons[count2].gameObject.active = true;
             count2++;
         }
         count2 = 0;
-        while (count2 < consumableslots)
+        while (count2 < selectedFighter.consumableslots)
         {
             consumablebuttons[count2].gameObject.active = true;
             count2++;
@@ -245,7 +314,7 @@ public class ItemManager : MonoBehaviour {
                 }
                 }
                 break;
-            case 2:
+            case 3:
                 if (hullsInInventory.Count != 0)
                 {
                     foreach (Vector2 item in hullsInInventory)
@@ -258,7 +327,7 @@ public class ItemManager : MonoBehaviour {
                 }
                 }
                 break;
-            case 3:
+            case 2:
                 if (bulletsInInventory.Count != 0)
                 {
                     foreach (Vector2 item in bulletsInInventory)

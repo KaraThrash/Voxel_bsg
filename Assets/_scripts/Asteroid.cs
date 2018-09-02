@@ -7,6 +7,7 @@ public class Asteroid : MonoBehaviour {
     public int size;
     public int hp;
     private Vector3 floatdirection;
+    public bool floataround;
 	// Use this for initialization
 	void Start () {
         floatdirection = Vector3.Normalize(-transform.position - transform.position) * 5.0f;
@@ -15,10 +16,12 @@ public class Asteroid : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        GetComponent<Rigidbody>().velocity = floatdirection * 10.0f;
-        if (Vector3.Distance(transform.position, Vector3.zero) > 5000)
-        { Destroy(this.gameObject); }
-
+        if (floataround == true)
+        {
+            GetComponent<Rigidbody>().velocity = floatdirection * 10.0f;
+            if (Vector3.Distance(transform.position, Vector3.zero) > 5000)
+            { Destroy(this.gameObject); }
+        }
     }
 
     public void BreakApart()
@@ -37,6 +40,7 @@ public class Asteroid : MonoBehaviour {
             }
         size--;
         if (size <= 0) {
+            Instantiate(resource, new Vector3(transform.position.x + 20,transform.position.y + 25,transform.position.z + 20), transform.rotation);
             Destroy(this.gameObject);
 
         }
@@ -52,6 +56,7 @@ public class Asteroid : MonoBehaviour {
     {
         if (col.gameObject.tag == "Bullet" || col.gameObject.tag == "BulletEnemy")
         {
+            Instantiate(resource, col.gameObject.transform.position, transform.rotation);
             hp--;
             if (hp <= 0)
             { BreakApart(); }
