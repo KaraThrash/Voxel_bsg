@@ -234,8 +234,20 @@ public class ViperControls : MonoBehaviour {
 
     public void RaycastShootGuns()
     {
-        Instantiate(bullet,gun1.transform.position,gun1.transform.rotation);
-        Instantiate(bullet, gun2.transform.position, gun2.transform.rotation);
+        if (bullet.GetComponent<Bullet>().lance == true)
+        {
+            GameObject clone = Instantiate(bullet, gun1.transform.position, gun1.transform.rotation) as GameObject;
+            clone.transform.parent = this.transform;
+            GameObject clone2 = Instantiate(bullet, gun2.transform.position, gun2.transform.rotation) as GameObject;
+            clone2.transform.parent = this.transform;
+
+        }
+        else
+        {
+            Instantiate(bullet, gun1.transform.position, gun1.transform.rotation);
+            Instantiate(bullet, gun2.transform.position, gun2.transform.rotation);
+        }
+        
     }
     public void flightControls(float newvert, float newhort, float roll, float rollX, float rollY, float lift)
     {
@@ -269,12 +281,14 @@ public class ViperControls : MonoBehaviour {
             myplayer.GetComponent<Player>().vehicletakingdamage(1);
 
         }
-
-        if (col.gameObject.tag == "Resource" && heldresource == 0)
+        //&& heldresource == 0
+        if (col.gameObject.tag == "Resource" )
         {
-            heldresource = col.gameObject.GetComponent<PickUp>().type;
-            Destroy(col.gameObject);
+            myplayer.GetComponent<Player>().gamemanager.itemManager.ItemPickUp(col.gameObject);
 
+            //heldresource = col.gameObject.GetComponent<PickUp>().type;
+            Destroy(col.gameObject);
+            
         }
     }
 

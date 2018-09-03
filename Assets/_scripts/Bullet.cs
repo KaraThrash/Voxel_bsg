@@ -10,13 +10,20 @@ public class Bullet : MonoBehaviour {
     public GameObject intialExplosion;
     private Rigidbody rb;
     public float lifeTime;
+    public bool lance; //toggles on instead of being a projectile
     // Use this for initialization
     void Start()
     {
-        transform.parent = GameObject.Find("BulletParent").transform;
         rb = GetComponent<Rigidbody>();
+        if (lance == false)
+        {
+            transform.parent = GameObject.Find("BulletParent").transform;
+            rb.AddForce(transform.forward * (speed), ForceMode.Impulse);
+        }
+        
+    
        // if (large == true) { Instantiate(intialExplosion, transform.position, transform.rotation); }
-        rb.AddForce(transform.forward * (speed), ForceMode.Impulse);
+        
 
     }
 
@@ -38,6 +45,18 @@ public class Bullet : MonoBehaviour {
       
 
     }
+    public void OnTriggerEnter(Collider col)
+    {
+        //GetComponent<Collider>().enabled = false;
+        if (explosion != null)
+        {
+            Instantiate(explosion, transform.position, transform.rotation);
+        }
+        //lifeTime = 0.5f;
+
+
+    }
+
     public void Die()
     {
 

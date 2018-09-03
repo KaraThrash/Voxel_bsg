@@ -24,6 +24,7 @@ GameObject:
   - component: {fileID: 23078973539403404}
   - component: {fileID: 114192987989113186}
   - component: {fileID: 54334647453984332}
+  - component: {fileID: 114841200452798316}
   m_Layer: 2
   m_Name: EnemyBullet
   m_TagString: BulletEnemy
@@ -116,6 +117,22 @@ MonoBehaviour:
   large: 0
   intialExplosion: {fileID: 0}
   lifeTime: 10
+  lance: 0
+--- !u!114 &114841200452798316
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1854357067856306}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6daf7b55d2b0e94fb18239134a36625, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  type: 2
+  value: 1
+  itemnumber: 0
+  colors: []
 --- !u!135 &135653491450255598
 SphereCollider:
   m_ObjectHideFlags: 1

@@ -29,7 +29,7 @@ public class NpcManager : MonoBehaviour {
 
     public void NPCkilled(int moneyvalue)
     {
-        gameManager.playermanager.SpendMoney(-moneyvalue) ;
+        gameManager.itemManager.SpendMoney(-moneyvalue) ;
     }
 
 }

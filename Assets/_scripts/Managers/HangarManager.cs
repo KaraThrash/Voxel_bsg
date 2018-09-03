@@ -83,7 +83,7 @@ public class HangarManager : MonoBehaviour {
 
             if (fighterToRepair.GetComponent<Fighter>().currenthp < fighterToRepair.GetComponent<Fighter>().totalhp)
         {
-            if (gameManager.playermanager.SpendMoney(1))
+            if (gameManager.itemManager.SpendMoney(1))
             {
 
 

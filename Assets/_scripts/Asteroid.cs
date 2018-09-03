@@ -6,6 +6,7 @@ public class Asteroid : MonoBehaviour {
     public GameObject resource;
     public int size;
     public int hp;
+    public int itemheld;// the item number from the masterlist
     private Vector3 floatdirection;
     public bool floataround;
 	// Use this for initialization
@@ -40,7 +41,10 @@ public class Asteroid : MonoBehaviour {
             }
         size--;
         if (size <= 0) {
-            Instantiate(resource, new Vector3(transform.position.x + 20,transform.position.y + 25,transform.position.z + 20), transform.rotation);
+           // Instantiate(resource, new Vector3(transform.position.x + 20,transform.position.y + 25,transform.position.z + 20), transform.rotation);
+            GameObject clone = Instantiate(resource, transform.position, transform.rotation) as GameObject;
+            clone.GetComponent<PickUp>().SetWhichItem(itemheld);
+
             Destroy(this.gameObject);
 
         }
@@ -56,7 +60,8 @@ public class Asteroid : MonoBehaviour {
     {
         if (col.gameObject.tag == "Bullet" || col.gameObject.tag == "BulletEnemy")
         {
-            Instantiate(resource, col.gameObject.transform.position, transform.rotation);
+            GameObject clone = Instantiate(resource, col.gameObject.transform.position, transform.rotation) as GameObject;
+            clone.GetComponent<PickUp>().SetWhichItem(itemheld); 
             hp--;
             if (hp <= 0)
             { BreakApart(); }

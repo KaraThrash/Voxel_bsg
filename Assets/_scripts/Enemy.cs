@@ -156,6 +156,16 @@ public class Enemy : MonoBehaviour {
             Die();
 
         }
+        if (other.gameObject.tag == "Bullet")
+        {
+            Instantiate(explosion, transform.position, transform.rotation);
+            // gameManager.GetComponent<GameManager>().RaiderDestroyed(value);
+            hp -= 1;
+            if (hp <= 0)
+            {
+                Die();
+            }
+        }
     }
     public void FireGuns()
     {

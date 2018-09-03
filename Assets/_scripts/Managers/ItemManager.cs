@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 public class ItemManager : MonoBehaviour {
+    public int money, fuel;
+    public Text fueltext, moneytext;
     public GameManager gameManager;
     public List<GameObject> AllItems;
     //public List<GameObject> InInventory; // items available to the player, but not equiped or a recent pick up while on mission
@@ -211,6 +213,79 @@ public class ItemManager : MonoBehaviour {
             }
         }
     }
+    public void ItemPickUp(GameObject whichitem)
+    {
+        
+           
+
+            int whichtype = AllItems[whichitem.GetComponent<PickUp>().itemnumber].GetComponent<PickUp>().type;
+
+                int count = 0;
+                bool founditem = false;
+                switch (whichtype)
+                {
+                    case 0:
+                        while (count < gunsInInventory.Count)
+                        {
+                            if (gunsInInventory[count].x == whichitem.GetComponent<PickUp>().itemnumber)
+                            {
+                                gunsInInventory[count] = new Vector2(gunsInInventory[count].x, gunsInInventory[count].y + 1);
+                                founditem = true;
+                            }
+                            count++;
+
+                        }
+                        if (founditem == false) { gunsInInventory.Add(new Vector2(whichitem.GetComponent<PickUp>().itemnumber, 1)); }
+                        
+                        break;
+                    case 1:
+                        while (count < enginesInInventory.Count)
+                        {
+                            if (enginesInInventory[count].x == whichitem.GetComponent<PickUp>().itemnumber)
+                            {
+                                enginesInInventory[count] = new Vector2(enginesInInventory[count].x, enginesInInventory[count].y + 1);
+                                founditem = true;
+                            }
+                            count++;
+
+                        }
+                        if (founditem == false) { enginesInInventory.Add(new Vector2(whichitem.GetComponent<PickUp>().itemnumber, 1)); }
+                       
+                        break;
+                    case 2:
+
+                        break;
+                    case 3:
+                        while (count < hullsInInventory.Count)
+                        {
+                            if (hullsInInventory[count].x == whichitem.GetComponent<PickUp>().itemnumber)
+                            {
+                                hullsInInventory[count] = new Vector2(hullsInInventory[count].x, hullsInInventory[count].y + 1);
+                                founditem = true;
+                            }
+                            count++;
+
+                        }
+                        if (founditem == false) { gunsInInventory.Add(new Vector2(whichitem.GetComponent<PickUp>().itemnumber, 1)); }
+                    
+                        break;
+                case -2://money
+                money += whichitem.GetComponent<PickUp>().value;
+
+                break;
+                case -3://fuel
+                    fuel += whichitem.GetComponent<PickUp>().value;
+
+                    break;
+                default:
+
+                        break;
+
+                }
+            
+        
+    }
+
     public void ToggleHangarDisplay(int weaponslots,int engineslots,int hullslots,int bulletslots,int consumableslots)
     {
 
@@ -358,7 +433,14 @@ public class ItemManager : MonoBehaviour {
 
     }
 
-
+    public void showfuelandMoney()
+    {
+        string tempstring = "";
+        while (tempstring.Length < fuel)
+        { tempstring += "I"; }
+        fueltext.text = tempstring;
+        moneytext.text = money.ToString();
+    }
     public void DisplayInventory()
     {
         List<Vector2> InInventory = new List<Vector2>();
@@ -389,5 +471,15 @@ public class ItemManager : MonoBehaviour {
 
     }
 
-    
+    public bool SpendMoney(int cost)
+    {
+
+        if (money >= cost)
+        {
+            money -= cost;
+            moneytext.text = money.ToString();
+            return true;
+        }
+        return false;
+    }
 }

@@ -82,4 +82,6 @@ public class Fighter : MonoBehaviour {
         return itemremoved;
     }
    
+
+
 }

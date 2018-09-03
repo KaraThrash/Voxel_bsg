@@ -33,7 +33,7 @@ public class GameManager : MonoBehaviour {
     void Start () {
         wavenumber.text = "1";
         raidersdestroyedtext.text = "1";
-     
+        itemManager.showfuelandMoney();
     }
 	
 	// Update is called once per frame
@@ -90,6 +90,8 @@ public class GameManager : MonoBehaviour {
             hangarManager.addFighter(playermanager.myship);
 
             }
+        itemManager.showfuelandMoney();
+
         playermanager.myship = null;
         //playermanager.endLevel();
             hubmenu.active = true;
