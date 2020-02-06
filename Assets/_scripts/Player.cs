@@ -13,16 +13,16 @@ public class Player : MonoBehaviour {
     public GameManager gamemanager;
     // Use this for initialization
     void Start () {
-		
+      // Item newitem = new Item{name = "red"};
 	}
-	
+
 	// Update is called once per frame
 	void Update () {
-		
+
 	}
     public bool SpendMoney(int cost)
     {
-      
+
         if (money > cost)
         { money -= cost;
             moneytext.text = money.ToString();
@@ -38,7 +38,6 @@ public class Player : MonoBehaviour {
 
         fighterselected.transform.rotation = playerSpawn.transform.rotation;
         myship.GetComponent<ViperControls>().camerasphere = mycamera;
-        myship.GetComponent<ViperControls>().camforward = mycamera.GetComponent<ThirdPersonCamera>().myfwdobj;
         myship.GetComponent<ViperControls>().myplayer = this.gameObject;
         mycamera.GetComponent<ThirdPersonCamera>().target = myship;
 
@@ -55,16 +54,20 @@ public class Player : MonoBehaviour {
             Destroy(myship);
             myship =  gamemanager.npcManager.GetComponent<NpcManager>().SpawnNewController(2, playerSpawn.transform.position,playerSpawn.transform.rotation);
             myship.GetComponent<ViperControls>().camerasphere = mycamera;
-            myship.GetComponent<ViperControls>().camforward = mycamera.GetComponent<ThirdPersonCamera>().myfwdobj;
             myship.GetComponent<ViperControls>().myplayer = this.gameObject;
             mycamera.GetComponent<ThirdPersonCamera>().target = myship;
         }
 
-        int count = 0;
-        string tempstring = "";
-        while (count < shiphp)
-        { tempstring += "I"; count++; }
-        hpText.text = tempstring;
+
+    }
+    public void SetHPBar()
+    {
+
+      int count = 0;
+      string tempstring = "";
+      while (count < shiphp)
+      { tempstring += "I"; count++; }
+      hpText.text = tempstring;
     }
     public void startnewlevel()
     {
@@ -77,8 +80,8 @@ public class Player : MonoBehaviour {
         if (myship != null)
         { myship.active = false; }
         gamemanager.TravelToHub();
-       
-       
+
+
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
     }

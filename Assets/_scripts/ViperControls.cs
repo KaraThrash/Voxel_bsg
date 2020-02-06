@@ -3,15 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class ViperControls : MonoBehaviour {
-    public Vector3 newvel;
+    private Vector3 newvel;
     public GameObject myplayer;
     public GameObject camera;
     public GameObject camerasphere;
-    public GameObject fwd;
-    public GameObject up;
-    public GameObject rgt;
     public GameObject behind;
-    public GameObject camforward;
     public Quaternion targetRotation;
 
 
@@ -20,14 +16,14 @@ public class ViperControls : MonoBehaviour {
     public float flySpeed;
     public float  strafeSpeed;
     public float liftSpeed;
-    public float lift;
-    public float hort;
-    public float vert;
-    public float roll;
+    private float lift;
+    private float hort;
+    private float vert;
+    private float roll;
     public float rollSpeed;
     public float rollMod;
-    public float mouseX;
-    public float mouseY;
+    private float mouseX;
+    private float mouseY;
     public GameObject gun1;
     public GameObject gun2;
     public GameObject bullet;
@@ -44,34 +40,38 @@ public class ViperControls : MonoBehaviour {
         cameraspeed = 15;
         distspeed = 12;
     }
-	
+
 	// Update is called once per frame
 	void Update () {
        //KeyboardFlightControls();
 
-
         thirdpersonflightcontrols();
-       
+
         // ControllerFlight();
 
+    }
+    public void ControlCamera(float hort,float vert)
+    {
+      if (Input.GetMouseButton(1))
+      {
+          camerasphere.transform.position = transform.position;
+          // targetRotation = Quaternion.LookRotation((camera.transform.position + camera.transform.forward) - transform.position);
+          step = Mathf.Min(4 * Time.deltaTime, 1.5f);
+          transform.rotation = Quaternion.Lerp(transform.rotation, camerasphere.transform.rotation, step);
+
+          camerasphere.GetComponent<ThirdPersonCamera>().rollz = roll * 20 * Time.deltaTime ;
+      }
+      else {
+
+          camerasphere.GetComponent<ThirdPersonCamera>().rollz = 0;
+      }
     }
     public void thirdpersonflightcontrols()
     {
         hort = Input.GetAxis("Horizontal");
         vert = Input.GetAxis("Vertical");
-        if (Input.GetMouseButton(1))
-        {
-            camerasphere.transform.position = transform.position;
-            targetRotation = Quaternion.LookRotation(camforward.transform.position - transform.position);
-            step = Mathf.Min(4 * Time.deltaTime, 1.5f);
-            transform.rotation = Quaternion.Lerp(transform.rotation, camerasphere.transform.rotation, step);
-            
-            camerasphere.GetComponent<ThirdPersonCamera>().rollz = roll * 20 * Time.deltaTime ;
-        }
-        else {
+        ControlCamera(hort,vert);
 
-            camerasphere.GetComponent<ThirdPersonCamera>().rollz = 0;
-        }
         if (Input.GetMouseButton(0))
         {
 
@@ -91,12 +91,12 @@ public class ViperControls : MonoBehaviour {
         { lift = 2; }
         else { lift = 0; }
 
-       
+
      //   if (Input.GetKeyDown(KeyCode.E)) { if (rollMod == -15) { rollMod = 0; } else { rollMod = -15; } }
      //   if (Input.GetKeyDown(KeyCode.Q)) { if (rollMod == 15) { rollMod = 0; } else { rollMod = 15; } }
 
         //if (Input.GetKey(KeyCode.Q) || Input.GetKey(KeyCode.U)) { roll = (rollSpeed + rollMod); } else if (Input.GetKey(KeyCode.E) || Input.GetKey(KeyCode.O)) { roll = -(rollSpeed + rollMod); } else { roll = 0; }
-      
+
 
        // if (Input.GetKeyDown(KeyCode.LeftShift))
         //{
@@ -114,13 +114,13 @@ public class ViperControls : MonoBehaviour {
         //rb.AddTorque(transform.forward * roll * 15.0f * Time.deltaTime, ForceMode.Impulse);
         // GetComponent<PhotonView>().RPC("flightControls", PhotonTargets.AllViaServer, vert, hort, roll, mouseX, mouseY, exit, lift);
 
-        Vector3 tempvel = transform.position - rgt.transform.position;
+        Vector3 tempvel = transform.position - (transform.position + transform.right);
         tempvel *= strafeSpeed * -hort;
-        Vector3 tempvel2 = transform.position - fwd.transform.position;
+        Vector3 tempvel2 = transform.position - (transform.position + transform.forward);
         tempvel2 *= flySpeed * -vert;
-        Vector3 tempvel3 = transform.position - up.transform.position;
+        Vector3 tempvel3 = transform.position - (transform.position + transform.up);
         tempvel3 *= flySpeed * lift;
-       
+
         newvel = tempvel + tempvel2 + tempvel3 ;
         rb.velocity = Vector3.Lerp(rb.velocity,newvel,5.0f * Time.deltaTime);
        // flightControls(vert, hort, roll, 0, 0, lift);
@@ -132,7 +132,7 @@ public class ViperControls : MonoBehaviour {
 
             if (guncooldown <= 0)
             {
-               
+
                RaycastShootGuns();
 
                 guncooldown = 0.2f;
@@ -141,7 +141,7 @@ public class ViperControls : MonoBehaviour {
         }
 
         if (Input.GetKey(KeyCode.KeypadPlus) || Input.GetKey(KeyCode.LeftBracket)) { lift = liftSpeed; }
-        else if 
+        else if
             (Input.GetKey(KeyCode.KeypadEnter) || Input.GetKey(KeyCode.RightBracket))
         { lift = -liftSpeed; }
         else { lift = 0; }
@@ -155,7 +155,7 @@ public class ViperControls : MonoBehaviour {
         if (Input.GetKey(KeyCode.Keypad4) || Input.GetKey(KeyCode.J)) { mouseX = -(turnSpeed + rollMod); } else if (Input.GetKey(KeyCode.Keypad6) || Input.GetKey(KeyCode.L)) { mouseX = (turnSpeed + rollMod); } else { mouseX = 0; }
         if (Input.GetKey(KeyCode.Keypad2) || Input.GetKey(KeyCode.K)) { mouseY = -(turnSpeed + rollMod); } else if (Input.GetKey(KeyCode.Keypad8) || Input.GetKey(KeyCode.I)) { mouseY = (turnSpeed + rollMod); } else { mouseY = 0; }
 
-        
+
         if (Input.GetKeyDown(KeyCode.LeftShift))
         {
            // ToggleGlide();
@@ -169,16 +169,16 @@ public class ViperControls : MonoBehaviour {
     {
         hort = Input.GetAxis("Horizontal");
         vert = Input.GetAxis("Vertical");
-    
-        
+
+
             camerasphere.transform.position = transform.position;
-            targetRotation = Quaternion.LookRotation(camforward.transform.position - transform.position);
+            targetRotation = Quaternion.LookRotation((camerasphere.transform.position + camerasphere.transform.forward) - transform.position);
             step = Mathf.Min(4 * Time.deltaTime, 1.5f);
             transform.rotation = Quaternion.Lerp(transform.rotation, camerasphere.transform.rotation, step);
 
             camerasphere.GetComponent<ThirdPersonCamera>().rollz = roll * 20 * Time.deltaTime;
-        
-       
+
+
         if (Input.GetAxis("3rd Axis") > 0)
         {
 
@@ -221,11 +221,11 @@ public class ViperControls : MonoBehaviour {
         //rb.AddTorque(transform.forward * roll * 15.0f * Time.deltaTime, ForceMode.Impulse);
         // GetComponent<PhotonView>().RPC("flightControls", PhotonTargets.AllViaServer, vert, hort, roll, mouseX, mouseY, exit, lift);
 
-        Vector3 tempvel = transform.position - rgt.transform.position;
+        Vector3 tempvel = transform.position - (transform.position + transform.right);
         tempvel *= strafeSpeed * -hort;
-        Vector3 tempvel2 = transform.position - fwd.transform.position;
+        Vector3 tempvel2 = transform.position - (transform.position + transform.forward);
         tempvel2 *= flySpeed * -vert;
-        Vector3 tempvel3 = transform.position - up.transform.position;
+        Vector3 tempvel3 = transform.position - (transform.position + transform.up);
         tempvel3 *= flySpeed * lift;
 
         newvel = tempvel + tempvel2 + tempvel3;
@@ -247,21 +247,21 @@ public class ViperControls : MonoBehaviour {
             Instantiate(bullet, gun1.transform.position, gun1.transform.rotation);
             Instantiate(bullet, gun2.transform.position, gun2.transform.rotation);
         }
-        
+
     }
     public void flightControls(float newvert, float newhort, float roll, float rollX, float rollY, float lift)
     {
         if (vert != 0)
         {
             rb.AddForce(transform.forward * ((vert * flySpeed * 10 )) * Time.deltaTime);
-            
+
         }
         if (hort != 0)
         {
 
             rb.AddForce(transform.right * (hort * strafeSpeed) * Time.deltaTime, ForceMode.Impulse);
         }
-      
+
         if (roll != 0) { rb.AddTorque(transform.forward * roll * Time.deltaTime, ForceMode.Impulse); }
         if (rollX != 0) { rb.AddTorque(transform.up * rollX * Time.deltaTime, ForceMode.Impulse); }
         if (rollY != 0) { rb.AddTorque(transform.right * rollY * Time.deltaTime, ForceMode.Impulse); }
@@ -288,7 +288,7 @@ public class ViperControls : MonoBehaviour {
 
             //heldresource = col.gameObject.GetComponent<PickUp>().type;
             Destroy(col.gameObject);
-            
+
         }
     }
 
