@@ -71,6 +71,11 @@ public class ViperControls : MonoBehaviour {
         hort = Input.GetAxis("Horizontal");
         vert = Input.GetAxis("Vertical");
         ControlCamera(hort,vert);
+        if (guncooldowntimer > 0)
+        {
+
+            guncooldowntimer -= Time.deltaTime;
+        }
 
         if (Input.GetMouseButton(0))
         {
@@ -82,7 +87,7 @@ public class ViperControls : MonoBehaviour {
 
                 guncooldowntimer = guncooldown;
             }
-            guncooldowntimer -= Time.deltaTime;
+
         }
 
         if (Input.GetKey(KeyCode.Space) || Input.GetKey(KeyCode.LeftBracket)) { lift = -2; }

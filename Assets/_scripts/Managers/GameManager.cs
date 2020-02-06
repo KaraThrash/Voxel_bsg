@@ -62,14 +62,12 @@ public class GameManager : MonoBehaviour {
             playermanager.startnewlevel();
         }
     }
+    
     public void TravelToHub()
     {
 
         npcManager.enemyparent.active = false; //TODO enemy parent objects based on map. THis needs to always clean up enemies
             mapManager.ReturnToHub();
-
-
-
 
     }
 }

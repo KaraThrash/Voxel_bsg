@@ -20,6 +20,10 @@ public class Player : MonoBehaviour {
 	void Update () {
 
 	}
+  public GameObject GetPlayer()
+  {
+    return myship;
+  }
     public bool SpendMoney(int cost)
     {
 

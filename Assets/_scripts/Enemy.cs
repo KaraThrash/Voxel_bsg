@@ -3,10 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Enemy : MonoBehaviour {
-    public GameObject gameManager;
     public NpcManager npcManager;
-    public GameObject fwdObject;
-    public GameObject mydradis;
     public GameObject patrolparent;
     public int speed;
     public int rotForce = 6;
@@ -14,14 +11,13 @@ public class Enemy : MonoBehaviour {
     public Vector3 straferunspot; //for doing gun passes on large ships
     public GameObject shipTarget;
     public GameObject patroltarget;
-    private Quaternion targetRotation;
+
     public GameObject gun1;
     public GameObject gun2;
     public GameObject bullet;
     public float gunCooldown;
-    private Rigidbody rb;
 
-    public string patrolPointType;
+
     public bool canPatrol;
     public GameObject explosion;
     public GameObject dradisModel;
@@ -34,51 +30,32 @@ public class Enemy : MonoBehaviour {
     public float gunCost; //what to set the cooldown to after firing
     public GameObject leadDistanceTarget;
     public float overShootCoolDown;
-    public bool tieFighter;
     public int value = 1;
     public bool aitest,stationary;
-    // Use this for initialization
-    void Start()
-    {
-        hp = 1;
-        rb = GetComponent<Rigidbody>();
-        gameManager = GameObject.Find("GameManager");
-        patrolparent = GameObject.Find("PatrolPoints");
-        patroltarget = patrolparent.transform.GetChild(Random.Range(0,5)).gameObject;
-    }
 
+    private Quaternion targetRotation;
+    private Rigidbody rb;
+
+    // Use this for initialization
+    void Awake()
+    {
+        ResetToNeutral();
+
+    }
+    public void ResetToNeutral()
+    {
+      if(rb == null){rb = GetComponent<Rigidbody>();}
+      if(hp <= 0){hp = 1;}
+
+      if(patrolparent == null){  GameObject.Find("PatrolPoints");}
+      if(patrolparent != null){  patroltarget = patrolparent.transform.GetChild(Random.Range(0,patrolparent.transform.childCount)).gameObject;  }
+    }
     // Update is called once per frame
     void Update()
     {
-        if (stationary == false)
-        {
 
-            if (mydradis.GetComponent<Dradis>().target != null) { Attack(); } else { Patrol(); }
-            if (gunCooldown > 0)
-            { gunCooldown -= Time.deltaTime; }
-            else
-            {
-                //FireGuns();
-                // gunCooldown = gunCost + Random.Range(0, 3.0f);
-            }
-        }
-        //if (overShootCoolDown > 0)
-        //{
-        //    overShootCoolDown -= Time.deltaTime;
-        //}
+        GetComponent<AIattackpattern>().Fly();
 
-        //if (avoidCollisionClock <= 0f)
-        //{
-        //    //leadDistanceTarget.transform.localPosition = new Vector3(0, 0, (rb.velocity.magnitude * 0.2f));
-        //    if (mydradis.GetComponent<Dradis>().target != null) { Attack(); } else { Patrol(); }
-        //  //  CheckForward();
-
-
-
-
-
-        //}
-        //else { AvoidCollision(); }
 
     }
 
@@ -86,17 +63,17 @@ public class Enemy : MonoBehaviour {
     {
         // possible issue with dradis detection
         RaycastHit hit;
-       
-        
+
+
 
         if (Physics.Raycast(transform.position, transform.forward, out hit, 310.0f))
         {
-            
-            if (hit.transform.gameObject == mydradis.GetComponent<Dradis>().target)
+
+            if (hit.transform.gameObject == GetComponent<AIattackpattern>().target)
             {
                 canShoot = true;
 
-              
+
             }
             else
             {
@@ -116,19 +93,19 @@ public class Enemy : MonoBehaviour {
         //    transform.Rotate(Vector3.right * -60 * Time.deltaTime);
         //   // transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 0.3f * Time.deltaTime);
         //    transform.position = Vector3.MoveTowards(transform.position, fwdObject.transform.position, speed);
-           
+
         //}
         //else
         //{
 
-           
+
         //    // transform.position += (transform.forward * Time.deltaTime * speed);
         //    transform.Rotate(Vector3.right * -30 * Time.deltaTime);
         //}
 
         rb.drag = 2.0f;
         transform.Rotate(Vector3.right * -30 * Time.deltaTime);
-        transform.position = Vector3.MoveTowards(transform.position, fwdObject.transform.position, speed  * Time.deltaTime);
+        transform.position = Vector3.MoveTowards(transform.position, (transform.position + transform.forward), speed  * Time.deltaTime);
     }
     public void OnCollisionEnter(Collision col)
     {
@@ -142,7 +119,7 @@ public class Enemy : MonoBehaviour {
                 Die();
             }
         }
-     
+
 
     }
     public void OnTriggerEnter(Collider other)
@@ -179,16 +156,19 @@ public class Enemy : MonoBehaviour {
         {
             npcManager.NPCkilled(value);
         }
+        //TODO: have npc manager disable them instead of spawning new ones all the time
         Destroy(this.gameObject);
     }
     public void Attack()
     {
         if (aitest == true)
         {
-            GetComponent<AIattackpattern>().target = mydradis.GetComponent<Dradis>().target;
+
+            GetComponent<AIattackpattern>().target = npcManager.GetClosestTarget(transform.position);
+
             if (GetComponent<AIattackpattern>().target != null)
             {
-                GetComponent<AIattackpattern>().GetFarAndComeBack(mydradis.GetComponent<Dradis>().target);
+                GetComponent<AIattackpattern>().GetFarAndComeBack(GetComponent<AIattackpattern>().target);
                 float angle = Vector3.Angle(GetComponent<AIattackpattern>().target.transform.position - transform.position, transform.forward);
 
                 if (angle <= accuracy) { canShoot = true; } else { canShoot = false; }
@@ -203,16 +183,18 @@ public class Enemy : MonoBehaviour {
         }
         else
         {
-            //gunCooldown -= Time.deltaTime; 
+            //gunCooldown -= Time.deltaTime;
 
-            targetRotation = Quaternion.LookRotation(mydradis.GetComponent<Dradis>().target.transform.position - transform.position);
+            targetRotation = Quaternion.LookRotation(GetComponent<AIattackpattern>().target.transform.position - transform.position);
 
-            float angle = Vector3.Angle(mydradis.GetComponent<Dradis>().target.transform.position - transform.position, transform.forward);
+            float angle = Vector3.Angle(GetComponent<AIattackpattern>().target.transform.position - transform.position, transform.forward);
             if (overShootCoolDown <= 0)
             {
                 transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotForce * Time.deltaTime);
             }
+
             if (angle <= accuracy) { canShoot = true; } else { canShoot = false; }
+
             if (gunCooldown <= 0 && canShoot == true)
             {
 
@@ -220,19 +202,19 @@ public class Enemy : MonoBehaviour {
                 gunCooldown = gunCost + Random.Range(0, 3.0f);
 
             }
-            if (Vector3.Distance(transform.position, mydradis.GetComponent<Dradis>().target.transform.position) > 50)
+            if (Vector3.Distance(transform.position,GetComponent<AIattackpattern>().target.transform.position) > 50)
             {
                 rb.AddForce(transform.forward * speed * Time.deltaTime, ForceMode.Impulse);
             }
 
-            if (Vector3.Distance(transform.position, mydradis.GetComponent<Dradis>().target.transform.position) < 10)
+            if (Vector3.Distance(transform.position, GetComponent<AIattackpattern>().target.transform.position) < 10)
             {
                 overShootCoolDown = 2.0f;
             }
 
-            if (Vector3.Distance(transform.position, mydradis.GetComponent<Dradis>().target.transform.position) > 1440)
+            if (Vector3.Distance(transform.position, GetComponent<AIattackpattern>().target.transform.position) > 1440)
             {
-                transform.position = Vector3.MoveTowards(transform.position, mydradis.GetComponent<Dradis>().target.transform.position, speed * Time.deltaTime);
+                transform.position = Vector3.MoveTowards(transform.position, GetComponent<AIattackpattern>().target.transform.position, speed * Time.deltaTime);
 
             }
 
@@ -252,25 +234,25 @@ public class Enemy : MonoBehaviour {
     public void Patrol()
     {
 
-        if (Vector3.Distance(patroltarget.transform.position, transform.position) < 100)
+        if (Vector3.Distance(patroltarget.transform.position, transform.position) < 10)
         { patroltarget = patrolparent.transform.GetChild(Random.Range(0, 5)).gameObject; }
-       
+
 
         targetRotation = Quaternion.LookRotation(patroltarget.transform.position - transform.position);
 
         float angle = Vector3.Angle(patroltarget.transform.position - transform.position, transform.forward);
-   
+
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotForce * Time.deltaTime);
 
             // rb.AddForce(transform.forward * speed * Time.deltaTime, ForceMode.Impulse);
-            transform.position = Vector3.MoveTowards(transform.position, patroltarget.transform.position, speed * 3 * Time.deltaTime);
+            transform.position = Vector3.MoveTowards(transform.position, patroltarget.transform.position, speed  * Time.deltaTime);
 
 
 
 
     }
 
- 
+
 
 
 }

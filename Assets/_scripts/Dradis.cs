@@ -11,26 +11,27 @@ public class Dradis : MonoBehaviour {
     public int maxrange;
     // Use this for initialization
     void Start () {
-		
+
 	}
-	
+
 	// Update is called once per frame
 	void Update () {
         if (target != null)
         {
             if (Vector3.Distance(target.transform.position, transform.position) > maxrange)
             { target = null; }
-            
+
         }
 	}
 
     public void OnTriggerEnter(Collider col)
     {
+      //TODO: change this to check distance through an iterator
         if (target == null)
         {if (col.gameObject.tag == "dradistarget" )
                 if (col.GetComponent<Dradis>().mytype == sensortarget)
                 { target = col.GetComponent<Dradis>().myship; }
-                
+
         }
     }
 
