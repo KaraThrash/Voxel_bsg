@@ -3,47 +3,41 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class AIattackpattern : MonoBehaviour {
-    public GameObject target;
-    public GameObject patroltarget;
-    public GameObject bullet;
 
-    public Transform guns;
+    public float speed,walkspeed;
+    public float rotForce = 6;
 
     public float accuracy;
     public float gunCooldown;
     public float gunCost;
-    public float closedistance;
-    public float fardistance;
+    public float closedistance,fardistance,avoidCollisionClock;
 
-    public int speed;
-    public int rotForce = 6;
-    public bool canShoot,stationary;
-    public bool flyaway;
-    public bool flypast;
+    public bool destroyed,canShoot;
+    public bool flyaway,flypast;
 
+    public GameObject patrolparent,patroltarget;
+    private Vector3 straferunspot;
     private Quaternion targetRotation;
     private Rigidbody rb;
     private Enemy myEnemy;
     // Use this for initialization
     void Awake () {
+
         rb = GetComponent<Rigidbody>();
         myEnemy = GetComponent<Enemy>();
+        patrolparent = myEnemy.patrolparent;
+        patroltarget = myEnemy.patroltarget;
     }
 
-	// Update is called once per frame
-	void Update () {
 
-	}
-
-  public void Fly()
+  public void Fly(GameObject target)
   {
-    if (stationary == false)
-    {
+
 
         if (target != null)
         {
 
-          Attack();
+          Attack(target);
         }
         else
         {
@@ -51,7 +45,7 @@ public class AIattackpattern : MonoBehaviour {
           if (gunCooldown <= 0)
           {
               gunCooldown = gunCost * 10;
-                FindTarget();
+                myEnemy.FindTarget();
            }
 
 
@@ -60,19 +54,11 @@ public class AIattackpattern : MonoBehaviour {
         if (gunCooldown > 0)
         { gunCooldown -= Time.deltaTime; }
 
-    }
-  }
-  public void FireGuns()
-  {
-    foreach(Transform go in guns)
-    {
-      GameObject clone = Instantiate(bullet, go.transform.position, go.transform.rotation);
-    }
 
   }
-  public void Attack()
-  {
 
+  public void Attack(GameObject target)
+  {
 
           if (target != null)
           {
@@ -83,7 +69,7 @@ public class AIattackpattern : MonoBehaviour {
               if (gunCooldown <= 0 && canShoot == true)
               {
 
-                  FireGuns();
+                  myEnemy.FireGuns();
                   gunCooldown = gunCost + Random.Range(0, 3.0f);
 
               }
@@ -94,15 +80,9 @@ public class AIattackpattern : MonoBehaviour {
 
 
 
-  public void FindTarget()
-  {
-    target = GetComponent<Enemy>().npcManager.GetClosestTarget(transform.position);
-  }
-
-
     public void GetFarAndComeBack(GameObject targetship)
     {
-
+      GameObject target = myEnemy.target;
         //gunCooldown -= Time.deltaTime;
 
        // targetRotation = Quaternion.LookRotation(targetship.transform.position - transform.position);
@@ -156,6 +136,8 @@ public class AIattackpattern : MonoBehaviour {
     public void Patrol()
     {
 
+      patroltarget = myEnemy.patroltarget;
+
       if(patroltarget != null){
         if (Vector3.Distance(patroltarget.transform.position, transform.position) < 10)
         { patroltarget = myEnemy.patrolparent.transform.GetChild(Random.Range(0, 5)).gameObject; }
@@ -168,11 +150,45 @@ public class AIattackpattern : MonoBehaviour {
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotForce * Time.deltaTime);
 
             // rb.AddForce(transform.forward * speed * Time.deltaTime, ForceMode.Impulse);
-            transform.position = Vector3.MoveTowards(transform.position, patroltarget.transform.position, speed  * Time.deltaTime);
-          }else{FindTarget(); }
+            transform.position = Vector3.MoveTowards(transform.position, patroltarget.transform.position, walkspeed  * Time.deltaTime);
+          }else{myEnemy.FindTarget(); }
 
 
 
     }
+    public void CheckForward()
+    {
+      GameObject target = myEnemy.target;
+        // possible issue with dradis detection
+        RaycastHit hit;
 
+
+
+        if (Physics.Raycast(transform.position, transform.forward, out hit, 310.0f))
+        {
+
+            if (hit.transform.gameObject == myEnemy.target)
+            {
+                canShoot = true;
+
+
+            }
+            else
+            {
+                rb.drag = 0.5f;
+                //canShoot = false;
+                if (avoidCollisionClock < 0) { avoidCollisionClock = 0.4f; }
+                else { if (avoidCollisionClock < 3) { straferunspot = Vector3.zero; avoidCollisionClock += Time.deltaTime; } }
+            }
+
+        }
+        else { avoidCollisionClock -= Time.deltaTime; canShoot = true; }
+    }
+    public void AvoidCollision()
+    {
+
+        rb.drag = 2.0f;
+        transform.Rotate(Vector3.right * -30 * Time.deltaTime);
+        transform.position = Vector3.MoveTowards(transform.position, (transform.position + transform.forward), speed  * Time.deltaTime);
+    }
 }
