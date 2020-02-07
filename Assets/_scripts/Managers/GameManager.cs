@@ -14,31 +14,6 @@ public class GameManager : MonoBehaviour {
 
 
 
-    //
-    // public Player playermanager;
-    // public MapManager mapManager;
-    // public HangarManager hangarManager;
-    // public NpcManager npcManager;
-    // public ItemManager itemManager;
-    // public int killstoadvance;
-    // public int raidersdestroyed;
-    // public int currentwave;
-    // public GameObject spwaner;
-    // public GameObject basestarSpawner;
-    // public GameObject enemyparent;
-    // public GameObject bulletparent;
-    // public GameObject hubmenu;
-    // public List<GameObject> basestarSpawners;
-    // public Text mapArea;
-    // public Text raidersdestroyedtext;
-    // public Text jumptimertext;
-    // public Text wavenumber;
-    // public float nextwaveclock; //after jump until the wave starts
-    // public float timetojumpclock; //after goal for the wave is achieved and the wave is ready to end
-    // public GameObject ftljumpimage;
-    // //public GameObject npcManager;
-    // public bool onmenuscreen;
-
 
     // Use this for initialization
     void Start () {
@@ -62,7 +37,7 @@ public class GameManager : MonoBehaviour {
             playermanager.startnewlevel();
         }
     }
-    
+
     public void TravelToHub()
     {
 

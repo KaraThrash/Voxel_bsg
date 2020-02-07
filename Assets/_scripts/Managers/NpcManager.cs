@@ -3,18 +3,42 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class NpcManager : MonoBehaviour {
-    public List<GameObject> npcs,fleetNpcs;
+    public List<GameObject> enemies,npcs,fleetNpcs;
     public GameObject enemyparent;
     public GameManager gameManager;
     // Use this for initialization
     void Start () {
 
 	}
+  void Awake()
+  {
+    //NOTE: this is for testing/ devpurposes.
 
+    foreach(Transform go in enemyparent.transform)
+    {
+      enemies.Add(go.gameObject);
+    }
+    AlertNpcs(gameManager.mapManager.GetCurrentArea());
+  }
 	// Update is called once per frame
 	void Update () {
 
 	}
+  public void AlertNpcs(GameObject newMapArea)
+  {
+    foreach(GameObject go in enemies)
+    {
+      if(go.GetComponent<Enemy>().mapArea == null)
+      {
+        go.GetComponent<Enemy>().mapArea = gameManager.mapManager.FindClosestArea(go.transform);
+      }
+
+      if(go.GetComponent<Enemy>().mapArea != newMapArea)
+      {go.GetComponent<Enemy>().SetAlert(false);}
+      else{go.GetComponent<Enemy>().SetAlert(true);}
+    }
+
+  }
     public void SpawnOne(int whichone,Vector3 where, Quaternion rot)
     {
         GameObject clone = Instantiate(npcs[whichone], where, rot) as GameObject;
