@@ -312,31 +312,27 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   npcManager: {fileID: 0}
-  patrolparent: {fileID: 0}
-  speed: 55
-  rotForce: 3
   straferunspot: {x: 0, y: 0, z: 0}
-  shipTarget: {fileID: 0}
+  guns: {fileID: 0}
+  mapArea: {fileID: 0}
+  target: {fileID: 0}
+  patrolparent: {fileID: 0}
   patroltarget: {fileID: 0}
-  gun1: {fileID: 1388391940961480}
-  gun2: {fileID: 1453202024656032}
   bullet: {fileID: 1854357067856306, guid: 7c20892db9eec574889df3b8fcf44ef3, type: 3}
-  gunCooldown: 0
-  canPatrol: 0
+  leadDistanceTarget: {fileID: 0}
   explosion: {fileID: 1926707618117312, guid: daa39a6ae5f365f42bc5399029997e86, type: 3}
   dradisModel: {fileID: 0}
-  avoidCollisionClock: 0
-  canShoot: 0
   myWing: {fileID: 0}
-  destroyed: 0
-  hp: 1
-  accuracy: 1
-  gunCost: 1
-  leadDistanceTarget: {fileID: 0}
-  overShootCoolDown: 0
   value: 1
+  hp: 1
+  speed: 55
+  rotForce: 3
+  destroyed: 0
+  canShoot: 0
+  returnHome: 0
   aitest: 0
   stationary: 0
+  alert: 0
 --- !u!114 &4839318271488363622
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -349,21 +345,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6bd7b574bb9d27c45813548a907d5afa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  target: {fileID: 0}
-  patroltarget: {fileID: 0}
-  bullet: {fileID: 1854357067856306, guid: 7c20892db9eec574889df3b8fcf44ef3, type: 3}
-  guns: {fileID: 5036135630493988453}
+  currentAttackPlan: 0
+  speed: 55
+  walkspeed: 0
+  rotForce: 6
   accuracy: 1
   gunCooldown: 0
   gunCost: 0.2
   closedistance: 4
   fardistance: 20
-  speed: 55
-  rotForce: 6
+  avoidCollisionClock: 0
+  destroyed: 0
   canShoot: 0
-  stationary: 0
   flyaway: 0
   flypast: 0
+  patrolparent: {fileID: 0}
+  patroltarget: {fileID: 0}
 --- !u!1 &1892981201632538
 GameObject:
   m_ObjectHideFlags: 0
@@ -481,7 +478,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7114518769114473223}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: -0.49, z: 0.76}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4927759150867872}

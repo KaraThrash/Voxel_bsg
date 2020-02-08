@@ -109,11 +109,13 @@ public class Enemy : MonoBehaviour {
         if (col.gameObject.tag == "Bullet")
         {
             Instantiate(explosion, transform.position, transform.rotation);
-            hp -= 1;
-            if (hp <= 0)
-            {
-                Die();
-            }
+            if(hp > 0){
+                  hp -= 1;
+                  if (hp <= 0)
+                  {
+                      Die();
+                  }
+                }
         }
 
 
@@ -131,12 +133,14 @@ public class Enemy : MonoBehaviour {
         }
         if (other.gameObject.tag == "Bullet")
         {
-            Instantiate(explosion, transform.position, transform.rotation);
-            // gameManager.GetComponent<GameManager>().RaiderDestroyed(value);
-            hp -= 1;
-            if (hp <= 0)
-            {
-                Die();
+            if(hp > 0){
+                Instantiate(explosion, transform.position, transform.rotation);
+                // gameManager.GetComponent<GameManager>().RaiderDestroyed(value);
+                hp -= 1;
+                if (hp <= 0)
+                {
+                    Die();
+                }
             }
         }
     }
@@ -153,10 +157,10 @@ public class Enemy : MonoBehaviour {
     {
         if (npcManager != null)
         {
-            npcManager.NPCkilled(value);
+            npcManager.NPCkilled(GetComponent<Enemy>());
         }
         //TODO: have npc manager disable them instead of spawning new ones all the time
-        Destroy(this.gameObject);
+        // Destroy(this.gameObject);
     }
 
 

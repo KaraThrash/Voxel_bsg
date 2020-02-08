@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class AIattackpattern : MonoBehaviour {
 
+    public int currentAttackPlan;
     public float speed,walkspeed;
     public float rotForce = 6;
 
@@ -17,7 +18,7 @@ public class AIattackpattern : MonoBehaviour {
 
     public GameObject patrolparent,patroltarget;
 
-    private Vector3 straferunspot;
+    private Vector3 straferunspot,tempTargetSpot;
     private Quaternion targetRotation;
     private Rigidbody rb;
     private Enemy myEnemy;
@@ -52,10 +53,35 @@ public class AIattackpattern : MonoBehaviour {
 
 
         }
-        if (gunCooldown > 0)
-        { gunCooldown -= Time.deltaTime; }
+        // if (gunCooldown > 0)
+        // { gunCooldown -= Time.deltaTime; }
+         gunCooldown -= Time.deltaTime;
 
+  }
 
+  public void AttackPlans(GameObject target)
+  {
+    switch(currentAttackPlan)
+    {
+      case -1: //get away
+        GetAway(target);
+      break;
+      case 0: //chicken
+        Chicken(target);
+      break;
+      case 1: //get behind
+       GetBehind(target);
+      break;
+      case 2: //strafe
+      GetFarAndComeBack(target);
+      break;
+      case 3:
+
+      break;
+      default:
+        GetBehind(target);
+      break;
+    }
   }
 
   public void Attack(GameObject target)
@@ -64,37 +90,119 @@ public class AIattackpattern : MonoBehaviour {
           if (target != null)
           {
               // GetFarAndComeBack(target);
-              GetBehind(target);
-              float angle = Vector3.Angle(target.transform.position - transform.position, transform.forward);
+              // GetBehind(target);
+                AttackPlans(target);
+              // if (gunCooldown > 0)
+              // {
+              //   GetAway(target);
+              // }else
+              // {
+              //   if(currentAttackPlan == -1)
+              //   {
+              //       CalculateNextMove(target);
+              //   }
+              //   AttackPlans(target);
+              // }
 
-              if (angle <= accuracy) { canShoot = true; } else { canShoot = false; }
-              if (gunCooldown <= 0 && canShoot == true)
-              {
 
-                  myEnemy.FireGuns();
-                  gunCooldown = gunCost + Random.Range(0, 3.0f);
-
-              }
           }
 
 
   }
+  public void GetAway(GameObject targetship)
+  {
+    targetRotation = Quaternion.LookRotation(tempTargetSpot - transform.position );
+    //not impulse, momentuem based
+    rb.AddForce(transform.forward * speed  *  Time.deltaTime,ForceMode.Impulse);
+    transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotForce * Time.deltaTime);
+    if (gunCooldown <= -3.0f)
+    {
+        CalculateNextMove(targetship);
+     }
+
+  }
+  public void Chicken(GameObject targetship)
+  {
+    float angle = Vector3.Angle(targetship.transform.position - transform.position, transform.forward);
+
+    if (angle <= accuracy) { canShoot = true; } else { canShoot = false; }
+    if (gunCooldown <= 0 && canShoot == true)
+    {
+
+        myEnemy.FireGuns();
+        gunCooldown = gunCost + Random.Range(0, 3.0f);
+
+        // CalculateNextMove(target);
+    }
+
+      targetRotation = Quaternion.LookRotation(targetship.transform.position - transform.position );
+      //not impulse, momentuem based
+      rb.AddForce(transform.forward * speed * 10 *  Time.deltaTime);
+      transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotForce * Time.deltaTime);
+      if(Vector3.Distance(targetship.transform.position,transform.position) < closedistance)
+      {
+        tempTargetSpot = transform.position + (transform.forward * 20);
+        currentAttackPlan = -1;
+      }
+  }
+  public void CalculateNextMove(GameObject targetship)
+  {
+        bool targetinfront = Vector3.Distance((transform.position + transform.forward),targetship.transform.position ) < Vector3.Distance((transform.position - transform.forward),targetship.transform.position ) ;
+        bool targetfacingme = Vector3.Distance((targetship.transform.position + targetship.transform.forward),transform.position ) < Vector3.Distance((targetship.transform.position - targetship.transform.forward),transform.position );
+        if(targetinfront == true )
+        {
+          //target In Front
+            if(targetfacingme == true )
+            {
+              currentAttackPlan = 0; // chicken
+            }
+
+            else
+            {
+              currentAttackPlan = 1; // chase / get behind
+            }
 
 
+        }
+        else
+        { //target behind
+                if(targetfacingme == true )
+                {
+                    currentAttackPlan = 2;
+                }
+
+                else
+                {
+                  currentAttackPlan = 1;
+                }
+        }
+
+  }
 
     public void GetFarAndComeBack(GameObject targetship)
     {
-          GameObject target = myEnemy.target;
+          // GameObject target = myEnemy.target;
             //gunCooldown -= Time.deltaTime;
 
            // targetRotation = Quaternion.LookRotation(targetship.transform.position - transform.position);
+           float angle = Vector3.Angle(targetship.transform.position - transform.position, transform.forward);
+
+           if (angle <= accuracy) { canShoot = true; } else { canShoot = false; }
+           if (gunCooldown <= 0 && canShoot == true)
+           {
+
+               myEnemy.FireGuns();
+               gunCooldown = gunCost + Random.Range(0, 3.0f);
+
+               // CalculateNextMove(target);
+           }
 
             if (flyaway == true)
             {
 
                 if (flypast == true)
                 {
-                    if (Vector3.Distance(transform.position, target.transform.position) > closedistance)
+                    if (Vector3.Distance(transform.position, targetship.transform.position) > closedistance)
                     {
 
                         flypast = false;
@@ -103,13 +211,17 @@ public class AIattackpattern : MonoBehaviour {
                 }
                 else
                 {
-                    targetRotation = Quaternion.LookRotation(transform.position - target.transform.position);
-
+                    targetRotation = Quaternion.LookRotation(transform.position - targetship.transform.position);
+                    if(Vector3.Distance(targetship.transform.position,transform.position) < closedistance)
+                    {
+                      tempTargetSpot = targetship.transform.position + (targetship.transform.forward * 20);
+                      currentAttackPlan = -1;
+                    }
                 }
 
 
 
-                if (Vector3.Distance(transform.position, target.transform.position) > fardistance)
+                if (Vector3.Distance(transform.position, targetship.transform.position) > fardistance)
                 {
                     flyaway = false;
                     flypast = false;
@@ -119,8 +231,8 @@ public class AIattackpattern : MonoBehaviour {
             }
             else
             {
-               targetRotation = Quaternion.LookRotation(target.transform.position - transform.position);
-                if (Vector3.Distance(transform.position, target.transform.position) < closedistance)
+               targetRotation = Quaternion.LookRotation(targetship.transform.position - transform.position);
+                if (Vector3.Distance(transform.position, targetship.transform.position) < closedistance)
                 {
                     flyaway = true;
                     flypast = true;
@@ -190,7 +302,17 @@ public class AIattackpattern : MonoBehaviour {
             }
 
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotForce * Time.deltaTime);
+            float angle = Vector3.Angle(targetship.transform.position - transform.position, transform.forward);
 
+            if (angle <= accuracy) { canShoot = true; } else { canShoot = false; }
+            if (gunCooldown <= 0 && canShoot == true)
+            {
+
+                myEnemy.FireGuns();
+                gunCooldown = gunCost + Random.Range(0, 3.0f);
+
+                // CalculateNextMove(target);
+            }
 
     }
 

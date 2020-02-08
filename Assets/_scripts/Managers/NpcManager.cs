@@ -51,9 +51,11 @@ public class NpcManager : MonoBehaviour {
         return clone;
     }
 
-    public void NPCkilled(int moneyvalue)
+    public void NPCkilled(Enemy npckilled)
     {
-        gameManager.itemManager.SpendMoney(-moneyvalue) ;
+        enemies.Remove(npckilled.gameObject);
+        gameManager.playermanager.SpendMoney(-npckilled.value) ;
+        Destroy(npckilled.gameObject);
     }
 
     public GameObject GetClosestTarget(Vector3 fromPos)

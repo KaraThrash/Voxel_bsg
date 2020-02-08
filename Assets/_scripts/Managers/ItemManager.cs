@@ -98,7 +98,7 @@ public void SetDefaultItemList()
 }
     public void MakeITemListFromFile()
      {
-         string text = File.ReadAllText("MasterItemFile.txt");
+         string text = File.ReadAllText("./Assets/Resources/Items/MasterItemFile.txt");
 
          string[] strValues = text.Split(';');
 
