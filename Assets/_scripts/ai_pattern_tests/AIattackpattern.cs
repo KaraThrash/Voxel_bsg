@@ -17,7 +17,7 @@ public class AIattackpattern : MonoBehaviour {
     public bool flyaway,flypast;
 
     public GameObject patrolparent,patroltarget;
-
+    public List<Material> colors;
     private Vector3 straferunspot,tempTargetSpot;
     private Quaternion targetRotation;
     private Rigidbody rb;
@@ -65,15 +65,19 @@ public class AIattackpattern : MonoBehaviour {
     {
       case -1: //get away
         GetAway(target);
+
       break;
       case 0: //chicken
         Chicken(target);
+
       break;
       case 1: //get behind
        GetBehind(target);
+
       break;
       case 2: //strafe
       GetFarAndComeBack(target);
+
       break;
       case 3:
 
@@ -82,6 +86,7 @@ public class AIattackpattern : MonoBehaviour {
         GetBehind(target);
       break;
     }
+
   }
 
   public void Attack(GameObject target)
@@ -89,28 +94,20 @@ public class AIattackpattern : MonoBehaviour {
 
           if (target != null)
           {
-              // GetFarAndComeBack(target);
-              // GetBehind(target);
+
                 AttackPlans(target);
-              // if (gunCooldown > 0)
-              // {
-              //   GetAway(target);
-              // }else
-              // {
-              //   if(currentAttackPlan == -1)
-              //   {
-              //       CalculateNextMove(target);
-              //   }
-              //   AttackPlans(target);
-              // }
 
-
+              if (gunCooldown <= -8.0f)
+              {
+                  CalculateNextMove(target);
+               }
           }
 
 
   }
   public void GetAway(GameObject targetship)
   {
+        transform.GetChild(0).GetComponent<Renderer>().material = colors[0];
     targetRotation = Quaternion.LookRotation(tempTargetSpot - transform.position );
     //not impulse, momentuem based
     rb.AddForce(transform.forward * speed  *  Time.deltaTime,ForceMode.Impulse);
@@ -141,7 +138,7 @@ public class AIattackpattern : MonoBehaviour {
       transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotForce * Time.deltaTime);
       if(Vector3.Distance(targetship.transform.position,transform.position) < closedistance)
       {
-        tempTargetSpot = transform.position + (transform.forward * 20);
+        tempTargetSpot = transform.position + (transform.forward * closedistance);
         currentAttackPlan = -1;
       }
   }
@@ -176,7 +173,7 @@ public class AIattackpattern : MonoBehaviour {
                   currentAttackPlan = 1;
                 }
         }
-
+        transform.GetChild(0).GetComponent<Renderer>().material = colors[currentAttackPlan + 1];
   }
 
     public void GetFarAndComeBack(GameObject targetship)
@@ -214,7 +211,7 @@ public class AIattackpattern : MonoBehaviour {
                     targetRotation = Quaternion.LookRotation(transform.position - targetship.transform.position);
                     if(Vector3.Distance(targetship.transform.position,transform.position) < closedistance)
                     {
-                      tempTargetSpot = targetship.transform.position + (targetship.transform.forward * 20);
+                      tempTargetSpot = targetship.transform.position + (targetship.transform.forward * fardistance);
                       currentAttackPlan = -1;
                     }
                 }
@@ -281,7 +278,7 @@ public class AIattackpattern : MonoBehaviour {
 
 
 
-            if (Vector3.Distance(transform.position,(target.transform.position  + target.transform.forward )  ) < Vector3.Distance(transform.position,(target.transform.position  - (target.transform.forward * 20) )) )
+            if (Vector3.Distance(transform.position,(target.transform.position  + target.transform.forward )  ) < Vector3.Distance(transform.position,(target.transform.position  - (target.transform.forward * closedistance) )) )
             {
               targetRotation = Quaternion.LookRotation(  (target.transform.position  - (target.transform.forward * 50) - (target.transform.up * 50) ) -transform.position  );
 
@@ -291,13 +288,13 @@ public class AIattackpattern : MonoBehaviour {
                 targetRotation = Quaternion.LookRotation( target.transform.position   - transform.position);
 
             }
-            if(Vector3.Distance(transform.position,(target.transform.position  - (target.transform.forward * 20) )) > 30)
+            if(Vector3.Distance(transform.position,(target.transform.position  - (target.transform.forward * closedistance) )) > 30)
             {rb.AddForce(transform.forward * speed * Time.deltaTime, ForceMode.Impulse);}
-            else   if(Vector3.Distance(transform.position,(target.transform.position  - (target.transform.forward * 20) )) > 10)
-              {  rb.AddForce(((target.transform.position  - (target.transform.forward * 20)) - transform.position) * speed * Time.deltaTime);}
+            else   if(Vector3.Distance(transform.position,(target.transform.position  - (target.transform.forward * closedistance) )) > 10)
+              {  rb.AddForce(((target.transform.position  - (target.transform.forward * closedistance)) - transform.position) * speed * Time.deltaTime);}
             else
             {
-              transform.position = Vector3.MoveTowards(transform.position,(target.transform.position  - (target.transform.forward * 20)),speed * 0.1f * Time.deltaTime);
+              transform.position = Vector3.MoveTowards(transform.position,(target.transform.position  - (target.transform.forward * closedistance)),speed * 0.1f * Time.deltaTime);
 
             }
 

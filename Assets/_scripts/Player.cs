@@ -62,7 +62,7 @@ public class Player : MonoBehaviour {
             mycamera.GetComponent<ThirdPersonCamera>().target = myship;
         }
 
-
+        SetHPBar();
     }
     public void SetHPBar()
     {

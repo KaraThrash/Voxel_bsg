@@ -30,7 +30,7 @@ public class ViperControls : MonoBehaviour {
     public float guncooldown;
     public float guncooldowntimer;
     public float cameraspeed;
-    public float step;
+    public float step,groundCollisionTimer;
 
     public float distspeed;
     public int heldresource;
@@ -45,7 +45,10 @@ public class ViperControls : MonoBehaviour {
 	void Update () {
        //KeyboardFlightControls();
 
-        thirdpersonflightcontrols();
+       if(groundCollisionTimer >= 0)
+       {thirdpersonflightcontrols();}
+         else{groundCollisionTimer -= Time.deltaTime;}
+
 
         // ControllerFlight();
 
@@ -294,6 +297,14 @@ public class ViperControls : MonoBehaviour {
             //heldresource = col.gameObject.GetComponent<PickUp>().type;
             Destroy(col.gameObject);
 
+        }
+        if (col.gameObject.tag == "Enviroment" )
+        {
+          //bounce off the ground on contact
+          //TODO calculate the right amount of bounce
+            groundCollisionTimer = 0.1f;
+            rb.velocity = (transform.position - col.contacts[0].point).normalized *  flySpeed;
+              // rb.AddForce((transform.position - col.contacts[0].point).normalized * flySpeed  ,ForceMode.Impulse);
         }
     }
 

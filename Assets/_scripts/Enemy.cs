@@ -60,7 +60,22 @@ public class Enemy : MonoBehaviour {
       //alert enemies are enemies that are in the general area of play.
       //enemies in area x dont need to active when player is in Y
       if(alert == true)
-      {GetComponent<AIattackpattern>().Fly(target);}
+      {
+        if(GetComponent<AIattackpattern>() != null)
+        {
+          GetComponent<AIattackpattern>().Fly(target);
+        }else
+        {
+          if(GetComponent<AIEvasion>() != null)
+          {
+            GetComponent<AIEvasion>().Fly(target);
+          }
+        }
+
+
+
+
+      }
       else{
         //TODO: have enemies leash back to their start Position
         if(returnHome == true)
