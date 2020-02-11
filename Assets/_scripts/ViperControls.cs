@@ -289,10 +289,19 @@ public class ViperControls : MonoBehaviour {
             myplayer.GetComponent<Player>().vehicletakingdamage(1);
 
         }
-        //&& heldresource == 0
+        //check if it is a pickup able object
         if (col.gameObject.tag == "Resource" )
         {
+          //check if its the players dropped resources from the last time theydied
+          if(col.gameObject.GetComponent<PickUp>() != null && col.gameObject.GetComponent<PickUp>().playerCache == true)
+          {
+            myplayer.GetComponent<Player>().PickUpCache();
+          }else
+          {
+            //if not the player cache send to item manager to add to inventory
             myplayer.GetComponent<Player>().gamemanager.itemManager.ItemPickUp(col.gameObject);
+          }
+
 
             //heldresource = col.gameObject.GetComponent<PickUp>().type;
             Destroy(col.gameObject);

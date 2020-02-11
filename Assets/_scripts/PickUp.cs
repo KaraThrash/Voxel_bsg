@@ -5,15 +5,16 @@ using UnityEngine;
 public class PickUp : MonoBehaviour {
     public int type;
     public int value, itemnumber; //if engine speed, if gun attack cooldown
+    public bool playerCache;
     public Material[] colors; //green,red,blue,yellow
 	// Use this for initialization
 	void Start () {
-		
+
 	}
-	
+
 	// Update is called once per frame
 	void Update () {
-		
+
 	}
 
     public void SetWhichItem(int newitemnumber)
@@ -26,5 +27,8 @@ public class PickUp : MonoBehaviour {
        // GetComponent<Renderer>().material = colors[Mathf.Abs(newitemnumber) % 3];
 
     }
-
+    public void SetAsPlayerCache()
+    {
+      playerCache = true;
+    }
 }

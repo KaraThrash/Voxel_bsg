@@ -25,6 +25,12 @@ public class Player : MonoBehaviour {
   {
     return myship;
   }
+
+  public void PickUpCache()
+  {
+    money += droppedMoney;
+    droppedMoney = 0;
+  }
     public bool SpendMoney(int cost)
     {
 
@@ -52,19 +58,7 @@ public class Player : MonoBehaviour {
         shiphp = shiphp - dmgtaken;
         if (shiphp <= 0)
         {
-            //myship.transform.position = playerSpawn.transform.position;
-            //shiphp = 5;
-            //myship.GetComponent<Rigidbody>().velocity = Vector3.zero; myship.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
-            //myship.transform.rotation = playerSpawn.transform.rotation;
-
-            // Destroy(myship);
-
           ShipDestroyed();
-
-
-            // myship.GetComponent<ViperControls>().hp = mycamera;
-            // myship.GetComponent<ViperControls>().myplayer = this.gameObject;
-            // mycamera.GetComponent<ThirdPersonCamera>().target = myship;
         }
 
         SetHPBar();
@@ -83,7 +77,13 @@ public class Player : MonoBehaviour {
       myship.GetComponent<Rigidbody>().isKinematic = true;
       myship.transform.position = playerSpawn.transform.position;
       myship.transform.rotation = playerSpawn.transform.rotation;
-      Instantiate(corpseMoneyDrop,dieSpot,transform.rotation);
+      //drop your held currency to be available to be picked up again
+
+      GameObject clone = Instantiate(corpseMoneyDrop,dieSpot,transform.rotation);
+      if(clone.GetComponent<PickUp>() != null)
+      {clone.GetComponent<PickUp>().SetAsPlayerCache();}
+
+
       myship.GetComponent<Rigidbody>().isKinematic = false;
       shiphp = hp;
     }
