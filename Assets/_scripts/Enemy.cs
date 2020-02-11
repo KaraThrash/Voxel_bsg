@@ -35,15 +35,18 @@ public class Enemy : MonoBehaviour {
     // Use this for initialization
     void Awake()
     {
-        ResetToNeutral();
-        startPos = transform.position;
-        startRot = transform.rotation;
+      if(rb == null){rb = GetComponent<Rigidbody>();}
+        ResetToNeutral(npcManager);
+
     }
-    public void ResetToNeutral()
+    public void ResetToNeutral(NpcManager npcManage)
     {
+      npcManager = npcManage;
+      startPos = transform.position;
+      startRot = transform.rotation;
       if(rb == null){rb = GetComponent<Rigidbody>();}
       if(hp <= 0){hp = 1;}
-
+      alert = false;
       if(patrolparent == null){  GameObject.Find("PatrolPoints");}
       if(patrolparent != null){  patroltarget = patrolparent.transform.GetChild(Random.Range(0,patrolparent.transform.childCount)).gameObject;  }
     }

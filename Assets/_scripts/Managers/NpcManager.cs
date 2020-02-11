@@ -13,7 +13,7 @@ public class NpcManager : MonoBehaviour {
   void Awake()
   {
     //NOTE: this is for testing/ devpurposes.
-
+    enemies.Clear();
     foreach(Transform go in enemyparent.transform)
     {
       enemies.Add(go.gameObject);
@@ -24,6 +24,31 @@ public class NpcManager : MonoBehaviour {
 	void Update () {
 
 	}
+  public void CleanUpEnemies()
+  {
+    foreach(GameObject go in enemies)
+    {
+      if(go != null)
+      {
+        Destroy(go);
+      }
+
+    }
+    enemies.Clear();
+  }
+
+  public void SpawnEnemiesForNewMap(Transform spawnAreas)
+  {
+
+    foreach(Transform go in spawnAreas)
+    {
+      GameObject clone = Instantiate(npcs[0], go.position, go.rotation) as GameObject;
+      clone.transform.parent = enemyparent.transform;
+      enemies.Add(clone);
+      clone.GetComponent<Enemy>().ResetToNeutral(GetComponent<NpcManager>());
+    }
+
+  }
   public void AlertNpcs(GameObject newMapArea)
   {
     foreach(GameObject go in enemies)
@@ -60,6 +85,8 @@ public class NpcManager : MonoBehaviour {
 
     public GameObject GetClosestTarget(Vector3 fromPos)
     {
+
+      return gameManager.playermanager.myship;
       if(fleetNpcs.Count <= 0){return null;}
       GameObject closestTarget = fleetNpcs[0];
       float dist = Vector3.Distance(fromPos,closestTarget.transform.position);

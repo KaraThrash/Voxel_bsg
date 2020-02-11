@@ -23,10 +23,28 @@ public class GameManager : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-
-
+    if(Input.GetKeyDown(KeyCode.P))
+    {
+      StartNewMap();
     }
 
+    }
+    public void PlayerShipDestroyed()
+    {
+      playermanager.RespawnPlayer();
+      StartNewMap();
+    }
+public void StartNewMap()
+{
+  //clean up enemies cvurrently spawned
+  npcManager.CleanUpEnemies();
+  //get new map
+
+  //spawn enemies for each designated spawn location
+  npcManager.SpawnEnemiesForNewMap(mapManager.currentMap.enemySpawnLocations);
+  //reset player hp
+
+}
     public void TravelFromHub()
     {
         if (mapManager.destination != -1 && playermanager.myship != null)

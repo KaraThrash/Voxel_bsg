@@ -29,6 +29,8 @@ public class AIattackpattern : MonoBehaviour {
         myEnemy = GetComponent<Enemy>();
         patrolparent = myEnemy.patrolparent;
         patroltarget = myEnemy.patroltarget;
+        if(colors.Count > 0)
+        {  transform.GetChild(0).GetComponent<Renderer>().material = colors[Random.Range(0,(int)colors.Count) ];}
     }
 
 

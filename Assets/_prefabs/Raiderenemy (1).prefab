@@ -314,7 +314,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   npcManager: {fileID: 0}
   straferunspot: {x: 0, y: 0, z: 0}
-  guns: {fileID: 0}
+  guns: {fileID: 5036135630493988453}
   mapArea: {fileID: 0}
   target: {fileID: 0}
   patrolparent: {fileID: 0}
@@ -326,7 +326,7 @@ MonoBehaviour:
   myWing: {fileID: 0}
   value: 1
   hp: 1
-  speed: 55
+  speed: 20
   rotForce: 3
   destroyed: 0
   canShoot: 0
@@ -347,14 +347,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentAttackPlan: 0
-  speed: 55
-  walkspeed: 0
-  rotForce: 6
+  speed: 40
+  walkspeed: 12
+  rotForce: 4
   accuracy: 1
   gunCooldown: 0
   gunCost: 0.2
-  closedistance: 4
-  fardistance: 20
+  closedistance: 20
+  fardistance: 60
   avoidCollisionClock: 0
   destroyed: 0
   canShoot: 0

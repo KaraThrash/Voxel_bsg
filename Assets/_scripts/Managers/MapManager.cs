@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class MapManager : MonoBehaviour {
     public GameManager gameManager;
+    public Map currentMap;
     public int destination;
     public int fleetlocation;
     public float rangeToChangeMapSegement;

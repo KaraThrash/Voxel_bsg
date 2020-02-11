@@ -5,8 +5,9 @@ using UnityEngine.UI;
 public class Player : MonoBehaviour {
     public int hp;
     public int shiphp;
-    public int money;
+    public int money,droppedMoney;
     public Text hpText,moneytext;
+    public GameObject corpseMoneyDrop;
     public GameObject mycamera;
     public GameObject playerSpawn;
     public GameObject myship;
@@ -55,15 +56,38 @@ public class Player : MonoBehaviour {
             //shiphp = 5;
             //myship.GetComponent<Rigidbody>().velocity = Vector3.zero; myship.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
             //myship.transform.rotation = playerSpawn.transform.rotation;
-            Destroy(myship);
-            myship =  gamemanager.npcManager.GetComponent<NpcManager>().SpawnNewController(2, playerSpawn.transform.position,playerSpawn.transform.rotation);
-            myship.GetComponent<ViperControls>().camerasphere = mycamera;
-            myship.GetComponent<ViperControls>().myplayer = this.gameObject;
-            mycamera.GetComponent<ThirdPersonCamera>().target = myship;
+
+            // Destroy(myship);
+
+          ShipDestroyed();
+
+
+            // myship.GetComponent<ViperControls>().hp = mycamera;
+            // myship.GetComponent<ViperControls>().myplayer = this.gameObject;
+            // mycamera.GetComponent<ThirdPersonCamera>().target = myship;
         }
 
         SetHPBar();
     }
+    public void ShipDestroyed()
+    {
+          droppedMoney = money;
+          money = 0;
+
+          gamemanager.PlayerShipDestroyed();
+
+    }
+    public void RespawnPlayer()
+    {
+      Vector3 dieSpot =   myship.transform.position;
+      myship.GetComponent<Rigidbody>().isKinematic = true;
+      myship.transform.position = playerSpawn.transform.position;
+      myship.transform.rotation = playerSpawn.transform.rotation;
+      Instantiate(corpseMoneyDrop,dieSpot,transform.rotation);
+      myship.GetComponent<Rigidbody>().isKinematic = false;
+      shiphp = hp;
+    }
+
     public void SetHPBar()
     {
 
