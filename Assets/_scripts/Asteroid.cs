@@ -14,7 +14,7 @@ public class Asteroid : MonoBehaviour {
         floatdirection = Vector3.Normalize(-transform.position - transform.position) * 5.0f;
 
     }
-	
+
 	// Update is called once per frame
 	void Update () {
         if (floataround == true)
@@ -29,7 +29,7 @@ public class Asteroid : MonoBehaviour {
     {
         if (size > 1)
         {
-            
+
             GameObject clone = Instantiate(this.gameObject, transform.position + transform.localScale, transform.rotation) as GameObject;
             clone.GetComponent<Asteroid>().size = size - 1;
             clone.GetComponent<Asteroid>().hp = size - 1;
@@ -43,7 +43,7 @@ public class Asteroid : MonoBehaviour {
         if (size <= 0) {
            // Instantiate(resource, new Vector3(transform.position.x + 20,transform.position.y + 25,transform.position.z + 20), transform.rotation);
             GameObject clone = Instantiate(resource, transform.position, transform.rotation) as GameObject;
-            clone.GetComponent<PickUp>().SetWhichItem(itemheld);
+            // clone.GetComponent<PickUp>().SetWhichItem(itemheld);
 
             Destroy(this.gameObject);
 
@@ -61,7 +61,7 @@ public class Asteroid : MonoBehaviour {
         if (col.gameObject.tag == "Bullet" || col.gameObject.tag == "BulletEnemy")
         {
             GameObject clone = Instantiate(resource, col.gameObject.transform.position, transform.rotation) as GameObject;
-            clone.GetComponent<PickUp>().SetWhichItem(itemheld); 
+            // clone.GetComponent<PickUp>().SetWhichItem(itemheld); 
             hp--;
             if (hp <= 0)
             { BreakApart(); }

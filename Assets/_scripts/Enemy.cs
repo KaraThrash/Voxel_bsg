@@ -21,7 +21,7 @@ public class Enemy : MonoBehaviour {
 
 
 
-    public int value = 1;
+    public int value = 1,itemheldtype;
     public int hp;
     public float speed = 20;
     public float rotForce = 6;
@@ -79,9 +79,15 @@ public class Enemy : MonoBehaviour {
         {ReturnHome();}else
         {
           AlertActions();
-          if(Vector3.Distance(target.transform.position,transform.position) > leashDistance)
+          //if targeting something dont return until leashing
+          if(target != null && Vector3.Distance(target.transform.position,transform.position) > leashDistance)
           {
             target = null; inCombat = false; alert = false;
+          }
+          else
+          {
+            //the player is out of this enemies home area and the enemy is not targeting anything
+            inCombat = false;
           }
         }
 

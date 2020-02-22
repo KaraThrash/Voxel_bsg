@@ -32,6 +32,7 @@ public class ItemManager : MonoBehaviour {
     public List<Vector2> gunsInInventory, hullsInInventory,enginesInInventory, bulletsInInventory, consumablesInInventory,playerInventory;
 
     public Transform inventoryButtons,equipButtons,bulletbuttons,consumablebuttons;
+      public GameObject itemDrop;
     public int typedisplayed,placeinlist,equipSlot;//placeinlist for scrolling through items, show: 0-9, 10-19 etc //TODO: sort options
 
 
@@ -113,7 +114,7 @@ public void SetDefaultItemList()
                         type = 5,
                         placeInMasterList = MasterItemList.Count
                   };
-                    newitem.setPlayerHeld(3);
+                    newitem.setPlayerHeld(0);
 
               if(tempstring.Length > 1){
 
@@ -182,7 +183,27 @@ public void SetDefaultItemList()
 
     public void ItemPickUp(GameObject whichitem)
     {
+        if(whichitem.GetComponent<PickUp>() != null)
+        {
+          //zero is just money/points for simplicity of enemies that dont drop special items
+          if(whichitem.GetComponent<PickUp>().itemnumber == 0)
+          {
+            SpendMoney(-1);
+          }else
+          {
+            // TODO: add item to inventory
+              print(MasterItemList[whichitem.GetComponent<PickUp>().itemnumber].getPlayerHeld());
+              Item tempitem2 = MasterItemList[(int)whichitem.GetComponent<PickUp>().itemnumber];//new Item{};
+              tempitem2.setPlayerHeld(1);
 
+              MasterItemList[(int)whichitem.GetComponent<PickUp>().itemnumber] = tempitem2;
+
+            // MasterItemList[whichitem.GetComponent<PickUp>().itemnumber].setPlayerHeld(MasterItemList[whichitem.GetComponent<PickUp>().itemnumber].getPlayerHeld() + 1);
+            print(MasterItemList[whichitem.GetComponent<PickUp>().itemnumber].getPlayerHeld());
+          }
+
+
+        }
     }
 
 
@@ -287,7 +308,7 @@ public void SetDefaultItemList()
                   while (placeinlist < MasterItemList.Count)
                   {
                     //X is the items place in the master list, y is the value held by the player
-                    if( MasterItemList[placeinlist].type == typedisplayed)
+                    if( MasterItemList[placeinlist].type == typedisplayed && MasterItemList[placeinlist].getPlayerHeld() > 0)
                     {
                       inventoryButtons.GetChild(count).gameObject.active = true;
                       inventoryButtons.GetChild(count).GetChild(0).GetComponent<Text>().text = MasterItemList[placeinlist].name + " : " + MasterItemList[placeinlist].getPlayerHeld();
@@ -311,6 +332,13 @@ public void SetDefaultItemList()
               }
 
 
+    }
+
+    public void ItemDrop(Vector3 dropLocation,int itemtodrop)
+    {
+      GameObject clone = Instantiate(itemDrop,dropLocation,transform.rotation);
+      if(clone.GetComponent<PickUp>() != null)
+      {clone.GetComponent<PickUp>().SetWhichItem(GetComponent<ItemManager>(),Random.Range(4,MasterItemList.Count));}
     }
 
 

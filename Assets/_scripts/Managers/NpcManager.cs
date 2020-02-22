@@ -80,13 +80,19 @@ public class NpcManager : MonoBehaviour {
     {
         enemies.Remove(npckilled.gameObject);
         gameManager.playermanager.SpendMoney(-npckilled.value) ;
+
+        Vector3 npcDieSpot = npckilled.transform.position;
+        int npckilledItemType = npckilled.itemheldtype;
         Destroy(npckilled.gameObject);
+        gameManager.itemManager.ItemDrop(npcDieSpot,npckilledItemType);
+
     }
 
     public GameObject GetClosestTarget(Vector3 fromPos)
     {
 
       return gameManager.playermanager.myship;
+
       if(fleetNpcs.Count <= 0){return null;}
       GameObject closestTarget = fleetNpcs[0];
       float dist = Vector3.Distance(fromPos,closestTarget.transform.position);

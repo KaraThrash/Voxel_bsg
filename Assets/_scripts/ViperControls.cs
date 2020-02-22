@@ -55,18 +55,20 @@ public class ViperControls : MonoBehaviour {
     }
     public void ControlCamera(float hort,float vert)
     {
+
+      //default is camera tracks with mouse // needs to toggle on free look
       if (Input.GetMouseButton(1))
       {
-          camerasphere.transform.position = transform.position;
-          // targetRotation = Quaternion.LookRotation((camera.transform.position + camera.transform.forward) - transform.position);
-          step = Mathf.Min(4 * Time.deltaTime, 1.5f);
-          transform.rotation = Quaternion.Lerp(transform.rotation, camerasphere.transform.rotation, step);
-
-          camerasphere.GetComponent<ThirdPersonCamera>().rollz = roll * 20 * Time.deltaTime ;
+          camerasphere.GetComponent<ThirdPersonCamera>().rollz = 0;
       }
       else {
+        camerasphere.transform.position = transform.position;
+        // targetRotation = Quaternion.LookRotation((camera.transform.position + camera.transform.forward) - transform.position);
+        step = Mathf.Min(4 * Time.deltaTime, 1.5f);
+        transform.rotation = Quaternion.Lerp(transform.rotation, camerasphere.transform.rotation, step);
 
-          camerasphere.GetComponent<ThirdPersonCamera>().rollz = 0;
+        camerasphere.GetComponent<ThirdPersonCamera>().rollz = roll * 20 * Time.deltaTime ;
+
       }
     }
     public void thirdpersonflightcontrols()
