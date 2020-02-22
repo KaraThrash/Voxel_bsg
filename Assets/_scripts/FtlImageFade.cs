@@ -7,11 +7,14 @@ public class FtlImageFade : MonoBehaviour {
     public Color colorEnd ;
     public Renderer fadematerial;
     public bool fade;
+    public float fadeSpeed;
     // Use this for initialization
     void Start()
     {
-        colorStart = GetComponent<RawImage>().color;
+        // colorStart = GetComponent<RawImage>().color;
+
         colorEnd = colorStart;
+
         colorEnd.a = 0;
         //fadematerial = GetComponent<Renderer>();
         // colorEnd.a = 0;
@@ -25,9 +28,10 @@ public class FtlImageFade : MonoBehaviour {
         //fadematerial.material.color != colorEnd ||
         if (this.GetComponent<RawImage>().color.a != 0)
         {
-            this.GetComponent<RawImage>().color = Color.Lerp(GetComponent<RawImage>().color, colorEnd, 2.0f * Time.deltaTime);
+          if(fadeSpeed == 0){fadeSpeed = 1;}
+            this.GetComponent<RawImage>().color = Color.Lerp(GetComponent<RawImage>().color, colorEnd, fadeSpeed * Time.deltaTime);
 
-           
+
             // fadematerial.material.color.a -= 0.1f;
         }
 

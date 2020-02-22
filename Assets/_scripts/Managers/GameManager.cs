@@ -10,7 +10,7 @@ public class GameManager : MonoBehaviour {
   public HangarManager hangarManager;
   public NpcManager npcManager;
   public ItemManager itemManager;
-
+  public FtlImageFade imageFade;
 
 
 
@@ -31,9 +31,11 @@ public class GameManager : MonoBehaviour {
     }
     public void PlayerShipDestroyed()
     {
+      imageFade.StartFade();
       playermanager.RespawnPlayer();
       StartNewMap();
     }
+
 public void StartNewMap()
 {
   //clean up enemies cvurrently spawned
@@ -43,6 +45,18 @@ public void StartNewMap()
   //spawn enemies for each designated spawn location
   npcManager.SpawnEnemiesForNewMap(mapManager.currentMap.enemySpawnLocations);
   //reset player hp
+
+}
+
+//rest at a bonfire
+public void Dock(Transform dock,Transform dockSpawnSpot)
+{
+  //for transitions block the player view and slowly return it to make transportation from locations and reseting the map less jarring
+  imageFade.StartFade();
+  playermanager.SetPlayerSpawn(dockSpawnSpot.gameObject);
+  playermanager.RespawnPlayer();
+  StartNewMap();
+
 
 }
     public void TravelFromHub()

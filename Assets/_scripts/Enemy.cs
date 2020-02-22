@@ -25,8 +25,9 @@ public class Enemy : MonoBehaviour {
     public int hp;
     public float speed = 20;
     public float rotForce = 6;
+    public float leashDistance;
     public bool destroyed,canShoot,returnHome;
-    public bool aitest,stationary,alert;
+    public bool aitest,stationary,alert,inCombat;
 
     private Vector3 startPos;
     private Quaternion targetRotation,startRot;
@@ -64,30 +65,44 @@ public class Enemy : MonoBehaviour {
       //enemies in area x dont need to active when player is in Y
       if(alert == true)
       {
-        if(GetComponent<AIattackpattern>() != null)
-        {
-          GetComponent<AIattackpattern>().Fly(target);
-        }else
-        {
-          if(GetComponent<AIEvasion>() != null)
-          {
-            GetComponent<AIEvasion>().Fly(target);
-          }
-        }
 
+        AlertActions();
 
 
 
       }
       else{
+
+
         //TODO: have enemies leash back to their start Position
-        if(returnHome == true)
-        {ReturnHome();}
+        if(returnHome == true && inCombat == false)
+        {ReturnHome();}else
+        {
+          AlertActions();
+          if(Vector3.Distance(target.transform.position,transform.position) > leashDistance)
+          {
+            target = null; inCombat = false; alert = false;
+          }
+        }
 
       }
 
 
 
+    }
+    public void AlertActions()
+    {
+      if(target != null){inCombat = true;}
+      if(GetComponent<AIattackpattern>() != null)
+      {
+        GetComponent<AIattackpattern>().Fly(target);
+      }else
+      {
+        if(GetComponent<AIEvasion>() != null)
+        {
+          GetComponent<AIEvasion>().Fly(target);
+        }
+      }
     }
     public void ReturnHome()
     {

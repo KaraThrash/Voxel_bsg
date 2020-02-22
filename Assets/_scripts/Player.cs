@@ -67,21 +67,23 @@ public class Player : MonoBehaviour {
     {
           droppedMoney = money;
           money = 0;
-
+          Vector3 dieSpot =   myship.transform.position;
+          myship.GetComponent<Rigidbody>().isKinematic = true;
+              //drop your held currency to be available to be picked up again
+          GameObject clone = Instantiate(corpseMoneyDrop,dieSpot,transform.rotation);
+          if(clone.GetComponent<PickUp>() != null)
+          {clone.GetComponent<PickUp>().SetAsPlayerCache();}
+          //handle the logic of dying before respawning
           gamemanager.PlayerShipDestroyed();
 
     }
+
     public void RespawnPlayer()
     {
-      Vector3 dieSpot =   myship.transform.position;
       myship.GetComponent<Rigidbody>().isKinematic = true;
       myship.transform.position = playerSpawn.transform.position;
       myship.transform.rotation = playerSpawn.transform.rotation;
-      //drop your held currency to be available to be picked up again
 
-      GameObject clone = Instantiate(corpseMoneyDrop,dieSpot,transform.rotation);
-      if(clone.GetComponent<PickUp>() != null)
-      {clone.GetComponent<PickUp>().SetAsPlayerCache();}
 
 
       myship.GetComponent<Rigidbody>().isKinematic = false;
@@ -112,6 +114,10 @@ public class Player : MonoBehaviour {
 
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
+    }
+    public void SetPlayerSpawn(GameObject newSpawn)
+    {
+      playerSpawn = newSpawn;
     }
     public void restartlevel() {
         //for web build
