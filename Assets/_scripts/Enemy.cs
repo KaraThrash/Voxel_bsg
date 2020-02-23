@@ -28,12 +28,18 @@ public class Enemy : MonoBehaviour {
     public float leashDistance;
     public bool destroyed,canShoot,returnHome;
     public bool aitest,stationary,alert,inCombat;
-
+    private float avoidCollisionClock;
     private Vector3 startPos;
     private Quaternion targetRotation,startRot;
     private Rigidbody rb;
 
     // Use this for initialization
+    void Start()
+    {
+      if(rb == null){rb = GetComponent<Rigidbody>();}
+        ResetToNeutral(npcManager);
+
+    }
     void Awake()
     {
       if(rb == null){rb = GetComponent<Rigidbody>();}
@@ -48,7 +54,7 @@ public class Enemy : MonoBehaviour {
       if(rb == null){rb = GetComponent<Rigidbody>();}
       if(hp <= 0){hp = 1;}
       alert = false;
-      if(patrolparent == null){  GameObject.Find("PatrolPoints");}
+      if(patrolparent == null){  patrolparent = GameObject.Find("PatrolPoints");}
       if(patrolparent != null){  patroltarget = patrolparent.transform.GetChild(Random.Range(0,patrolparent.transform.childCount)).gameObject;  }
     }
     public void SetAlert(bool isAlert)
@@ -112,36 +118,49 @@ public class Enemy : MonoBehaviour {
     }
     public void ReturnHome()
     {
+
+         CheckForward();
         //TODO: have enemies leash back to their start Position
+        if(avoidCollisionClock <= 0){
+                  if(Vector3.Distance(transform.position,startPos) < 15.0f){
+                      transform.rotation = Quaternion.Slerp(transform.rotation, startRot, rotForce  * Time.deltaTime);
+                      transform.position = Vector3.MoveTowards(transform.position,startPos,speed * Time.deltaTime);
 
-          if(Vector3.Distance(transform.position,startPos) < 2.0f){
-              transform.rotation = Quaternion.Slerp(transform.rotation, startRot, rotForce  * Time.deltaTime);
-              transform.position = Vector3.MoveTowards(transform.position,startPos,speed * Time.deltaTime);
+                    if(Vector3.Distance(transform.position,startPos) < 2.2f){
+                      transform.position = startPos;
 
-            if(Vector3.Distance(transform.position,startPos) < 0.2f){
-              transform.position = startPos;
+                      transform.rotation = startRot;
+                      rb.isKinematic = true;
+                      rb.isKinematic = false;
+                      returnHome = false;
+                    }
 
-              transform.rotation = startRot;
-              rb.isKinematic = true;
-              rb.isKinematic = false;
-              returnHome = false;
-            }
+                  }else
+                  {
+                    rb.AddForce(transform.forward * speed * Time.deltaTime, ForceMode.Impulse);
+                    targetRotation = Quaternion.LookRotation( startPos - transform.position);
 
-          }else
-          {
-            rb.AddForce(transform.forward * speed * Time.deltaTime, ForceMode.Impulse);
-            targetRotation = Quaternion.LookRotation( startPos - transform.position);
-
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotForce * Time.deltaTime);
-            if(Vector3.Distance(transform.position,startPos) <= 2.0f){
-              transform.rotation = startRot;
-              rb.velocity = Vector3.zero;
-            }
-          }
+                    transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotForce * Time.deltaTime);
+                    if(Vector3.Distance(transform.position,startPos) <= 5.0f){
+                      transform.rotation = startRot;
+                      rb.velocity = Vector3.zero;
+                    }
+                  }
+        }else{AvoidCollision();}
     }
     public void FindTarget()
     {
-      target = npcManager.GetClosestTarget(transform.position);
+      //compare distance from in front to behind the enemy to determine if the player is in a forward cone of vision
+      //or if the player is extremely close
+      if((npcManager.GetDistanceToPlayer(transform.position + (transform.forward * 15)) < npcManager.GetDistanceToPlayer(transform.position - (transform.forward * 2))
+      ||
+      npcManager.GetDistanceToPlayer(transform.position) < 5) && npcManager.GetDistanceToPlayer(transform.position) < leashDistance )
+
+      {
+
+        target = npcManager.GetPlayerShip();
+      }
+
     }
     public void OnCollisionEnter(Collision col)
     {
@@ -192,6 +211,26 @@ public class Enemy : MonoBehaviour {
         }
 
     }
+    public void CheckForward()
+    {
+        // possible issue with dradis detection
+        RaycastHit hit;
+
+
+
+        if (Physics.Raycast(transform.position, transform.forward, out hit, 50.0f) && Vector3.Distance(hit.point, startPos) > 10)
+        {
+
+
+
+                if (avoidCollisionClock < 0) { avoidCollisionClock = 0.4f; }
+                else { if (avoidCollisionClock < 3) { avoidCollisionClock += Time.deltaTime; } }
+
+
+        }
+        else { avoidCollisionClock -= Time.deltaTime;  }
+    }
+
     public void Die()
     {
         if (npcManager != null)
@@ -202,6 +241,14 @@ public class Enemy : MonoBehaviour {
         // Destroy(this.gameObject);
     }
 
+    public void AvoidCollision()
+    {
+      //TODO: scan around to find the open space rather than always rotating away 180
+        targetRotation = Quaternion.LookRotation(  (transform.position  + (transform.up * 50) - (transform.forward * 50) ) - transform.position  );
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotForce * Time.deltaTime);
+        rb.velocity = Vector3.Lerp(rb.velocity,transform.forward * speed,Time.deltaTime * speed );
+
+    }
 
 
 

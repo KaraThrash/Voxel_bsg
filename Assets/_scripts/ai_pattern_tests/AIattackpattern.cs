@@ -12,13 +12,14 @@ public class AIattackpattern : MonoBehaviour {
     public float gunCooldown;
     public float gunCost;
     public float closedistance,fardistance,avoidCollisionClock;
-
+    public float checkForwardDistance = 100.0f;
     public bool destroyed,canShoot;
     public bool flyaway,flypast;
 
     public GameObject patrolparent,patroltarget;
+    public Material avoidingCollisionColor;
     public List<Material> colors;
-    private Vector3 straferunspot,tempTargetSpot;
+    private Vector3 straferunspot,tempTargetSpot,openSpotToAvoidCollision;
     private Quaternion targetRotation;
     private Rigidbody rb;
     private Enemy myEnemy;
@@ -93,7 +94,8 @@ public class AIattackpattern : MonoBehaviour {
 
   public void Attack(GameObject target)
   {
-
+    CheckForward(target);
+      if(avoidCollisionClock <= 0){
           if (target != null)
           {
 
@@ -104,7 +106,11 @@ public class AIattackpattern : MonoBehaviour {
                   CalculateNextMove(target);
                }
           }
-
+        }
+        else
+        {
+          AvoidCollision();
+        }
 
   }
   public void GetAway(GameObject targetship)
@@ -249,11 +255,13 @@ public class AIattackpattern : MonoBehaviour {
     public void Patrol()
     {
 
-      patroltarget = myEnemy.patroltarget;
 
-      if(patroltarget != null){
+
+      if(myEnemy.patrolparent != null){
+          if(patroltarget != null){
+
         if (Vector3.Distance(patroltarget.transform.position, transform.position) < 10)
-        { patroltarget = myEnemy.patrolparent.transform.GetChild(Random.Range(0, 5)).gameObject; }
+        { patroltarget = myEnemy.patrolparent.transform.GetChild(Random.Range(0, myEnemy.patrolparent.transform.childCount)).gameObject; }
 
 
         targetRotation = Quaternion.LookRotation(patroltarget.transform.position - transform.position);
@@ -264,7 +272,17 @@ public class AIattackpattern : MonoBehaviour {
 
             // rb.AddForce(transform.forward * speed * Time.deltaTime, ForceMode.Impulse);
             transform.position = Vector3.MoveTowards(transform.position, patroltarget.transform.position, walkspeed  * Time.deltaTime);
-          }else{myEnemy.FindTarget(); }
+          }
+          else
+          {
+            patroltarget = myEnemy.patrolparent.transform.GetChild(Random.Range(0, myEnemy.patrolparent.transform.childCount)).gameObject;
+          }
+        }
+        else{
+
+          myEnemy.FindTarget();
+
+         }
 
 
 
@@ -315,18 +333,17 @@ public class AIattackpattern : MonoBehaviour {
 
     }
 
-    public void CheckForward()
+    public void CheckForward(GameObject target)
     {
-      GameObject target = myEnemy.target;
         // possible issue with dradis detection
         RaycastHit hit;
 
 
 
-        if (Physics.Raycast(transform.position, transform.forward, out hit, 310.0f))
+        if (Physics.Raycast(transform.position, transform.forward, out hit, checkForwardDistance))
         {
 
-            if (hit.transform.gameObject == myEnemy.target)
+            if (hit.transform.gameObject == target)
             {
                 canShoot = true;
 
@@ -334,8 +351,7 @@ public class AIattackpattern : MonoBehaviour {
             }
             else
             {
-                rb.drag = 0.5f;
-                //canShoot = false;
+
                 if (avoidCollisionClock < 0) { avoidCollisionClock = 0.4f; }
                 else { if (avoidCollisionClock < 3) { straferunspot = Vector3.zero; avoidCollisionClock += Time.deltaTime; } }
             }
@@ -343,11 +359,66 @@ public class AIattackpattern : MonoBehaviour {
         }
         else { avoidCollisionClock -= Time.deltaTime; canShoot = true; }
     }
-    public void AvoidCollision()
+
+    public void RayCastForward()
     {
 
-        rb.drag = 2.0f;
-        transform.Rotate(Vector3.right * -30 * Time.deltaTime);
-        transform.position = Vector3.MoveTowards(transform.position, (transform.position + transform.forward), speed  * Time.deltaTime);
+    }
+    public void RayCastToFindOpening()
+    {
+      RaycastHit hit;
+
+      if (Physics.Raycast(transform.position, transform.forward, out hit, checkForwardDistance))
+      {
+
+        openSpotToAvoidCollision = transform.position + (transform.forward + (( hit.transform.position - hit.point ).normalized )) ;
+        // avoidCollisionClock = 0.3f;
+        return;
+      }else{
+        if(avoidCollisionClock > 1){avoidCollisionClock = 0.5f;}
+
+        // openSpotToAvoidCollision = transform.position + transform.forward * 5.0f;
+        return;
+
+      }
+
+      //
+      // if (Physics.Raycast(transform.position, transform.right + transform.forward, out hit, 15.0f))
+      // {
+      //
+      //
+      // }else {openSpotToAvoidCollision = transform.position + ((transform.right + transform.forward) * 12.5f); return;}
+      //
+      // if (Physics.Raycast(transform.position,  transform.forward - transform.right, out hit, 15.0f))
+      // {
+      //
+      //
+      // }else {openSpotToAvoidCollision = transform.position + ((transform.forward - transform.right) * 12.5f); return;}
+      // if (Physics.Raycast(transform.position, transform.forward + transform.up, out hit, 15.0f))
+      // {
+      //
+      //
+      // }else{openSpotToAvoidCollision = transform.position + ((transform.up + transform.forward) * 12.5f); return;}
+      // if (Physics.Raycast(transform.position, transform.forward - transform.up, out hit, 5.0f))
+      // {
+      //
+      //
+      // }else{openSpotToAvoidCollision = transform.position + ((transform.up + transform.forward) * 12.5f); return;}
+      //
+      // openSpotToAvoidCollision = transform.position - (( -transform.up + transform.forward * 5) );
+    }
+    public void AvoidCollision()
+    {
+      //TODO: scan around to find the open space rather than always rotating away 180
+      RayCastToFindOpening();
+      transform.GetChild(0).GetComponent<Renderer>().material = avoidingCollisionColor;
+        targetRotation = Quaternion.LookRotation(  transform.position - openSpotToAvoidCollision );
+        // targetRotation = Quaternion.LookRotation(  (transform.position  + (transform.up * 50) - (transform.forward * 50) ) - transform.position  );
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotForce * 0.3f * Time.deltaTime);
+        //either move forwad to avoid the obstacle of slow down to not collide
+        if(avoidCollisionClock < 1){rb.AddForce(transform.forward * walkspeed * Time.deltaTime,ForceMode.Impulse);}
+        else{ rb.velocity = Vector3.Lerp(rb.velocity,Vector3.zero,Time.deltaTime * walkspeed );}
+        // rb.velocity = Vector3.Lerp(rb.velocity,transform.forward * walkspeed,Time.deltaTime * speed );
+
     }
 }

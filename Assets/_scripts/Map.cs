@@ -5,6 +5,7 @@ using UnityEngine;
 public class Map : MonoBehaviour
 {
   public Transform enemySpawnLocations;
+  public Transform patrolLocations;
     // Start is called before the first frame update
     void Start()
     {

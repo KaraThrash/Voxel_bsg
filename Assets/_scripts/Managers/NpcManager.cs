@@ -108,6 +108,12 @@ public class NpcManager : MonoBehaviour {
       return closestTarget;
     }
 
+    public GameObject GetPlayerShip()
+    {
+      return gameManager.playermanager.myship;
+    }
+
+
     public float GetDistanceToPlayer(Vector3 fromPos)
     {
       return Vector3.Distance(fromPos,gameManager.playermanager.GetPlayer().transform.position);

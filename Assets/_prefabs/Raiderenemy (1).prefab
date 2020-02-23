@@ -79,6 +79,7 @@ MeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 1
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -233,6 +234,7 @@ MeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 1
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -323,6 +325,7 @@ MonoBehaviour:
   dradisModel: {fileID: 0}
   myWing: {fileID: 0}
   value: 1
+  itemheldtype: 0
   hp: 1
   speed: 20
   rotForce: 3
@@ -349,19 +352,22 @@ MonoBehaviour:
   currentAttackPlan: 0
   speed: 40
   walkspeed: 12
-  rotForce: 4
+  rotForce: 2
   accuracy: 1
   gunCooldown: 0
   gunCost: 0.2
   closedistance: 20
   fardistance: 60
   avoidCollisionClock: 0
+  checkForwardDistance: 50
   destroyed: 0
   canShoot: 0
   flyaway: 0
   flypast: 0
   patrolparent: {fileID: 0}
   patroltarget: {fileID: 0}
+  avoidingCollisionColor: {fileID: 2100000, guid: 177ccd8da64149f4dad592910c45e459,
+    type: 2}
   colors:
   - {fileID: 2100000, guid: 762833067f3b1364591a320e572a5bea, type: 2}
   - {fileID: 2100000, guid: 9ecc3ae7982d7834291f3c75af41d0cd, type: 2}
@@ -433,6 +439,7 @@ MeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -5176,6 +5183,7 @@ ParticleSystemRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
