@@ -128,6 +128,7 @@ public class AIattackpattern : MonoBehaviour {
   }
   public void Chicken(GameObject targetship)
   {
+      transform.GetChild(0).GetComponent<Renderer>().material = colors[currentAttackPlan + 1];
     float angle = Vector3.Angle(targetship.transform.position - transform.position, transform.forward);
 
     if (angle <= accuracy) { canShoot = true; } else { canShoot = false; }
@@ -186,6 +187,7 @@ public class AIattackpattern : MonoBehaviour {
 
     public void GetFarAndComeBack(GameObject targetship)
     {
+        transform.GetChild(0).GetComponent<Renderer>().material = colors[currentAttackPlan + 1];
           // GameObject target = myEnemy.target;
             //gunCooldown -= Time.deltaTime;
 
@@ -291,12 +293,8 @@ public class AIattackpattern : MonoBehaviour {
 
     public void GetBehind(GameObject targetship)
     {
+        transform.GetChild(0).GetComponent<Renderer>().material = colors[currentAttackPlan + 1];
           GameObject target = myEnemy.target;
-            //gunCooldown -= Time.deltaTime;
-
-           // targetRotation = Quaternion.LookRotation(targetship.transform.position - transform.position);
-
-
 
             if (Vector3.Distance(transform.position,(target.transform.position  + target.transform.forward )  ) < Vector3.Distance(transform.position,(target.transform.position  - (target.transform.forward * closedistance) )) )
             {
@@ -346,13 +344,13 @@ public class AIattackpattern : MonoBehaviour {
             if (hit.transform.gameObject == target)
             {
                 canShoot = true;
-
+                avoidCollisionClock = 0;
 
             }
             else
             {
 
-                if (avoidCollisionClock < 0) { avoidCollisionClock = 0.4f; }
+                if (avoidCollisionClock < 0) { avoidCollisionClock = 1.4f; }
                 else { if (avoidCollisionClock < 3) { straferunspot = Vector3.zero; avoidCollisionClock += Time.deltaTime; } }
             }
 
@@ -371,13 +369,10 @@ public class AIattackpattern : MonoBehaviour {
       if (Physics.Raycast(transform.position, transform.forward, out hit, checkForwardDistance))
       {
 
-        openSpotToAvoidCollision = transform.position + (transform.forward + (( hit.transform.position - hit.point ).normalized )) ;
-        // avoidCollisionClock = 0.3f;
+        openSpotToAvoidCollision =  (myEnemy.target.transform.position -  hit.point).normalized ;
         return;
       }else{
-        if(avoidCollisionClock > 1){avoidCollisionClock = 0.5f;}
 
-        // openSpotToAvoidCollision = transform.position + transform.forward * 5.0f;
         return;
 
       }
@@ -412,12 +407,12 @@ public class AIattackpattern : MonoBehaviour {
       //TODO: scan around to find the open space rather than always rotating away 180
       RayCastToFindOpening();
       transform.GetChild(0).GetComponent<Renderer>().material = avoidingCollisionColor;
-        targetRotation = Quaternion.LookRotation(  transform.position - openSpotToAvoidCollision );
+        targetRotation = Quaternion.LookRotation( transform.position -   (openSpotToAvoidCollision ));
         // targetRotation = Quaternion.LookRotation(  (transform.position  + (transform.up * 50) - (transform.forward * 50) ) - transform.position  );
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotForce * 0.3f * Time.deltaTime);
         //either move forwad to avoid the obstacle of slow down to not collide
         if(avoidCollisionClock < 1){rb.AddForce(transform.forward * walkspeed * Time.deltaTime,ForceMode.Impulse);}
-        else{ rb.velocity = Vector3.Lerp(rb.velocity,Vector3.zero,Time.deltaTime * walkspeed );}
+        else{ rb.AddForce(-transform.forward * walkspeed * Time.deltaTime,ForceMode.Impulse);}
         // rb.velocity = Vector3.Lerp(rb.velocity,transform.forward * walkspeed,Time.deltaTime * speed );
 
     }

@@ -37,7 +37,7 @@ public class Enemy : MonoBehaviour {
     void Start()
     {
       if(rb == null){rb = GetComponent<Rigidbody>();}
-        ResetToNeutral(npcManager);
+        // ResetToNeutral(npcManager);
 
     }
     void Awake()
@@ -48,6 +48,7 @@ public class Enemy : MonoBehaviour {
     }
     public void ResetToNeutral(NpcManager npcManage)
     {
+
       npcManager = npcManage;
       startPos = transform.position;
       startRot = transform.rotation;
@@ -132,7 +133,7 @@ public class Enemy : MonoBehaviour {
                       transform.rotation = startRot;
                       rb.isKinematic = true;
                       rb.isKinematic = false;
-                      returnHome = false;
+                      // returnHome = false;
                     }
 
                   }else

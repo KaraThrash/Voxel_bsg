@@ -46,6 +46,7 @@ public class NpcManager : MonoBehaviour {
       clone.transform.parent = enemyparent.transform;
       enemies.Add(clone);
       clone.GetComponent<Enemy>().ResetToNeutral(GetComponent<NpcManager>());
+      clone.GetComponent<Enemy>().SetAlert(false);
     }
 
   }
@@ -58,7 +59,7 @@ public class NpcManager : MonoBehaviour {
         go.GetComponent<Enemy>().mapArea = gameManager.mapManager.FindClosestArea(go.transform);
       }
 
-      if(go.GetComponent<Enemy>().mapArea != newMapArea)
+      if(go.GetComponent<Enemy>().mapArea != null &&  go.GetComponent<Enemy>().mapArea != newMapArea)
       {go.GetComponent<Enemy>().SetAlert(false);}
       else{go.GetComponent<Enemy>().SetAlert(true);}
     }
