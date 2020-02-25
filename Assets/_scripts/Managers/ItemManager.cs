@@ -9,6 +9,7 @@ public struct Item {
   public string name;
   public int type;
   public int placeInMasterList;
+  public string stats;
   private int playerHeldCount;
 
   public int getPlayerHeld ( )
@@ -23,13 +24,13 @@ public struct Item {
 public class ItemManager : MonoBehaviour {
 
     public int money, fuel;
-    public Text fueltext, moneytext;
+    public Text fueltext, moneytext,itemstatdisplay,pickUpText;
     public GameManager gameManager;
     public  List<Item> MasterItemList;
     //public List<GameObject> InInventory; // items available to the player, but not equiped or a recent pick up while on mission
     public List<Vector2> equipedItems; //slot,item
     public List<Vector2> pickedUpItems; //picked up during a mission
-    public List<Vector2> gunsInInventory, hullsInInventory,enginesInInventory, bulletsInInventory, consumablesInInventory,playerInventory;
+    public List<Vector2> playerInventory;
 
     public Transform inventoryButtons,equipButtons,bulletbuttons,consumablebuttons;
       public GameObject itemDrop;
@@ -44,6 +45,8 @@ public class ItemManager : MonoBehaviour {
         MakeITemListFromFile();
     }
 
+
+
 public void SetDefaultItemList()
 {
 
@@ -54,7 +57,7 @@ public void SetDefaultItemList()
         placeInMasterList = 0
   };
   newItem.setPlayerHeld(3);
-  gunsInInventory.Add(new Vector2(0,1));
+
   MasterItemList.Add(newItem);
    newItem = new Item
  {
@@ -64,7 +67,7 @@ public void SetDefaultItemList()
 
   };
     newItem.setPlayerHeld(3);
-  hullsInInventory.Add(new Vector2(1,1));
+
     MasterItemList.Add(newItem);
 
     newItem = new Item
@@ -74,7 +77,7 @@ public void SetDefaultItemList()
          placeInMasterList = 2
    };
      newItem.setPlayerHeld(3);
-   enginesInInventory.Add(new Vector2(2,1));
+
      MasterItemList.Add(newItem);
      newItem = new Item
    {
@@ -83,7 +86,7 @@ public void SetDefaultItemList()
           placeInMasterList = 3
     };
       newItem.setPlayerHeld(3);
-      consumablesInInventory.Add(new Vector2(3,1));
+
       MasterItemList.Add(newItem);
       playerInventory.Add(new Vector2(0,1));
       playerInventory.Add(new Vector2(1,1));
@@ -124,6 +127,14 @@ public void SetDefaultItemList()
                          else if(tempstring[1].Trim() == "usable"){newitem.type = 3;}
                          else{}
                }
+               if(tempstring.Length > 3){
+
+                       if(tempstring[2].Trim() == "stats"){newitem.stats = tempstring[3]; print("stats: " + newitem.stats);}
+                      else if(tempstring[2].Trim() == "effect"){}
+
+                          else{}
+                }
+
                MasterItemList.Add(newitem);
 
 
@@ -135,6 +146,8 @@ public void SetDefaultItemList()
 
 
      }
+
+     //for pulling prefabs in the resource folder
      public GameObject LoadItemFromResource(string itemtoloadname)
      {
        string tempstring = "Items/" + itemtoloadname;
@@ -169,11 +182,14 @@ public void SetDefaultItemList()
 
       }
       //structs passed by value, calling a struct gets a copy.
+      //check that the item isnt a default item: default items are always available
       if(whichitem > 3)
       {
+
         Item tempitem = MasterItemList[whichitem];
         tempitem.setPlayerHeld(-1);
         MasterItemList[whichitem] = tempitem;
+          itemstatdisplay.text = tempitem.stats;
       }
 
       equipButtons.GetChild(equipSlot).GetChild(0).GetComponent<Text>().text = MasterItemList[whichitem].name;
@@ -200,6 +216,9 @@ public void SetDefaultItemList()
 
             // MasterItemList[whichitem.GetComponent<PickUp>().itemnumber].setPlayerHeld(MasterItemList[whichitem.GetComponent<PickUp>().itemnumber].getPlayerHeld() + 1);
             print(MasterItemList[whichitem.GetComponent<PickUp>().itemnumber].getPlayerHeld());
+
+            //display item pickedUp
+            pickUpText.text = "Gained Item: " + MasterItemList[whichitem.GetComponent<PickUp>().itemnumber].name;
           }
 
 

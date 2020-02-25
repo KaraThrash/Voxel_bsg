@@ -326,6 +326,22 @@ public class ViperControls : MonoBehaviour {
             myplayer.GetComponent<Player>().endLevel();
 
         }
+        else if (col.gameObject.tag == "Dock")
+        {
+            myplayer.GetComponent<Player>().NearDock(true);
 
+        }
+        else{}
     }
+    public void OnTriggerExit(Collider col)
+    {
+
+        if (col.gameObject.tag == "Dock")
+        {
+            myplayer.GetComponent<Player>().NearDock(false);
+
+        }
+        else{}
+    }
+
 }

@@ -37,16 +37,23 @@ public class NpcManager : MonoBehaviour {
     enemies.Clear();
   }
 
-  public void SpawnEnemiesForNewMap(Transform spawnAreas)
+  public void SpawnEnemiesForNewMap(Map currentMap)
   {
-
-    foreach(Transform go in spawnAreas)
+    int count = 0;
+    //iterate through the main maps sub areas, and then iterate through the sub pieces spawn locations
+    foreach(Transform go in currentMap.mapSubSections)
     {
-      GameObject clone = Instantiate(npcs[0], go.position, go.rotation) as GameObject;
-      clone.transform.parent = enemyparent.transform;
-      enemies.Add(clone);
-      clone.GetComponent<Enemy>().ResetToNeutral(GetComponent<NpcManager>());
-      clone.GetComponent<Enemy>().SetAlert(false);
+      count = 0;
+      while(count < go.GetComponent<Map>().enemySpawnLocations.childCount)
+      {
+        GameObject clone = Instantiate(npcs[0], go.GetComponent<Map>().enemySpawnLocations.GetChild(count).position, go.GetComponent<Map>().enemySpawnLocations.GetChild(count).rotation) as GameObject;
+        clone.transform.parent = enemyparent.transform;
+        enemies.Add(clone);
+        clone.GetComponent<Enemy>().ResetToNeutral(GetComponent<NpcManager>());
+        clone.GetComponent<Enemy>().patrolparent = go.GetComponent<Map>().patrolLocations.gameObject;//.GetChild(count);
+        clone.GetComponent<Enemy>().SetAlert(false);
+        count++;
+      }
     }
 
   }
@@ -79,9 +86,13 @@ public class NpcManager : MonoBehaviour {
 
     public void NPCkilled(Enemy npckilled)
     {
+      //remove this enemy from the list
         enemies.Remove(npckilled.gameObject);
+        //generate points for the player
         gameManager.playermanager.SpendMoney(-npckilled.value) ;
 
+        //save the spot where the enemy died and spawn an item drop at that Location
+        //NOTE: destroy the enemy first so it doesnt collide and make the drop act erratic
         Vector3 npcDieSpot = npckilled.transform.position;
         int npckilledItemType = npckilled.itemheldtype;
         Destroy(npckilled.gameObject);
@@ -91,7 +102,7 @@ public class NpcManager : MonoBehaviour {
 
     public GameObject GetClosestTarget(Vector3 fromPos)
     {
-
+        //NOTE: for prototype only target the player
       return gameManager.playermanager.myship;
 
       if(fleetNpcs.Count <= 0){return null;}

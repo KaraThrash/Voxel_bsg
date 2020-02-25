@@ -7,7 +7,7 @@ public class ThirdPersonCamera : MonoBehaviour
     public GameObject myfwdobj;
     public GameObject target;
     public Quaternion newrot;
-    public bool movetowards;
+    public bool inMenu,movetowards;
     public float damping;
     public float flyspeed;
     public float XSensitivity = 2f;
@@ -32,6 +32,15 @@ public class ThirdPersonCamera : MonoBehaviour
         m_CharacterTargetRot = transform.rotation;
 
     }
+    public void SetInMenu(bool menuOn)
+    {
+      inMenu = menuOn;
+      if(inMenu == true)
+      {
+        Cursor.lockState = CursorLockMode.None;
+       Cursor.visible = true;
+      }
+    }
     public void Update()
 
     {
@@ -46,7 +55,7 @@ public class ThirdPersonCamera : MonoBehaviour
              yRot = Input.GetAxis("4th Axis") * XSensitivity;
              xRot = Input.GetAxis("5th Axis") * -YSensitivity;
         }
-       
+
         m_CharacterTargetRot *= Quaternion.Euler(-xRot, yRot, rollz);
         //   m_CameraTargetRot *= Quaternion.Euler(-xRot, 0f, 0f);
         Quaternion rotationDelta = Quaternion.FromToRotation(transform.forward, target.transform.forward);
@@ -90,25 +99,30 @@ public class ThirdPersonCamera : MonoBehaviour
 
     private void InternalLockUpdate()
     {
-        if (Input.GetKeyUp(KeyCode.Escape))
-        {
-            m_cursorIsLocked = false;
-        }
-        else if (Input.GetMouseButtonUp(0))
-        {
-            m_cursorIsLocked = true;
-        }
+          if(inMenu == false){
+                  if (Input.GetKeyUp(KeyCode.Escape))
+                  {
+                      m_cursorIsLocked = false;
+                  }
+                  else if (Input.GetMouseButtonUp(0))
+                  {
+                      m_cursorIsLocked = true;
+                  }
 
-        if (m_cursorIsLocked)
-        {
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
-        }
-        else if (!m_cursorIsLocked)
-        {
-            Cursor.lockState = CursorLockMode.None;
+                  if (m_cursorIsLocked)
+                  {
+                      Cursor.lockState = CursorLockMode.Locked;
+                      Cursor.visible = false;
+                  }
+                  else if (!m_cursorIsLocked)
+                  {
+                      Cursor.lockState = CursorLockMode.None;
+                      Cursor.visible = true;
+                  }
+          }else{
+             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
-        }
+          }
     }
 
     Quaternion ClampRotationAroundXAxis(Quaternion q)

@@ -36,12 +36,17 @@ public class MapManager : MonoBehaviour {
     return activeMapArea;
 
   }
+  public Map GetCurrentMap()
+  {
+    return currentMap;
+
+  }
   public GameObject FindClosestArea(Transform playerShip)
   {
     //find the closest map section
       float dist = rangeToChangeMapSegement * 2;
-      GameObject newarea = currentMapParent.GetChild(0).gameObject;
-      foreach(Transform go in currentMapParent)
+      GameObject newarea = currentMap.mapSubSections.GetChild(0).gameObject;
+      foreach(Transform go in currentMap.mapSubSections)
       {
         if(Vector3.Distance(playerShip.position,go.position) < dist)
         {
@@ -50,26 +55,31 @@ public class MapManager : MonoBehaviour {
         }
 
       }
+
+      //check to see if the new piece has a difference range to change over to the next one
+      if(newarea.GetComponent<Map>().rangeToChangeMapSegement > 0){rangeToChangeMapSegement = newarea.GetComponent<Map>().rangeToChangeMapSegement;}
+      else{rangeToChangeMapSegement = 100;}
+
       return newarea;
   }
     public void SetDestination(int target)
     {
-        destination = target;
+        // destination = target;
     }
     public void MoveToNewArea()
     {
-        foreach (GameObject go in maps)
-        { go.active = false; }
-        fleetMarker.transform.position = maplocations[destination].transform.position;
-        maps[destination].active = true;
-        destination = -1;
+        // foreach (GameObject go in maps)
+        // { go.active = false; }
+        // fleetMarker.transform.position = maplocations[destination].transform.position;
+        // maps[destination].active = true;
+        // destination = -1;
     }
     public void ReturnToHub()
     {
-        foreach (GameObject go in maps)
-        { go.active = false; }
-       // fleetMarker.transform.position = maplocations[destination].transform.position;
-       // maps[destination].active = true;
-        destination = -1;
+       //  foreach (GameObject go in maps)
+       //  { go.active = false; }
+       // // fleetMarker.transform.position = maplocations[destination].transform.position;
+       // // maps[destination].active = true;
+       //  destination = -1;
     }
 }

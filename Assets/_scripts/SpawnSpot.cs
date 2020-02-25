@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DockingPlatform : MonoBehaviour
+public class SpawnSpot : MonoBehaviour
 {
-  public GameManager gameManager;
-  public Transform spawnSpot;
+  public Enemy enemyToSpawn;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -15,13 +15,6 @@ public class DockingPlatform : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-      if (Input.GetKeyDown(KeyCode.T))
-      {
-        gameManager.Dock(this.transform,spawnSpot);
 
-
-      }
     }
-
-    
 }

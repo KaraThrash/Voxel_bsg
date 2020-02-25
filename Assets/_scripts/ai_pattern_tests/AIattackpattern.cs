@@ -17,7 +17,7 @@ public class AIattackpattern : MonoBehaviour {
     public bool flyaway,flypast;
 
     public GameObject patrolparent,patroltarget;
-    public Material avoidingCollisionColor;
+    public Material avoidingCollisionColor,patrolColor;
     public List<Material> colors;
     private Vector3 straferunspot,tempTargetSpot,openSpotToAvoidCollision;
     private Quaternion targetRotation;
@@ -257,7 +257,7 @@ public class AIattackpattern : MonoBehaviour {
     public void Patrol()
     {
 
-
+      transform.GetChild(0).GetComponent<Renderer>().material = patrolColor;
 
       if(myEnemy.patrolparent != null){
           if(patroltarget != null){

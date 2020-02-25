@@ -6,7 +6,9 @@ public class Player : MonoBehaviour {
     public int hp;
     public int shiphp;
     public int money,droppedMoney;
-    public Text hpText,moneytext;
+    public bool atDock;
+    public Text hpText,moneytext,contextButton;
+    public GameObject contextButtonUi;
     public GameObject corpseMoneyDrop;
     public GameObject mycamera;
     public GameObject playerSpawn;
@@ -20,7 +22,34 @@ public class Player : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
+    if(atDock == true && Input.GetKeyDown(KeyCode.Tab))
+    {gamemanager.ActivateMenu(1);}
+
 	}
+
+  public void ListenForInput()
+  {
+
+
+  }
+
+  public void NearDock(bool entering)
+  {
+    atDock = false;
+    if(entering == true)
+    {
+      atDock = true;
+      contextButtonUi.active = true;
+      contextButton.text = "Tab for Dock Menu";
+    }
+    else
+    {
+      contextButtonUi.active = false;
+      contextButton.text = "";
+    }
+
+  }
+
   public GameObject GetPlayer()
   {
     return myship;
@@ -41,6 +70,7 @@ public class Player : MonoBehaviour {
         }
         return false;
     }
+
     public void SelectFighter(GameObject fighterselected)
     {
         myship = fighterselected;
@@ -53,6 +83,8 @@ public class Player : MonoBehaviour {
         mycamera.GetComponent<ThirdPersonCamera>().target = myship;
 
     }
+
+
     public void vehicletakingdamage(int dmgtaken)
     {
         shiphp = shiphp - dmgtaken;
@@ -73,6 +105,7 @@ public class Player : MonoBehaviour {
           GameObject clone = Instantiate(corpseMoneyDrop,dieSpot,transform.rotation);
           if(clone.GetComponent<PickUp>() != null)
           {clone.GetComponent<PickUp>().SetAsPlayerCache();}
+
           //handle the logic of dying before respawning
           gamemanager.PlayerShipDestroyed();
 
