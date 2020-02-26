@@ -301,7 +301,11 @@ public class ViperControls : MonoBehaviour {
           }else
           {
             //if not the player cache send to item manager to add to inventory
-            myplayer.GetComponent<Player>().gamemanager.itemManager.ItemPickUp(col.gameObject);
+            if(col.gameObject.GetComponent<PickUp>() != null )
+            {
+                myplayer.GetComponent<Player>().gamemanager.itemManager.ItemPickUp(col.gameObject);
+            }
+
           }
 
 

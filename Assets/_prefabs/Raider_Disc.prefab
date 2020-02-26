@@ -57,7 +57,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: d64781501a0af7941a820c024442b22d, type: 2}
+  - {fileID: 2100000, guid: 8a740c6c7046e9d47b1e95a2bb3a5561, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -156,15 +156,18 @@ MonoBehaviour:
   dradisModel: {fileID: 0}
   myWing: {fileID: 0}
   value: 1
+  itemheldtype: 0
   hp: 1
   speed: 40
   rotForce: 2
+  leashDistance: 0
   destroyed: 0
   canShoot: 0
   returnHome: 0
   aitest: 1
   stationary: 0
   alert: 0
+  inCombat: 0
 --- !u!114 &8451962902486041285
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -187,12 +190,16 @@ MonoBehaviour:
   closedistance: 20
   fardistance: 60
   avoidCollisionClock: 0
+  checkForwardDistance: 100
   destroyed: 0
   canShoot: 0
   flyaway: 0
   flypast: 0
   patrolparent: {fileID: 0}
   patroltarget: {fileID: 0}
+  avoidingCollisionColor: {fileID: 0}
+  patrolColor: {fileID: 0}
+  colors: []
 --- !u!1 &3920093774446699011
 GameObject:
   m_ObjectHideFlags: 0

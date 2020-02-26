@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour {
 
   public Player playermanager;
+  public Menus menuManager;
   public MapManager mapManager;
   public HangarManager hangarManager;
   public NpcManager npcManager;
@@ -56,28 +57,12 @@ public class GameManager : MonoBehaviour {
 
     }
 
-    public void ActivateMenu(int whichMenu)
+    public void ActivateMenu()
     {
-        // dockMenu.active = false;
-      switch(whichMenu)
-      {
-        case 0:
+     //when opening the menu the manager returns true, false if it is closing the menu
+     //unlock or lock the mouse based on the menu state
+      cam.SetInMenu(  menuManager.OpenMenu());
 
-        break;
-        case 1: //at bonfire menu
-        if(dockMenu.active == true){
-          dockMenu.active = false;
-          cam.SetInMenu(false);
-        }
-        else{dockMenu.active = true;
-          //set the camera to not lock the cursor when in a menu
-          cam.SetInMenu(true);
-        }
-
-        break;
-        default:
-        break;
-      }
 
     }
 
@@ -92,14 +77,16 @@ public class GameManager : MonoBehaviour {
 
 
     }
-    public void TravelFromHub()
+    public void TravelFromHub(int dest)
     {
-        if (mapManager.destination != -1 && playermanager.myship != null)
+        if (dest != -1 && playermanager.myship != null)
         {
-            mapManager.MoveToNewArea();
-            playermanager.myship.transform.position = Vector3.zero;
-            playermanager.myship.transform.eulerAngles = Vector3.zero;
+            mapManager.MoveToNewArea(dest);
+            mapManager.GetCurrentMap();
+            playermanager.SetPlayerSpawn(  mapManager.GetCurrentMap().playerStartSpot.gameObject);
             playermanager.startnewlevel();
+            StartNewMap();
+            ActivateMenu();
         }
     }
 

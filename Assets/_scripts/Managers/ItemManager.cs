@@ -102,8 +102,9 @@ public void SetDefaultItemList()
 }
     public void MakeITemListFromFile()
      {
-         string text = File.ReadAllText("./Assets/Resources/Items/MasterItemFile.txt");
-
+         // string text = File.ReadAllText("./Resources/Items/MasterItemFile.txt");
+         //Load a text file (Assets/Resources/Text/textFile01.txt)
+                 string text = Resources.Load<TextAsset>("Items/MasterItemFile").ToString();
          string[] strValues = text.Split(';');
 
          int count = 0;
@@ -202,7 +203,7 @@ public void SetDefaultItemList()
         if(whichitem.GetComponent<PickUp>() != null)
         {
           //zero is just money/points for simplicity of enemies that dont drop special items
-          if(whichitem.GetComponent<PickUp>().itemnumber == 0)
+          if(whichitem.GetComponent<PickUp>().itemnumber == 0 || whichitem.GetComponent<PickUp>().itemnumber >= MasterItemList.Count)
           {
             SpendMoney(-1);
           }else
@@ -356,6 +357,7 @@ public void SetDefaultItemList()
     public void ItemDrop(Vector3 dropLocation,int itemtodrop)
     {
       GameObject clone = Instantiate(itemDrop,dropLocation,transform.rotation);
+
       if(clone.GetComponent<PickUp>() != null)
       {clone.GetComponent<PickUp>().SetWhichItem(GetComponent<ItemManager>(),Random.Range(4,MasterItemList.Count));}
     }

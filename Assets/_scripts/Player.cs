@@ -23,7 +23,7 @@ public class Player : MonoBehaviour {
 	void Update () {
 
     if(atDock == true && Input.GetKeyDown(KeyCode.Tab))
-    {gamemanager.ActivateMenu(1);}
+    {gamemanager.ActivateMenu();}
 
 	}
 
@@ -36,16 +36,17 @@ public class Player : MonoBehaviour {
   public void NearDock(bool entering)
   {
     atDock = false;
+    contextButton.text = "";
     if(entering == true)
     {
       atDock = true;
-      contextButtonUi.active = true;
+      // contextButtonUi.active = true;
       contextButton.text = "Tab for Dock Menu";
     }
     else
     {
-      contextButtonUi.active = false;
-      contextButton.text = "";
+      // contextButtonUi.active = false;
+      // contextButton.text = "";
     }
 
   }
@@ -120,6 +121,7 @@ public class Player : MonoBehaviour {
 
 
       myship.GetComponent<Rigidbody>().isKinematic = false;
+      //TODO: dont refill health when traveling, right now this is used when moving to a new area
       shiphp = hp;
     }
 
@@ -134,6 +136,7 @@ public class Player : MonoBehaviour {
     }
     public void startnewlevel()
     {
+      RespawnPlayer();
         myship.active = true;
         mycamera.GetComponent<ThirdPersonCamera>().enabled = true;
     }

@@ -3,33 +3,68 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Menus : MonoBehaviour {
-    public GameObject hubparentmenu;
-    public List<GameObject> hubsubmenus;
+  public GameManager gameManager;
+    public GameObject hubparentmenu,hangarMenu,fleetMenu,mapmenu,ftlmenu;
+
     // Use this for initialization
     void Start () {
-		
+
 	}
-	
+
 	// Update is called once per frame
 	void Update () {
-		
-	}
-    public void HubMenuChange(int whichmenu)
-    {
-        foreach (GameObject go in hubsubmenus)
-        { go.active = false; }
-        hubsubmenus[whichmenu].active = true;
-        //switch (whichmenu)
-        //{
-        //    case 0:
 
-        //        break;
-        //    case 1:
-        //        break;
-        //    case 2:
-        //        break;
-        //    default:
-        //        break;
-        //}
+	}
+  public bool OpenMenu()
+  {
+
+    //enable menu objects on the canvas if they are currently disabled
+    //or turn them off if already in menu
+    if(hubparentmenu.active == false)
+    {
+       hubparentmenu.active = true;
+        HubMenuChange("hangar");
+        return true;
+      }
+      else
+      {
+    hubparentmenu.active = false;
+    return false;
+    }
+
+  }
+    public void HubMenuChange(string whichmenu)
+    {
+
+        hangarMenu.active = false;
+        fleetMenu.active = false;
+        mapmenu.active = false;
+        ftlmenu.active = false;
+
+        switch (whichmenu)
+        {
+           case "hangar":
+              hangarMenu.active = true;
+               break;
+           case "fleet":
+              fleetMenu.active = true;
+               break;
+           case "map":
+              mapmenu.active = true;
+               break;
+               case "ftl":
+                  ftlmenu.active = true;
+                   break;
+           default:
+           hangarMenu.active = true;
+               break;
+        }
+    }
+
+
+    public void FTLTravelMenu(int dest)
+    {
+      gameManager.TravelFromHub(dest);
+
     }
 }

@@ -29,7 +29,7 @@ public class Enemy : MonoBehaviour {
     public bool destroyed,canShoot,returnHome;
     public bool aitest,stationary,alert,inCombat;
     private float avoidCollisionClock;
-    private Vector3 startPos;
+    private Vector3 startPos,openSpotToAvoidCollision;
     private Quaternion targetRotation,startRot;
     private Rigidbody rb;
 
@@ -82,8 +82,10 @@ public class Enemy : MonoBehaviour {
 
 
         //TODO: have enemies leash back to their start Position
-        if(returnHome == true && inCombat == false)
-        {ReturnHome();}else
+        if(returnHome == true )
+        {  if(inCombat == false)
+          {ReturnHome();}
+          else
         {
           AlertActions();
           //if targeting something dont return until leashing
@@ -103,6 +105,7 @@ public class Enemy : MonoBehaviour {
 
 
     }
+  }
     public void AlertActions()
     {
       if(target != null){inCombat = true;}
@@ -120,6 +123,7 @@ public class Enemy : MonoBehaviour {
     public void ReturnHome()
     {
 
+
          CheckForward();
         //TODO: have enemies leash back to their start Position
         if(avoidCollisionClock <= 0){
@@ -128,6 +132,7 @@ public class Enemy : MonoBehaviour {
                       transform.position = Vector3.MoveTowards(transform.position,startPos,speed * Time.deltaTime);
 
                     if(Vector3.Distance(transform.position,startPos) < 2.2f){
+                      returnHome = false;
                       transform.position = startPos;
 
                       transform.rotation = startRot;
@@ -242,15 +247,38 @@ public class Enemy : MonoBehaviour {
         // Destroy(this.gameObject);
     }
 
+    public void RayCastToFindOpening()
+    {
+      RaycastHit hit;
+
+      if (Physics.Raycast(transform.position, transform.forward, out hit, 25.0f) && Vector3.Distance(transform.position,startPos) > 25.0f)
+      {
+
+        openSpotToAvoidCollision =  (startPos -  hit.point).normalized ;
+        return;
+      }else{
+
+        return;
+
+      }
+
+
+    }
     public void AvoidCollision()
     {
       //TODO: scan around to find the open space rather than always rotating away 180
-        targetRotation = Quaternion.LookRotation(  (transform.position  + (transform.up * 50) - (transform.forward * 50) ) - transform.position  );
-        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotForce * Time.deltaTime);
-        rb.velocity = Vector3.Lerp(rb.velocity,transform.forward * speed,Time.deltaTime * speed );
+      RayCastToFindOpening();
 
+        targetRotation = Quaternion.LookRotation( transform.position -   (openSpotToAvoidCollision ));
+        // targetRotation = Quaternion.LookRotation(  (transform.position  + (transform.up * 50) - (transform.forward * 50) ) - transform.position  );
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotForce * 0.3f * Time.deltaTime);
+        //either move forwad to avoid the obstacle of slow down to not collide
+        if(avoidCollisionClock < 1){rb.AddForce(transform.forward * speed * Time.deltaTime,ForceMode.Impulse);}
+        else{ rb.AddForce(-transform.forward * speed * Time.deltaTime,ForceMode.Impulse);}
+        // rb.velocity = Vector3.Lerp(rb.velocity,transform.forward * walkspeed,Time.deltaTime * speed );
+        if(returnHome == true && Vector3.Distance(transform.position,startPos) < 15.0f)
+        {avoidCollisionClock = 0;}
     }
-
 
 
 

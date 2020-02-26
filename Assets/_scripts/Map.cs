@@ -9,6 +9,7 @@ public class Map : MonoBehaviour
   public Transform mapSubSections;
   public Transform enemySpawnLocations;
   public Transform patrolLocations;
+  public Transform playerStartSpot;
     // Start is called before the first frame update
     void Start()
     {

@@ -66,13 +66,13 @@ public class MapManager : MonoBehaviour {
     {
         // destination = target;
     }
-    public void MoveToNewArea()
+    public void MoveToNewArea(int newArea)
     {
-        // foreach (GameObject go in maps)
-        // { go.active = false; }
-        // fleetMarker.transform.position = maplocations[destination].transform.position;
-        // maps[destination].active = true;
-        // destination = -1;
+        foreach (GameObject go in maps)
+        { go.active = false; }
+        maps[newArea].active = true;
+
+        currentMap = maps[newArea].GetComponent<Map>();
     }
     public void ReturnToHub()
     {
