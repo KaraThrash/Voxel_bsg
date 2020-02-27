@@ -130,7 +130,9 @@ public void SetDefaultItemList()
                }
                if(tempstring.Length > 3){
 
-                       if(tempstring[2].Trim() == "stats"){newitem.stats = tempstring[3]; print("stats: " + newitem.stats);}
+                       if(tempstring[2].Trim() == "stats"){newitem.stats = tempstring[3];
+                          // print("stats: " + newitem.stats);
+                        }
                       else if(tempstring[2].Trim() == "effect"){}
 
                           else{}

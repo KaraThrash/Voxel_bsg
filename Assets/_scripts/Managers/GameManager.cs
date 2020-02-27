@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour {
 
+public FleetManager fleetManager;
   public Player playermanager;
   public Menus menuManager;
   public MapManager mapManager;
@@ -13,6 +14,7 @@ public class GameManager : MonoBehaviour {
   public ItemManager itemManager;
   public ThirdPersonCamera cam;
   public FtlImageFade imageFade;
+
 
   public GameObject dockMenu;
 

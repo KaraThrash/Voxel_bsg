@@ -5,6 +5,7 @@ using UnityEngine.UI;
 public class FtlImageFade : MonoBehaviour {
     public Color colorStart ;
     public Color colorEnd ;
+    public Color ftl,takedmg ;
     public Renderer fadematerial;
     public bool fade;
     public float fadeSpeed;

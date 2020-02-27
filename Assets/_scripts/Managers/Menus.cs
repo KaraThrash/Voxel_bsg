@@ -48,6 +48,7 @@ public class Menus : MonoBehaviour {
                break;
            case "fleet":
               fleetMenu.active = true;
+              gameManager.fleetManager.UpdateInfo();
                break;
            case "map":
               mapmenu.active = true;

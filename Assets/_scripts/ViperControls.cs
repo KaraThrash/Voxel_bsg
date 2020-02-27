@@ -46,8 +46,10 @@ public class ViperControls : MonoBehaviour {
        //KeyboardFlightControls();
 
        if(groundCollisionTimer >= 0)
-       {thirdpersonflightcontrols();}
-         else{groundCollisionTimer -= Time.deltaTime;}
+       {
+         thirdpersonflightcontrols();
+       }
+        else{groundCollisionTimer -= Time.deltaTime;}
 
 
         // ControllerFlight();

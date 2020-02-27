@@ -4,15 +4,17 @@ using UnityEngine;
 
 public class Fleetship : MonoBehaviour {
     public GameObject gameManager;
+    public FleetManager fleetManager;
     public int pop;
     public int food;
     public int fuel;
     public int morale;
-    public int totalsubsystems; //hp
+    public int totalsubsystems,maxhp; //hp
     public GameObject resourcemanager;
     public float dieclock;
     public bool hasresources;
     public int value; //points
+    public string name;
     // Use this for initialization
     void Start () {
         gameManager = GameObject.Find("GameManager");
@@ -21,13 +23,17 @@ public class Fleetship : MonoBehaviour {
             resourcemanager.GetComponent<ResourceManager>().ResourceChange(pop, food, fuel, morale);
         }
     }
-	
+
 	// Update is called once per frame
 	void Update () {
         if (dieclock != -1)
-        { dieclock -= Time.deltaTime;
+        {
+
+          dieclock -= Time.deltaTime;
             if (dieclock <= 0)
             { ShipDestroyed(); }
+
+
         }
 	}
 
@@ -48,6 +54,7 @@ public class Fleetship : MonoBehaviour {
         if (hasresources == true)
         {
             resourcemanager.GetComponent<ResourceManager>().ResourceChange(-pop, -food, -fuel, -morale);
+
         }
         if (value > 0)
         {
