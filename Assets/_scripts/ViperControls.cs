@@ -36,48 +36,77 @@ public class ViperControls : MonoBehaviour {
     public int heldresource;
 	// Use this for initialization
 	void Start () {
-        rb = GetComponent<Rigidbody>();
+
         cameraspeed = 15;
         distspeed = 12;
     }
+    public void SetUp(GameObject newplayer,GameObject newcam)
+    {
+      // myplayer = newplayer;
+      // camera = newcam; camerasphere = newcam;
+    }
 
-	// Update is called once per frame
-	void Update () {
+	public void Fly (Rigidbody shipRigidBody) {
        //KeyboardFlightControls();
 
-       if(groundCollisionTimer >= 0)
+       if(groundCollisionTimer <= 0)
        {
-         thirdpersonflightcontrols();
+         thirdpersonflightcontrols(shipRigidBody);
        }
-        else{groundCollisionTimer -= Time.deltaTime;}
+        else{
+
+          groundCollisionTimer -= Time.deltaTime;
+
+        }
 
 
         // ControllerFlight();
 
     }
-    public void ControlCamera(float hort,float vert)
+    public void WeaponSystems()
+    {
+      if (guncooldowntimer > 0)
+      {
+
+          guncooldowntimer -= Time.deltaTime;
+      }
+
+      if (Input.GetMouseButton(0))
+      {
+
+          if (guncooldowntimer <= 0)
+          {
+
+              RaycastShootGuns();
+
+              guncooldowntimer = guncooldown;
+          }
+
+      }
+    }
+    public void ControlCamera(GameObject cam,GameObject ship)
     {
 
       //default is camera tracks with mouse // needs to toggle on free look
       if (Input.GetMouseButton(1))
       {
-          camerasphere.GetComponent<ThirdPersonCamera>().rollz = 0;
+          cam.GetComponent<ThirdPersonCamera>().rollz = 0;
       }
       else {
-        camerasphere.transform.position = transform.position;
+        cam.transform.position = ship.transform.position;
         // targetRotation = Quaternion.LookRotation((camera.transform.position + camera.transform.forward) - transform.position);
         step = Mathf.Min(4 * Time.deltaTime, 1.5f);
-        transform.rotation = Quaternion.Lerp(transform.rotation, camerasphere.transform.rotation, step);
+        ship.transform.rotation = Quaternion.Lerp(ship.transform.rotation, cam.transform.rotation, step);
 
-        camerasphere.GetComponent<ThirdPersonCamera>().rollz = roll * 20 * Time.deltaTime ;
+        cam.GetComponent<ThirdPersonCamera>().rollz = roll * 20 * Time.deltaTime ;
 
       }
     }
-    public void thirdpersonflightcontrols()
+    public void thirdpersonflightcontrols(Rigidbody shipRigidBody)
     {
         hort = Input.GetAxis("Horizontal");
         vert = Input.GetAxis("Vertical");
-        ControlCamera(hort,vert);
+
         if (guncooldowntimer > 0)
         {
 
@@ -120,22 +149,20 @@ public class ViperControls : MonoBehaviour {
         { roll = 1; }
         else { roll = 0; }
         // if (roll != 0) { rb.AddTorque(transform.forward * roll * Time.deltaTime, ForceMode.Impulse); }
-        transform.Rotate(0, 0, roll * rollSpeed * Time.deltaTime);
+        shipRigidBody.transform.Rotate(0, 0, roll * rollSpeed * Time.deltaTime);
 
 
-        //rb.AddTorque(transform.forward * roll * 15.0f * Time.deltaTime, ForceMode.Impulse);
-        // GetComponent<PhotonView>().RPC("flightControls", PhotonTargets.AllViaServer, vert, hort, roll, mouseX, mouseY, exit, lift);
 
-        Vector3 tempvel = transform.position - (transform.position + transform.right);
+        Vector3 tempvel = shipRigidBody.transform.position - (shipRigidBody.transform.position + shipRigidBody.transform.right);
         tempvel *= strafeSpeed * -hort;
-        Vector3 tempvel2 = transform.position - (transform.position + transform.forward);
+        Vector3 tempvel2 = shipRigidBody.transform.position - (shipRigidBody.transform.position + shipRigidBody.transform.forward);
         tempvel2 *= flySpeed * -vert;
         Vector3 tempvel3 = transform.position - (transform.position + transform.up);
         tempvel3 *= flySpeed * lift;
 
         newvel = tempvel + tempvel2 + tempvel3 ;
-        rb.velocity = Vector3.Lerp(rb.velocity,newvel,5.0f * Time.deltaTime);
-       // flightControls(vert, hort, roll, 0, 0, lift);
+        shipRigidBody.velocity = Vector3.Lerp(shipRigidBody.velocity,newvel,5.0f * Time.deltaTime);
+
     }
     public void KeyboardFlightControls()
     {
@@ -286,7 +313,10 @@ public class ViperControls : MonoBehaviour {
     }
 
 
-    public void OnCollisionEnter(Collision col)
+
+
+
+    public void HandleCollisionEnter(Collision col,Rigidbody shipRigidBody )
     {
         if (col.gameObject.tag == "BulletEnemy")
         {
@@ -320,12 +350,22 @@ public class ViperControls : MonoBehaviour {
           //bounce off the ground on contact
           //TODO calculate the right amount of bounce
             groundCollisionTimer = 0.1f;
-            rb.velocity = (transform.position - col.contacts[0].point).normalized *  flySpeed;
+            myplayer.GetComponent<Player>().gamemanager.imageFade.StartDmgFade();
+            shipRigidBody.velocity = (shipRigidBody.transform.position - col.contacts[0].point).normalized *  flySpeed;
               // rb.AddForce((transform.position - col.contacts[0].point).normalized * flySpeed  ,ForceMode.Impulse);
         }
     }
 
-    public void OnTriggerEnter(Collider col)
+    public void HandleTriggerExit(Collider col,Rigidbody shipRigidBody )
+    {
+      if (col.gameObject.tag == "Dock")
+      {
+          myplayer.GetComponent<Player>().NearDock(false);
+
+      }
+      else{}
+    }
+    public void HandleTriggerEnter(Collider col,Rigidbody shipRigidBody )
     {
         if (col.gameObject.tag == "Exit")
         {
@@ -339,15 +379,22 @@ public class ViperControls : MonoBehaviour {
         }
         else{}
     }
-    public void OnTriggerExit(Collider col)
-    {
+    // public void OnCollisionEnter(Collision col)
+    // {
+    //     HandleCollisionEnter(col,rb);
+    // }
+    //
+    //
+    // public void OnTriggerEnter(Collider col)
+    // {
+    //     HandleTriggerEnter(col,rb);
+    // }
+    //
+    // public void OnTriggerExit(Collider col)
+    // {
+    //   HandleTriggerExit(col,rb);
+    //
+    // }
 
-        if (col.gameObject.tag == "Dock")
-        {
-            myplayer.GetComponent<Player>().NearDock(false);
-
-        }
-        else{}
-    }
 
 }

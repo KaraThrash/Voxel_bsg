@@ -37,6 +37,10 @@ public class FtlImageFade : MonoBehaviour {
         }
 
     }
+    public void StartDmgFade()
+    {
+        GetComponent<RawImage>().color = takedmg;
+    }
     public void StartFade()
     {
         GetComponent<RawImage>().color = colorStart;

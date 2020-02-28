@@ -6,13 +6,13 @@ public class Player : MonoBehaviour {
     public int hp;
     public int shiphp;
     public int money,droppedMoney;
-    public bool atDock;
+    public bool atDock,inMenu;
     public Text hpText,moneytext,contextButton;
     public GameObject contextButtonUi;
     public GameObject corpseMoneyDrop;
     public GameObject mycamera;
     public GameObject playerSpawn;
-    public GameObject myship;
+    public GameObject myship,viperShip,raptorShip;
     public GameManager gamemanager;
     // Use this for initialization
     void Start () {
@@ -22,11 +22,45 @@ public class Player : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
+//TODO: re organize this. it clearly doesnt belong here so figure out where it does go
     if(atDock == true && Input.GetKeyDown(KeyCode.Tab))
     {gamemanager.ActivateMenu();}
 
+
+    if(inMenu == false)
+    {
+      ControlShip();
+    }
+
 	}
 
+  public void ChangeShips(int changeto)
+  {
+    if(changeto == 0)
+    {
+      raptorShip.active = false;
+      viperShip.active = true;
+      myship = viperShip;
+    }else
+    {
+      raptorShip.active = false;
+      viperShip.active = true;
+      myship = raptorShip;
+    }
+
+  }
+  public void ControlShip()
+  {
+        if(myship.GetComponent<PlayerControls>() != null )
+        {
+          myship.GetComponent<PlayerControls>().ControlShip();
+        }
+
+  }
+  public void SetInMenu(bool menuStatus)
+  {
+    inMenu = menuStatus;
+  }
   public void ListenForInput()
   {
 

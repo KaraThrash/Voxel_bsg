@@ -17,7 +17,7 @@ public FleetManager fleetManager;
 
 
   public GameObject dockMenu;
-
+  public bool inMenu;
 
 
     // Use this for initialization
@@ -63,9 +63,12 @@ public FleetManager fleetManager;
     {
      //when opening the menu the manager returns true, false if it is closing the menu
      //unlock or lock the mouse based on the menu state
-      cam.SetInMenu(  menuManager.OpenMenu());
+     inMenu = menuManager.OpenMenu();
 
-
+      cam.SetInMenu(  inMenu);
+      //set the player controller so that when in menu the ship isnt flying around
+     playermanager.SetInMenu(inMenu);
+     //TODO: think about pausing or not
     }
 
     //rest at a bonfire
