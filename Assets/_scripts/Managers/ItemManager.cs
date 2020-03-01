@@ -118,6 +118,7 @@ public void SetDefaultItemList()
                         type = 5,
                         placeInMasterList = MasterItemList.Count
                   };
+                  //NOTE: set to 1 to have all items
                     newitem.setPlayerHeld(0);
 
               if(tempstring.Length > 1){
@@ -231,69 +232,7 @@ public void SetDefaultItemList()
 
     public void ToggleHangarDisplay(int weaponslots,int engineslots,int hullslots,int bulletslots,int consumableslots)
     {
-    //
-    //
-    //     List<Button> shipslots = new List<Button>();
-    //     shipslots.AddRange(gunbuttons);
-    //     shipslots.AddRange(enginebuttons);
-    //     shipslots.AddRange(hullbuttons);
-    //     shipslots.AddRange(bulletbuttons);
-    //     shipslots.AddRange(consumablebuttons);
-    //     foreach (Button inventorybutton in shipslots)
-    //     {
-    //         inventorybutton.gameObject.active = false;
-    //     }
-    //     Fighter selectedFighter = gameManager.hangarManager.selectedFighterObj.GetComponent<Fighter>();
-    //
-    //     int count2 = 0;
-    //         while (count2 < selectedFighter.weaponslots)
-    //         {
-    //             gunbuttons[count2].gameObject.active = true;
-    //         if (selectedFighter.weaponequipped.Count > count2)
-    //         {
-    //             gunbuttons[count2].transform.GetChild(0).GetComponent<Text>().text = AllItems[selectedFighter.weaponequipped[count2]].name;
-    //         }
-    //         else { gunbuttons[count2].transform.GetChild(0).GetComponent<Text>().text = "weapon slot"; }
-    //             count2++;
-    //         }
-    //         count2 = 0;
-    //     while (count2 < selectedFighter.engineslots)
-    //     {
-    //         enginebuttons[count2].gameObject.active = true;
-    //         if (selectedFighter.enginequipped.Count > count2)
-    //         {
-    //             enginebuttons[count2].transform.GetChild(0).GetComponent<Text>().text = AllItems[selectedFighter.enginequipped[count2]].name;
-    //         }
-    //         else { enginebuttons[count2].transform.GetChild(0).GetComponent<Text>().text = "engine slot"; }
-    //         count2++;
-    //     }
-    //     count2 = 0;
-    //     while (count2 < selectedFighter.hullslots)
-    //     {
-    //         hullbuttons[count2].gameObject.active = true;
-    //         if (selectedFighter.hullequipped.Count > count2)
-    //         {
-    //             hullbuttons[count2].transform.GetChild(0).GetComponent<Text>().text = AllItems[selectedFighter.hullequipped[count2]].name;
-    //         }
-    //         else { hullbuttons[count2].transform.GetChild(0).GetComponent<Text>().text = "hull slot"; }
-    //         count2++;
-    //     }
-    //     count2 = 0;
-    //     while (count2 < selectedFighter.bulleteslots)
-    //     {
-    //         bulletbuttons[count2].gameObject.active = true;
-    //         count2++;
-    //     }
-    //     count2 = 0;
-    //     while (count2 < selectedFighter.consumableslots)
-    //     {
-    //         consumablebuttons[count2].gameObject.active = true;
-    //         count2++;
-    //     }
-    //     count2 = 0;
-    //
-    //
-    //
+
     }
 
 

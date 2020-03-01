@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Menus : MonoBehaviour {
   public GameManager gameManager;
-    public GameObject hubparentmenu,hangarMenu,fleetMenu,mapmenu,ftlmenu;
+    public GameObject hubparentmenu,hangarMenu,fleetMenu,mapmenu,ftlmenu,enemyFleetMenu;
 
     // Use this for initialization
     void Start () {
@@ -40,25 +40,28 @@ public class Menus : MonoBehaviour {
         fleetMenu.active = false;
         mapmenu.active = false;
         ftlmenu.active = false;
-
+        enemyFleetMenu.active = false;
         switch (whichmenu)
         {
-           case "hangar":
-              hangarMenu.active = true;
-               break;
-           case "fleet":
-              fleetMenu.active = true;
-              gameManager.fleetManager.UpdateInfo();
-               break;
-           case "map":
-              mapmenu.active = true;
-               break;
-               case "ftl":
-                  ftlmenu.active = true;
-                   break;
+            case "hangar":
+                hangarMenu.active = true;
+            break;
+            case "fleet":
+                fleetMenu.active = true;
+                gameManager.fleetManager.UpdateInfo();
+            break;
+            case "map":
+                mapmenu.active = true;
+            break;
+            case "ftl":
+                ftlmenu.active = true;
+            break;
+            case "enemyfleet":
+                enemyFleetMenu.active = true;
+            break;
            default:
-           hangarMenu.active = true;
-               break;
+              hangarMenu.active = true;
+             break;
         }
     }
 

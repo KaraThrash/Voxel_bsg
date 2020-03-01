@@ -119,6 +119,23 @@ public class NpcManager : MonoBehaviour {
       }
       return closestTarget;
     }
+    public GameObject GetClosestEnemy(GameObject fromObject)
+    {
+      if( enemies.Count <= 0){return fromObject;}
+      float currentDistance = 9999;
+      GameObject closestEnemy = enemies[0];
+      foreach(GameObject go in enemies)
+      {
+        if(Vector3.Distance(go.transform.position,fromObject.transform.position) < currentDistance)
+        {
+          currentDistance = Vector3.Distance(go.transform.position,fromObject.transform.position);
+          closestEnemy = go;
+
+        }
+
+      }
+      return closestEnemy;
+    }
 
     public GameObject GetPlayerShip()
     {

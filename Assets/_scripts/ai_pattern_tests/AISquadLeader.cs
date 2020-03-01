@@ -61,7 +61,10 @@ public void Fly(GameObject target)
        gunCooldown -= Time.deltaTime;
 
 }
+public void CommandSquad()
+{
 
+}
 public void AttackPlans(GameObject target)
 {
   switch(currentAttackPlan)

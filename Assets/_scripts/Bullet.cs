@@ -4,13 +4,13 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour {
 
-    public float speed;
-    public GameObject explosion;
+    public float speed,rotSpeed;
+    public GameObject explosion,target;
     public bool large;
     public GameObject intialExplosion;
     private Rigidbody rb;
     public float lifeTime;
-    public bool lance; //toggles on instead of being a projectile
+    public bool lance,missile; //toggles on instead of being a projectile
     // Use this for initialization
     void Start()
     {
@@ -20,10 +20,10 @@ public class Bullet : MonoBehaviour {
             transform.parent = GameObject.Find("BulletParent").transform;
             rb.AddForce(transform.forward * (speed), ForceMode.Impulse);
         }
-        
-    
+
+
        // if (large == true) { Instantiate(intialExplosion, transform.position, transform.rotation); }
-        
+
 
     }
 
@@ -32,8 +32,22 @@ public class Bullet : MonoBehaviour {
     {
 
         lifeTime -= Time.deltaTime;
+        if(missile == true)
+        {
+          MissileLogic();
+        }
         if (lifeTime <= 0) { Die(); }
     }
+
+    public void MissileLogic()
+    {
+          if(target != null)
+          {
+            rb.AddForce(transform.forward * speed  *  Time.deltaTime);
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(target.transform.position - transform.position ), rotSpeed * Time.deltaTime);
+           }
+    }
+
     public void OnCollisionEnter(Collision col)
     {
         GetComponent<Collider>().enabled = false;
@@ -42,7 +56,7 @@ public class Bullet : MonoBehaviour {
             Instantiate(explosion, transform.position, transform.rotation);
         }
         lifeTime = 0.5f;
-      
+
 
     }
     public void OnTriggerEnter(Collider col)
