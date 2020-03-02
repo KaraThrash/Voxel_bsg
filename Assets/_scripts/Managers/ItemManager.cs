@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+ using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,7 +12,9 @@ public struct Item {
   public int placeInMasterList;
   public string stats;
   private int playerHeldCount;
-
+    public int armor;
+    public int damage;
+    public int speed;
   public int getPlayerHeld ( )
          {
           return playerHeldCount;
@@ -24,7 +27,7 @@ public struct Item {
 public class ItemManager : MonoBehaviour {
 
     public int money, fuel;
-    public Text fueltext, moneytext,itemstatdisplay,pickUpText;
+    public Text fueltext, moneytext,itemstatdisplay,pickUpText,playerShipStatsDisplay;
     public GameManager gameManager;
     public  List<Item> MasterItemList;
     //public List<GameObject> InInventory; // items available to the player, but not equiped or a recent pick up while on mission
@@ -104,10 +107,11 @@ public void SetDefaultItemList()
      {
          // string text = File.ReadAllText("./Resources/Items/MasterItemFile.txt");
          //Load a text file (Assets/Resources/Text/textFile01.txt)
-                 string text = Resources.Load<TextAsset>("Items/MasterItemFile").ToString();
-         string[] strValues = text.Split(';');
-
-         int count = 0;
+                 string text = Resources.Load<TextAsset>("Items/MasterItemSheetcsv").ToString();
+         string[] strValues = text.Split('\n');
+         print(strValues[0]);
+         print(strValues[1]);
+         int count = 1; //0 is the header
          while(count < strValues.Length)
          {
                 string[] tempstring = strValues[count].Split(',');
@@ -119,7 +123,7 @@ public void SetDefaultItemList()
                         placeInMasterList = MasterItemList.Count
                   };
                   //NOTE: set to 1 to have all items
-                    newitem.setPlayerHeld(0);
+                    newitem.setPlayerHeld(2);
 
               if(tempstring.Length > 1){
 
@@ -129,15 +133,26 @@ public void SetDefaultItemList()
                          else if(tempstring[1].Trim() == "usable"){newitem.type = 3;}
                          else{}
                }
-               if(tempstring.Length > 3){
 
-                       if(tempstring[2].Trim() == "stats"){newitem.stats = tempstring[3];
-                          // print("stats: " + newitem.stats);
+               if(tempstring.Length >= 3){
+                  if(tempstring[2].Trim() != "x"){newitem.armor = Convert.ToInt32(tempstring[2]);}
+                  }
+
+                  if(tempstring.Length >= 4){
+                     if(tempstring[3].Trim() != "x"){newitem.damage = Convert.ToInt32(tempstring[3]);}
+                     }
+
+                     if(tempstring.Length >= 5){
+                        if(tempstring[4].Trim() != "x"){newitem.speed = Convert.ToInt32(tempstring[4]);}
                         }
-                      else if(tempstring[2].Trim() == "effect"){}
+                      //
+                      //  if(tempstring[2].Trim() == "stats"){newitem.stats = tempstring[3];
+                      //     // print("stats: " + newitem.stats);
+                      //   }
+                      // else if(tempstring[2].Trim() == "effect"){}
+                      //
+                      //     else{}
 
-                          else{}
-                }
 
                MasterItemList.Add(newitem);
 
@@ -146,7 +161,7 @@ public void SetDefaultItemList()
 
                  count++;
 
-         }
+               }
 
 
      }
@@ -179,7 +194,7 @@ public void SetDefaultItemList()
             // Item tempitem = MasterItemList[(int)equipedItems[equipSlot].y];
             Item tempitem2 = MasterItemList[(int)equipedItems[equipSlot].y];//new Item{};
             tempitem2.setPlayerHeld(1);
-
+            gameManager.playermanager.playerShipStats.UnEquipItem(tempitem2);
             MasterItemList[(int)equipedItems[equipSlot].y] = tempitem2;
 
           }
@@ -193,11 +208,18 @@ public void SetDefaultItemList()
         Item tempitem = MasterItemList[whichitem];
         tempitem.setPlayerHeld(-1);
         MasterItemList[whichitem] = tempitem;
-          itemstatdisplay.text = tempitem.stats;
+        string statstring = "";
+        if(tempitem.armor != 0){statstring += "armor: " + tempitem.armor.ToString() + "\n";}
+        if(tempitem.damage != 0){statstring += "damage: " + tempitem.damage.ToString() + "\n";}
+        if(tempitem.speed != 0){statstring += "speed: " + tempitem.speed.ToString() + "\n";}
+          itemstatdisplay.text = statstring;
+
+          gameManager.playermanager.playerShipStats.EquipItem(tempitem);
       }
 
       equipButtons.GetChild(equipSlot).GetChild(0).GetComponent<Text>().text = MasterItemList[whichitem].name;
       equipedItems[equipSlot] = new Vector2(equipSlot,whichitem);
+      playerShipStatsDisplay.text = gameManager.playermanager.playerShipStats.GetStatsAsString();
       ResetTypeButtons();
     }
 
@@ -300,7 +322,7 @@ public void SetDefaultItemList()
       GameObject clone = Instantiate(itemDrop,dropLocation,transform.rotation);
 
       if(clone.GetComponent<PickUp>() != null)
-      {clone.GetComponent<PickUp>().SetWhichItem(GetComponent<ItemManager>(),Random.Range(4,MasterItemList.Count));}
+      {clone.GetComponent<PickUp>().SetWhichItem(GetComponent<ItemManager>(),UnityEngine.Random.Range(4,MasterItemList.Count));}
     }
 
 

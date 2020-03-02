@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 public class Player : MonoBehaviour {
+  public PlayerControls playerControls;
+  public PlayerShipStats playerShipStats;
     public int hp;
     public int shiphp;
     public int money,droppedMoney;
