@@ -17,7 +17,7 @@ public class AISquadLeader : MonoBehaviour
   public bool flyaway,flypast;
 
   public GameObject patrolparent,patroltarget;
-  public List<Enemy> squad;
+  public List<AIsquadunit> squad;
   public List<Material> colors;
   private Vector3 straferunspot,tempTargetSpot;
   private Quaternion targetRotation;
@@ -37,8 +37,14 @@ public class AISquadLeader : MonoBehaviour
 
 public void Fly(GameObject target)
 {
-
-
+      if(Input.GetKeyDown(KeyCode.O))
+      {
+        CommandSquad( target);
+      }
+      if(Input.GetKeyDown(KeyCode.I))
+      {
+        CommandSquad2( target);
+      }
       if (target != null)
       {
         myEnemy.inCombat = true;
@@ -61,10 +67,68 @@ public void Fly(GameObject target)
        gunCooldown -= Time.deltaTime;
 
 }
-public void CommandSquad()
+public void CommandSquad(GameObject target)
 {
+  Vector3 temppos = (transform.forward * -15);
+  int count = 4;
+  foreach(AIsquadunit ai in squad)
+  {
+    ai.GetOrder(temppos,target.transform);
+    if(count % 2 == 0)
+    {
+      if(count % 3 == 0)
+      {temppos = ((transform.right * -count * 2)) - (transform.forward * 5 * count);}
+      else{temppos = ( (transform.right * count * 2)) - (transform.forward * 5 * count);}
+
+
+    }
+    else
+    {
+      if(count % 3 == 0)
+      {temppos = ( (transform.up * -count * 2)) - (transform.forward * 5 * count);}
+      else{temppos = ( (transform.up * count * 2)) - (transform.forward * 5 * count);}
+
+
+    }
+
+    count++;
+  }
+}
+
+public void AddSquadMember(GameObject newsquadmember)
+{
+  if(newsquadmember.GetComponent<AIsquadunit>() != null)
+  {squad.Add(newsquadmember.GetComponent<AIsquadunit>());}
+  newsquadmember.GetComponent<Enemy>().Conscript(this.gameObject);
+  newsquadmember.GetComponent<AIsquadunit>().GetOrder((transform.forward * 15) * -(squad.Count + 1) ,this.transform);
+}
+
+public void CommandSquad2(GameObject target)
+{
+  Vector3 temppos = (transform.forward * -15);
+  int count = 0;
+  if(count < squad.Count)
+  {
+    squad[count].GetOrder(temppos,target.transform);
+     temppos = (transform.up * 15);
+    count++;
+  }
+  if(count < squad.Count)
+  {
+    squad[count].GetOrder(temppos,target.transform);
+      temppos = (transform.right * -15);
+    count++;
+  }
+  if(count < squad.Count)
+  {
+    squad[count].GetOrder(temppos,target.transform);
+  temppos = (transform.right * -15);
+    count++;
+  }
+
 
 }
+
 public void AttackPlans(GameObject target)
 {
   switch(currentAttackPlan)
@@ -92,7 +156,8 @@ public void AttackPlans(GameObject target)
       GetBehind(target);
     break;
   }
-
+      //TODO: relative commands based on current attack pattern
+    // CommandSquad(target);
 }
 
 public void Attack(GameObject target)
@@ -103,9 +168,12 @@ public void Attack(GameObject target)
 
               AttackPlans(target);
 
-            if (gunCooldown <= -8.0f)
+            if (gunCooldown <= -1.0f)
             {
                 CalculateNextMove(target);
+                //check to find conscriptable enemies
+                myEnemy.FindSquadMembers();
+                gunCooldown = 0;
              }
         }
 

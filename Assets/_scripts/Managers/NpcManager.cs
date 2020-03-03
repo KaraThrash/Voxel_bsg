@@ -137,6 +137,26 @@ public class NpcManager : MonoBehaviour {
       return closestEnemy;
     }
 
+    public GameObject GetClosestUnConscriptedEnemy(GameObject fromObject)
+    {
+      if( enemies.Count <= 0){return fromObject;}
+      float currentDistance = 9999;
+      GameObject closestEnemy = fromObject;
+      foreach(GameObject go in enemies)
+      {
+        if(go.GetComponent<Enemy>().conscriptable == true && go.GetComponent<Enemy>().squadLeader == null){
+            if(Vector3.Distance(go.transform.position,fromObject.transform.position) < currentDistance)
+            {
+              currentDistance = Vector3.Distance(go.transform.position,fromObject.transform.position);
+              closestEnemy = go;
+
+            }
+          }
+
+      }
+      return closestEnemy;
+    }
+
     public GameObject GetPlayerShip()
     {
       return gameManager.playermanager.myship;

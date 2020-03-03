@@ -17,7 +17,7 @@ public class Enemy : MonoBehaviour {
     public GameObject leadDistanceTarget;
     public GameObject explosion;
     public GameObject dradisModel;
-    public GameObject myWing;
+    public GameObject squadLeader,myWing;
 
 
 
@@ -26,7 +26,7 @@ public class Enemy : MonoBehaviour {
     public float speed = 20;
     public float rotForce = 6;
     public float leashDistance;
-    public bool destroyed,canShoot,returnHome;
+    public bool conscriptable,destroyed,canShoot,returnHome;
     public bool aitest,stationary,alert,inCombat;
     private float avoidCollisionClock;
     private Vector3 startPos,openSpotToAvoidCollision;
@@ -64,6 +64,20 @@ public class Enemy : MonoBehaviour {
       //TODO: return to rest location // leash
       if(alert == false){returnHome = true;}else{returnHome = false;}
     }
+    public void Conscript(GameObject newsquadLeader)
+    {
+      if(conscriptable == true){
+
+        squadLeader = newsquadLeader;
+        if(GetComponent<AIsquadunit>() != null)
+        {
+          GetComponent<AIsquadunit>().Conscript(squadLeader);
+          //activate conscripted units
+          alert = true;
+        }
+      }
+
+    }
     // Update is called once per frame
     void Update()
     {
@@ -74,7 +88,6 @@ public class Enemy : MonoBehaviour {
       {
 
         AlertActions();
-
 
 
       }
@@ -109,16 +122,30 @@ public class Enemy : MonoBehaviour {
     public void AlertActions()
     {
       if(target != null){inCombat = true;}
-      if(GetComponent<AIattackpattern>() != null)
+      //if conscripted follow leader, otherwise act as normal
+      if(squadLeader != null)
       {
-        GetComponent<AIattackpattern>().Fly(target);
-      }else
-      {
-        if(GetComponent<AIEvasion>() != null)
-        {
-          GetComponent<AIEvasion>().Fly(target);
-        }
+          if(GetComponent<AIsquadunit>() != null)
+          {
+            GetComponent<AIsquadunit>().Fly(target);
+          }
       }
+        else
+        {
+          if(GetComponent<AIattackpattern>() != null)
+          {
+            GetComponent<AIattackpattern>().Fly(target);
+          }else if(GetComponent<AIEvasion>() != null)
+          {
+            GetComponent<AIEvasion>().Fly(target);
+          }
+          else if(GetComponent<AISquadLeader>() != null)
+          {
+            GetComponent<AISquadLeader>().Fly(target);
+          }
+          else{}
+        }
+
     }
     public void ReturnHome()
     {
@@ -167,6 +194,20 @@ public class Enemy : MonoBehaviour {
         target = npcManager.GetPlayerShip();
       }
 
+
+    }
+
+    public void FindSquadMembers()
+    {
+      //check to find npcs to add to squad
+      if(GetComponent<AISquadLeader>() != null)
+      {
+        GameObject newsquadmember = npcManager.GetClosestUnConscriptedEnemy(this.gameObject);
+        if(newsquadmember != this.gameObject)
+        {
+          GetComponent<AISquadLeader>().AddSquadMember(newsquadmember);
+        }
+      }
     }
     public void OnCollisionEnter(Collision col)
     {
