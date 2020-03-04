@@ -43,7 +43,7 @@ public class FleetManager : MonoBehaviour
             }
             else
             {
-              Button newbutton = Instantiate(fleetShipButton,new Vector3(fleetShipButton.transform.position.x,fleetShipButton.transform.position.y - ((count + 1) * fleetShipButton.GetComponent<RectTransform>().rect.height),0),fleetShipButton.transform.rotation);
+              Button newbutton = Instantiate(fleetShipButton,new Vector3(fleetShipButton.transform.position.x,fleetShipButton.transform.position.y - ((count + 1) * (fleetShipButton.GetComponent<RectTransform>().rect.height * 2)),0),fleetShipButton.transform.rotation);
               newbutton.transform.GetChild(0).GetComponent<Text>().text = fleetShips.GetChild(count).GetComponent<Fleetship>().name;
               int hptextlength =  fleetShips.GetChild(count).GetComponent<Fleetship>().totalsubsystems;
               string hptext = "";

@@ -58,6 +58,7 @@ public class Menus : MonoBehaviour {
             break;
             case "enemyfleet":
                 enemyFleetMenu.active = true;
+                gameManager.enemyFleetManager.UpdateInfo();
             break;
            default:
               hangarMenu.active = true;

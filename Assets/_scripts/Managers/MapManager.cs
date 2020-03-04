@@ -22,7 +22,7 @@ public class MapManager : MonoBehaviour {
       if(activeMapArea != null)
       {
         //check the location of the player ship against the map segment to start enabling adjacent npcs
-        GameObject playerShip = gameManager.playermanager.GetPlayer();
+        GameObject playerShip = gameManager.playerManager.GetPlayer();
         if(Vector3.Distance(playerShip.transform.position,activeMapArea.transform.position) > rangeToChangeMapSegement)
         {
           //enable next spot

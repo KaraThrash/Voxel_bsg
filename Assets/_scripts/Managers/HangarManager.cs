@@ -11,25 +11,25 @@ public class HangarManager : MonoBehaviour {
     public Text selectedFighterStats;
     // Use this for initialization
     void Start () {
-		
+
 	}
-	
+
 	// Update is called once per frame
 	void Update () {
-        if (Input.GetKeyUp(KeyCode.T)) { addFighter(gameManager.playermanager.myship); }
+        if (Input.GetKeyUp(KeyCode.T)) { addFighter(gameManager.playerManager.myship); }
     }
     public void selectFighter(int whichfighter)
     {
-        if (gameManager.playermanager.myship != null)
-        { addFighter(gameManager.playermanager.myship); }
+        if (gameManager.playerManager.myship != null)
+        { addFighter(gameManager.playerManager.myship); }
 
-        gameManager.playermanager.SelectFighter(fighters[whichfighter]);
+        gameManager.playerManager.SelectFighter(fighters[whichfighter]);
         selectedFighter.active = true; //image displaying the selected fighter
         selectedFighter.transform.GetChild(0).GetComponent<Text>().text = hangarbuttons[whichfighter].transform.GetChild(1).GetComponent<Text>().text;
         selectedFighterObj = fighters[whichfighter];
         selectedFighter.GetComponent<Image>().sprite = hangarbuttons[whichfighter].GetComponent<Image>().sprite;
         //selectedFighter.GetComponent<Image>().color = hangarbuttons[whichfighter].GetComponent<Image>().color;
-       // selectedFighterStats.text = gameManager.playermanager.myship.name;
+       // selectedFighterStats.text = gameManager.playerManager.myship.name;
         fighters.Remove(fighters[whichfighter]);
         SetHangarButtons();
         gameManager.itemManager.ToggleHangarDisplay(1,2,3,3,3);
@@ -73,8 +73,8 @@ public class HangarManager : MonoBehaviour {
         GameObject fighterToRepair;
         if (whichfighter == -1)
         {
-            fighterToRepair = gameManager.playermanager.myship;
-           
+            fighterToRepair = gameManager.playerManager.myship;
+
         }
         else
         {
@@ -92,9 +92,9 @@ public class HangarManager : MonoBehaviour {
                 { selectedFighter.transform.GetChild(0).GetComponent<Text>().text = fighterToRepair.GetComponent<Fighter>().currenthp.ToString() + " / " + fighterToRepair.GetComponent<Fighter>().totalhp.ToString(); }
                 else
                 { hangarbuttons[whichfighter].transform.GetChild(1).GetComponent<Text>().text = fighterToRepair.GetComponent<Fighter>().currenthp.ToString() + " / " + fighterToRepair.GetComponent<Fighter>().totalhp.ToString(); }
-                
+
             }
         }
-        
+
     }
 }

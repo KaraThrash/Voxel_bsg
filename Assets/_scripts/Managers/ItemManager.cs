@@ -194,7 +194,7 @@ public void SetDefaultItemList()
             // Item tempitem = MasterItemList[(int)equipedItems[equipSlot].y];
             Item tempitem2 = MasterItemList[(int)equipedItems[equipSlot].y];//new Item{};
             tempitem2.setPlayerHeld(1);
-            gameManager.playermanager.playerShipStats.UnEquipItem(tempitem2);
+            gameManager.playerManager.playerShipStats.UnEquipItem(tempitem2);
             MasterItemList[(int)equipedItems[equipSlot].y] = tempitem2;
 
           }
@@ -214,12 +214,12 @@ public void SetDefaultItemList()
         if(tempitem.speed != 0){statstring += "speed: " + tempitem.speed.ToString() + "\n";}
           itemstatdisplay.text = statstring;
 
-          gameManager.playermanager.playerShipStats.EquipItem(tempitem);
+          gameManager.playerManager.playerShipStats.EquipItem(tempitem);
       }
 
       equipButtons.GetChild(equipSlot).GetChild(0).GetComponent<Text>().text = MasterItemList[whichitem].name;
       equipedItems[equipSlot] = new Vector2(equipSlot,whichitem);
-      playerShipStatsDisplay.text = gameManager.playermanager.playerShipStats.GetStatsAsString();
+      playerShipStatsDisplay.text = gameManager.playerManager.playerShipStats.GetStatsAsString();
       ResetTypeButtons();
     }
 

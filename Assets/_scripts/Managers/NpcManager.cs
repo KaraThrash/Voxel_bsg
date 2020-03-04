@@ -89,7 +89,7 @@ public class NpcManager : MonoBehaviour {
       //remove this enemy from the list
         enemies.Remove(npckilled.gameObject);
         //generate points for the player
-        gameManager.playermanager.SpendMoney(-npckilled.value) ;
+        gameManager.playerManager.SpendMoney(-npckilled.value) ;
 
         //save the spot where the enemy died and spawn an item drop at that Location
         //NOTE: destroy the enemy first so it doesnt collide and make the drop act erratic
@@ -103,7 +103,7 @@ public class NpcManager : MonoBehaviour {
     public GameObject GetClosestTarget(Vector3 fromPos)
     {
         //NOTE: for prototype only target the player
-      return gameManager.playermanager.myship;
+      return gameManager.playerManager.myship;
 
       if(fleetNpcs.Count <= 0){return null;}
       GameObject closestTarget = fleetNpcs[0];
@@ -159,12 +159,12 @@ public class NpcManager : MonoBehaviour {
 
     public GameObject GetPlayerShip()
     {
-      return gameManager.playermanager.myship;
+      return gameManager.playerManager.myship;
     }
 
 
     public float GetDistanceToPlayer(Vector3 fromPos)
     {
-      return Vector3.Distance(fromPos,gameManager.playermanager.GetPlayer().transform.position);
+      return Vector3.Distance(fromPos,gameManager.playerManager.GetPlayer().transform.position);
     }
 }

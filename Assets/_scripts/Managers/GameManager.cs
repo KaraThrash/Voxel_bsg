@@ -6,7 +6,8 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour {
 
 public FleetManager fleetManager;
-  public Player playermanager;
+  public Player playerManager;
+  public EnemyFleet enemyFleetManager;
   public Menus menuManager;
   public MapManager mapManager;
   public HangarManager hangarManager;
@@ -37,7 +38,7 @@ public FleetManager fleetManager;
     public void PlayerShipDestroyed()
     {
       imageFade.StartFade();
-      playermanager.RespawnPlayer();
+      playerManager.RespawnPlayer();
 
       //NOTE: nothing should respawn on player death
       //since the player can immediately dock if they want to respawn stuff so they can still easily farm
@@ -67,7 +68,7 @@ public FleetManager fleetManager;
 
       cam.SetInMenu(  inMenu);
       //set the player controller so that when in menu the ship isnt flying around
-     playermanager.SetInMenu(inMenu);
+     playerManager.SetInMenu(inMenu);
      //TODO: think about pausing or not
     }
 
@@ -76,20 +77,20 @@ public FleetManager fleetManager;
     {
       //for transitions block the player view and slowly return it to make transportation from locations and reseting the map less jarring
       imageFade.StartFade();
-      playermanager.SetPlayerSpawn(dockSpawnSpot.gameObject);
-      playermanager.RespawnPlayer();
+      playerManager.SetPlayerSpawn(dockSpawnSpot.gameObject);
+      playerManager.RespawnPlayer();
       StartNewMap();
 
 
     }
     public void TravelFromHub(int dest)
     {
-        if (dest != -1 && playermanager.myship != null)
+        if (dest != -1 && playerManager.myship != null)
         {
             mapManager.MoveToNewArea(dest);
             mapManager.GetCurrentMap();
-            playermanager.SetPlayerSpawn(  mapManager.GetCurrentMap().playerStartSpot.gameObject);
-            playermanager.startnewlevel();
+            playerManager.SetPlayerSpawn(  mapManager.GetCurrentMap().playerStartSpot.gameObject);
+            playerManager.startnewlevel();
             StartNewMap();
             ActivateMenu();
         }

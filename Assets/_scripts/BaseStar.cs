@@ -4,21 +4,19 @@ using UnityEngine;
 
 public class BaseStar : MonoBehaviour {
     public Vector3 jumpinLocation;
-    public List<GameObject> hangars;
     public bool jumpin;
     public Vector3 lastsafespot; //while jumping in to get that warp effect
     public float jumpinclock;
     public GameObject galactica;
-
+    public int destroyedHangars,destroyedTurrets,destroyedEngines;
+    public Transform hangars,turrets,engines;
     //turret type, turret count, fighter rtpe, fighter count, total dmg
     //slowly repair parts, when fighters/turrets are destroyed they have to be rebuilt over time
 
     // Use this for initialization
     void Start () {
-        galactica = GameObject.Find("Battlestar");
-        transform.rotation = galactica.transform.rotation;
+
        // transform.position = transform.position * 5;
-        jumpin = true;
         lastsafespot  = transform.position ;
 
 
@@ -32,7 +30,50 @@ public class BaseStar : MonoBehaviour {
         }
 
 
-	}
+  	}
+    public int GetEngineStrength()
+    {
+      int str = 0;
+      foreach(Transform go in engines)
+      {
+        if(go.GetComponent<ShipPart>().destroyed == false)
+        {str++;}
+      }
+      return str;
+    }
+    public int GetHangarStrength()
+    {
+      int str = 0;
+      foreach(Transform go in hangars)
+      {
+        if(go.GetComponent<ShipPart>().destroyed == false)
+        {str++;}
+      }
+      return str;
+    }
+    public int GetTurretStrength()
+    {
+      int str = 0;
+      foreach(Transform go in turrets)
+      {
+        if(go.GetComponent<ShipPart>().destroyed == false)
+        {str++;}
+      }
+      return str;
+    }
+
+    public void SystemDestroyed()
+    {}
+
+    public void SystemDestroyed(string whichSystem)
+    {
+      if(whichSystem == "hangar"){}
+      else if(whichSystem == "turret"){}
+      else if(whichSystem == "engine"){}
+      else{}
+    }
+
+
 
     public void JumpIn()
     {
@@ -61,13 +102,13 @@ public class BaseStar : MonoBehaviour {
         if (jumpin == true)
         {
 
-            foreach (GameObject el in hangars)
-            {
-                if (el != null)
-                {
-                    el.GetComponent<Spawn>().spawnclock = spawnspeed; el.GetComponent<Spawn>().count = spawnnumber; el.GetComponent<Spawn>().spawnspeed = spawnspeed;
-                }
-            }
+            // foreach (GameObject el in hangars)
+            // {
+            //     if (el != null)
+            //     {
+            //         el.GetComponent<Spawn>().spawnclock = spawnspeed; el.GetComponent<Spawn>().count = spawnnumber; el.GetComponent<Spawn>().spawnspeed = spawnspeed;
+            //     }
+            // }
             jumpin = false;
         }
 
@@ -87,9 +128,6 @@ public class BaseStar : MonoBehaviour {
 
     }
 
-    //public void SystemDestroyed(GameObject whichsystem)
-    //{
-    //    hangars.Remove(whichsystem);
-    //}
+
 
 }
