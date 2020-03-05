@@ -9,6 +9,7 @@ public class FleetManager : MonoBehaviour
   public Transform fleetShips,fleetShipButtonParent;
   public Button fleetShipButton; //button for each specific ship to show its stats/info
   public Text shipStatText,fleetStatText;
+  public int comabtStrength,engineStrength,resourceStrength;
     // Start is called before the first frame update
     void Start()
     {
@@ -63,7 +64,26 @@ public class FleetManager : MonoBehaviour
 
 
     }
+    public GameObject GetClosestFleetShip(Vector3 frompos)
+    {
 
+      //if no fleet ships remain return the battlestar, which is always present
+      if(fleetShips.childCount <= 0){return galactica.gameObject;}
+
+      float dist = 9999;
+      GameObject closest = galactica.gameObject;
+
+      foreach(Transform go in fleetShips)
+      {
+        if(Vector3.Distance(frompos,go.transform.position) < dist)
+        {
+          dist = Vector3.Distance(frompos,go.transform.position);
+          closest = go.gameObject;
+        }
+
+      }
+      return closest;
+    }
     public void DisplayShipStats(int whichship)
     {
         if(fleetShips.childCount > whichship)

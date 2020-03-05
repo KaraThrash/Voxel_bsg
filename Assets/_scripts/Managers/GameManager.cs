@@ -13,6 +13,7 @@ public FleetManager fleetManager;
   public HangarManager hangarManager;
   public NpcManager npcManager;
   public ItemManager itemManager;
+  public WorldTime timeManager;
   public ThirdPersonCamera cam;
   public FtlImageFade imageFade;
 
@@ -67,6 +68,7 @@ public FleetManager fleetManager;
      inMenu = menuManager.OpenMenu();
 
       cam.SetInMenu(  inMenu);
+      timeManager.SetInMenu(inMenu);
       //set the player controller so that when in menu the ship isnt flying around
      playerManager.SetInMenu(inMenu);
      //TODO: think about pausing or not

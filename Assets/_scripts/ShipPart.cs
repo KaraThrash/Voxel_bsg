@@ -7,7 +7,7 @@ public class ShipPart : MonoBehaviour {
     //TODO: assign subsystems to be disabled when this is damaged/destroyed
     public int hp;
     public string partType;//turret,engine,hangar,etc
-    public bool destroyed;
+    public bool destroyed,cannotBeHit;
 	// Use this for initialization
 	void Start () {
 
@@ -38,10 +38,18 @@ public class ShipPart : MonoBehaviour {
       {
         //set the ship part to indicate that it is destroyed
           if(healthyIndicator != null){   healthyIndicator.active = false;}
-        if(damagedIndicator != null){  destroyedIndicator.active = true;}
+        if(destroyedIndicator != null){  destroyedIndicator.active = true;}
 
         //if this is on the basestar update the enemy fleet stats
         myship.GetComponent<BaseStar>().SystemDestroyed(partType);
+      }
+      else if(myship.GetComponent<ShipPart>() != null)
+      {
+        //set the ship part to indicate that it is destroyed
+          if(healthyIndicator != null){   healthyIndicator.active = false;}
+        if(destroyedIndicator != null){  destroyedIndicator.active = true;}
+        myship.GetComponent<ShipPart>().SubSystemDestroyed();
+
       }
       else
       {
@@ -50,9 +58,15 @@ public class ShipPart : MonoBehaviour {
       }
 
     }
+    public void SubSystemDestroyed()
+    {
+      TakeDamage(1);
+    }
+
     public void OnTriggerEnter(Collider col)
     {
-        if (col.gameObject.tag == "Bullet")
+
+        if (cannotBeHit == false && col.gameObject.tag == "Bullet")
         { TakeDamage(1); }
 
 

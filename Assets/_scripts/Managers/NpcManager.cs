@@ -119,6 +119,13 @@ public class NpcManager : MonoBehaviour {
       }
       return closestTarget;
     }
+
+    public GameObject GetClosestFleetShip(Vector3 fromPos)
+    {
+
+      return gameManager.fleetManager.GetClosestFleetShip(fromPos);
+    }
+
     public GameObject GetClosestEnemy(GameObject fromObject)
     {
       if( enemies.Count <= 0){return fromObject;}

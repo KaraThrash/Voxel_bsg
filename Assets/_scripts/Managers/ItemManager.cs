@@ -35,8 +35,8 @@ public class ItemManager : MonoBehaviour {
     public List<Vector2> pickedUpItems; //picked up during a mission
     public List<Vector2> playerInventory;
 
-    public Transform inventoryButtons,equipButtons,bulletbuttons,consumablebuttons;
-      public GameObject itemDrop;
+    public Transform inventoryButtons,inventoryStatText,equipButtons,bulletbuttons,consumablebuttons;
+      public GameObject itemDrop,nextButton;
     public int typedisplayed,placeinlist,equipSlot;//placeinlist for scrolling through items, show: 0-9, 10-19 etc //TODO: sort options
 
 
@@ -179,7 +179,10 @@ public void SetDefaultItemList()
 	void Update () {
 
 	}
-
+public void DestroyEquipOnPlayerDeath()
+{
+  equipedItems.Clear();
+}
 
     //
     public void ToggleEquip(int whichitem)
@@ -261,11 +264,19 @@ public void SetDefaultItemList()
 
     public void ResetTypeButtons()
     {
+      nextButton.active = false;
       foreach (Transform inventorybutton in inventoryButtons)
       {
         //reset text of button then disable it
         inventorybutton.GetChild(0).gameObject.GetComponent<Text>().text = "";
           inventorybutton.gameObject.active = false;
+
+      }
+      foreach (Transform statdisplay in inventoryStatText)
+      {
+        //reset text of button then disable it
+        statdisplay.GetComponent<Text>().text = "";
+          // statdisplay.gameObject.active = false;
 
       }
     }
@@ -279,12 +290,12 @@ public void SetDefaultItemList()
         ResetTypeButtons();
         int count = 0;
         //if the entire list has been gone through or the item type has changed, reset the place in list back to the start
-        if(placeinlist >= MasterItemList.Count || whattype != typedisplayed)
+        if(placeinlist >= MasterItemList.Count || (whattype != typedisplayed && whattype != -1)) //-1 for scrolling
         {
           placeinlist = 0;
         }
+        if(whattype != -1){typedisplayed = whattype;}
 
-        typedisplayed = whattype;
 
               if(MasterItemList.Count != 0) {
                   //go through all available items of the correct type, and refernce the master list for it's info
@@ -295,7 +306,8 @@ public void SetDefaultItemList()
                     {
                       inventoryButtons.GetChild(count).gameObject.active = true;
                       inventoryButtons.GetChild(count).GetChild(0).GetComponent<Text>().text = MasterItemList[placeinlist].name + " : " + MasterItemList[placeinlist].getPlayerHeld();
-
+                      Item tempitem = MasterItemList[placeinlist];
+                      inventoryStatText.GetChild(count).GetComponent<Text>().text = "Armor: " + tempitem.armor + " Damage: " + tempitem.damage + " Speed: " + tempitem.speed;
                       //so the button is not set to the variable, since we do not want the value to update
                       int tempint = placeinlist;
                       inventoryButtons.GetChild(count).GetComponent<Button>().onClick.RemoveAllListeners();
@@ -305,6 +317,7 @@ public void SetDefaultItemList()
                           if(count >= inventoryButtons.childCount)
                           {
                             placeinlist++;
+                            nextButton.active = true;
                             return;
                           }
                     }

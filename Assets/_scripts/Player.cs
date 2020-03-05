@@ -32,12 +32,16 @@ public class Player : MonoBehaviour {
     if(inMenu == false)
     {
       ControlShip();
+    }else
+    {
+        myship.GetComponent<Rigidbody>().isKinematic = true;
     }
 
 	}
 
   public void ChangeShips(int changeto)
   {
+    //TODO: this need a complete overhaul
     if(changeto == 0)
     {
       raptorShip.active = false;
@@ -61,6 +65,7 @@ public class Player : MonoBehaviour {
   }
   public void SetInMenu(bool menuStatus)
   {
+      myship.GetComponent<Rigidbody>().isKinematic = false;
     inMenu = menuStatus;
   }
   public void ListenForInput()
@@ -108,18 +113,18 @@ public class Player : MonoBehaviour {
         return false;
     }
 
-    public void SelectFighter(GameObject fighterselected)
-    {
-        myship = fighterselected;
-        myship.transform.parent = this.transform;
-            fighterselected.transform.position = playerSpawn.transform.position;
-
-        fighterselected.transform.rotation = playerSpawn.transform.rotation;
-        myship.GetComponent<ViperControls>().camerasphere = mycamera;
-        myship.GetComponent<ViperControls>().myplayer = this.gameObject;
-        mycamera.GetComponent<ThirdPersonCamera>().target = myship;
-
-    }
+    // public void SelectFighter(GameObject fighterselected)
+    // {
+    //     myship = fighterselected;
+    //     myship.transform.parent = this.transform;
+    //         fighterselected.transform.position = playerSpawn.transform.position;
+    //
+    //     fighterselected.transform.rotation = playerSpawn.transform.rotation;
+    //     myship.GetComponent<ViperControls>().camerasphere = mycamera;
+    //     myship.GetComponent<ViperControls>().myplayer = this.gameObject;
+    //     mycamera.GetComponent<ThirdPersonCamera>().target = myship;
+    //
+    // }
 
 
     public void vehicletakingdamage(int dmgtaken)
@@ -134,6 +139,8 @@ public class Player : MonoBehaviour {
     }
     public void ShipDestroyed()
     {
+      //track total lost money?
+      //TODO: lost money buffs missing npcs
           droppedMoney = money;
           money = 0;
           Vector3 dieSpot =   myship.transform.position;
