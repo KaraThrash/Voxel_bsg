@@ -19,7 +19,7 @@ public FleetManager fleetManager;
 
 
   public GameObject dockMenu;
-  public bool inMenu;
+  public bool inMenu,inBattle;
 
 
     // Use this for initialization
@@ -46,7 +46,8 @@ public FleetManager fleetManager;
       // StartNewMap();
     }
 
-
+    public bool GetInBattle()
+    {return inBattle;}
 
 
     public void StartNewMap()

@@ -56,7 +56,7 @@ public void Fly(GameObject target)
         if (gunCooldown <= 0)
         {
             gunCooldown = gunCost * 10;
-              myEnemy.FindTarget();
+              myEnemy.CheckToNoticePlayer();
          }
 
 
@@ -336,7 +336,7 @@ public void CalculateNextMove(GameObject targetship)
 
           // rb.AddForce(transform.forward * speed * Time.deltaTime, ForceMode.Impulse);
           transform.position = Vector3.MoveTowards(transform.position, patroltarget.transform.position, walkspeed  * Time.deltaTime);
-        }else{myEnemy.FindTarget(); }
+        }else{myEnemy.CheckToNoticePlayer(); }
 
 
 

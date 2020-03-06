@@ -65,7 +65,7 @@ public class AIsquadunit : MonoBehaviour
         // if (gunCooldown <= 0)
         // {
         //     gunCooldown = gunCost * 10;
-        //       myEnemy.FindTarget();
+        //       myEnemy.CheckToNoticePlayer();
         //  }
 
 
@@ -232,7 +232,7 @@ public class AIsquadunit : MonoBehaviour
       }
       else{
 
-        myEnemy.FindTarget();
+        myEnemy.CheckToNoticePlayer();
 
        }
 

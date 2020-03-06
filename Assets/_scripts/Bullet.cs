@@ -26,7 +26,20 @@ public class Bullet : MonoBehaviour {
 
 
     }
+    void Awake()
+    {
+        rb = GetComponent<Rigidbody>();
+        if (lance == false)
+        {
+            transform.parent = GameObject.Find("BulletParent").transform;
+            rb.AddForce(transform.forward * (speed), ForceMode.Impulse);
+        }
 
+
+       // if (large == true) { Instantiate(intialExplosion, transform.position, transform.rotation); }
+
+
+    }
     // Update is called once per frame
     void Update()
     {
@@ -55,7 +68,7 @@ public class Bullet : MonoBehaviour {
         {
             Instantiate(explosion, transform.position, transform.rotation);
         }
-        lifeTime = 0.5f;
+        lifeTime = 0.1f;
 
 
     }

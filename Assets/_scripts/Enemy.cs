@@ -26,7 +26,7 @@ public class Enemy : MonoBehaviour {
     public float speed = 20;
     public float rotForce = 6;
     public float leashDistance;
-    public bool conscriptable,destroyed,canShoot,returnHome;
+    public bool conscriptable,destroyed,canShoot,returnHome,inBattle;
     public bool aitest,stationary,alert,inCombat;
     private float avoidCollisionClock;
     private Vector3 startPos,openSpotToAvoidCollision;
@@ -81,9 +81,23 @@ public class Enemy : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
+      if(inBattle == false)
+      {
+         FlyOnMap();
 
-      //alert enemies are enemies that are in the general area of play.
-      //enemies in area x dont need to active when player is in Y
+       }
+        else
+        {
+          FlyInBattle();
+        }
+
+
+    }
+
+    public void FlyInBattle()
+    {
+
+    //during battle enemies will not leash to idle
       if(alert == true)
       {
 
@@ -94,31 +108,62 @@ public class Enemy : MonoBehaviour {
       else{
 
 
-        //TODO: have enemies leash back to their start Position
-        if(returnHome == true )
-        {  if(inCombat == false)
-          {ReturnHome();}
-          else
-        {
+
           AlertActions();
-          //if targeting something dont return until leashing
-          if(target != null && Vector3.Distance(target.transform.position,transform.position) > leashDistance)
+
+          if(target == null )
           {
-            target = null; inCombat = false; alert = false;
+            FindTarget();
           }
-          else
-          {
-            //the player is out of this enemies home area and the enemy is not targeting anything
-            inCombat = false;
-          }
-        }
+
 
       }
 
 
 
     }
+
+
+  public void FlyOnMap()
+  {
+
+    //alert enemies are enemies that are in the general area of play.
+    //enemies in area x dont need to active when player is in Y
+    if(alert == true)
+    {
+
+      AlertActions();
+
+
+    }
+    else{
+
+
+      //TODO: have enemies leash back to their start Position
+      if(returnHome == true )
+      {  if(inCombat == false)
+        {ReturnHome();}
+        else
+      {
+        AlertActions();
+        //if targeting something dont return until leashing
+        if(target != null && Vector3.Distance(target.transform.position,transform.position) > leashDistance)
+        {
+          target = null; inCombat = false; alert = false;
+        }
+        else
+        {
+          //the player is out of this enemies home area and the enemy is not targeting anything
+          inCombat = false;
+        }
+      }
+
+    }
+
+
+
   }
+}
     public void AlertActions()
     {
       if(target != null){inCombat = true;}
@@ -183,6 +228,18 @@ public class Enemy : MonoBehaviour {
     }
     public void FindTarget()
     {
+
+        target = npcManager.GetClosestTarget(transform.position);
+
+        if(target.GetComponent<Fleetship>() != null)
+        {
+        target =  target.GetComponent<Fleetship>().GetClosestShipPart(transform.position).gameObject;
+        }
+
+
+    }
+    public void CheckToNoticePlayer()
+    {
       //compare distance from in front to behind the enemy to determine if the player is in a forward cone of vision
       //or if the player is extremely close
       if((npcManager.GetDistanceToPlayer(transform.position + (transform.forward * 15)) < npcManager.GetDistanceToPlayer(transform.position - (transform.forward * 2))
@@ -196,7 +253,6 @@ public class Enemy : MonoBehaviour {
 
 
     }
-
     public void FindSquadMembers()
     {
       //check to find npcs to add to squad

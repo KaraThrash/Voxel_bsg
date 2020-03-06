@@ -50,7 +50,12 @@ public class AIattackpattern : MonoBehaviour {
           if (gunCooldown <= 0)
           {
               gunCooldown = gunCost * 10;
-                myEnemy.FindTarget();
+
+              if(myEnemy.inBattle == true)
+              {  myEnemy.FindTarget();}
+                else{  myEnemy.CheckToNoticePlayer();}
+
+
            }
 
 
@@ -282,7 +287,9 @@ public class AIattackpattern : MonoBehaviour {
         }
         else{
 
-          myEnemy.FindTarget();
+          if(myEnemy.inBattle == true)
+          {  myEnemy.FindTarget();}
+            else{  myEnemy.CheckToNoticePlayer();}
 
          }
 

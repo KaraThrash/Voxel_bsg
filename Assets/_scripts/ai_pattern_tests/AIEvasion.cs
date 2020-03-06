@@ -46,7 +46,7 @@ public void Fly(GameObject target)
         if (gunCooldown <= 0)
         {
             gunCooldown = gunCost * 10;
-              myEnemy.FindTarget();
+              myEnemy.CheckToNoticePlayer();
          }
 
 

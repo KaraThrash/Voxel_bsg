@@ -54,7 +54,9 @@ public class ShipPart : MonoBehaviour {
       else
       {
         myship.SendMessage("SystemDestroyed");
-        Destroy(this.gameObject);
+        if(healthyIndicator != null){   healthyIndicator.active = false;}
+      if(destroyedIndicator != null){  destroyedIndicator.active = true;}else{this.gameObject.active = false;}
+        // Destroy(this.gameObject);
       }
 
     }

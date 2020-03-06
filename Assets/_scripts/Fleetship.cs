@@ -5,6 +5,7 @@ using UnityEngine;
 public class Fleetship : MonoBehaviour {
     public GameObject gameManager;
     public FleetManager fleetManager;
+    public Transform shipParts;
     public int pop;
     public int food;
     public int fuel;
@@ -36,6 +37,33 @@ public class Fleetship : MonoBehaviour {
 
         }
 	}
+
+  public Transform GetShipParts()
+  {
+    if(shipParts != null){  return shipParts;}
+    return this.transform;
+  }
+
+  public Transform GetClosestShipPart(Vector3 fromPos)
+  {
+      Transform closestTarget = this.transform;
+    if(shipParts != null){
+
+      float dist = 9999;
+      foreach(Transform go in shipParts)
+      {
+        if(go.GetComponent<ShipPart>() != null && go.GetComponent<ShipPart>().destroyed == false && Vector3.Distance(fromPos,go.position) < dist)
+        {
+          dist = Vector3.Distance(fromPos,go.transform.position);
+          closestTarget = go;
+        }
+
+      }
+      return shipParts;
+
+    }
+    return closestTarget;
+  }
 
     public void SystemDestroyed()
     {

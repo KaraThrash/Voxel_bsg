@@ -76,7 +76,16 @@ public class NpcManager : MonoBehaviour {
     {
         GameObject clone = Instantiate(npcs[whichone], where, rot) as GameObject;
         clone.transform.parent = enemyparent.transform;
+        enemies.Add(clone);
+        clone.GetComponent<Enemy>().ResetToNeutral(GetComponent<NpcManager>());
+        // clone.GetComponent<Enemy>().patrolparent = go.GetComponent<Map>().patrolLocations.gameObject;//.GetChild(count);
+        clone.GetComponent<Enemy>().SetAlert(false);
+        if(gameManager.GetInBattle() == true){clone.GetComponent<Enemy>().inBattle = true;}
+
+
     }
+
+
     public GameObject SpawnNewController(int whichone, Vector3 where, Quaternion rot)
     {
         GameObject clone = Instantiate(npcs[whichone], where, rot) as GameObject;
@@ -103,11 +112,11 @@ public class NpcManager : MonoBehaviour {
     public GameObject GetClosestTarget(Vector3 fromPos)
     {
         //NOTE: for prototype only target the player
-      return gameManager.playerManager.myship;
+      // return gameManager.playerManager.myship;
 
-      if(fleetNpcs.Count <= 0){return null;}
-      GameObject closestTarget = fleetNpcs[0];
-      float dist = Vector3.Distance(fromPos,closestTarget.transform.position);
+      if(fleetNpcs.Count <= 0){return gameManager.playerManager.myship;}
+      GameObject closestTarget = gameManager.playerManager.myship;
+      float dist = 9999;
       foreach(GameObject go in fleetNpcs)
       {
         if(Vector3.Distance(fromPos,closestTarget.transform.position) < dist)
