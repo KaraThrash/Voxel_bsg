@@ -42,9 +42,9 @@ public class EnemyFleet : MonoBehaviour
       while (count < turretStrength)
       {
 
-          Instantiate(baseStarGunShip,baseStar.transform.position + (transform.up * (500 + Random.Range(50,550))) + (transform.right * (150 * -count) * ( Mathf.Sign(0 - (count % 2) ))),transform.rotation);
-
-
+          GameObject clone = Instantiate(baseStarGunShip,baseStar.transform.position + (transform.up * (500 + Random.Range(250,1550))) + (transform.forward * (350 * -count) * ( Mathf.Sign(0 - (count % 2) ))),transform.rotation);
+          clone.GetComponent<EnemyFleetShip>().npcManager = gameManager.npcManager;
+          clone.GetComponent<EnemyFleetShip>().enemyFleetManager = GetComponent<EnemyFleet>();
         count++;
 
       }
@@ -52,7 +52,9 @@ public class EnemyFleet : MonoBehaviour
       count = 0;
       while (count < turretStrength)
       {
-        Instantiate(baseStarHangarShip,baseStar.transform.position + (transform.up * (-500 - Random.Range(50,550))) + (transform.right * (100 * -count) * (Mathf.Sign(0 - (count % 2) ))),transform.rotation);
+        GameObject clone2 = Instantiate(baseStarHangarShip,baseStar.transform.position + (transform.up * (-500 - Random.Range(250,1050))) + (transform.forward * (500 * -count) * (Mathf.Sign(0 - (count % 2) ))),transform.rotation);
+        clone2.GetComponent<EnemyFleetShip>().npcManager = gameManager.npcManager;
+        clone2.GetComponent<EnemyFleetShip>().enemyFleetManager = GetComponent<EnemyFleet>();
           count++;
       }
     }

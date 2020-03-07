@@ -4,12 +4,13 @@ using UnityEngine;
 using UnityEngine.UI;
 public class FleetManager : MonoBehaviour
 {
-  public GameManager gamemanager;
+  public GameManager gameManager;
+  public ResourceManager resourceManager;
   public Fleetship galactica;
   public Transform fleetShips,fleetShipButtonParent;
   public Button fleetShipButton; //button for each specific ship to show its stats/info
   public Text shipStatText,fleetStatText;
-  public int comabtStrength,engineStrength,resourceStrength;
+  public int combatStrength,engineStrength,resourceStrength;
     // Start is called before the first frame update
     void Start()
     {
@@ -21,7 +22,7 @@ public class FleetManager : MonoBehaviour
     {
       if (Input.GetMouseButton(1))
       {
-          GetFleetStats();
+
       }
     }
     public void UpdateInfo()
@@ -62,6 +63,8 @@ public class FleetManager : MonoBehaviour
       }
       // inventoryButtons.GetChild(count).GetComponent<Button>().onClick.AddListener(delegate{ToggleEquip(tempint);});
 
+      //zero change to print the values
+      resourceManager.ResourceChange(0,0,0,0);
 
     }
     public GameObject GetClosestFleetShip(Vector3 frompos)
@@ -93,4 +96,11 @@ public class FleetManager : MonoBehaviour
 
         }
     }
+
+    public void ShipDestroyed(Fleetship shipDestroyed)
+    {
+      gameManager.infoManager.NewMessage(shipDestroyed.name + " Lost");
+
+    }
+
 }

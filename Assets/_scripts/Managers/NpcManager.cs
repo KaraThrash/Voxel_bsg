@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class NpcManager : MonoBehaviour {
-    public List<GameObject> enemies,npcs,fleetNpcs;
+    public List<GameObject> enemies,npcs;
+    public Transform fleetNpcs;
     public GameObject enemyparent;
     public GameManager gameManager;
     // Use this for initialization
@@ -114,15 +115,15 @@ public class NpcManager : MonoBehaviour {
         //NOTE: for prototype only target the player
       // return gameManager.playerManager.myship;
 
-      if(fleetNpcs.Count <= 0){return gameManager.playerManager.myship;}
+      if(fleetNpcs.childCount <= 0){return gameManager.playerManager.myship;}
       GameObject closestTarget = gameManager.playerManager.myship;
       float dist = 9999;
-      foreach(GameObject go in fleetNpcs)
+      foreach(Transform go in fleetNpcs)
       {
         if(Vector3.Distance(fromPos,closestTarget.transform.position) < dist)
         {
-          dist = Vector3.Distance(fromPos,go.transform.position);
-          closestTarget = go;
+          dist = Vector3.Distance(fromPos,go.position);
+          closestTarget = go.gameObject;
         }
 
       }

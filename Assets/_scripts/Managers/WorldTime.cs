@@ -4,8 +4,9 @@ using UnityEngine;
 using UnityEngine.UI;
 public class WorldTime : MonoBehaviour
 {
+  public GameManager gameManager;
   public Text clockText;
-  public int totalTimePassed;
+  public int totalTimePassed,currentMinutes;
   public float timeUntilAttack;
   public bool trackTime;//time stands still in menus
     // Start is called before the first frame update
@@ -17,9 +18,11 @@ public class WorldTime : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
       if(trackTime == true)
       {
         TrackTime();
+
       }
 
     }
@@ -36,6 +39,12 @@ public class WorldTime : MonoBehaviour
     public void TrackTime()
     {
       timeUntilAttack -= Time.deltaTime;
+
+        currentMinutes = (int)timeUntilAttack / 60;
+          if(gameManager.inMenu == false){clockText.text = currentMinutes.ToString();}
+
+
+
       if(timeUntilAttack <= 0){}
     }
 }

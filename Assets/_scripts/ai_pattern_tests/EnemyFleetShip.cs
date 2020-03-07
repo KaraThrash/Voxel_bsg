@@ -7,7 +7,7 @@ public class EnemyFleetShip : MonoBehaviour
   public NpcManager npcManager;
   public EnemyFleet enemyFleetManager;
   public GameObject target;
-  public GameObject cannon,bullet,hangar,missilebay,missile;
+  public GameObject cannon,bullet,hangar,missilebay,missile,rubble;
   public int enemyType,maxHp,currentHp; // enemy to tell the npc manager to spawn
   public Transform cooldownIndicator;
   public float rotForce = 0.1f,accuracy = 0; //
@@ -33,9 +33,30 @@ public class EnemyFleetShip : MonoBehaviour
 
       }else{InBattle();}
     }
+
+    public void FindTarget()
+    {
+      if(npcManager != null){
+        target = npcManager.GetClosestTarget(transform.position);
+
+        if(target.GetComponent<Fleetship>() != null)
+        {
+        target =  target.GetComponent<Fleetship>().GetClosestShipPart(transform.position).gameObject;
+        }
+
+      }
+    }
     public void InBattle()
     {
-        if(target == null){target = npcManager.GetClosestFleetShip(transform.position);}else{ FaceTarget();}
+
+        if(target == null){
+
+          FindTarget();
+
+        }
+        else{
+           FaceTarget();
+        }
         if(attackTimer != -1)
         {
             if(attackTimer > 0 )
@@ -56,8 +77,14 @@ public class EnemyFleetShip : MonoBehaviour
 
             }else
             {
-              Attack();
-              attackTimer = attackCost;
+                  if(target != null){
+                  Attack();
+
+                    if(target.GetComponent<ShipPart>() != null && target.GetComponent<ShipPart>().destroyed == true)
+                    {
+                      target =  null;
+                    }
+                  }
             }
        }
     }
@@ -72,6 +99,7 @@ public class EnemyFleetShip : MonoBehaviour
              {
               GameObject clone = Instantiate(bullet,bullet.transform.position,transform.rotation);
               clone.active = true;
+                attackTimer = attackCost;
              }
 
           }
@@ -79,7 +107,7 @@ public class EnemyFleetShip : MonoBehaviour
           {
 
             npcManager.SpawnOne(enemyType,hangar.transform.position,hangar.transform.rotation);
-
+              attackTimer = attackCost;
           }
           if(missilebay != null)
           {}
@@ -101,7 +129,11 @@ public class EnemyFleetShip : MonoBehaviour
     }
     public void ShipDestroyed()
     {
+      if(rubble != null){
 
+        GameObject clone = Instantiate(rubble,transform.position,transform.rotation);
+        clone.active = true;
+      }
         Destroy(this.gameObject);
     }
     public void FaceTarget()

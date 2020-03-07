@@ -11,7 +11,7 @@ public class Fleetship : MonoBehaviour {
     public int fuel;
     public int morale;
     public int totalsubsystems,maxhp; //hp
-    public GameObject resourcemanager;
+    public GameObject resourcemanager,rubble;
     public float dieclock;
     public bool hasresources;
     public int value; //points
@@ -59,7 +59,7 @@ public class Fleetship : MonoBehaviour {
         }
 
       }
-      return shipParts;
+
 
     }
     return closestTarget;
@@ -73,21 +73,28 @@ public class Fleetship : MonoBehaviour {
             GetComponent<Rigidbody>().useGravity = true;
             GetComponent<Rigidbody>().angularDrag = 0;
             GetComponent<Rigidbody>().drag = 0;
-            GetComponent<Rigidbody>().velocity = Vector3.down * 5.0f;
+            GetComponent<Rigidbody>().velocity = Vector3.down * 1.2f;
+              GetComponent<Rigidbody>().angularVelocity = (Vector3.down +  Vector3.right) * Random.Range(0.01f, 0.2f);
+            fleetManager.ShipDestroyed(GetComponent<Fleetship>());
+              if (hasresources == true)
+              {
+                  resourcemanager.GetComponent<ResourceManager>().ResourceChange(-pop, -food, -fuel, -morale);
+
+              }
+              if (value > 0)
+              {
+                 // gameManager.GetComponent<GameManager>().RaiderDestroyed(value);
+              }
         }
 
     }
     public void ShipDestroyed()
     {
-        if (hasresources == true)
-        {
-            resourcemanager.GetComponent<ResourceManager>().ResourceChange(-pop, -food, -fuel, -morale);
+      if(rubble != null){
 
-        }
-        if (value > 0)
-        {
-           // gameManager.GetComponent<GameManager>().RaiderDestroyed(value);
-        }
+        GameObject clone = Instantiate(rubble,transform.position,transform.rotation);
+        clone.active = true;
+      }
         Destroy(this.gameObject);
     }
 }

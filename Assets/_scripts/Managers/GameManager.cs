@@ -14,9 +14,9 @@ public FleetManager fleetManager;
   public NpcManager npcManager;
   public ItemManager itemManager;
   public WorldTime timeManager;
+  public InfoDisplay infoManager;
   public ThirdPersonCamera cam;
   public FtlImageFade imageFade;
-
 
   public GameObject dockMenu;
   public bool inMenu,inBattle;

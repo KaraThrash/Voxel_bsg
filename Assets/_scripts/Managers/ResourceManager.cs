@@ -20,10 +20,10 @@ public class ResourceManager : MonoBehaviour {
         fueltext.text = fuel.ToString();
         moraletext.text = morale.ToString();
     }
-	
+
 	// Update is called once per frame
 	void Update () {
-		
+
 	}
 
 
@@ -37,5 +37,5 @@ public class ResourceManager : MonoBehaviour {
   foodtext.text = food.ToString();
     fueltext.text = fuel.ToString();
     moraletext.text = morale.ToString();
-}
+   }
 }

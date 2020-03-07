@@ -231,7 +231,7 @@ public class Enemy : MonoBehaviour {
 
         target = npcManager.GetClosestTarget(transform.position);
 
-        if(target.GetComponent<Fleetship>() != null)
+        if(target != null && target.GetComponent<Fleetship>() != null)
         {
         target =  target.GetComponent<Fleetship>().GetClosestShipPart(transform.position).gameObject;
         }

@@ -68,7 +68,7 @@ public class ShipPart : MonoBehaviour {
     public void OnTriggerEnter(Collider col)
     {
 
-        if (cannotBeHit == false && col.gameObject.tag == "Bullet")
+        if (cannotBeHit == false && (col.gameObject.tag == "Bullet" || col.gameObject.tag == "BulletEnemy"))
         { TakeDamage(1); }
 
 
