@@ -92,69 +92,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!1 &1394834240134726
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 4283697695717182}
-  - component: {fileID: 65492182604945008}
-  - component: {fileID: 114540589283552570}
-  m_Layer: 0
-  m_Name: dradistarget
-  m_TagString: dradistarget
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &4283697695717182
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1394834240134726}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.79, z: -2.26}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 4814326270992176}
-  m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &65492182604945008
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1394834240134726}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &114540589283552570
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1394834240134726}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b49401a398f2e394e97840a71b65ed43, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  sensortarget: 0
-  mytype: 1
-  radar: 0
-  myship: {fileID: 1626289426795938}
-  target: {fileID: 0}
-  maxrange: 0
 --- !u!1 &1453202024656032
 GameObject:
   m_ObjectHideFlags: 0
@@ -278,7 +215,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4399832295698960}
-  - {fileID: 4283697695717182}
   - {fileID: 5036135630493988453}
   - {fileID: 829104238848678053}
   m_Father: {fileID: 0}
@@ -323,6 +259,7 @@ MonoBehaviour:
   leadDistanceTarget: {fileID: 0}
   explosion: {fileID: 1926707618117312, guid: daa39a6ae5f365f42bc5399029997e86, type: 3}
   dradisModel: {fileID: 0}
+  squadLeader: {fileID: 0}
   myWing: {fileID: 0}
   value: 1
   itemheldtype: 0
@@ -330,9 +267,11 @@ MonoBehaviour:
   speed: 20
   rotForce: 3
   leashDistance: 1000
+  conscriptable: 0
   destroyed: 0
   canShoot: 0
   returnHome: 1
+  inBattle: 0
   aitest: 0
   stationary: 0
   alert: 0
@@ -369,6 +308,7 @@ MonoBehaviour:
   avoidingCollisionColor: {fileID: 2100000, guid: 177ccd8da64149f4dad592910c45e459,
     type: 2}
   patrolColor: {fileID: 2100000, guid: 0dbc63055f2448d42ae16cd0ad39d62c, type: 2}
+  myRenderer: {fileID: 23694501329174740}
   colors:
   - {fileID: 2100000, guid: 762833067f3b1364591a320e572a5bea, type: 2}
   - {fileID: 2100000, guid: 9ecc3ae7982d7834291f3c75af41d0cd, type: 2}
@@ -497,7 +437,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4814326270992176}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!198 &8001556316805217758
 ParticleSystem:
@@ -5250,5 +5190,5 @@ Transform:
   - {fileID: 4927759150867872}
   - {fileID: 4188121801273078}
   m_Father: {fileID: 4814326270992176}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

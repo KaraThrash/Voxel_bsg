@@ -8,6 +8,7 @@ public class EnemyFleet : MonoBehaviour
   public BaseStar baseStar;
   public Text enemyFleetStrengthText;
   public GameObject baseStarGunShip,baseStarHangarShip;
+  public int gunshipNumber,hangarShipNumber;
     // Start is called before the first frame update
     void Start()
     {
@@ -42,9 +43,9 @@ public class EnemyFleet : MonoBehaviour
       while (count < turretStrength)
       {
 
-          GameObject clone = Instantiate(baseStarGunShip,baseStar.transform.position + (transform.up * (500 + Random.Range(250,1550))) + (transform.forward * (350 * -count) * ( Mathf.Sign(0 - (count % 2) ))),transform.rotation);
-          clone.GetComponent<EnemyFleetShip>().npcManager = gameManager.npcManager;
-          clone.GetComponent<EnemyFleetShip>().enemyFleetManager = GetComponent<EnemyFleet>();
+
+        gameManager.npcManager.SpawnOne(gunshipNumber,baseStar.transform.position + (transform.up * (500 + Random.Range(250,1550))) + (transform.forward * (350 * -count) * ( Mathf.Sign(0 - (count % 2) ))),transform.rotation);
+
         count++;
 
       }
@@ -52,9 +53,8 @@ public class EnemyFleet : MonoBehaviour
       count = 0;
       while (count < turretStrength)
       {
-        GameObject clone2 = Instantiate(baseStarHangarShip,baseStar.transform.position + (transform.up * (-500 - Random.Range(250,1050))) + (transform.forward * (500 * -count) * (Mathf.Sign(0 - (count % 2) ))),transform.rotation);
-        clone2.GetComponent<EnemyFleetShip>().npcManager = gameManager.npcManager;
-        clone2.GetComponent<EnemyFleetShip>().enemyFleetManager = GetComponent<EnemyFleet>();
+        gameManager.npcManager.SpawnOne(hangarShipNumber,baseStar.transform.position + (transform.up * (-500 - Random.Range(250,1050))) + (transform.forward * (500 * -count) * (Mathf.Sign(0 - (count % 2) ))),transform.rotation);
+
           count++;
       }
     }

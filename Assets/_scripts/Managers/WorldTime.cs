@@ -5,9 +5,10 @@ using UnityEngine.UI;
 public class WorldTime : MonoBehaviour
 {
   public GameManager gameManager;
-  public Text clockText;
+  public Text clockText,fleetJumpReadiness;
+  public GameObject joinAttackButton,fleetJumpButton;
   public int totalTimePassed,currentMinutes;
-  public float timeUntilAttack;
+  public float timeUntilAttack,timeSinceLastJump,timerate;
   public bool trackTime;//time stands still in menus
     // Start is called before the first frame update
     void Start()
@@ -19,9 +20,11 @@ public class WorldTime : MonoBehaviour
     void Update()
     {
 
+      //NOTE: always track time?
+        TrackTime();
       if(trackTime == true)
       {
-        TrackTime();
+
 
       }
 
@@ -38,13 +41,37 @@ public class WorldTime : MonoBehaviour
     }
     public void TrackTime()
     {
-      timeUntilAttack -= Time.deltaTime;
+
+      timeUntilAttack -= (Time.deltaTime * timerate);
+      timeSinceLastJump += (Time.deltaTime * timerate);
+
+      if(gameManager.fleetManager.engineStrength < timeSinceLastJump ){fleetJumpButton.active = true;}
+      else{fleetJumpButton.active = false;}
+      fleetJumpReadiness.text = (int)timeSinceLastJump + " / " + gameManager.fleetManager.engineStrength;
 
         currentMinutes = (int)timeUntilAttack / 60;
           if(gameManager.inMenu == false){clockText.text = currentMinutes.ToString();}
 
 
 
-      if(timeUntilAttack <= 0){}
+      if(timeUntilAttack <= 1)
+      {
+        joinAttackButton.active = true;
+      }else{  joinAttackButton.active = false;}
+
+    }
+
+    public void FastForwardTime(int rate)
+    {
+      //buttons in menu to speed times towards the next Attack
+      //NOTE: special events to interrupt? or just auto to the next battle?
+
+      // next battle ready at minutes < 1 so no need to speed past that time
+      if(timeUntilAttack / 60 > 1)
+      {
+        timerate = rate;
+          // timeUntilAttack -= (Time.deltaTime * rate) ;
+      }else{timerate = 1;}
+
     }
 }

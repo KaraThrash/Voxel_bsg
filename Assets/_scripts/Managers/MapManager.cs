@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class MapManager : MonoBehaviour {
     public GameManager gameManager;
-    public Map currentMap;
+    public Map currentMap,fireLinkMap; //main map for post fleet jumps
     public int destination;
     public int fleetlocation;
     public float rangeToChangeMapSegement;
@@ -68,12 +68,28 @@ public class MapManager : MonoBehaviour {
     }
     public void MoveToNewArea(int newArea)
     {
+        fireLinkMap.gameObject.active = false;
+
         foreach (GameObject go in maps)
         { go.active = false; }
-        maps[newArea].active = true;
 
-        currentMap = maps[newArea].GetComponent<Map>();
+        //firelink map is trhe post jump fleet location
+        if(newArea == -2)
+        {
+          fireLinkMap.gameObject.active = true;
+          currentMap = fireLinkMap;
+        }
+        else
+        {
+              maps[newArea].active = true;
+              currentMap = maps[newArea].GetComponent<Map>();
+        }
+
+
+
     }
+
+
     public void ReturnToHub()
     {
        //  foreach (GameObject go in maps)

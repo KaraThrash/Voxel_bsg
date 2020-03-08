@@ -9,6 +9,7 @@ public class ResourceManager : MonoBehaviour {
     public int morale;
     public int vipers;
     public int raptors;
+    public int ftlSpoolTime;//time before the fleet can jump again at no cost
     public Text poptext;
     public Text foodtext;
     public Text fueltext;

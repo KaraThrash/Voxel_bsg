@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class NpcManager : MonoBehaviour {
-    public List<GameObject> enemies,npcs;
+    public List<GameObject> enemies,npcs,friendlies;
     public Transform fleetNpcs;
     public GameObject enemyparent;
     public GameManager gameManager;
@@ -17,7 +17,16 @@ public class NpcManager : MonoBehaviour {
     enemies.Clear();
     foreach(Transform go in enemyparent.transform)
     {
-      enemies.Add(go.gameObject);
+      if(go.GetComponent<Enemy>() != null){
+
+        if(go.GetComponent<Enemy>().friendly == true){
+          friendlies.Add(go.gameObject);
+        }
+        else{enemies.Add(go.gameObject);}
+
+      }
+      else{}
+
     }
     AlertNpcs(gameManager.mapManager.GetCurrentArea());
   }
@@ -78,10 +87,24 @@ public class NpcManager : MonoBehaviour {
         GameObject clone = Instantiate(npcs[whichone], where, rot) as GameObject;
         clone.transform.parent = enemyparent.transform;
         enemies.Add(clone);
-        clone.GetComponent<Enemy>().ResetToNeutral(GetComponent<NpcManager>());
-        // clone.GetComponent<Enemy>().patrolparent = go.GetComponent<Map>().patrolLocations.gameObject;//.GetChild(count);
-        clone.GetComponent<Enemy>().SetAlert(false);
-        if(gameManager.GetInBattle() == true){clone.GetComponent<Enemy>().inBattle = true;}
+
+
+        if(clone.GetComponent<EnemyFleetShip>() != null)
+        {
+          clone.GetComponent<EnemyFleetShip>().npcManager = gameManager.npcManager;
+          clone.GetComponent<EnemyFleetShip>().enemyFleetManager = gameManager.GetComponent<EnemyFleet>();
+        }
+        if(clone.GetComponent<Enemy>() != null)
+        {
+          clone.GetComponent<Enemy>().ResetToNeutral(GetComponent<NpcManager>());
+          // clone.GetComponent<Enemy>().patrolparent = go.GetComponent<Map>().patrolLocations.gameObject;//.GetChild(count);
+          clone.GetComponent<Enemy>().SetAlert(false);
+            if(gameManager.GetInBattle() == true){clone.GetComponent<Enemy>().inBattle = true;}
+        }
+
+
+
+
 
 
     }
@@ -136,6 +159,25 @@ public class NpcManager : MonoBehaviour {
       return gameManager.fleetManager.GetClosestFleetShip(fromPos);
     }
 
+
+    public GameObject GetClosestFriendly(GameObject fromObject)
+    {
+      if( friendlies.Count <= 0){return fromObject;}
+      float currentDistance = 9999;
+      GameObject closestfriendly = friendlies[0];
+      foreach(GameObject go in friendlies)
+      {
+        if(Vector3.Distance(go.transform.position,fromObject.transform.position) < currentDistance)
+        {
+          currentDistance = Vector3.Distance(go.transform.position,fromObject.transform.position);
+          closestfriendly = go;
+
+        }
+
+      }
+      return closestfriendly;
+    }
+
     public GameObject GetClosestEnemy(GameObject fromObject)
     {
       if( enemies.Count <= 0){return fromObject;}
@@ -143,7 +185,7 @@ public class NpcManager : MonoBehaviour {
       GameObject closestEnemy = enemies[0];
       foreach(GameObject go in enemies)
       {
-        if(Vector3.Distance(go.transform.position,fromObject.transform.position) < currentDistance)
+        if(go != fromObject && Vector3.Distance(go.transform.position,fromObject.transform.position) < currentDistance)
         {
           currentDistance = Vector3.Distance(go.transform.position,fromObject.transform.position);
           closestEnemy = go;

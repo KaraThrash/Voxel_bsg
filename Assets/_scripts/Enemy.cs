@@ -26,7 +26,7 @@ public class Enemy : MonoBehaviour {
     public float speed = 20;
     public float rotForce = 6;
     public float leashDistance;
-    public bool conscriptable,destroyed,canShoot,returnHome,inBattle;
+    public bool friendly,conscriptable,destroyed,canShoot,returnHome,inBattle;
     public bool aitest,stationary,alert,inCombat;
     private float avoidCollisionClock;
     private Vector3 startPos,openSpotToAvoidCollision;
@@ -113,7 +113,15 @@ public class Enemy : MonoBehaviour {
 
           if(target == null )
           {
-            FindTarget();
+            if(friendly == true){
+
+              target = npcManager.GetClosestEnemy(this.gameObject);
+              if(target == this.gameObject){target = null;}
+            }
+            else{  FindTarget();}
+
+
+
           }
 
 
@@ -133,7 +141,18 @@ public class Enemy : MonoBehaviour {
     {
 
       AlertActions();
+      if(target == null )
+      {
+        if(friendly == true){
 
+          target = npcManager.GetClosestEnemy(this.gameObject);
+          if(target == this.gameObject){target = null;}
+        }
+        else{  FindTarget();}
+
+
+
+      }
 
     }
     else{
@@ -247,8 +266,8 @@ public class Enemy : MonoBehaviour {
       npcManager.GetDistanceToPlayer(transform.position) < 5) && npcManager.GetDistanceToPlayer(transform.position) < leashDistance )
 
       {
+        if(friendly == false){  target = npcManager.GetPlayerShip();}
 
-        target = npcManager.GetPlayerShip();
       }
 
 

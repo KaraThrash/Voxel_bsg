@@ -18,6 +18,7 @@ public class AIattackpattern : MonoBehaviour {
 
     public GameObject patrolparent,patroltarget;
     public Material avoidingCollisionColor,patrolColor;
+    public Renderer myRenderer;
     public List<Material> colors;
     private Vector3 straferunspot,tempTargetSpot,openSpotToAvoidCollision;
     private Quaternion targetRotation;
@@ -30,7 +31,7 @@ public class AIattackpattern : MonoBehaviour {
         myEnemy = GetComponent<Enemy>();
         patrolparent = myEnemy.patrolparent;
         patroltarget = myEnemy.patroltarget;
-        if(colors.Count > 0)
+        if(colors.Count > 0 && myRenderer != null)
         {  transform.GetChild(0).GetComponent<Renderer>().material = colors[Random.Range(0,(int)colors.Count) ];}
     }
 
@@ -121,6 +122,8 @@ public class AIattackpattern : MonoBehaviour {
   public void GetAway(GameObject targetship)
   {
         transform.GetChild(0).GetComponent<Renderer>().material = colors[0];
+        if(colors.Count > 0 && myRenderer != null)
+        {  myRenderer.material = colors[0];}
     targetRotation = Quaternion.LookRotation(tempTargetSpot - transform.position );
     //not impulse, momentuem based
     rb.AddForce(transform.forward * speed  *  Time.deltaTime,ForceMode.Impulse);
@@ -133,7 +136,8 @@ public class AIattackpattern : MonoBehaviour {
   }
   public void Chicken(GameObject targetship)
   {
-      transform.GetChild(0).GetComponent<Renderer>().material = colors[currentAttackPlan + 1];
+    if(colors.Count > 0 && myRenderer != null)
+    {  myRenderer.material = colors[currentAttackPlan + 1];}
     float angle = Vector3.Angle(targetship.transform.position - transform.position, transform.forward);
 
     if (angle <= accuracy) { canShoot = true; } else { canShoot = false; }
@@ -187,12 +191,15 @@ public class AIattackpattern : MonoBehaviour {
                   currentAttackPlan = 1;
                 }
         }
-        transform.GetChild(0).GetComponent<Renderer>().material = colors[currentAttackPlan + 1];
+        if(colors.Count > 0 && myRenderer != null)
+        {  myRenderer.material = colors[currentAttackPlan + 1];}
+
   }
 
     public void GetFarAndComeBack(GameObject targetship)
     {
-        transform.GetChild(0).GetComponent<Renderer>().material = colors[currentAttackPlan + 1];
+      if(colors.Count > 0 && myRenderer != null)
+      {  myRenderer.material = colors[currentAttackPlan + 1];}
           // GameObject target = myEnemy.target;
             //gunCooldown -= Time.deltaTime;
 
@@ -262,7 +269,8 @@ public class AIattackpattern : MonoBehaviour {
     public void Patrol()
     {
 
-      transform.GetChild(0).GetComponent<Renderer>().material = patrolColor;
+      if(patrolColor != null && myRenderer != null)
+      {  myRenderer.material = patrolColor;}
 
       if(myEnemy.patrolparent != null){
           if(patroltarget != null){
@@ -300,7 +308,10 @@ public class AIattackpattern : MonoBehaviour {
 
     public void GetBehind(GameObject targetship)
     {
-        transform.GetChild(0).GetComponent<Renderer>().material = colors[currentAttackPlan + 1];
+
+      if(colors.Count > 0 && myRenderer != null)
+      {  myRenderer.material = colors[currentAttackPlan + 1];}
+
           GameObject target = myEnemy.target;
 
             if (Vector3.Distance(transform.position,(target.transform.position  + target.transform.forward )  ) < Vector3.Distance(transform.position,(target.transform.position  - (target.transform.forward * closedistance) )) )
@@ -413,7 +424,9 @@ public class AIattackpattern : MonoBehaviour {
     {
       //TODO: scan around to find the open space rather than always rotating away 180
       RayCastToFindOpening();
-      transform.GetChild(0).GetComponent<Renderer>().material = avoidingCollisionColor;
+      if(avoidingCollisionColor != null && myRenderer != null)
+      {  myRenderer.material = avoidingCollisionColor;}
+
         targetRotation = Quaternion.LookRotation( transform.position -   (openSpotToAvoidCollision ));
         // targetRotation = Quaternion.LookRotation(  (transform.position  + (transform.up * 50) - (transform.forward * 50) ) - transform.position  );
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotForce * 0.3f * Time.deltaTime);

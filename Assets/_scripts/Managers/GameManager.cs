@@ -86,6 +86,19 @@ public FleetManager fleetManager;
 
 
     }
+
+    public void JumpFleet()
+    {
+
+      enemyFleetManager.baseStar.gameObject.active = false;
+      mapManager.MoveToNewArea(-2);
+      mapManager.GetCurrentMap();
+      // playerManager.SetPlayerSpawn(  mapManager.GetCurrentMap().playerStartSpot.gameObject);
+      playerManager.startnewlevel();
+      StartNewMap();
+      ActivateMenu();
+    }
+
     public void TravelFromHub(int dest)
     {
         if (dest != -1 && playerManager.myship != null)
