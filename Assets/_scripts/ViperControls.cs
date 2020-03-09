@@ -351,7 +351,7 @@ public class ViperControls : MonoBehaviour {
           //TODO calculate the right amount of bounce
             groundCollisionTimer = 0.1f;
             myplayer.GetComponent<Player>().gamemanager.imageFade.StartDmgFade();
-            shipRigidBody.velocity = (shipRigidBody.transform.position - col.contacts[0].point).normalized *  flySpeed;
+            shipRigidBody.velocity = (shipRigidBody.transform.position - col.contacts[0].point).normalized *  flySpeed ;
               // rb.AddForce((transform.position - col.contacts[0].point).normalized * flySpeed  ,ForceMode.Impulse);
         }
     }

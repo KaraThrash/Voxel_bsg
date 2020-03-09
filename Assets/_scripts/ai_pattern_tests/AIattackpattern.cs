@@ -4,26 +4,34 @@ using UnityEngine;
 
 public class AIattackpattern : MonoBehaviour {
 
-    public int currentAttackPlan;
-    public float speed,walkspeed;
-    public float rotForce = 6;
+  public int currentAttackPlan;
 
-    public float accuracy;
-    public float gunCooldown;
-    public float gunCost;
-    public float closedistance,fardistance,avoidCollisionClock;
-    public float checkForwardDistance = 100.0f;
-    public bool destroyed,canShoot;
-    public bool flyaway,flypast;
+// parameters to change/set how the ship controls
+  public float speed = 50,walkspeed = 10;
+  public float rotForce = 6;
+  public float accuracy = 1;
 
-    public GameObject patrolparent,patroltarget;
-    public Material avoidingCollisionColor,patrolColor;
-    public Renderer myRenderer;
-    public List<Material> colors;
-    private Vector3 straferunspot,tempTargetSpot,openSpotToAvoidCollision;
-    private Quaternion targetRotation;
-    private Rigidbody rb;
-    private Enemy myEnemy;
+  public float closedistance = 10,fardistance = 40;
+  public float gunCost = 1;
+  public float checkForwardDistance = 100.0f;
+//
+
+  public float gunCooldown;
+
+  public float avoidCollisionClock;
+
+  public bool destroyed,canShoot;
+  public bool flyaway,flypast;
+
+  public GameObject patrolparent,patroltarget;
+  public Material avoidingCollisionColor,patrolColor;
+  public Renderer myRenderer;
+  public List<Material> colors;
+
+  private Vector3 straferunspot,tempTargetSpot,openSpotToAvoidCollision;
+  private Quaternion targetRotation;
+  private Rigidbody rb;
+  private Enemy myEnemy;
     // Use this for initialization
     void Awake () {
 

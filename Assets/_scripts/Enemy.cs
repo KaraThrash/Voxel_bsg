@@ -203,11 +203,15 @@ public class Enemy : MonoBehaviour {
           {
             GetComponent<AIEvasion>().Fly(target);
           }
+          else if(GetComponent<AIDinosaur>() != null)
+          {
+            GetComponent<AIDinosaur>().Fly(target);
+          }
           else if(GetComponent<AISquadLeader>() != null)
           {
             GetComponent<AISquadLeader>().Fly(target);
           }
-          else{}
+          else{SendMessage("Fly",target);}
         }
 
     }
