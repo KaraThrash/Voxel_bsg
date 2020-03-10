@@ -86,6 +86,9 @@ public class Player : MonoBehaviour {
     }
     else
     {
+      //if knocked off the dock, exit the menu
+      if(gamemanager.inMenu == true )
+      {gamemanager.ActivateMenu();}
       // contextButtonUi.active = false;
       // contextButton.text = "";
     }
@@ -188,7 +191,7 @@ public class Player : MonoBehaviour {
         mycamera.GetComponent<ThirdPersonCamera>().enabled = false;
         if (myship != null)
         { myship.active = false; }
-        gamemanager.TravelToHub();
+
 
 
         Cursor.visible = true;

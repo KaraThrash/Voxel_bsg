@@ -71,14 +71,20 @@ public class NpcManager : MonoBehaviour {
   {
     foreach(GameObject go in enemies)
     {
-      if(go.GetComponent<Enemy>().mapArea == null)
+      if(go.GetComponent<Enemy>() != null)
       {
-        go.GetComponent<Enemy>().mapArea = gameManager.mapManager.FindClosestArea(go.transform);
+        if(go.GetComponent<Enemy>().mapArea == null)
+        {
+          go.GetComponent<Enemy>().mapArea = gameManager.mapManager.FindClosestArea(go.transform);
+        }
+
+        if(go.GetComponent<Enemy>().mapArea != null &&  go.GetComponent<Enemy>().mapArea != newMapArea)
+        {go.GetComponent<Enemy>().SetAlert(false);}
+        else{go.GetComponent<Enemy>().SetAlert(true);}
       }
 
-      if(go.GetComponent<Enemy>().mapArea != null &&  go.GetComponent<Enemy>().mapArea != newMapArea)
-      {go.GetComponent<Enemy>().SetAlert(false);}
-      else{go.GetComponent<Enemy>().SetAlert(true);}
+
+
     }
 
   }
@@ -115,6 +121,18 @@ public class NpcManager : MonoBehaviour {
         GameObject clone = Instantiate(npcs[whichone], where, rot) as GameObject;
 
         return clone;
+    }
+
+    public void PlayerDie()
+    {
+      foreach(GameObject go in enemies)
+      {
+        if(go.GetComponent<Enemy>().target == gameManager.playerManager.myship)
+        {
+          go.GetComponent<Enemy>().target = null;
+        }
+
+      }
     }
 
     public void NPCkilled(Enemy npckilled)

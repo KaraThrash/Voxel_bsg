@@ -15,6 +15,7 @@ public FleetManager fleetManager;
   public ItemManager itemManager;
   public WorldTime timeManager;
   public InfoDisplay infoManager;
+  public AttackManager attackManager;
   public ThirdPersonCamera cam;
   public FtlImageFade imageFade;
 
@@ -36,10 +37,16 @@ public FleetManager fleetManager;
     }
 
     }
+
+
     public void PlayerShipDestroyed()
     {
       imageFade.StartFade();
+            //have enemies that were targeting the player stop
+      npcManager.PlayerDie();
       playerManager.RespawnPlayer();
+
+
 
       //NOTE: nothing should respawn on player death
       //since the player can immediately dock if they want to respawn stuff so they can still easily farm
@@ -60,8 +67,27 @@ public FleetManager fleetManager;
       npcManager.SpawnEnemiesForNewMap(mapManager.GetCurrentMap());
       //reset player hp
 
+      //fleet ships and base stars are only around during the battles, regular map levels are just the player
+      if(inBattle == true)
+      {
+        StartBattle();
+      }else
+      {
+
+        fleetManager.fleetShips.gameObject.active = false;
+        fleetManager.galactica.gameObject.active = false;
+        enemyFleetManager.baseStar.gameObject.active = false;
+      }
+
     }
 
+    public void StartBattle()
+    {
+      fleetManager.fleetShips.gameObject.active = true;
+      fleetManager.galactica.gameObject.active = true;
+      enemyFleetManager.baseStar.gameObject.active = true;
+      enemyFleetManager.StartFleetBattle();
+    }
     public void ActivateMenu()
     {
      //when opening the menu the manager returns true, false if it is closing the menu
@@ -80,10 +106,28 @@ public FleetManager fleetManager;
     {
       //for transitions block the player view and slowly return it to make transportation from locations and reseting the map less jarring
       imageFade.StartFade();
+
       playerManager.SetPlayerSpawn(dockSpawnSpot.gameObject);
       playerManager.RespawnPlayer();
       StartNewMap();
 
+
+    }
+    public void ResetTheClock()
+    {
+      timeManager.ResetTheClock();
+
+
+    }
+    public void EnemyAttack(bool autoresolve)
+    {
+      if(autoresolve == true)
+      {attackManager.AutoResolve(fleetManager,enemyFleetManager);}
+      else
+      {//if not auto resolve then the player is joining the battle
+          TravelFromHub(attackManager.GetBattleMap());
+
+      }
 
     }
 
@@ -91,32 +135,30 @@ public FleetManager fleetManager;
     {
 
       enemyFleetManager.baseStar.gameObject.active = false;
-      mapManager.MoveToNewArea(-2);
-      mapManager.GetCurrentMap();
-      // playerManager.SetPlayerSpawn(  mapManager.GetCurrentMap().playerStartSpot.gameObject);
-      playerManager.startnewlevel();
-      StartNewMap();
-      ActivateMenu();
+      TravelFromHub(0);
+      // mapManager.MoveToNewArea(0); //jump is to firelink //a safe location
+      // mapManager.GetCurrentMap();
+      // // playerManager.SetPlayerSpawn(  mapManager.GetCurrentMap().playerStartSpot.gameObject);
+      // playerManager.startnewlevel();
+      // StartNewMap();
+      // ActivateMenu();
+        ResetTheClock();
     }
 
     public void TravelFromHub(int dest)
     {
-        if (dest != -1 && playerManager.myship != null)
+        if (playerManager.myship != null)
         {
             mapManager.MoveToNewArea(dest);
             mapManager.GetCurrentMap();
             playerManager.SetPlayerSpawn(  mapManager.GetCurrentMap().playerStartSpot.gameObject);
             playerManager.startnewlevel();
+            if(dest < 0){inBattle = true;}
+            else{inBattle = false;}
             StartNewMap();
             ActivateMenu();
         }
     }
 
-    public void TravelToHub()
-    {
 
-        npcManager.enemyparent.active = false; //TODO enemy parent objects based on map. THis needs to always clean up enemies
-            mapManager.ReturnToHub();
-
-    }
 }

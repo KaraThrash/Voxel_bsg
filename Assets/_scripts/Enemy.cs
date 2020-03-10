@@ -55,6 +55,7 @@ public class Enemy : MonoBehaviour {
       if(rb == null){rb = GetComponent<Rigidbody>();}
       if(hp <= 0){hp = 1;}
       alert = false;
+      inCombat = false;
       if(patrolparent == null){  patrolparent = GameObject.Find("PatrolPoints");}
       if(patrolparent != null){  patroltarget = patrolparent.transform.GetChild(Random.Range(0,patrolparent.transform.childCount)).gameObject;  }
     }

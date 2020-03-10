@@ -10,7 +10,7 @@ public class MapManager : MonoBehaviour {
     public float rangeToChangeMapSegement;
     public Transform currentMapParent;
     public GameObject fleetMarker,activeMapArea; // active map area used for segmenting parts of the map for enemy logic
-    public List<GameObject> maps, maplocations; // the world objects, and the ftl menu locations
+    public List<GameObject> maps, battlemaps,maplocations; // the world objects, and the ftl menu locations
     // Use this for initialization
     void Start () {
 
@@ -72,17 +72,31 @@ public class MapManager : MonoBehaviour {
 
         foreach (GameObject go in maps)
         { go.active = false; }
-
+        foreach (GameObject go in battlemaps)
+        { go.active = false; }
         //firelink map is trhe post jump fleet location
-        if(newArea == -2)
+        if(newArea == 0)
         {
           fireLinkMap.gameObject.active = true;
           currentMap = fireLinkMap;
         }
-        else
+        else  if(newArea < 0)
         {
-              maps[newArea].active = true;
-              currentMap = maps[newArea].GetComponent<Map>();
+          if(battlemaps.Count > Mathf.Abs(newArea))
+          {
+            battlemaps[Mathf.Abs(newArea)].active = true;
+            currentMap = battlemaps[Mathf.Abs(newArea)].GetComponent<Map>();
+          }
+
+        }else
+        {
+
+          if(maps.Count > newArea)
+          {
+            maps[newArea].active = true;
+            currentMap = maps[newArea].GetComponent<Map>();
+          }
+
         }
 
 

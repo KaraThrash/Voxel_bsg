@@ -361,7 +361,7 @@ public class ViperControls : MonoBehaviour {
       if (col.gameObject.tag == "Dock")
       {
           myplayer.GetComponent<Player>().NearDock(false);
-
+          
       }
       else{}
     }

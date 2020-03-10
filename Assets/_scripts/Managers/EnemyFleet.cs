@@ -44,7 +44,7 @@ public class EnemyFleet : MonoBehaviour
       {
 
 
-        gameManager.npcManager.SpawnOne(gunshipNumber,baseStar.transform.position + (transform.up * (500 + Random.Range(250,1550))) + (transform.forward * (350 * -count) * ( Mathf.Sign(0 - (count % 2) ))),transform.rotation);
+        gameManager.npcManager.SpawnOne(gunshipNumber,baseStar.transform.position + ( (transform.forward * -(500 + Random.Range(250,750)))) + (transform.up * (500 + Random.Range(250,750))) + (transform.right * (350 * -count) * ( Mathf.Sign(0 - (count % 2) ))),transform.rotation);
 
         count++;
 
@@ -53,7 +53,7 @@ public class EnemyFleet : MonoBehaviour
       count = 0;
       while (count < turretStrength)
       {
-        gameManager.npcManager.SpawnOne(hangarShipNumber,baseStar.transform.position + (transform.up * (-500 - Random.Range(250,1050))) + (transform.forward * (500 * -count) * (Mathf.Sign(0 - (count % 2) ))),transform.rotation);
+        gameManager.npcManager.SpawnOne(hangarShipNumber,baseStar.transform.position + ( (transform.forward * -(500 + Random.Range(250,750)))) + (transform.up * (-500 - Random.Range(250,750))) + (transform.right * (500 * -count) * (Mathf.Sign(0 - (count % 2) ))),transform.rotation);
 
           count++;
       }

@@ -267,6 +267,7 @@ MonoBehaviour:
   speed: 20
   rotForce: 3
   leashDistance: 1000
+  friendly: 0
   conscriptable: 0
   destroyed: 0
   canShoot: 0
@@ -289,16 +290,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentAttackPlan: 0
-  speed: 20
-  walkspeed: 12
-  rotForce: 2
+  speed: 35
+  walkspeed: 15
+  rotForce: 3
   accuracy: 1
-  gunCooldown: 0
-  gunCost: 0.2
   closedistance: 20
   fardistance: 60
-  avoidCollisionClock: 0
+  gunCost: 0.2
   checkForwardDistance: 50
+  gunCooldown: 0
+  avoidCollisionClock: 0
   destroyed: 0
   canShoot: 0
   flyaway: 0

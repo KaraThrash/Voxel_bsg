@@ -8,6 +8,7 @@ public class WorldTime : MonoBehaviour
   public Text clockText,fleetJumpReadiness;
   public GameObject joinAttackButton,fleetJumpButton;
   public int totalTimePassed,currentMinutes;
+  public int fleetJumpTimeIncrements,timeBetweenAttacks = 180; //FTL spools at slow/avg/fast per ship and player can risky jump || leave ships behind
   public float timeUntilAttack,timeSinceLastJump,timerate;
   public bool trackTime;//time stands still in menus
     // Start is called before the first frame update
@@ -21,13 +22,28 @@ public class WorldTime : MonoBehaviour
     {
 
       //NOTE: always track time?
+      //not when in battle
+
+
         TrackTime();
-      if(trackTime == true)
-      {
 
 
-      }
 
+      // if(trackTime == true)
+      // {
+      //   TrackTime();
+      //
+      // }
+
+    }
+
+
+
+    public void ResetTheClock()
+    {
+      timeUntilAttack = timeBetweenAttacks;
+      timeSinceLastJump = 0;
+      SetClockText();
     }
     public void SetInMenu(bool isinmenu)
     {
@@ -37,28 +53,66 @@ public class WorldTime : MonoBehaviour
       if((int)timeUntilAttack % 60 < 10){seconds += "0";}
       string minutes = "";
       if((int)timeUntilAttack / 60 < 10){minutes += "0";}
-      clockText.text = minutes + ((int)timeUntilAttack / 60).ToString() + " :" + seconds + ((int)timeUntilAttack % 60).ToString();
+      // clockText.text = minutes + ((int)timeUntilAttack / 60).ToString() + " :" + seconds + ((int)timeUntilAttack % 60).ToString();
+    }
+    public void SetClockText()
+    {
+      string seconds = "";
+      //display 9 seconds remaining as 00:09
+      if((int)timeUntilAttack % 60 < 10){seconds += "0";}
+      string minutes = "";
+      if((int)timeUntilAttack / 60 < 10){minutes += "0";}
+      if(trackTime == false)
+      {clockText.text = minutes + ((int)timeUntilAttack / 60).ToString() + " :" + seconds + ((int)timeUntilAttack % 60).ToString();}
+        else
+        {clockText.text = minutes + ((int)timeUntilAttack / 60).ToString() ;}
+
     }
     public void TrackTime()
     {
 
-      timeUntilAttack -= (Time.deltaTime * timerate);
-      timeSinceLastJump += (Time.deltaTime * timerate);
 
-      if(gameManager.fleetManager.engineStrength < timeSinceLastJump ){fleetJumpButton.active = true;}
-      else{fleetJumpButton.active = false;}
-      fleetJumpReadiness.text = (int)timeSinceLastJump + " / " + gameManager.fleetManager.engineStrength;
+      if(gameManager.GetInBattle() == false)
+      {
+        if(timeUntilAttack > 0){  timeUntilAttack -= (Time.deltaTime * timerate);}
 
         currentMinutes = (int)timeUntilAttack / 60;
           if(gameManager.inMenu == false){clockText.text = currentMinutes.ToString();}
 
 
 
-      if(timeUntilAttack <= 1)
+      if(timeUntilAttack <= 60)
       {
         joinAttackButton.active = true;
-      }else{  joinAttackButton.active = false;}
 
+        //0 attack occurs, if the player isnt there it auto resolves
+        //cant join a battle in progress [wont make it in time if the clock is already at 0]
+        if(timeUntilAttack <= 0)
+        {
+          joinAttackButton.active = false;
+
+        }
+      }else{
+
+      joinAttackButton.active = false;
+      }
+      }else{
+        timeUntilAttack = -1;
+        joinAttackButton.active = false;
+
+      }
+
+      timeSinceLastJump += (Time.deltaTime * timerate);
+
+      if(gameManager.fleetManager.engineStrength < timeSinceLastJump ){
+        fleetJumpButton.active = true;
+      }
+      else{fleetJumpButton.active = false;}
+
+      fleetJumpReadiness.text = (int)timeSinceLastJump + " / " + gameManager.fleetManager.engineStrength;
+
+
+      SetClockText();
     }
 
     public void FastForwardTime(int rate)
