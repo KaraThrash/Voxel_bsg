@@ -56,7 +56,7 @@ public class NpcManager : MonoBehaviour {
       count = 0;
       while(count < go.GetComponent<Map>().enemySpawnLocations.childCount)
       {
-        GameObject clone = Instantiate(npcs[0], go.GetComponent<Map>().enemySpawnLocations.GetChild(count).position, go.GetComponent<Map>().enemySpawnLocations.GetChild(count).rotation) as GameObject;
+        GameObject clone = Instantiate(npcs[go.GetComponent<Map>().GetEnemyType()], go.GetComponent<Map>().enemySpawnLocations.GetChild(count).position, go.GetComponent<Map>().enemySpawnLocations.GetChild(count).rotation) as GameObject;
         clone.transform.parent = enemyparent.transform;
         enemies.Add(clone);
         clone.GetComponent<Enemy>().ResetToNeutral(GetComponent<NpcManager>());

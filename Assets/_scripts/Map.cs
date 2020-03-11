@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Map : MonoBehaviour
 {
-  public int rangeToChangeMapSegement;
+  public int rangeToChangeMapSegement,enemyType;
   public bool mapSubSection;
   public Transform mapSubSections;
   public Transform enemySpawnLocations;
@@ -21,4 +21,6 @@ public class Map : MonoBehaviour
     {
 
     }
+    public int GetEnemyType()
+    {return enemyType;}
 }
