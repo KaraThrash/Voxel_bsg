@@ -62,6 +62,7 @@ public class NpcManager : MonoBehaviour {
         clone.GetComponent<Enemy>().ResetToNeutral(GetComponent<NpcManager>());
         clone.GetComponent<Enemy>().patrolparent = go.GetComponent<Map>().patrolLocations.gameObject;//.GetChild(count);
         clone.GetComponent<Enemy>().SetAlert(false);
+        clone.GetComponent<Enemy>().mapArea = go.gameObject;
         count++;
       }
     }
@@ -233,6 +234,23 @@ public class NpcManager : MonoBehaviour {
       }
       return closestEnemy;
     }
+
+    public void AlertEnemiesInRange(GameObject fromObject,float rng)
+    {
+      if( enemies.Count <= 0){}
+
+      foreach(GameObject go in enemies)
+      {
+        if(Vector3.Distance(go.transform.position,fromObject.transform.position) < rng ){
+          go.GetComponent<Enemy>().alert = true;
+          go.GetComponent<Enemy>().target = GetPlayerShip();
+
+          }
+
+      }
+
+    }
+
 
     public GameObject GetPlayerShip()
     {

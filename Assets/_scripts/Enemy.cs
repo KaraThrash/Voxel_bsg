@@ -46,10 +46,10 @@ public class Enemy : MonoBehaviour {
         ResetToNeutral(npcManager);
 
     }
-    public void ResetToNeutral(NpcManager npcManage)
+    public void ResetToNeutral(NpcManager npcmanager)
     {
 
-      npcManager = npcManage;
+      npcManager = npcmanager;
       startPos = transform.position;
       startRot = transform.rotation;
       if(rb == null){rb = GetComponent<Rigidbody>();}
