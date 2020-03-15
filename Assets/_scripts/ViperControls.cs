@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class ViperControls : MonoBehaviour {
+  public PlayerControls playerControls;
     private Vector3 newvel;
     public GameObject myplayer;
     public GameObject camera;
@@ -21,7 +22,7 @@ public class ViperControls : MonoBehaviour {
     private float vert;
     private float roll;
     public float rollSpeed;
-    public float rollMod;
+    public float rollMod,engineMod;
     private float mouseX;
     private float mouseY;
     public GameObject gun1;
@@ -32,18 +33,27 @@ public class ViperControls : MonoBehaviour {
     public float cameraspeed;
     public float step,groundCollisionTimer;
 
-    public float distspeed;
     public int heldresource;
 	// Use this for initialization
 	void Start () {
 
         cameraspeed = 15;
-        distspeed = 12;
+
     }
-    public void SetUp(GameObject newplayer,GameObject newcam)
+
+//each ship type has its core values to modify the player stats
+    public void SetUp(PlayerShipStats playerStats,PlayerControls newplayerControls)
     {
-      // myplayer = newplayer;
-      // camera = newcam; camerasphere = newcam;
+      playerControls = newplayerControls;
+
+      rollSpeed = playerStats.speed;
+      // rollMod = playerStats
+      turnSpeed = playerStats.speed / 4;
+      flySpeed = playerStats.speed;
+      engineMod = 5;
+      strafeSpeed = playerStats.speed * 4;
+      // guncooldown = playerStats
+      // cameraspeed = playerStats
     }
 
 	public void Fly (Rigidbody shipRigidBody) {
@@ -96,16 +106,20 @@ public class ViperControls : MonoBehaviour {
         cam.transform.position = ship.transform.position;
         // targetRotation = Quaternion.LookRotation((camera.transform.position + camera.transform.forward) - transform.position);
         step = Mathf.Min(4 * Time.deltaTime, 1.5f);
-        ship.transform.rotation = Quaternion.Lerp(ship.transform.rotation, cam.transform.rotation, step);
+        ship.transform.rotation = Quaternion.Lerp(ship.transform.rotation, cam.transform.rotation, Time.deltaTime * rollMod * turnSpeed);
 
+//TODO: change this '20' to a reasonable variable // cam should be slightly behind ship rotation to give the semse of movement
         cam.GetComponent<ThirdPersonCamera>().rollz = roll * 20 * Time.deltaTime ;
 
       }
     }
     public void thirdpersonflightcontrols(Rigidbody shipRigidBody)
     {
-        hort = Input.GetAxis("Horizontal");
-        vert = Input.GetAxis("Vertical");
+      if(Input.GetAxis("Horizontal") != 0 && playerControls.UseStamina(1) == true)
+      {  hort = Input.GetAxis("Horizontal");}else{hort = 0;}
+      if(Input.GetAxis("Vertical") != 0 && playerControls.UseStamina(1) == true)
+      {  vert = Input.GetAxis("Vertical");}else{vert = 0;}
+
 
         if (guncooldowntimer > 0)
         {
@@ -126,150 +140,37 @@ public class ViperControls : MonoBehaviour {
 
         }
 
-        if (Input.GetKey(KeyCode.Space) || Input.GetKey(KeyCode.LeftBracket)) { lift = -2; }
-        else if
-            (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightBracket))
-        { lift = 2; }
-        else { lift = 0; }
+
+              if  ((Input.GetKey(KeyCode.Space) ) && playerControls.UseStamina(1) == true)
+              { lift = 4; rollMod = 1;}
+              else  if  ((Input.GetKey(KeyCode.LeftShift) ) && playerControls.UseStamina(1) == true)
+                { lift = 0; rollMod = 2;}
+              else { lift = 1; rollMod = 1;}
 
 
-     //   if (Input.GetKeyDown(KeyCode.E)) { if (rollMod == -15) { rollMod = 0; } else { rollMod = -15; } }
-     //   if (Input.GetKeyDown(KeyCode.Q)) { if (rollMod == 15) { rollMod = 0; } else { rollMod = 15; } }
 
-        //if (Input.GetKey(KeyCode.Q) || Input.GetKey(KeyCode.U)) { roll = (rollSpeed + rollMod); } else if (Input.GetKey(KeyCode.E) || Input.GetKey(KeyCode.O)) { roll = -(rollSpeed + rollMod); } else { roll = 0; }
-
-
-       // if (Input.GetKeyDown(KeyCode.LeftShift))
-        //{
-            // ToggleGlide();
-        //}
 
         if (Input.GetKey(KeyCode.E)) { roll = -1; }
         else if (Input.GetKey(KeyCode.Q))
         { roll = 1; }
         else { roll = 0; }
-        // if (roll != 0) { rb.AddTorque(transform.forward * roll * Time.deltaTime, ForceMode.Impulse); }
-        shipRigidBody.transform.Rotate(0, 0, roll * rollSpeed * Time.deltaTime);
+        // roll feels really sluggish, x10 the rollSpeed so the number is visually easier to work with
+        shipRigidBody.transform.Rotate(0, 0, roll * rollSpeed * 10 * rollMod * Time.deltaTime);
 
 
 
         Vector3 tempvel = shipRigidBody.transform.position - (shipRigidBody.transform.position + shipRigidBody.transform.right);
         tempvel *= strafeSpeed * -hort;
         Vector3 tempvel2 = shipRigidBody.transform.position - (shipRigidBody.transform.position + shipRigidBody.transform.forward);
-        tempvel2 *= flySpeed * -vert;
+        tempvel2 *= flySpeed * -lift;
         Vector3 tempvel3 = transform.position - (transform.position + transform.up);
-        tempvel3 *= flySpeed * lift;
+        tempvel3 *= strafeSpeed * -vert;
 
         newvel = tempvel + tempvel2 + tempvel3 ;
         shipRigidBody.velocity = Vector3.Lerp(shipRigidBody.velocity,newvel,5.0f * Time.deltaTime);
 
     }
-    public void KeyboardFlightControls()
-    {
-        if (Input.GetKey(KeyCode.Space))
-        {
 
-            if (guncooldown <= 0)
-            {
-
-               RaycastShootGuns();
-
-                guncooldown = 0.2f;
-            }
-            guncooldown -= Time.deltaTime;
-        }
-
-        if (Input.GetKey(KeyCode.KeypadPlus) || Input.GetKey(KeyCode.LeftBracket)) { lift = liftSpeed; }
-        else if
-            (Input.GetKey(KeyCode.KeypadEnter) || Input.GetKey(KeyCode.RightBracket))
-        { lift = -liftSpeed; }
-        else { lift = 0; }
-
-        hort = Input.GetAxis("Horizontal");
-        vert = Input.GetAxis("Vertical");
-        if (Input.GetKeyDown(KeyCode.E)) { if (rollMod == -15) { rollMod = 0; } else { rollMod = -15; } }
-        if (Input.GetKeyDown(KeyCode.Q)) { if (rollMod == 15) { rollMod = 0; } else { rollMod = 15; } }
-
-        if (Input.GetKey(KeyCode.Keypad7) || Input.GetKey(KeyCode.U)) { roll = (rollSpeed + rollMod); } else if (Input.GetKey(KeyCode.Keypad9) || Input.GetKey(KeyCode.O)) { roll = -(rollSpeed + rollMod); } else { roll = 0; }
-        if (Input.GetKey(KeyCode.Keypad4) || Input.GetKey(KeyCode.J)) { mouseX = -(turnSpeed + rollMod); } else if (Input.GetKey(KeyCode.Keypad6) || Input.GetKey(KeyCode.L)) { mouseX = (turnSpeed + rollMod); } else { mouseX = 0; }
-        if (Input.GetKey(KeyCode.Keypad2) || Input.GetKey(KeyCode.K)) { mouseY = -(turnSpeed + rollMod); } else if (Input.GetKey(KeyCode.Keypad8) || Input.GetKey(KeyCode.I)) { mouseY = (turnSpeed + rollMod); } else { mouseY = 0; }
-
-
-        if (Input.GetKeyDown(KeyCode.LeftShift))
-        {
-           // ToggleGlide();
-        }
-
-        // GetComponent<PhotonView>().RPC("flightControls", PhotonTargets.AllViaServer, vert, hort, roll, mouseX, mouseY, exit, lift);
-        flightControls(vert, hort, roll, mouseX, mouseY, lift);
-    }
-
-    public void ControllerFlight()
-    {
-        hort = Input.GetAxis("Horizontal");
-        vert = Input.GetAxis("Vertical");
-
-
-            camerasphere.transform.position = transform.position;
-            targetRotation = Quaternion.LookRotation((camerasphere.transform.position + camerasphere.transform.forward) - transform.position);
-            step = Mathf.Min(4 * Time.deltaTime, 1.5f);
-            transform.rotation = Quaternion.Lerp(transform.rotation, camerasphere.transform.rotation, step);
-
-            camerasphere.GetComponent<ThirdPersonCamera>().rollz = roll * 20 * Time.deltaTime;
-
-
-        if (Input.GetAxis("3rd Axis") > 0)
-        {
-
-            if (guncooldowntimer <= 0)
-            {
-
-                RaycastShootGuns();
-
-                guncooldowntimer = guncooldown;
-            }
-            guncooldowntimer -= Time.deltaTime;
-        }
-
-        if (Input.GetKey(KeyCode.Joystick1Button8) || Input.GetKey(KeyCode.LeftBracket)) { lift = -2; }
-        else if
-            (Input.GetKey(KeyCode.Joystick1Button9) || Input.GetKey(KeyCode.RightBracket))
-        { lift = 2; }
-        else { lift = 0; }
-
-
-        //   if (Input.GetKeyDown(KeyCode.E)) { if (rollMod == -15) { rollMod = 0; } else { rollMod = -15; } }
-        //   if (Input.GetKeyDown(KeyCode.Q)) { if (rollMod == 15) { rollMod = 0; } else { rollMod = 15; } }
-
-        //if (Input.GetKey(KeyCode.Q) || Input.GetKey(KeyCode.U)) { roll = (rollSpeed + rollMod); } else if (Input.GetKey(KeyCode.E) || Input.GetKey(KeyCode.O)) { roll = -(rollSpeed + rollMod); } else { roll = 0; }
-
-
-        // if (Input.GetKeyDown(KeyCode.LeftShift))
-        //{
-        // ToggleGlide();
-        //}
-
-        if (Input.GetKey(KeyCode.Joystick1Button5)) { roll = -1; }
-        else if (Input.GetKey(KeyCode.Joystick1Button4))
-        { roll = 1; }
-        else { roll = 0; }
-        // if (roll != 0) { rb.AddTorque(transform.forward * roll * Time.deltaTime, ForceMode.Impulse); }
-        transform.Rotate(0, 0, roll * rollSpeed * Time.deltaTime);
-
-
-        //rb.AddTorque(transform.forward * roll * 15.0f * Time.deltaTime, ForceMode.Impulse);
-        // GetComponent<PhotonView>().RPC("flightControls", PhotonTargets.AllViaServer, vert, hort, roll, mouseX, mouseY, exit, lift);
-
-        Vector3 tempvel = transform.position - (transform.position + transform.right);
-        tempvel *= strafeSpeed * -hort;
-        Vector3 tempvel2 = transform.position - (transform.position + transform.forward);
-        tempvel2 *= flySpeed * -vert;
-        Vector3 tempvel3 = transform.position - (transform.position + transform.up);
-        tempvel3 *= flySpeed * lift;
-
-        newvel = tempvel + tempvel2 + tempvel3;
-        rb.velocity = Vector3.Lerp(rb.velocity, newvel, 5.0f * Time.deltaTime);
-    }
 
     public void RaycastShootGuns()
     {
@@ -288,29 +189,7 @@ public class ViperControls : MonoBehaviour {
         }
 
     }
-    public void flightControls(float newvert, float newhort, float roll, float rollX, float rollY, float lift)
-    {
-        if (vert != 0)
-        {
-            rb.AddForce(transform.forward * ((vert * flySpeed * 10 )) * Time.deltaTime);
 
-        }
-        if (hort != 0)
-        {
-
-            rb.AddForce(transform.right * (hort * strafeSpeed) * Time.deltaTime, ForceMode.Impulse);
-        }
-
-        if (roll != 0) { rb.AddTorque(transform.forward * roll * Time.deltaTime, ForceMode.Impulse); }
-        if (rollX != 0) { rb.AddTorque(transform.up * rollX * Time.deltaTime, ForceMode.Impulse); }
-        if (rollY != 0) { rb.AddTorque(transform.right * rollY * Time.deltaTime, ForceMode.Impulse); }
-        //if (roll == 0 && rollX == 0 && rollY == 0)
-        //{ rb.angularDrag = 1.0f; rb.drag = 1.0f; }
-        //else { rb.angularDrag = 0; rb.drag = 0; }
-
-        if (lift != 0) { rb.AddForce(transform.up * lift * 30 * Time.deltaTime); }
-
-    }
 
 
 
@@ -361,7 +240,7 @@ public class ViperControls : MonoBehaviour {
       if (col.gameObject.tag == "Dock")
       {
           myplayer.GetComponent<Player>().NearDock(false);
-          
+
       }
       else{}
     }
@@ -379,22 +258,7 @@ public class ViperControls : MonoBehaviour {
         }
         else{}
     }
-    // public void OnCollisionEnter(Collision col)
-    // {
-    //     HandleCollisionEnter(col,rb);
-    // }
-    //
-    //
-    // public void OnTriggerEnter(Collider col)
-    // {
-    //     HandleTriggerEnter(col,rb);
-    // }
-    //
-    // public void OnTriggerExit(Collider col)
-    // {
-    //   HandleTriggerExit(col,rb);
-    //
-    // }
+
 
 
 }

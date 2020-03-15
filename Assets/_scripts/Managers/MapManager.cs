@@ -44,8 +44,9 @@ public class MapManager : MonoBehaviour {
   public GameObject FindClosestArea(Transform playerShip)
   {
     //find the closest map section
-      float dist = rangeToChangeMapSegement * 2;
+
       GameObject newarea = currentMap.mapSubSections.GetChild(0).gameObject;
+      float dist = newarea.GetComponent<Map>().rangeToChangeMapSegement * 5;
       foreach(Transform go in currentMap.mapSubSections)
       {
         if(Vector3.Distance(playerShip.position,go.position) < dist)

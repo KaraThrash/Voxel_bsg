@@ -18,7 +18,8 @@ public class Player : MonoBehaviour {
     public GameManager gamemanager;
     // Use this for initialization
     void Start () {
-      // Item newitem = new Item{name = "red"};
+      ChangeShips(0);
+      ChangeShips(0);
 	}
 
 	// Update is called once per frame
@@ -28,10 +29,14 @@ public class Player : MonoBehaviour {
     if(atDock == true && Input.GetKeyDown(KeyCode.Tab))
     {gamemanager.ActivateMenu();}
 
-
+    if(Input.GetKeyDown(KeyCode.Y))
+    {ChangeShips(0);}
     if(inMenu == false)
     {
+
       ControlShip();
+
+
     }else
     {
         myship.GetComponent<Rigidbody>().isKinematic = true;
@@ -42,17 +47,18 @@ public class Player : MonoBehaviour {
   public void ChangeShips(int changeto)
   {
     //TODO: this need a complete overhaul
-    if(changeto == 0)
-    {
-      raptorShip.active = false;
-      viperShip.active = true;
-      myship = viperShip;
-    }else
-    {
-      raptorShip.active = false;
-      viperShip.active = true;
-      myship = raptorShip;
-    }
+    // if(changeto == 0)
+    // {
+    //   raptorShip.active = false;
+    //   viperShip.active = true;
+    //   myship = viperShip;
+    // }else
+    // {
+    //   raptorShip.active = false;
+    //   viperShip.active = true;
+    //   myship = raptorShip;
+    // }
+    playerControls.ChangeShip(playerShipStats);
 
   }
   public void ControlShip()

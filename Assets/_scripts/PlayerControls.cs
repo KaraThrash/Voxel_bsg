@@ -8,7 +8,7 @@ public class PlayerControls : MonoBehaviour
   public GameObject camera;
   public GameObject camerasphere;
   public bool inMenu;
-
+  public PlayerShipStats playerStats;
   private Rigidbody rb;
     // Start is called before the first frame update
     void Start()
@@ -19,8 +19,7 @@ public class PlayerControls : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-      if(Input.GetKeyDown(KeyCode.Y))
-      {ChangeShip();}
+
     }
 
     public void ControlShip()
@@ -39,23 +38,50 @@ public class PlayerControls : MonoBehaviour
               playerShip.GetComponent<RaptorControls>().ControlCamera(camerasphere,this.gameObject);
             }
           }
+
+          if(playerStats != null)
+          {
+            playerStats.RechargeStamina();
+
+          }
     }
 
-    public void ChangeShip()
+    public bool UseStamina(float cost)
     {
+
+      if(playerStats != null )
+      {
+          return playerStats.UseStamina(cost);
+
+      }
+
+        return false;
+    }
+
+    public void ChangeShip(PlayerShipStats newplayerStats)
+    {
+      playerStats = newplayerStats;
           if(viperShip.active == true )
           {
             viperShip.active = false;
             playerShip = raptorShip;
             raptorShip.active = true;
+            if(playerShip.GetComponent<RaptorControls>() != null)
+            {
 
+              playerShip.GetComponent<RaptorControls>().SetUp(newplayerStats,GetComponent<PlayerControls>());
+            }
 
           }else
           {
               raptorShip.active = false;
             viperShip.active = true;
             playerShip = viperShip;
+            if(playerShip.GetComponent<ViperControls>() != null)
+            {
 
+              playerShip.GetComponent<ViperControls>().SetUp(newplayerStats,GetComponent<PlayerControls>());
+            }
           }
     }
 

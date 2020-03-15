@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class RaptorControls : MonoBehaviour
 {
+    public PlayerControls playerControls;
   private Vector3 newvel;
   public GameObject myplayer;
   public GameObject camera;
@@ -22,7 +23,7 @@ public class RaptorControls : MonoBehaviour
   private float vert;
   private float roll;
   public float rollSpeed;
-  public float rollMod;
+  public float rollMod,engineMod;
   private float mouseX;
   private float mouseY;
   public GameObject gun1;
@@ -41,11 +42,20 @@ void Start () {
       cameraspeed = 15;
       distspeed = 12;
   }
-public void SetUp(GameObject newplayer,GameObject newcam)
-{
-  myplayer = newplayer;
-  camera = newcam; camerasphere = newcam;
-}
+  //each ship type has its core values to modify the player stats
+      public void SetUp(PlayerShipStats playerStats,PlayerControls newplayerControls)
+      {
+        playerControls = newplayerControls;
+
+        rollSpeed = playerStats.speed / 2;
+        // rollMod = playerStats
+        turnSpeed = playerStats.speed / 8;
+        flySpeed = playerStats.speed / 2;
+        engineMod = 5;
+        strafeSpeed = playerStats.speed * 4;
+        // guncooldown = playerStats
+        // cameraspeed = playerStats
+      }
 
 public void Fly (Rigidbody shipRigidBody)  {
      //KeyboardFlightControls();
@@ -100,7 +110,7 @@ public void Fly (Rigidbody shipRigidBody)  {
     // else {}
       cam.transform.position = ship.transform.position;
       // targetRotation = Quaternion.LookRotation((camera.transform.position + camera.transform.forward) - transform.position);
-      step = Mathf.Min(rollSpeed * Time.deltaTime, 1.5f);
+      step = Mathf.Min(turnSpeed * Time.deltaTime, 1.5f);
 
       ship.transform.rotation = Quaternion.Lerp(ship.transform.rotation, cam.transform.rotation, step);
 
@@ -124,10 +134,25 @@ public void Fly (Rigidbody shipRigidBody)  {
       { roll = 1; }
       else { roll = 0; }
 
+
+      if (Input.GetKey(KeyCode.Space)) {
+
+        if(Input.GetAxis("Mouse ScrollWheel") > 0 && rollMod < engineMod)
+        {
+          rollMod += Time.deltaTime;
+
+        }
+        if(Input.GetAxis("Mouse ScrollWheel") < 0 && rollMod > 1)
+        {
+          rollMod -= Time.deltaTime;
+
+        }
+          shipRigidBody.AddForce(shipRigidBody.transform.forward * (flySpeed * rollMod) );
+      }
       shipRigidBody.transform.Rotate(0, 0, roll * rollSpeed * Time.deltaTime);
 
 
-      shipRigidBody.AddForce(shipRigidBody.transform.forward * (flySpeed * vert) );
+
 
       //brakes
       if (Input.GetMouseButton(1))
