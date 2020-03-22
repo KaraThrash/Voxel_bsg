@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlayerControls : MonoBehaviour
 {
-  public GameObject playerShip,viperShip,raptorShip;
+  public GameObject playerShip,viperShip,raptorShip,tankShip;
   public GameObject camera;
   public GameObject camerasphere;
   public bool inMenu;
@@ -24,20 +24,24 @@ public class PlayerControls : MonoBehaviour
 
     public void ControlShip()
     {
+      // if(rb == null){  rb = GetComponent<Rigidbody>();}
           if(playerShip.GetComponent<ViperControls>() != null)
           {
             playerShip.GetComponent<ViperControls>().Fly(rb);
             playerShip.GetComponent<ViperControls>().WeaponSystems();
             playerShip.GetComponent<ViperControls>().ControlCamera(camerasphere,this.gameObject);
-          }else
-          {
-            if(playerShip.GetComponent<RaptorControls>() != null)
+          }else if(playerShip.GetComponent<RaptorControls>() != null)
             {
               playerShip.GetComponent<RaptorControls>().Fly(rb);
               playerShip.GetComponent<RaptorControls>().WeaponSystems();
               playerShip.GetComponent<RaptorControls>().ControlCamera(camerasphere,this.gameObject);
             }
-          }
+            else if(playerShip.GetComponent<TankControls>() != null)
+              {
+                playerShip.GetComponent<TankControls>().Fly(rb);
+                playerShip.GetComponent<TankControls>().WeaponSystems();
+                playerShip.GetComponent<TankControls>().ControlCamera(camerasphere,this.gameObject);
+              }else{}
 
           if(playerStats != null)
           {
@@ -60,29 +64,39 @@ public class PlayerControls : MonoBehaviour
 
     public void ChangeShip(PlayerShipStats newplayerStats)
     {
+        if(rb == null){  rb = GetComponent<Rigidbody>();}
       playerStats = newplayerStats;
-          if(viperShip.active == true )
+          if(viperShip.active == true)
           {
             viperShip.active = false;
+            tankShip.active = false;
             playerShip = raptorShip;
             raptorShip.active = true;
+              rb.useGravity = false;
             if(playerShip.GetComponent<RaptorControls>() != null)
             {
 
-              playerShip.GetComponent<RaptorControls>().SetUp(newplayerStats,GetComponent<PlayerControls>());
+              playerShip.GetComponent<RaptorControls>().SetUp(playerStats.gameObject,newplayerStats,GetComponent<PlayerControls>());
             }
 
-          }else
+          }else  if(tankShip.active == true)
           {
-              raptorShip.active = false;
-            viperShip.active = true;
-            playerShip = viperShip;
-            if(playerShip.GetComponent<ViperControls>() != null)
-            {
-
-              playerShip.GetComponent<ViperControls>().SetUp(newplayerStats,GetComponent<PlayerControls>());
-            }
+            rb.useGravity = false;
+            raptorShip.active = false;
+            tankShip.active = false;
+          viperShip.active = true;
+          playerShip = viperShip;
+            playerShip.GetComponent<ViperControls>().SetUp(playerStats.gameObject,newplayerStats,GetComponent<PlayerControls>());
+          }else  if(raptorShip.active == true)
+          {
+              rb.useGravity = true;
+            raptorShip.active = false;
+          viperShip.active = false;
+          tankShip.active = true;
+          playerShip = tankShip;
+            playerShip.GetComponent<TankControls>().SetUp(playerStats.gameObject,newplayerStats,GetComponent<PlayerControls>());
           }
+
     }
 
     public void OnCollisionEnter(Collision col)

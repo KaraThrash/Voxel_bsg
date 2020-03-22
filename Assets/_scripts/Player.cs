@@ -19,7 +19,7 @@ public class Player : MonoBehaviour {
     // Use this for initialization
     void Start () {
       ChangeShips(0);
-      ChangeShips(0);
+
 	}
 
 	// Update is called once per frame
