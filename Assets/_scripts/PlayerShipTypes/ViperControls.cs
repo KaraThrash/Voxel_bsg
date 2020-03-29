@@ -47,7 +47,7 @@ public class ViperControls : MonoBehaviour {
       myplayer = newmyplayer;
       playerControls = newplayerControls;
 
-      rollSpeed = playerStats.speed / 4;
+      rollSpeed = playerStats.speed / 2;
       // rollMod = playerStats
       turnSpeed = playerStats.speed / 8;
       flySpeed = playerStats.speed;
@@ -144,9 +144,13 @@ public class ViperControls : MonoBehaviour {
 
               if  ((Input.GetKey(KeyCode.Space) ) && playerControls.UseStamina(1) == true)
               { lift = 4; rollMod = 1;}
-              else  if  ((Input.GetKey(KeyCode.LeftShift) ) && playerControls.UseStamina(1) == true)
-                { lift = 0; rollMod = 2;}
-              else { lift = 1; rollMod = 1;}
+              else  if  ((Input.GetKey(KeyCode.LeftShift) ) )
+                {
+                  if((shipRigidBody.velocity.magnitude < 5 || playerControls.UseStamina(1) == true))
+                {  lift = 0; rollMod = 2;}
+                  else { lift = 1; rollMod = 1;}
+                }
+
 
 
 

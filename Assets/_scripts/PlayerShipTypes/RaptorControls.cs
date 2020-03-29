@@ -148,6 +148,7 @@ public void Fly (Rigidbody shipRigidBody)  {
           rollMod -= Time.deltaTime;
 
         }
+        if(rollMod < 1){rollMod = 1;}
           shipRigidBody.AddForce(shipRigidBody.transform.forward * (flySpeed * rollMod) );
       }
       shipRigidBody.transform.Rotate(0, 0, roll * rollSpeed * Time.deltaTime);
@@ -156,7 +157,7 @@ public void Fly (Rigidbody shipRigidBody)  {
 
 
       //brakes
-      if (Input.GetMouseButton(1))
+      if (Input.GetKey(KeyCode.LeftShift))
       {shipRigidBody.velocity = Vector3.Lerp(shipRigidBody.velocity,Vector3.zero,brakeSpeed * Time.deltaTime);}
 
 

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlayerControls : MonoBehaviour
 {
-  public GameObject playerShip,viperShip,raptorShip,tankShip;
+  public GameObject playerShip,viperShip,raptorShip,tankShip,turnShip;
   public GameObject camera;
   public GameObject camerasphere;
   public bool inMenu;
@@ -41,7 +41,14 @@ public class PlayerControls : MonoBehaviour
                 playerShip.GetComponent<TankControls>().Fly(rb);
                 playerShip.GetComponent<TankControls>().WeaponSystems();
                 playerShip.GetComponent<TankControls>().ControlCamera(camerasphere,this.gameObject);
-              }else{}
+              }
+              else if(playerShip.GetComponent<TurningShip>() != null)
+                {
+                  playerShip.GetComponent<TurningShip>().Fly(rb);
+                  playerShip.GetComponent<TurningShip>().WeaponSystems();
+                  playerShip.GetComponent<TurningShip>().ControlCamera(camerasphere,this.gameObject);
+                }
+              else{}
 
           if(playerStats != null)
           {
@@ -72,6 +79,7 @@ public class PlayerControls : MonoBehaviour
             tankShip.active = false;
             playerShip = raptorShip;
             raptorShip.active = true;
+            turnShip.active = false;
               rb.useGravity = false;
             if(playerShip.GetComponent<RaptorControls>() != null)
             {
@@ -79,12 +87,13 @@ public class PlayerControls : MonoBehaviour
               playerShip.GetComponent<RaptorControls>().SetUp(playerStats.gameObject,newplayerStats,GetComponent<PlayerControls>());
             }
 
-          }else  if(tankShip.active == true)
+          }else  if(turnShip.active == true)
           {
             rb.useGravity = false;
             raptorShip.active = false;
             tankShip.active = false;
           viperShip.active = true;
+          turnShip.active = false;
           playerShip = viperShip;
             playerShip.GetComponent<ViperControls>().SetUp(playerStats.gameObject,newplayerStats,GetComponent<PlayerControls>());
           }else  if(raptorShip.active == true)
@@ -93,8 +102,18 @@ public class PlayerControls : MonoBehaviour
             raptorShip.active = false;
           viperShip.active = false;
           tankShip.active = true;
+          turnShip.active = false;
           playerShip = tankShip;
             playerShip.GetComponent<TankControls>().SetUp(playerStats.gameObject,newplayerStats,GetComponent<PlayerControls>());
+          }else  if(tankShip.active == true)
+          {
+              rb.useGravity = false;
+            raptorShip.active = false;
+          viperShip.active = false;
+          tankShip.active = false;
+          turnShip.active = true;
+          playerShip = turnShip;
+            playerShip.GetComponent<TurningShip>().SetUp(playerStats.gameObject,newplayerStats,GetComponent<PlayerControls>());
           }
 
     }
@@ -109,7 +128,7 @@ public class PlayerControls : MonoBehaviour
         if(playerShip.GetComponent<ViperControls>() != null)
         {
           playerShip.GetComponent<ViperControls>().HandleCollisionEnter(col,rb);
-        }
+        }else{}
       }
 
     }
@@ -125,7 +144,7 @@ public class PlayerControls : MonoBehaviour
         if(playerShip.GetComponent<ViperControls>() != null)
         {
           playerShip.GetComponent<ViperControls>().HandleTriggerEnter(col,rb);
-        }
+        }else{}
       }
 
     }
@@ -140,7 +159,7 @@ public class PlayerControls : MonoBehaviour
         if(playerShip.GetComponent<ViperControls>() != null)
         {
           playerShip.GetComponent<ViperControls>().HandleTriggerExit(col,rb);
-        }
+        }else{}
       }
 
 

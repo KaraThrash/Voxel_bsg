@@ -63,9 +63,9 @@ public class WorldTime : MonoBehaviour
       string minutes = "";
       if((int)timeUntilAttack / 60 < 10){minutes += "0";}
       if(trackTime == false)
-      {clockText.text = minutes + ((int)timeUntilAttack / 60).ToString() + " :" + seconds + ((int)timeUntilAttack % 60).ToString();}
+      {clockText.text = minutes + Mathf.Max(((int)timeUntilAttack / 60),0).ToString() + " :" + seconds + ((int)Mathf.Max(timeUntilAttack % 60,0)).ToString();}
         else
-        {clockText.text = minutes + ((int)timeUntilAttack / 60).ToString() ;}
+        {clockText.text = minutes + Mathf.Max(((int)timeUntilAttack / 60),0).ToString() ;}
 
     }
     public void TrackTime()

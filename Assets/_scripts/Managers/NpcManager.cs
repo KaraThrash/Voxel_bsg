@@ -155,7 +155,7 @@ public class NpcManager : MonoBehaviour {
     public GameObject GetClosestTarget(Vector3 fromPos)
     {
         //NOTE: for prototype only target the player
-      // return gameManager.playerManager.myship;
+      return gameManager.playerManager.myship;
 
       if(fleetNpcs.childCount <= 0){return gameManager.playerManager.myship;}
       GameObject closestTarget = gameManager.playerManager.myship;
