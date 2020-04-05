@@ -5,11 +5,14 @@ using UnityEngine;
 public class PlayerControls : MonoBehaviour
 {
   public GameObject playerShip,viperShip,raptorShip,tankShip,turnShip;
-  public GameObject camera;
+  public GameObject lockOnTarget;
   public GameObject camerasphere;
   public bool inMenu;
   public PlayerShipStats playerStats;
   private Rigidbody rb;
+  public PlayerSpecialActions playerSpecialActions;
+  public float lockOutWeapons,lockOutEngines;
+  private Vector3 velocityDirection;
     // Start is called before the first frame update
     void Start()
     {
@@ -25,11 +28,20 @@ public class PlayerControls : MonoBehaviour
     public void ControlShip()
     {
       // if(rb == null){  rb = GetComponent<Rigidbody>();}
+        playerSpecialActions.ListenToButtonPresses();
+
           if(playerShip.GetComponent<ViperControls>() != null)
           {
-            playerShip.GetComponent<ViperControls>().Fly(rb);
-            playerShip.GetComponent<ViperControls>().WeaponSystems();
-            playerShip.GetComponent<ViperControls>().ControlCamera(camerasphere,this.gameObject);
+            if(lockOutWeapons <= 0)
+            {playerShip.GetComponent<ViperControls>().WeaponSystems();}
+            if(lockOutEngines <= 0)
+            {
+              playerShip.GetComponent<ViperControls>().ControlCamera(camerasphere,this.gameObject);
+                playerShip.GetComponent<ViperControls>().Fly(rb);
+            }
+
+
+
           }else if(playerShip.GetComponent<RaptorControls>() != null)
             {
               playerShip.GetComponent<RaptorControls>().Fly(rb);
@@ -50,13 +62,27 @@ public class PlayerControls : MonoBehaviour
                 }
               else{}
 
+              if(lockOutEngines > 0 || lockOutWeapons > 0)
+              {  lockOutEngines -= Time.deltaTime;lockOutWeapons -= Time.deltaTime;}
           if(playerStats != null)
           {
             playerStats.RechargeStamina();
 
           }
     }
+    public void AttemptDodgeRoll()
+    {
+      int cost = 1;
+      if(UseStamina(cost))
+      {
+        lockOutEngines = 0.5f;
+        //default backwards //TODO: neautral barrel roll?
+        if(velocityDirection == Vector3.zero){  rb.velocity = playerShip.transform.forward *  -playerStats.dodgeDistance;}
+        else{  rb.velocity = velocityDirection.normalized * playerStats.dodgeDistance;}
 
+      }
+
+    }
     public bool UseStamina(float cost)
     {
 
@@ -68,7 +94,10 @@ public class PlayerControls : MonoBehaviour
 
         return false;
     }
-
+    public void SetVelocityDirection(Vector3 newDir)
+    {
+      velocityDirection = newDir;
+    }
     public void ChangeShip(PlayerShipStats newplayerStats)
     {
         if(rb == null){  rb = GetComponent<Rigidbody>();}

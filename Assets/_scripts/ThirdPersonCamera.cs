@@ -5,10 +5,10 @@ using UnityStandardAssets.CrossPlatformInput;
 public class ThirdPersonCamera : MonoBehaviour
 {
     public GameObject myfwdobj;
-    public GameObject target;
+    public GameObject player,target;
     public Quaternion newrot;
     public bool inMenu,movetowards;
-    public float damping;
+    public float lockOnSpeed,damping;
     public float flyspeed;
     public float XSensitivity = 2f;
     public float YSensitivity = 2f;
@@ -44,11 +44,18 @@ public class ThirdPersonCamera : MonoBehaviour
     public void Update()
 
     {
-        transform.position = target.transform.position;
+        transform.position = player.transform.position;
         if (useController == false)
         {
-             yRot = CrossPlatformInputManager.GetAxis("Mouse X") * XSensitivity;
-             xRot = CrossPlatformInputManager.GetAxis("Mouse Y") * YSensitivity;
+          // yRot = Mathf.Sign(Input.GetAxis("Mouse X")) * XSensitivity;
+          // if(Input.GetAxis("Mouse X") != 0)
+          // {yRot = Mathf.Sign(Input.GetAxis("Mouse X")) * XSensitivity;}
+          //   else{yRot = 0;}
+          // if(Input.GetAxis("Mouse Y") != 0)
+          // {xRot = Mathf.Sign(Input.GetAxis("Mouse Y")) * YSensitivity;}
+          //   else{xRot = 0;}
+             yRot = (Input.GetAxis("Mouse X") * XSensitivity) + (Input.GetAxis("4th") * XSensitivity)  ;
+             xRot = (Input.GetAxis("Mouse Y") * YSensitivity) +  (Input.GetAxis("5th") * YSensitivity)  ;
         }
         else
         {
@@ -58,7 +65,10 @@ public class ThirdPersonCamera : MonoBehaviour
 
         m_CharacterTargetRot *= Quaternion.Euler(-xRot, yRot, rollz);
         //   m_CameraTargetRot *= Quaternion.Euler(-xRot, 0f, 0f);
-        Quaternion rotationDelta = Quaternion.FromToRotation(transform.forward, target.transform.forward);
+
+          Quaternion rotationDelta = Quaternion.FromToRotation(transform.forward, player.transform.forward);
+
+
 
 
         if (clampVerticalRotation)
@@ -73,7 +83,13 @@ public class ThirdPersonCamera : MonoBehaviour
         }
         else
         {
-            transform.rotation = m_CharacterTargetRot;
+          if(target != null){
+
+              transform.rotation = Quaternion.Lerp (transform.rotation, Quaternion.LookRotation (target.transform.position - transform.position), lockOnSpeed * Time.deltaTime);
+              m_CharacterTargetRot = transform.rotation;
+          }
+          else{transform.rotation = m_CharacterTargetRot;}
+
             // transform.rotation = m_CameraTargetRot;
         }
 

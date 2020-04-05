@@ -34,12 +34,13 @@ public class MapProcGen : MonoBehaviour
       {
             foreach(Transform el in subParts)
             {
-              rnd = Random.Range(0,1);
+              rnd = Random.Range(0.0f,1.0f);
               if(rnd < spawnRate)
               {
                   GameObject clone = Instantiate(spawnableItems[(int)Random.Range(0,spawnableItems.Count)],el.transform.position,el.transform.rotation );
-                  // clone.transform.parent = this.transform;
-                  clone.transform.Rotate(clone.transform.right * Random.Range(-rotRange,rotRange));
+
+                  clone.transform.Rotate(transform.right * Random.Range(-rotRange,rotRange));
+
               }
 
               Destroy(el.gameObject);

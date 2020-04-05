@@ -6,7 +6,10 @@ public class PlayerShipStats : MonoBehaviour
 {
   public int basearmor,basedamage,basespeed;
   public int armor,damage,speed;
+  public int dodgeDistance = 50;
+
   public int hp = 10,stamina,tempHp,tempStamina;
+
   public float staminaRechargeRate = 1,currentstaminaRechargeBonus,staminaRechargeBonus,currentStamina;//stamina recharges faster when not being used
   public int currentHp = 10;
   public Text stamText;

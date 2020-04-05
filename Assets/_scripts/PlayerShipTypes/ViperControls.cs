@@ -1,10 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class ViperControls : MonoBehaviour {
   public PlayerControls playerControls;
-    private Vector3 newvel;
+
     public GameObject myplayer;
     public GameObject camera;
     public GameObject camerasphere;
@@ -12,19 +13,19 @@ public class ViperControls : MonoBehaviour {
     public Quaternion targetRotation;
 
 
-    private Rigidbody rb;
+
+
+    //stats for this specific ship when in use
     public int turnSpeed;
     public float flySpeed;
     public float  strafeSpeed;
     public float liftSpeed;
-    private float lift;
-    private float hort;
-    private float vert;
-    private float roll;
     public float rollSpeed;
+
     public float rollMod,engineMod;
-    private float mouseX;
-    private float mouseY;
+
+
+
     public GameObject gun1;
     public GameObject gun2;
     public GameObject bullet;
@@ -34,6 +35,12 @@ public class ViperControls : MonoBehaviour {
     public float step,groundCollisionTimer;
 
     public int heldresource;
+
+
+    private float roll;
+    private Vector3 velocityDirection; //unit vector for the controllere input direction of travel, to make dashing easier
+    private Rigidbody rb;
+
 	// Use this for initialization
 	void Start () {
 
@@ -47,7 +54,7 @@ public class ViperControls : MonoBehaviour {
       myplayer = newmyplayer;
       playerControls = newplayerControls;
 
-      rollSpeed = playerStats.speed / 2;
+      rollSpeed = playerStats.speed / 1;
       // rollMod = playerStats
       turnSpeed = playerStats.speed / 8;
       flySpeed = playerStats.speed;
@@ -62,7 +69,8 @@ public class ViperControls : MonoBehaviour {
 
        if(groundCollisionTimer <= 0)
        {
-         thirdpersonflightcontrols(shipRigidBody);
+         Controllerflightcontrols(shipRigidBody);
+         // thirdpersonflightcontrols(shipRigidBody);
        }
         else{
 
@@ -82,7 +90,7 @@ public class ViperControls : MonoBehaviour {
           guncooldowntimer -= Time.deltaTime;
       }
 
-      if (Input.GetMouseButton(0))
+      if (Input.GetMouseButton(0) || (Input.GetAxis("10thAxis")) > 0 )
       {
 
           if (guncooldowntimer <= 0)
@@ -116,6 +124,11 @@ public class ViperControls : MonoBehaviour {
     }
     public void thirdpersonflightcontrols(Rigidbody shipRigidBody)
     {
+      Vector3 newvel = Vector3.zero;
+
+      float lift = 0;
+      float hort = 0;
+      float vert = 0;
       if(Input.GetAxis("Horizontal") != 0 && playerControls.UseStamina(1) == true)
       {  hort = Input.GetAxis("Horizontal");}else{hort = 0;}
       if(Input.GetAxis("Vertical") != 0 && playerControls.UseStamina(1) == true)
@@ -142,14 +155,13 @@ public class ViperControls : MonoBehaviour {
         }
 
 
-              if  ((Input.GetKey(KeyCode.Space) ) && playerControls.UseStamina(1) == true)
-              { lift = 4; rollMod = 1;}
-              else  if  ((Input.GetKey(KeyCode.LeftShift) ) )
-                {
-                  if((shipRigidBody.velocity.magnitude < 5 || playerControls.UseStamina(1) == true))
-                {  lift = 0; rollMod = 2;}
-                  else { lift = 1; rollMod = 1;}
-                }
+              if  ((Input.GetKey(KeyCode.Space) ) )
+              { lift = 4; }
+              else  if  ((Input.GetKey(KeyCode.LeftShift)) )
+
+                {  lift = -4;}
+
+                else { lift = 0;}
 
 
 
@@ -167,16 +179,89 @@ public class ViperControls : MonoBehaviour {
         Vector3 tempvel = shipRigidBody.transform.position - (shipRigidBody.transform.position + shipRigidBody.transform.right);
         tempvel *= strafeSpeed * -hort;
         Vector3 tempvel2 = shipRigidBody.transform.position - (shipRigidBody.transform.position + shipRigidBody.transform.forward);
-        tempvel2 *= flySpeed * -lift;
+        tempvel2 *= flySpeed * -vert;
         Vector3 tempvel3 = transform.position - (transform.position + transform.up);
-        tempvel3 *= strafeSpeed * -vert;
+        tempvel3 *= strafeSpeed * -lift;
 
         newvel = tempvel + tempvel2 + tempvel3 ;
+        velocityDirection = newvel;
+        playerControls.SetVelocityDirection(newvel);
         shipRigidBody.velocity = Vector3.Lerp(shipRigidBody.velocity,newvel,5.0f * Time.deltaTime);
-
+        shipRigidBody.angularVelocity = Vector3.Lerp(shipRigidBody.angularVelocity,Vector3.zero,5.0f * Time.deltaTime);
     }
+    public void Controllerflightcontrols(Rigidbody shipRigidBody)
+    {
+      Vector3 newvel = Vector3.zero;
+
+      float lift = 0;
+      float hort = 0;
+      float vert = 0;
+      if(Input.GetAxis("Horizontal") != 0 && playerControls.UseStamina(1) == true)
+      {  hort = Input.GetAxis("Horizontal");}else{hort = 0;}
+
+        if(Input.GetAxis("Vertical") != 0 && playerControls.UseStamina(1) == true)
+        {  lift = Input.GetAxis("Vertical");}else{lift = 0;}
 
 
+
+        if (guncooldowntimer > 0)
+        {
+
+            guncooldowntimer -= Time.deltaTime;
+        }
+
+        if (Input.GetMouseButton(0))
+        {
+
+            if (guncooldowntimer <= 0)
+            {
+
+                RaycastShootGuns();
+
+                guncooldowntimer = guncooldown;
+            }
+
+        }
+
+
+              if  ((Input.GetKey(KeyCode.Space)) || (Input.GetAxis("9thAxis")) > 0 )
+              { vert = 1; }
+              else  if  ((Input.GetKey(KeyCode.LeftShift)) || (Input.GetKey(KeyCode.JoystickButton4)) )
+
+                {  vert = -1;}
+
+                else { vert = 0;}
+
+
+
+
+
+        if (Input.GetKey(KeyCode.JoystickButton8)) { roll = 1; }
+        else if (Input.GetKey(KeyCode.JoystickButton9))
+        { roll = -1; }
+        else { roll = 0; }
+        // roll feels really sluggish, x10 the rollSpeed so the number is visually easier to work with
+        shipRigidBody.transform.Rotate(0, 0, roll * rollSpeed * 10 * rollMod * Time.deltaTime);
+
+
+
+        Vector3 tempvel = shipRigidBody.transform.position - (shipRigidBody.transform.position + shipRigidBody.transform.right);
+        tempvel *= strafeSpeed * -hort;
+        Vector3 tempvel2 = shipRigidBody.transform.position - (shipRigidBody.transform.position + shipRigidBody.transform.forward);
+        tempvel2 *= flySpeed * -vert;
+        Vector3 tempvel3 = transform.position - (transform.position + transform.up);
+        tempvel3 *= strafeSpeed * -lift;
+
+        newvel = tempvel + tempvel2 + tempvel3 ;
+        velocityDirection = newvel;
+                playerControls.SetVelocityDirection(newvel);
+        shipRigidBody.velocity = Vector3.Lerp(shipRigidBody.velocity,newvel,5.0f * Time.deltaTime);
+shipRigidBody.angularVelocity = Vector3.Lerp(shipRigidBody.angularVelocity,Vector3.zero,5.0f * Time.deltaTime);
+    }
+    public void DodgeRoll(Rigidbody shipRigidBody)
+    {
+      shipRigidBody.velocity = velocityDirection * flySpeed;
+    }
     public void RaycastShootGuns()
     {
         if (bullet.GetComponent<Bullet>().lance == true)
@@ -233,9 +318,13 @@ public class ViperControls : MonoBehaviour {
         {
           //bounce off the ground on contact
           //TODO calculate the right amount of bounce
-            groundCollisionTimer = 0.1f;
+            groundCollisionTimer = 0.5f;
             myplayer.GetComponent<Player>().gamemanager.imageFade.StartDmgFade();
-            shipRigidBody.velocity = (shipRigidBody.transform.position - col.contacts[0].point).normalized *  flySpeed ;
+            if(shipRigidBody.velocity.magnitude < 50 )
+            {shipRigidBody.velocity = (shipRigidBody.transform.position - col.contacts[0].point).normalized *  flySpeed * 1.5f;}
+              else{shipRigidBody.velocity = (shipRigidBody.transform.position - col.contacts[0].point).normalized *  shipRigidBody.velocity.magnitude;}
+
+            shipRigidBody.angularVelocity = (shipRigidBody.transform.position - col.contacts[0].point).normalized *  flySpeed  ;
               // rb.AddForce((transform.position - col.contacts[0].point).normalized * flySpeed  ,ForceMode.Impulse);
         }
     }

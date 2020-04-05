@@ -26,7 +26,7 @@ public class Player : MonoBehaviour {
 	void Update () {
 
 //TODO: re organize this. it clearly doesnt belong here so figure out where it does go
-    if(atDock == true && Input.GetKeyDown(KeyCode.Tab))
+    if(atDock == true && (Input.GetKeyDown(KeyCode.Tab) || Input.GetKeyDown(KeyCode.JoystickButton2)))
     {gamemanager.ActivateMenu();}
 
     if(Input.GetKeyDown(KeyCode.Y))

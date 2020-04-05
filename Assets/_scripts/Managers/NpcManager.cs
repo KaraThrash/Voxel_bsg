@@ -215,6 +215,8 @@ public class NpcManager : MonoBehaviour {
       return closestEnemy;
     }
 
+    
+
     public GameObject GetClosestUnConscriptedEnemy(GameObject fromObject)
     {
       if( enemies.Count <= 0){return fromObject;}

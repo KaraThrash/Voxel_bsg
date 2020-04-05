@@ -1,0 +1,70 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class PlayerSpecialActions : MonoBehaviour
+{
+  public PlayerControls playerControls;
+  public KeyCode lastKeyPressed;
+  public float timeForDoublePress = 0.2f;
+
+  private float keyPressedTimer;
+    // Start is called before the first frame update
+    void Start()
+    {
+
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+      if(keyPressedTimer > 0){keyPressedTimer -= Time.deltaTime;}
+    }
+    public void ListenToButtonPresses()
+    {
+      foreach(KeyCode vKey in System.Enum.GetValues(typeof(KeyCode))){
+             if(Input.GetKeyDown(vKey)){
+             //your code here
+            if(vKey == lastKeyPressed)
+            {
+              // DodgeRoll(vKey);
+              keyPressedTimer = 0;
+
+            }
+              else
+              {
+                keyPressedTimer = timeForDoublePress;
+                lastKeyPressed = vKey;
+              }
+
+             if(Input.GetKeyDown(KeyCode.Alpha1))
+             {LockOn();}
+             if(Input.GetKeyDown(KeyCode.JoystickButton1))
+             {DodgeRoll(vKey);}
+
+             }
+         }
+
+    }
+    public void LockOn()
+    {
+      if(playerControls.lockOnTarget == null)
+      {
+        playerControls.lockOnTarget = GetComponent<Player>().gamemanager.npcManager.GetClosestEnemy(this.gameObject);
+        playerControls.camerasphere.GetComponent<ThirdPersonCamera>().target = playerControls.lockOnTarget;
+      }
+        else{playerControls.lockOnTarget = null; playerControls.camerasphere.GetComponent<ThirdPersonCamera>().target = null;}
+
+    }
+    public void DodgeRoll(KeyCode direction)
+    {
+        playerControls.AttemptDodgeRoll();
+      // if(direction == KeyCode.W){playerControls.GetComponent<Rigidbody>().velocity = playerControls.transform.forward * 350; playerControls.lockOutEngines = 0.1f;}
+      // if(direction == KeyCode.S){playerControls.GetComponent<Rigidbody>().velocity = playerControls.transform.forward * -350; playerControls.lockOutEngines = 0.1f;}
+      // if(direction == KeyCode.A){playerControls.GetComponent<Rigidbody>().velocity = playerControls.transform.right * -350; playerControls.lockOutEngines = 0.1f;}
+      // if(direction == KeyCode.D){playerControls.GetComponent<Rigidbody>().velocity = playerControls.transform.right * 350; playerControls.lockOutEngines = 0.1f;}
+      // if(direction == KeyCode.LeftShift){playerControls.GetComponent<Rigidbody>().velocity = playerControls.transform.up * -350; playerControls.lockOutEngines = 0.1f;}
+      //   if(direction == KeyCode.Space){playerControls.GetComponent<Rigidbody>().velocity = playerControls.transform.up * 350; playerControls.lockOutEngines = 0.1f;}
+    }
+
+}
