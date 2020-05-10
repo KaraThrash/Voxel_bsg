@@ -119,7 +119,9 @@ public class Enemy : MonoBehaviour {
               target = npcManager.GetClosestEnemy(this.gameObject);
               if(target == this.gameObject){target = null;}
             }
-            else{  FindTarget();}
+            else{
+                FindTarget();
+            }
 
 
 
@@ -149,7 +151,7 @@ public class Enemy : MonoBehaviour {
           target = npcManager.GetClosestEnemy(this.gameObject);
           if(target == this.gameObject){target = null;}
         }
-        else{  FindTarget();}
+        // else{  FindTarget();}
 
 
 

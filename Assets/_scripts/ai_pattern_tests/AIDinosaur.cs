@@ -59,7 +59,7 @@ public class AIDinosaur : MonoBehaviour
           }
           else
           {
-
+            Patrol();
             if (gunCooldown <= 0)
             {
                 gunCooldown = gunCost * 10;
@@ -256,5 +256,36 @@ public class AIDinosaur : MonoBehaviour
 
     }
 
+    public void Patrol()
+    {
 
+      if(patrolColor != null && myRenderer != null)
+      {  myRenderer.material = patrolColor;}
+
+      if(myEnemy.patrolparent != null){
+          if(patroltarget != null){
+
+        if (Vector3.Distance(patroltarget.transform.position, transform.position) < 10)
+        { patroltarget = myEnemy.patrolparent.transform.GetChild(Random.Range(0, myEnemy.patrolparent.transform.childCount)).gameObject; }
+
+
+        targetRotation = Quaternion.LookRotation(patroltarget.transform.position - transform.position);
+
+        float angle = Vector3.Angle(patroltarget.transform.position - transform.position, transform.forward);
+
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotForce * Time.deltaTime);
+
+            // rb.AddForce(transform.forward * speed * Time.deltaTime, ForceMode.Impulse);
+            transform.position = Vector3.MoveTowards(transform.position, patroltarget.transform.position, walkspeed  * Time.deltaTime);
+          }
+          else
+          {
+            patroltarget = myEnemy.patrolparent.transform.GetChild(Random.Range(0, myEnemy.patrolparent.transform.childCount)).gameObject;
+          }
+        }
+
+
+
+
+    }
 }

@@ -69,8 +69,8 @@ public class ViperControls : MonoBehaviour {
 
        if(groundCollisionTimer <= 0)
        {
-         Controllerflightcontrols(shipRigidBody);
-         // thirdpersonflightcontrols(shipRigidBody);
+         // Controllerflightcontrols(shipRigidBody);
+         thirdpersonflightcontrols(shipRigidBody);
        }
         else{
 
