@@ -19,7 +19,7 @@ public class MapManager : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
   {
-      if(activeMapArea != null)
+      if(activeMapArea != null && currentMap.gameObject.active == true)
       {
         //check the location of the player ship against the map segment to start enabling adjacent npcs
         GameObject playerShip = gameManager.playerManager.GetPlayer();
@@ -46,7 +46,7 @@ public class MapManager : MonoBehaviour {
     //find the closest map section
 
       GameObject newarea = currentMap.mapSubSections.GetChild(0).gameObject;
-      float dist = newarea.GetComponent<Map>().rangeToChangeMapSegement * 5;
+      float dist = (newarea.GetComponent<Map>().rangeToChangeMapSegement * 5) + 1;
       foreach(Transform go in currentMap.mapSubSections)
       {
         if(Vector3.Distance(playerShip.position,go.position) < dist)
@@ -63,6 +63,15 @@ public class MapManager : MonoBehaviour {
 
       return newarea;
   }
+
+  public void StartNewMap(Transform playerShip)
+  {
+    // FindClosestArea(playerShip);
+    rangeToChangeMapSegement = currentMap.rangeToChangeMapSegement;
+    activeMapArea = currentMap.mapSubSections.GetChild(0).gameObject;
+    gameManager.npcManager.AlertNpcs(activeMapArea);
+  }
+
     public void SetDestination(int target)
     {
         // destination = target;
@@ -87,6 +96,7 @@ public class MapManager : MonoBehaviour {
           {
             battlemaps[Mathf.Abs(newArea)].active = true;
             currentMap = battlemaps[Mathf.Abs(newArea)].GetComponent<Map>();
+
           }
 
         }else

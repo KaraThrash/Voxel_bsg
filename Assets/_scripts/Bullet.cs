@@ -10,7 +10,7 @@ public class Bullet : MonoBehaviour {
     public GameObject intialExplosion;
     private Rigidbody rb;
     public float lifeTime;
-    public bool lance,missile; //toggles on instead of being a projectile
+    public bool lance,missile,spray,twinLiked; //toggles on instead of being a projectile
     // Use this for initialization
     void Start()
     {
@@ -18,9 +18,17 @@ public class Bullet : MonoBehaviour {
         if (lance == false)
         {
             transform.parent = GameObject.Find("BulletParent").transform;
-            rb.AddForce(transform.forward * (speed), ForceMode.Impulse);
+           rb.AddForce(transform.forward * (speed), ForceMode.Impulse);
         }
-
+         if (spray == true)
+        {
+          spray = false;
+          Spray();
+        }
+        if (twinLiked == true)
+       {
+         TwinLink();
+       }
 
        // if (large == true) { Instantiate(intialExplosion, transform.position, transform.rotation); }
 
@@ -51,6 +59,48 @@ public class Bullet : MonoBehaviour {
         }
         if (lifeTime <= 0) { Die(); }
     }
+
+    public void Spray()
+    {
+      Vector3 tempvec = transform.position + (transform.forward * 3);
+      spray = false;
+      GameObject clone = Instantiate(this.gameObject,transform.position + transform.forward,transform.rotation);
+      // tempvec = (tempvec * -1);
+
+      clone.GetComponent<Rigidbody>().AddForce((clone.transform.position - transform.position ) * (speed), ForceMode.Impulse);
+      clone = Instantiate(this.gameObject,tempvec + transform.up,transform.rotation);
+      clone.GetComponent<Rigidbody>().AddForce((clone.transform.position - transform.position ) * (speed), ForceMode.Impulse);
+      clone = Instantiate(this.gameObject,tempvec - transform.up,transform.rotation);
+      clone.GetComponent<Rigidbody>().AddForce((clone.transform.position - transform.position ) * (speed), ForceMode.Impulse);
+      clone = Instantiate(this.gameObject,tempvec + transform.up + transform.up,transform.rotation);
+      clone.GetComponent<Rigidbody>().AddForce((clone.transform.position - transform.position ) * (speed), ForceMode.Impulse);
+      clone = Instantiate(this.gameObject,tempvec - transform.up - transform.up,transform.rotation);
+      clone.GetComponent<Rigidbody>().AddForce((clone.transform.position - transform.position ) * (speed), ForceMode.Impulse);
+      tempvec = transform.position + transform.right + (transform.forward * 3);
+      clone = Instantiate(this.gameObject,tempvec ,transform.rotation);
+      clone.GetComponent<Rigidbody>().AddForce((clone.transform.position - transform.position ) * (speed), ForceMode.Impulse);
+      clone = Instantiate(this.gameObject,tempvec + transform.right,transform.rotation);
+      clone.GetComponent<Rigidbody>().AddForce((clone.transform.position - transform.position ) * (speed), ForceMode.Impulse);
+    clone = Instantiate(this.gameObject,tempvec + transform.up,transform.rotation);
+    clone.GetComponent<Rigidbody>().AddForce((clone.transform.position - transform.position ) * (speed), ForceMode.Impulse);
+    clone = Instantiate(this.gameObject,tempvec - transform.up,transform.rotation);
+    clone.GetComponent<Rigidbody>().AddForce((clone.transform.position - transform.position ) * (speed), ForceMode.Impulse);
+      tempvec = transform.position - transform.right + (transform.forward * 3);
+      clone = Instantiate(this.gameObject,tempvec ,transform.rotation);
+      clone.GetComponent<Rigidbody>().AddForce((clone.transform.position - transform.position ) * (speed), ForceMode.Impulse);
+      clone = Instantiate(this.gameObject,tempvec - transform.right ,transform.rotation);
+      clone.GetComponent<Rigidbody>().AddForce((clone.transform.position - transform.position ) * (speed), ForceMode.Impulse);
+      clone = Instantiate(this.gameObject,tempvec + transform.up,transform.rotation);
+      clone.GetComponent<Rigidbody>().AddForce((clone.transform.position - transform.position ) * (speed), ForceMode.Impulse);
+      clone = Instantiate(this.gameObject,tempvec - transform.up,transform.rotation);
+      clone.GetComponent<Rigidbody>().AddForce((clone.transform.position - transform.position ) * (speed), ForceMode.Impulse);
+
+    }
+    public void TwinLink()
+    {
+
+    }
+
 
     public void MissileLogic()
     {

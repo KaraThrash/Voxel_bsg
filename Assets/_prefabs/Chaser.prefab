@@ -24,7 +24,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 295971573918408488}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.5, z: 0}
+  m_LocalPosition: {x: 0, y: -1.23, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 295971575560388983}
@@ -151,7 +151,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 295971574262885588}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.56, z: 0}
+  m_LocalPosition: {x: 0, y: -1.2899995, z: 0}
   m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
   m_Children: []
   m_Father: {fileID: 295971574916683820}
@@ -299,9 +299,9 @@ MonoBehaviour:
   value: 1
   itemheldtype: 0
   hp: 1
-  speed: 35
-  rotForce: 3
-  leashDistance: 10001
+  speed: 21
+  rotForce: 2
+  leashDistance: 1000
   friendly: 0
   conscriptable: 0
   destroyed: 0
@@ -325,14 +325,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentAttackPlan: 0
-  speed: 100
+  speed: 25
   walkspeed: 10
-  rotForce: 3
+  rotForce: 5
   accuracy: 1
   closedistance: 10
   fardistance: 40
   gunCost: 1
-  checkForwardDistance: 100
+  checkForwardDistance: 20
   gunCooldown: 0
   avoidCollisionClock: 0
   destroyed: 0
@@ -371,7 +371,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 295971575089263015}
   m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071067}
-  m_LocalPosition: {x: 0, y: 0.47, z: 0}
+  m_LocalPosition: {x: 0, y: -0.25999954, z: 0}
   m_LocalScale: {x: 198, y: 197.99988, z: 197.99988}
   m_Children: []
   m_Father: {fileID: 295971574916683820}
@@ -542,7 +542,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 295971575573707307}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -3.54}
+  m_LocalPosition: {x: 0, y: -0.72999954, z: -3.54}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 295971574916683820}
@@ -5295,7 +5295,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 295971575632775267}
   m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071067}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: -0.72999954, z: 0}
   m_LocalScale: {x: 200, y: 199.99988, z: 199.99988}
   m_Children: []
   m_Father: {fileID: 295971574916683820}

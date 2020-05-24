@@ -53,10 +53,10 @@ public class ViperControls : MonoBehaviour {
     {
       myplayer = newmyplayer;
       playerControls = newplayerControls;
-
+      liftSpeed = playerStats.speed / 4;
       rollSpeed = playerStats.speed / 1;
       // rollMod = playerStats
-      turnSpeed = playerStats.speed / 8;
+      turnSpeed = playerStats.speed / 4;
       flySpeed = playerStats.speed;
       engineMod = 5;
       strafeSpeed = playerStats.speed ;
@@ -156,10 +156,10 @@ public class ViperControls : MonoBehaviour {
 
 
               if  ((Input.GetKey(KeyCode.Space) ) )
-              { lift = 4; }
+              { lift = 1; }
               else  if  ((Input.GetKey(KeyCode.LeftShift)) )
 
-                {  lift = -4;}
+                {  lift = -1;}
 
                 else { lift = 0;}
 
@@ -266,16 +266,17 @@ shipRigidBody.angularVelocity = Vector3.Lerp(shipRigidBody.angularVelocity,Vecto
     {
         if (bullet.GetComponent<Bullet>().lance == true)
         {
-            GameObject clone = Instantiate(bullet, gun1.transform.position, gun1.transform.rotation) as GameObject;
-            clone.transform.parent = this.transform;
-            GameObject clone2 = Instantiate(bullet, gun2.transform.position, gun2.transform.rotation) as GameObject;
-            clone2.transform.parent = this.transform;
-
+            // GameObject clone = Instantiate(bullet, gun1.transform.position, gun1.transform.rotation) as GameObject;
+            // clone.transform.parent = this.transform;
+            // GameObject clone2 = Instantiate(bullet, gun2.transform.position, gun2.transform.rotation) as GameObject;
+            // clone2.transform.parent = this.transform;
+            GameObject clone2 = Instantiate(bullet, transform.position, gun2.transform.rotation) as GameObject;
         }
         else
         {
             Instantiate(bullet, gun1.transform.position, gun1.transform.rotation);
             Instantiate(bullet, gun2.transform.position, gun2.transform.rotation);
+            // Instantiate(bullet, transform.position, gun2.transform.rotation);
         }
 
     }
