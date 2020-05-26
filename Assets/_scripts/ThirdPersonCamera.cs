@@ -54,13 +54,13 @@ public class ThirdPersonCamera : MonoBehaviour
           // if(Input.GetAxis("Mouse Y") != 0)
           // {xRot = Mathf.Sign(Input.GetAxis("Mouse Y")) * YSensitivity;}
           //   else{xRot = 0;}
-             yRot = (Input.GetAxis("Mouse X") * XSensitivity) + (Input.GetAxis("4th") * XSensitivity)  ;
-             xRot = (Input.GetAxis("Mouse Y") * YSensitivity) +  (Input.GetAxis("5th") * YSensitivity)  ;
+             yRot = (Input.GetAxis("Mouse X") * XSensitivity) + ((Input.GetAxis("4th Axis") * ( XSensitivity)))  ;
+             xRot = (Input.GetAxis("Mouse Y") * YSensitivity) +  ((Input.GetAxis("5th Axis") * -( YSensitivity)))  ;
         }
         else
         {
-             yRot = Input.GetAxis("4th Axis") * XSensitivity;
-             xRot = Input.GetAxis("5th Axis") * -YSensitivity;
+             yRot = Input.GetAxis("4th Axis") * (1 + XSensitivity);
+             xRot = Input.GetAxis("5th Axis") * -(1 + YSensitivity);
         }
 
         m_CharacterTargetRot *= Quaternion.Euler(-xRot, yRot, rollz);

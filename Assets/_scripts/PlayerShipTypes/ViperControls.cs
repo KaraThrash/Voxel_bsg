@@ -56,7 +56,7 @@ public class ViperControls : MonoBehaviour {
       liftSpeed = playerStats.speed / 4;
       rollSpeed = playerStats.speed / 1;
       // rollMod = playerStats
-      turnSpeed = playerStats.speed / 4;
+      turnSpeed = playerStats.speed / 2;
       flySpeed = playerStats.speed;
       engineMod = 5;
       strafeSpeed = playerStats.speed ;
