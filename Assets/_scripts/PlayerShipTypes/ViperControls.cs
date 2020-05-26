@@ -33,6 +33,7 @@ public class ViperControls : MonoBehaviour {
     public float guncooldowntimer;
     public float cameraspeed;
     public float step,groundCollisionTimer;
+    public float inputBuffer;
 
     public int heldresource;
 
@@ -66,11 +67,18 @@ public class ViperControls : MonoBehaviour {
 
 	public void Fly (Rigidbody shipRigidBody) {
        //KeyboardFlightControls();
-
+       inputBuffer -= Time.deltaTime;
        if(groundCollisionTimer <= 0)
        {
          // Controllerflightcontrols(shipRigidBody);
-         thirdpersonflightcontrols(shipRigidBody);
+
+         //lock inputs after special actions like dodge/spin as to not override their affect
+         if(inputBuffer <= 0){thirdpersonflightcontrols(shipRigidBody);}
+         else{
+
+           shipRigidBody.velocity = velocityDirection.normalized * flySpeed;
+         }
+
        }
         else{
 
@@ -258,10 +266,17 @@ public class ViperControls : MonoBehaviour {
         shipRigidBody.velocity = Vector3.Lerp(shipRigidBody.velocity,newvel,5.0f * Time.deltaTime);
 shipRigidBody.angularVelocity = Vector3.Lerp(shipRigidBody.angularVelocity,Vector3.zero,5.0f * Time.deltaTime);
     }
+
     public void DodgeRoll(Rigidbody shipRigidBody)
     {
-      shipRigidBody.velocity = velocityDirection * flySpeed;
+          if(inputBuffer <= 0)
+          {
+            print("ship dodge");
+          inputBuffer = 0.5f;
+          shipRigidBody.velocity = velocityDirection * flySpeed;
+        }
     }
+
     public void RaycastShootGuns()
     {
         if (bullet.GetComponent<Bullet>().lance == true)

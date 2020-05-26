@@ -72,13 +72,15 @@ public class PlayerControls : MonoBehaviour
     }
     public void AttemptDodgeRoll()
     {
-      int cost = 1;
-      if(UseStamina(cost))
+      print("dodge");
+      int cost = -1;
+      if(UseStamina(cost) || true)
       {
-        lockOutEngines = 0.5f;
+        playerShip.SendMessage("DodgeRoll",rb);
+        // lockOutEngines = 0.5f;
         //default backwards //TODO: neautral barrel roll?
-        if(velocityDirection == Vector3.zero){  rb.velocity = playerShip.transform.forward *  -playerStats.dodgeDistance;}
-        else{  rb.velocity = velocityDirection.normalized * playerStats.dodgeDistance;}
+        // if(velocityDirection == Vector3.zero){  rb.velocity = playerShip.transform.forward *  -playerStats.dodgeDistance;}
+        // else{  rb.velocity = velocityDirection.normalized * playerStats.dodgeDistance;}
 
       }
 

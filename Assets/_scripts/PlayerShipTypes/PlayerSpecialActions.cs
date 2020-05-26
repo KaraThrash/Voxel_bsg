@@ -5,8 +5,10 @@ using UnityEngine;
 public class PlayerSpecialActions : MonoBehaviour
 {
   public PlayerControls playerControls;
-  public KeyCode lastKeyPressed;
+  public string lastKeyPressed;
   public float timeForDoublePress = 0.2f;
+
+  public string leftkey,rightkey,upkey,downkey;
 
   private float keyPressedTimer;
     // Start is called before the first frame update
@@ -20,32 +22,77 @@ public class PlayerSpecialActions : MonoBehaviour
     {
       if(keyPressedTimer > 0){keyPressedTimer -= Time.deltaTime;}
     }
+
     public void ListenToButtonPresses()
     {
-      foreach(KeyCode vKey in System.Enum.GetValues(typeof(KeyCode))){
-             if(Input.GetKeyDown(vKey)){
-             //your code here
-            if(vKey == lastKeyPressed)
-            {
-              // DodgeRoll(vKey);
-              keyPressedTimer = 0;
 
-            }
-              else
-              {
-                keyPressedTimer = timeForDoublePress;
-                lastKeyPressed = vKey;
-              }
 
+
+              if(Input.GetKeyDown(leftkey))
+              {CheckForDoublePress(leftkey); return;}
+              if(Input.GetKeyDown(rightkey))
+              {CheckForDoublePress(rightkey);return; }
+              if(Input.GetKeyDown(upkey))
+              {CheckForDoublePress(upkey); return;}
+              if(Input.GetKeyDown(downkey))
+              {CheckForDoublePress(downkey);return; }
+
+             // if(Input.GetKeyDown("1"))
              if(Input.GetKeyDown(KeyCode.Alpha1))
              {LockOn();}
-             if(Input.GetKeyDown(KeyCode.JoystickButton1))
-             {DodgeRoll(vKey);}
+             // if(Input.GetKeyDown(KeyCode.JoystickButton1))
+             // {DodgeRoll(vKey);}
 
-             }
-         }
+
+
 
     }
+    public void CheckForDoublePress(string keypressed)
+    {
+      if(keypressed == lastKeyPressed)
+      {
+        DodgeRoll(keypressed);
+        keyPressedTimer = 0;
+        lastKeyPressed = "xxx";
+
+      }
+        else
+        {
+          keyPressedTimer = timeForDoublePress;
+          lastKeyPressed = keypressed;
+        }
+    }
+
+    // public void ListenToButtonPresses()
+    // {
+    //   foreach(KeyCode vKey in System.Enum.GetValues(typeof(KeyCode))){
+    //          if(Input.GetKeyDown(vKey)){
+    //          //your code here
+    //         if(vKey == lastKeyPressed)
+    //         {
+    //           DodgeRoll(vKey);
+    //           keyPressedTimer = 0;
+    //
+    //         }
+    //           else
+    //           {
+    //             keyPressedTimer = timeForDoublePress;
+    //             lastKeyPressed = vKey;
+    //           }
+    //
+    //          // if(Input.GetKeyDown("1"))
+    //          if(Input.GetKeyDown(KeyCode.Alpha1))
+    //          {LockOn();}
+    //          if(Input.GetKeyDown(KeyCode.JoystickButton1))
+    //          {DodgeRoll(vKey);}
+    //
+    //          }
+    //      }
+    //
+    // }
+
+
+
     public void LockOn()
     {
       if(playerControls.lockOnTarget == null)
@@ -56,7 +103,7 @@ public class PlayerSpecialActions : MonoBehaviour
         else{playerControls.lockOnTarget = null; playerControls.camerasphere.GetComponent<ThirdPersonCamera>().target = null;}
 
     }
-    public void DodgeRoll(KeyCode direction)
+    public void DodgeRoll(string direction)
     {
         playerControls.AttemptDodgeRoll();
       // if(direction == KeyCode.W){playerControls.GetComponent<Rigidbody>().velocity = playerControls.transform.forward * 350; playerControls.lockOutEngines = 0.1f;}
