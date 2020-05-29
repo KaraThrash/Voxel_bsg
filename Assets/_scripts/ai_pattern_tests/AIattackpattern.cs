@@ -146,7 +146,7 @@ public class AIattackpattern : MonoBehaviour {
   {
     if(colors.Count > 0 && myRenderer != null)
     {  myRenderer.material = colors[currentAttackPlan + 1];}
-    float angle = Vector3.Angle(targetship.transform.position - transform.position, transform.forward);
+    float angle = Vector3.Angle((targetship.transform.position + targetship.GetComponent<Rigidbody>().velocity) - transform.position, transform.forward);
 
     if (angle <= accuracy) { canShoot = true; } else { canShoot = false; }
     if (gunCooldown <= 0 && canShoot == true)

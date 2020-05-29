@@ -44,6 +44,23 @@ public class PlayerSpecialActions : MonoBehaviour
              // {DodgeRoll(vKey);}
 
 
+             //controller
+            //
+             // if(Input.GetKeyDown(JoystickButton0))
+             // {CheckForDoublePress(leftkey); return;}
+             //
+             // if(Input.GetKeyDown(leftkey))
+             // {CheckForDoublePress(leftkey); return;}
+             // if(Input.GetKeyDown(rightkey))
+             // {CheckForDoublePress(rightkey);return; }
+             // if(Input.GetKeyDown(upkey))
+             // {CheckForDoublePress(upkey); return;}
+             // if(Input.GetKeyDown(downkey))
+             // {CheckForDoublePress(downkey);return; }
+
+            if(Input.GetKeyDown(KeyCode.JoystickButton3))
+            {LockOn();}
+
 
 
     }
@@ -97,7 +114,7 @@ public class PlayerSpecialActions : MonoBehaviour
     {
       if(playerControls.lockOnTarget == null)
       {
-        playerControls.lockOnTarget = GetComponent<Player>().gamemanager.npcManager.GetClosestEnemy(this.gameObject);
+        playerControls.lockOnTarget = GetComponent<Player>().gamemanager.npcManager.GetClosestEnemy(playerControls.playerShip);
         playerControls.camerasphere.GetComponent<ThirdPersonCamera>().target = playerControls.lockOnTarget;
       }
         else{playerControls.lockOnTarget = null; playerControls.camerasphere.GetComponent<ThirdPersonCamera>().target = null;}

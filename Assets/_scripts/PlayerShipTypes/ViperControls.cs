@@ -55,9 +55,9 @@ public class ViperControls : MonoBehaviour {
       myplayer = newmyplayer;
       playerControls = newplayerControls;
       liftSpeed = playerStats.speed / 4;
-      rollSpeed = playerStats.speed / 1;
+      rollSpeed = playerStats.speed / 4;
       // rollMod = playerStats
-      turnSpeed = playerStats.speed / 2;
+      turnSpeed = playerStats.speed / 10;
       flySpeed = playerStats.speed;
       engineMod = 5;
       strafeSpeed = playerStats.speed ;
@@ -73,7 +73,10 @@ public class ViperControls : MonoBehaviour {
          // Controllerflightcontrols(shipRigidBody);
 
          //lock inputs after special actions like dodge/spin as to not override their affect
-         if(inputBuffer <= 0){thirdpersonflightcontrols(shipRigidBody);}
+         if(inputBuffer <= 0){
+           Controllerflightcontrols(shipRigidBody);
+           // thirdpersonflightcontrols(shipRigidBody);
+         }
          else{
 
            shipRigidBody.velocity = velocityDirection.normalized * flySpeed;
@@ -194,8 +197,8 @@ public class ViperControls : MonoBehaviour {
         newvel = tempvel + tempvel2 + tempvel3 ;
         velocityDirection = newvel;
         playerControls.SetVelocityDirection(newvel);
-        shipRigidBody.velocity = Vector3.Lerp(shipRigidBody.velocity,newvel,5.0f * Time.deltaTime);
-        shipRigidBody.angularVelocity = Vector3.Lerp(shipRigidBody.angularVelocity,Vector3.zero,5.0f * Time.deltaTime);
+        shipRigidBody.velocity = Vector3.Lerp(shipRigidBody.velocity,newvel,2.0f * Time.deltaTime);
+        shipRigidBody.angularVelocity = Vector3.Lerp(shipRigidBody.angularVelocity,Vector3.zero,2.0f * Time.deltaTime);
     }
     public void Controllerflightcontrols(Rigidbody shipRigidBody)
     {
@@ -263,8 +266,8 @@ public class ViperControls : MonoBehaviour {
         newvel = tempvel + tempvel2 + tempvel3 ;
         velocityDirection = newvel;
                 playerControls.SetVelocityDirection(newvel);
-        shipRigidBody.velocity = Vector3.Lerp(shipRigidBody.velocity,newvel,5.0f * Time.deltaTime);
-shipRigidBody.angularVelocity = Vector3.Lerp(shipRigidBody.angularVelocity,Vector3.zero,5.0f * Time.deltaTime);
+        shipRigidBody.velocity = Vector3.Lerp(shipRigidBody.velocity,newvel,2.0f * Time.deltaTime);
+shipRigidBody.angularVelocity = Vector3.Lerp(shipRigidBody.angularVelocity,Vector3.zero,2.0f * Time.deltaTime);
     }
 
     public void DodgeRoll(Rigidbody shipRigidBody)
