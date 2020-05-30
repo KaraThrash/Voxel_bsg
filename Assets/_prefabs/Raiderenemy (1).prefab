@@ -267,6 +267,15 @@ MonoBehaviour:
   speed: 20
   rotForce: 3
   leashDistance: 1000
+  stamina: 5
+  tempHp: 0
+  tempStamina: 0
+  staminaRechargeRate: 0.1
+  currentstaminaRechargeBonus: 0
+  staminaRechargeBonus: 0
+  currentStamina: 0
+  engineStaminaCost: 0.1
+  gunStaminaCost: 1
   friendly: 0
   conscriptable: 0
   destroyed: 0
@@ -290,12 +299,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentAttackPlan: 0
-  speed: 65
+  speed: 45
   walkspeed: 15
   rotForce: 5
   accuracy: 4
   closedistance: 20
   fardistance: 60
+  plusminus: 5
   gunCost: 0.2
   checkForwardDistance: 25
   gunCooldown: 0

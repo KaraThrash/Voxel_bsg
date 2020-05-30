@@ -11,7 +11,7 @@ public class AIattackpattern : MonoBehaviour {
   public float rotForce = 6;
   public float accuracy = 1;
 
-  public float closedistance = 10,fardistance = 40;
+  public float closedistance = 10,fardistance = 40,plusminus = 5;
   public float gunCost = 1;
   public float checkForwardDistance = 100.0f;
 //
@@ -47,6 +47,7 @@ public class AIattackpattern : MonoBehaviour {
   public void Fly(GameObject target)
   {
 
+    myEnemy.RechargeStamina();
 
         if (target != null)
         {
@@ -134,9 +135,14 @@ public class AIattackpattern : MonoBehaviour {
         {  myRenderer.material = colors[0];}
     targetRotation = Quaternion.LookRotation(tempTargetSpot - transform.position );
     //not impulse, momentuem based
+
+    if(myEnemy.UseStamina(myEnemy.engineStaminaCost * Time.deltaTime) == true)
+    {
     rb.AddForce(transform.forward * speed  *  Time.deltaTime,ForceMode.Impulse);
-    transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotForce * Time.deltaTime);
-    if (gunCooldown <= -3.0f)
+
+   }
+   transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotForce * Time.deltaTime);
+    if (gunCooldown <= -3.0f || Vector3.Distance(transform.position, targetship.transform.position) > fardistance)
     {
         CalculateNextMove(targetship);
      }
@@ -158,11 +164,14 @@ public class AIattackpattern : MonoBehaviour {
         // CalculateNextMove(target);
     }
 
-      targetRotation = Quaternion.LookRotation(targetship.transform.position - transform.position );
-      //not impulse, momentuem based
+      if(myEnemy.UseStamina(myEnemy.engineStaminaCost * Time.deltaTime) == true){
+          targetRotation = Quaternion.LookRotation(targetship.transform.position - transform.position );
+          //not impulse, momentuem based
+
+          transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotForce * Time.deltaTime);
+      }
       rb.AddForce(transform.forward * speed * 10 *  Time.deltaTime);
-      transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotForce * Time.deltaTime);
-      if(Vector3.Distance(targetship.transform.position,transform.position) < closedistance)
+      if(Vector3.Distance(targetship.transform.position,transform.position) < 7)
       {
         tempTargetSpot = transform.position + (transform.forward * closedistance);
         currentAttackPlan = -1;
@@ -208,10 +217,7 @@ public class AIattackpattern : MonoBehaviour {
     {
       if(colors.Count > 0 && myRenderer != null)
       {  myRenderer.material = colors[currentAttackPlan + 1];}
-          // GameObject target = myEnemy.target;
-            //gunCooldown -= Time.deltaTime;
-
-           // targetRotation = Quaternion.LookRotation(targetship.transform.position - transform.position);
+        
            float angle = Vector3.Angle(targetship.transform.position - transform.position, transform.forward);
 
            if (angle <= accuracy) { canShoot = true; } else { canShoot = false; }
@@ -269,9 +275,11 @@ public class AIattackpattern : MonoBehaviour {
 
             }
 
+              if(myEnemy.UseStamina(myEnemy.engineStaminaCost * Time.deltaTime) == true)
+              {
             rb.AddForce(transform.forward * speed * Time.deltaTime, ForceMode.Impulse);
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotForce * Time.deltaTime);
-
+          }
     }
 
     public void Patrol()
@@ -332,16 +340,17 @@ public class AIattackpattern : MonoBehaviour {
                 targetRotation = Quaternion.LookRotation( target.transform.position   - transform.position);
 
             }
-            if(Vector3.Distance(transform.position,(target.transform.position  - (target.transform.forward * closedistance) )) > 30)
-            {rb.AddForce(transform.forward * speed * Time.deltaTime, ForceMode.Impulse);}
-            else   if(Vector3.Distance(transform.position,(target.transform.position  - (target.transform.forward * closedistance) )) > 10)
-              {  rb.AddForce(((target.transform.position  - (target.transform.forward * closedistance)) - transform.position) * speed * Time.deltaTime);}
-            else
-            {
-              transform.position = Vector3.MoveTowards(transform.position,(target.transform.position  - (target.transform.forward * closedistance)),speed * 0.1f * Time.deltaTime);
+              if(myEnemy.UseStamina(myEnemy.engineStaminaCost * Time.deltaTime) == true){
+                      if(Vector3.Distance(transform.position,(target.transform.position  - (target.transform.forward * closedistance) )) > 30)
+                      {rb.AddForce(transform.forward * speed * Time.deltaTime, ForceMode.Impulse);}
+                      else   if(Vector3.Distance(transform.position,(target.transform.position  - (target.transform.forward * closedistance) )) > 10)
+                        {  rb.AddForce(((target.transform.position  - (target.transform.forward * closedistance)) - transform.position) * speed * Time.deltaTime);}
+                      else
+                      {
+                        transform.position = Vector3.MoveTowards(transform.position,(target.transform.position  - (target.transform.forward * closedistance)),speed * 0.1f * Time.deltaTime);
 
-            }
-
+                      }
+          }
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotForce * Time.deltaTime);
             float angle = Vector3.Angle(targetship.transform.position - transform.position, transform.forward);
 
@@ -375,9 +384,12 @@ public class AIattackpattern : MonoBehaviour {
             }
             else
             {
+                if (Vector3.Distance(transform.position,hit.point) < plusminus)
+                {rb.AddForce(transform.forward * speed * -Time.deltaTime);}
 
-                if (avoidCollisionClock < 0) { avoidCollisionClock = 1.4f; }
-                else { if (avoidCollisionClock < 3) { straferunspot = Vector3.zero; avoidCollisionClock += Time.deltaTime; } }
+                  if (avoidCollisionClock <= 0) { avoidCollisionClock = 1.4f; }
+                  else { if (avoidCollisionClock < 3) { straferunspot = Vector3.zero; avoidCollisionClock += Time.deltaTime; } }
+
             }
 
         }
@@ -434,6 +446,7 @@ public class AIattackpattern : MonoBehaviour {
       RayCastToFindOpening();
       if(avoidingCollisionColor != null && myRenderer != null)
       {  myRenderer.material = avoidingCollisionColor;}
+
 
         targetRotation = Quaternion.LookRotation( transform.position -   (openSpotToAvoidCollision ));
         // targetRotation = Quaternion.LookRotation(  (transform.position  + (transform.up * 50) - (transform.forward * 50) ) - transform.position  );

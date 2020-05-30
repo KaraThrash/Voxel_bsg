@@ -20,6 +20,7 @@ public class AttackManager : MonoBehaviour
     public int GetBattleMap()
     {
       float rnd = Random.Range(0.0f,10.0f);
+      return -1;
           //determine type of attack
           //if a battle go to battle Map
           if (rnd > 8){return -3;}

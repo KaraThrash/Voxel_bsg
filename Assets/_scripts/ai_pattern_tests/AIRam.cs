@@ -81,53 +81,61 @@ public class AIRam : MonoBehaviour
       {
           CheckForward(target);
 
-
-
-
           if (target != null)
           {
-            if(currentAttackPlan == 0)
-            {
-              if(Vector3.Distance(target.transform.position,transform.position) < fardistance)
-              {
-                float angle = Vector3.Angle(target.transform.position - transform.position, transform.forward);
-
-                if (angle <= accuracy) { currentAttackPlan = 1; }else
-                {
-                  rb.velocity = Vector3.Lerp(  rb.velocity,Vector3.zero,Time.deltaTime);
-                }
-                if(Vector3.Distance(target.transform.position,transform.position) < closedistance)
-                {currentAttackPlan = 1;}
-
-              }
-            }
-            else if(currentAttackPlan == 1)
-            {
-              if(Vector3.Distance(target.transform.position,transform.position) > (fardistance * 2))
-              {
-                currentAttackPlan = 0;
-              }
-            }
-
-
-
-                    if(currentAttackPlan == 0)
+                  if(currentAttackPlan == 0)
+                  {
+                    if(avoidCollisionClock <= 0)
                     {
+                        Approach(target);
 
+                      }
+                      else
+                      {
+                        AvoidCollision();
+                      }
+
+                    if(Vector3.Distance(target.transform.position,transform.position) < closedistance)
+                    {currentAttackPlan = 1;}
+
+                  }
+                  else if(currentAttackPlan == 1)
+                  {
+                    float angle = Vector3.Angle((target.transform.position + target.GetComponent<Rigidbody>().velocity) - transform.position, transform.forward);
+                    targetRotation = Quaternion.LookRotation(target.transform.position - transform.position );
+
+                    transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotForce * 3 *  Time.deltaTime);
+                  if (angle <= accuracy) {currentAttackPlan = 2; }
+
+
+                  }else if(currentAttackPlan == 2)
+                  {
+                    TryToAttack(target);
+                    if(Vector3.Distance(target.transform.position,transform.position) > (closedistance * 2))
+                    {
+                      currentAttackPlan = 3;
+                    }
+                  }
+
+                   else if(currentAttackPlan == 3)
+                    {
                       if(avoidCollisionClock <= 0)
                       {
-                          Approach(target);
+                            rb.AddForce(transform.forward * speed  *  Time.deltaTime);
 
                         }
                         else
                         {
                           AvoidCollision();
                         }
-
-                    }else
-                    {
-                      TryToAttack(target);
+                        if(Vector3.Distance(target.transform.position,transform.position) > (fardistance))
+                        {
+                          currentAttackPlan = 0;
+                        }
                     }
+
+
+
 
             }
 
@@ -151,10 +159,10 @@ public class AIRam : MonoBehaviour
       //when in range try and get above the target, if from that vantage it cant see, it tries to get below
       public void TryToAttack(GameObject target)
       {
-        // targetRotation = Quaternion.LookRotation(target.transform.position - transform.position );
+        targetRotation = Quaternion.LookRotation(target.transform.position - transform.position );
 
         rb.AddForce(transform.forward * speed  *  Time.deltaTime,ForceMode.Impulse);
-        // transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotForce * Time.deltaTime);
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotForce * 0.2f *  Time.deltaTime);
       }
 
       public bool RayCastAt(GameObject target,float rng)

@@ -1,5 +1,86 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &5428324946620414756
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 9011158732060854583}
+  - component: {fileID: 23951351967560449}
+  - component: {fileID: 6010509776665006072}
+  m_Layer: 0
+  m_Name: spaceCraft5
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &9011158732060854583
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5428324946620414756}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
+  m_LocalPosition: {x: 0, y: -1.27, z: -1.3}
+  m_LocalScale: {x: 0.6, y: 0.6, z: 0.6}
+  m_Children: []
+  m_Father: {fileID: 8977821675194121985}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
+--- !u!33 &23951351967560449
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5428324946620414756}
+  m_Mesh: {fileID: 8780898934934008276, guid: 0e465db32cdf0fb4ebc58655eafafb87, type: 3}
+--- !u!23 &6010509776665006072
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5428324946620414756}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 4438364402714204063, guid: 0e465db32cdf0fb4ebc58655eafafb87, type: 3}
+  - {fileID: -8896051167825165466, guid: 0e465db32cdf0fb4ebc58655eafafb87, type: 3}
+  - {fileID: -6271897200390792742, guid: 0e465db32cdf0fb4ebc58655eafafb87, type: 3}
+  - {fileID: -3963241562183589234, guid: 0e465db32cdf0fb4ebc58655eafafb87, type: 3}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
 --- !u!1 &8977821674717406871
 GameObject:
   m_ObjectHideFlags: 0
@@ -17,7 +98,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &8977821674717406870
 Transform:
   m_ObjectHideFlags: 0
@@ -229,7 +310,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8977821674963285822}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -1.1599998, z: -3.54}
+  m_LocalPosition: {x: 0, y: -1.1599998, z: -3.71}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 8977821675194121985}
@@ -4992,6 +5073,7 @@ Transform:
   - {fileID: 8977821674773857605}
   - {fileID: 8977821674963285817}
   - {fileID: 8977821675605155984}
+  - {fileID: 9011158732060854583}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -5042,6 +5124,15 @@ MonoBehaviour:
   speed: 25
   rotForce: 3
   leashDistance: 1000
+  stamina: 0
+  tempHp: 0
+  tempStamina: 0
+  staminaRechargeRate: 1
+  currentstaminaRechargeBonus: 0
+  staminaRechargeBonus: 0
+  currentStamina: 0
+  engineStaminaCost: 0
+  gunStaminaCost: 0
   friendly: 0
   conscriptable: 0
   destroyed: 0
@@ -5067,10 +5158,10 @@ MonoBehaviour:
   currentAttackPlan: 0
   speed: 33
   walkspeed: 10
-  rotForce: 15
-  accuracy: 0
-  closedistance: 10
-  fardistance: 20
+  rotForce: 12
+  accuracy: 1
+  closedistance: 20
+  fardistance: 60
   gunCost: 1
   checkForwardDistance: 20
   gunCooldown: 0
@@ -5194,7 +5285,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &8977821675411436226
 Transform:
   m_ObjectHideFlags: 0
@@ -5284,7 +5375,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8977821675605155985}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -1.1599998, z: 7.15}
+  m_LocalPosition: {x: 0, y: -0.93, z: 5.99}
   m_LocalScale: {x: 2, y: 0.70772, z: 0.81982}
   m_Children: []
   m_Father: {fileID: 8977821675194121985}

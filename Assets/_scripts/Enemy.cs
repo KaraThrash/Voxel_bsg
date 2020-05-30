@@ -26,6 +26,10 @@ public class Enemy : MonoBehaviour {
     public float speed = 20;
     public float rotForce = 6;
     public float leashDistance;
+
+      public int stamina,tempHp,tempStamina;
+    public float  staminaRechargeRate = 1,currentstaminaRechargeBonus,staminaRechargeBonus,currentStamina,engineStaminaCost,gunStaminaCost;//stamina recharges faster when not being used
+
     public bool friendly,conscriptable,destroyed,canShoot,returnHome,inBattle;
     public bool aitest,stationary,alert,inCombat;
     private float avoidCollisionClock;
@@ -333,12 +337,13 @@ public class Enemy : MonoBehaviour {
     }
     public void FireGuns()
     {
-
-        foreach(Transform go in guns)
+        if(UseStamina(gunStaminaCost) == true)
         {
-          GameObject clone = Instantiate(bullet, go.transform.position, go.transform.rotation);
+            foreach(Transform go in guns)
+            {
+              GameObject clone = Instantiate(bullet, go.transform.position, go.transform.rotation);
+            }
         }
-
     }
     public void CheckForward()
     {
@@ -358,6 +363,33 @@ public class Enemy : MonoBehaviour {
 
         }
         else { avoidCollisionClock -= Time.deltaTime;  }
+    }
+
+
+    public void RechargeStamina()
+    {
+        if(currentStamina < stamina + tempStamina)
+        {
+
+
+          currentStamina += Time.deltaTime * (staminaRechargeRate + currentstaminaRechargeBonus);
+          if(currentstaminaRechargeBonus < staminaRechargeBonus)
+          {
+            currentstaminaRechargeBonus += Time.deltaTime;
+          }
+        }
+
+    }
+    public bool UseStamina(float cost)
+    {
+        currentstaminaRechargeBonus = 0;
+        if(currentStamina >= cost)
+        {
+          currentStamina -=  cost;
+
+          return true;
+        }
+        return false;
     }
 
     public void Die()

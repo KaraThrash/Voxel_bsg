@@ -13,6 +13,8 @@ public class PlayerControls : MonoBehaviour
   public PlayerSpecialActions playerSpecialActions;
   public float lockOutWeapons,lockOutEngines;
   private Vector3 velocityDirection;
+
+  public float leftRightAxis,updownAxis,accelerationAxis;
     // Start is called before the first frame update
     void Start()
     {
@@ -23,8 +25,13 @@ public class PlayerControls : MonoBehaviour
     void Update()
     {
 
+      PlayerInputs();
     }
-
+    public void PlayerInputs()
+    {
+      updownAxis = Input.GetAxis("Vertical");
+      leftRightAxis = Input.GetAxis("Horizontal");
+    }
     public void ControlShip()
     {
       // if(rb == null){  rb = GetComponent<Rigidbody>();}
