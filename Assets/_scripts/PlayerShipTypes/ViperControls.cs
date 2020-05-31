@@ -59,7 +59,7 @@ public float weaponStaminaCost = 0.1f,engineStaminaCost = 0.1f;
       liftSpeed = playerStats.speed / 4;
       rollSpeed = playerStats.speed / 2;
       // rollMod = playerStats
-      turnSpeed = playerStats.speed / 6;
+      turnSpeed = playerStats.speed / 4;
       flySpeed = playerStats.speed;
       engineMod = 5;
       strafeSpeed = playerStats.speed ;

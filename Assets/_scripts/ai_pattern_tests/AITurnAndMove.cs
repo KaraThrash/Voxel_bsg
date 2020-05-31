@@ -60,7 +60,7 @@ public class AITurnAndMove : MonoBehaviour
             Patrol();
             if (gunCooldown <= 0)
             {
-                gunCooldown = gunCost * 10;
+                gunCooldown = gunCost * 2;
 
                 if(myEnemy.inBattle == true)
                 {  myEnemy.FindTarget();}
@@ -185,8 +185,8 @@ public class AITurnAndMove : MonoBehaviour
               }
               else
               {
-                  if (Vector3.Distance(transform.position,hit.point) < plusminus)
-                  {rb.AddForce(transform.forward * speed * -Time.deltaTime);}
+                  // if (Vector3.Distance(transform.position,hit.point) < plusminus)
+                  // {rb.AddForce(transform.forward * speed * -Time.deltaTime);}
 
                     if (avoidCollisionClock <= 0) { avoidCollisionClock = 1.4f; }
                     else { if (avoidCollisionClock < 3) { straferunspot = Vector3.zero; avoidCollisionClock += Time.deltaTime; } }
@@ -212,30 +212,6 @@ public class AITurnAndMove : MonoBehaviour
 
         }
 
-        //
-        // if (Physics.Raycast(transform.position, transform.right + transform.forward, out hit, 15.0f))
-        // {
-        //
-        //
-        // }else {openSpotToAvoidCollision = transform.position + ((transform.right + transform.forward) * 12.5f); return;}
-        //
-        // if (Physics.Raycast(transform.position,  transform.forward - transform.right, out hit, 15.0f))
-        // {
-        //
-        //
-        // }else {openSpotToAvoidCollision = transform.position + ((transform.forward - transform.right) * 12.5f); return;}
-        // if (Physics.Raycast(transform.position, transform.forward + transform.up, out hit, 15.0f))
-        // {
-        //
-        //
-        // }else{openSpotToAvoidCollision = transform.position + ((transform.up + transform.forward) * 12.5f); return;}
-        // if (Physics.Raycast(transform.position, transform.forward - transform.up, out hit, 5.0f))
-        // {
-        //
-        //
-        // }else{openSpotToAvoidCollision = transform.position + ((transform.up + transform.forward) * 12.5f); return;}
-        //
-        // openSpotToAvoidCollision = transform.position - (( -transform.up + transform.forward * 5) );
       }
       public void AvoidCollision()
       {

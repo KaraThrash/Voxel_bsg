@@ -272,14 +272,24 @@ public class Enemy : MonoBehaviour {
     {
       //compare distance from in front to behind the enemy to determine if the player is in a forward cone of vision
       //or if the player is extremely close
-      if((npcManager.GetDistanceToPlayer(transform.position + (transform.forward * 15)) < npcManager.GetDistanceToPlayer(transform.position - (transform.forward * 2))
-      ||
-      npcManager.GetDistanceToPlayer(transform.position) < 5) && npcManager.GetDistanceToPlayer(transform.position) < leashDistance )
 
+      RaycastHit hit;
+
+
+
+      if (Physics.Raycast(transform.position, (npcManager.GetPlayerShip().transform.position - transform.position), out hit, 250.0f) )
       {
-        if(friendly == false){  target = npcManager.GetPlayerShip();}
+          //check that the player is in front - if the forward of the enemy is closer than the enemy it can be resonably assumed the player is in front
+            if((npcManager.GetDistanceToPlayer(transform.position + (transform.forward * 4)) < npcManager.GetDistanceToPlayer(transform.position)
+            ||
+            npcManager.GetDistanceToPlayer(transform.position) < 10) && npcManager.GetDistanceToPlayer(transform.position) < leashDistance )
 
+            {
+              if(friendly == false){  target = npcManager.GetPlayerShip();}
+
+            }
       }
+
 
 
     }

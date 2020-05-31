@@ -222,6 +222,9 @@ public class AIRam : MonoBehaviour
               else
               {
 
+                if (Vector3.Distance(transform.position,hit.point) < 4)
+                {rb.AddForce(transform.forward * speed * -Time.deltaTime); currentAttackPlan = 0;}
+
                   if (avoidCollisionClock < 0) { avoidCollisionClock = 1.4f; }
                   else { if (avoidCollisionClock < 3) { straferunspot = Vector3.zero; avoidCollisionClock += Time.deltaTime; } }
               }

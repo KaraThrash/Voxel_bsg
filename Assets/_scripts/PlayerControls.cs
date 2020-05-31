@@ -133,7 +133,7 @@ public class PlayerControls : MonoBehaviour
           viperShip.active = true;
           turnShip.active = false;
           playerShip = viperShip;
-            playerShip.GetComponent<ViperControls>().SetUp(playerStats.gameObject,newplayerStats,GetComponent<PlayerControls>());
+
           }else  if(raptorShip.active == true)
           {
               rb.useGravity = true;
@@ -151,10 +151,24 @@ public class PlayerControls : MonoBehaviour
           tankShip.active = false;
           turnShip.active = true;
           playerShip = turnShip;
-            playerShip.GetComponent<TurningShip>().SetUp(playerStats.gameObject,newplayerStats,GetComponent<PlayerControls>());
+
           }
 
     }
+
+    public void SetShipStats(PlayerShipStats newplayerStats)
+    {
+        if(rb == null){  rb = GetComponent<Rigidbody>();}
+      playerStats = newplayerStats;
+
+            raptorShip.GetComponent<RaptorControls>().SetUp(playerStats.gameObject,newplayerStats,GetComponent<PlayerControls>());
+              viperShip.GetComponent<ViperControls>().SetUp(playerStats.gameObject,newplayerStats,GetComponent<PlayerControls>());
+            tankShip.GetComponent<TankControls>().SetUp(playerStats.gameObject,newplayerStats,GetComponent<PlayerControls>());
+            turnShip.GetComponent<TurningShip>().SetUp(playerStats.gameObject,newplayerStats,GetComponent<PlayerControls>());
+
+
+    }
+
 
     public void OnCollisionEnter(Collision col)
     {

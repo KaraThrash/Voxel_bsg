@@ -7,6 +7,8 @@ public class NpcManager : MonoBehaviour {
     public Transform fleetNpcs;
     public GameObject enemyparent;
     public GameManager gameManager;
+
+    public int maxEnemiesOnScreen = 30;
     // Use this for initialization
     void Start () {
 
@@ -91,6 +93,9 @@ public class NpcManager : MonoBehaviour {
   }
     public void SpawnOne(int whichone,Vector3 where, Quaternion rot)
     {
+      //to prevent infinite enemies from spawning by accident check the current quantity active
+      if(enemyparent.transform.childCount >= maxEnemiesOnScreen){return;}
+
         GameObject clone = Instantiate(npcs[whichone], where, rot) as GameObject;
         clone.transform.parent = enemyparent.transform;
         enemies.Add(clone);

@@ -27,10 +27,13 @@ public class EnemyFleet : MonoBehaviour
 
     public string GetFleetStrengthText()
     {
+      //attacks the fleet ships 
       string tempstring = "Combat Strength: ";
       tempstring += baseStar.GetTurretStrength().ToString() + "\n";
+      //chase potential // time to next attack
       tempstring += "FTL Strength: ";
       tempstring += baseStar.GetEngineStrength().ToString() + "\n";
+      // produces fighters that attack the player
       tempstring += "Production Strength: ";
       tempstring += baseStar.GetHangarStrength().ToString() ;
       return tempstring;

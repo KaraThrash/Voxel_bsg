@@ -18,47 +18,37 @@ public class Player : MonoBehaviour {
     public GameManager gamemanager;
     // Use this for initialization
     void Start () {
-      ChangeShips(0);
-
+      // ChangeShips(0);
+        playerControls.SetShipStats(playerShipStats);
 	}
 
 	// Update is called once per frame
 	void Update () {
 
 //TODO: re organize this. it clearly doesnt belong here so figure out where it does go
-    if(atDock == true && (Input.GetKeyDown(KeyCode.Tab) || Input.GetKeyDown(KeyCode.JoystickButton2)))
-    {gamemanager.ActivateMenu();}
+          if(atDock == true && (Input.GetKeyDown(KeyCode.Tab) || Input.GetKeyDown(KeyCode.JoystickButton6)))
+          {gamemanager.ActivateMenu();}
 
-    if(Input.GetKeyDown(KeyCode.Y))
-    {ChangeShips(0);}
-    if(inMenu == false)
-    {
+          if(Input.GetKeyDown(KeyCode.Y))
+          {ChangeShips(0);}
+          if(inMenu == false)
+          {
 
-      ControlShip();
+            ControlShip();
 
 
-    }else
-    {
-        myship.GetComponent<Rigidbody>().isKinematic = true;
-    }
+          }else
+          {
+              myship.GetComponent<Rigidbody>().isKinematic = true;
+          }
 
 	}
 
   public void ChangeShips(int changeto)
   {
     //TODO: this need a complete overhaul
-    // if(changeto == 0)
-    // {
-    //   raptorShip.active = false;
-    //   viperShip.active = true;
-    //   myship = viperShip;
-    // }else
-    // {
-    //   raptorShip.active = false;
-    //   viperShip.active = true;
-    //   myship = raptorShip;
-    // }
-    playerControls.ChangeShip(playerShipStats);
+
+      playerControls.ChangeShip(playerShipStats);
 
   }
   public void ControlShip()
@@ -175,6 +165,8 @@ public class Player : MonoBehaviour {
       myship.GetComponent<Rigidbody>().isKinematic = false;
       //TODO: dont refill health when traveling, right now this is used when moving to a new area
       shiphp = hp;
+
+      playerControls.SetShipStats(playerShipStats);
     }
 
     public void SetHPBar()
