@@ -132,8 +132,8 @@ public float weaponStaminaCost = 0.1f,engineStaminaCost = 0.1f;
       else {
         cam.transform.position = ship.transform.position;
         // targetRotation = Quaternion.LookRotation((camera.transform.position + camera.transform.forward) - transform.position);
-        step = Mathf.Min(4 * Time.deltaTime, 1.5f);
-        ship.transform.rotation = Quaternion.Lerp(ship.transform.rotation, cam.transform.rotation, Time.deltaTime * rollMod * turnSpeed);
+        step = Mathf.Min(0.5f * Time.deltaTime, 1.5f);
+        cam.transform.rotation = Quaternion.Lerp(cam.transform.rotation, ship.transform.rotation, Time.deltaTime * rollMod * 0.2f * turnSpeed);
 
 //TODO: change this '20' to a reasonable variable // cam should be slightly behind ship rotation to give the semse of movement
         cam.GetComponent<ThirdPersonCamera>().rollz = roll * 20 * Time.deltaTime ;

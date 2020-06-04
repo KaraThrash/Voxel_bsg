@@ -76,10 +76,29 @@ public class ThirdPersonCamera : MonoBehaviour
 
         if (smooth)
         {
+          if(target != null){
+
+
+            //lock on to a place in space based on the target velocity // [better targeting computers give more robust controls?]
+            Vector3 targetpos = target.transform.position;
+            if(target.GetComponent<Rigidbody>() != null)
+            {  targetpos = (target.transform.position + target.GetComponent<Rigidbody>().velocity);}
+
+
+
             transform.rotation = Quaternion.Slerp(transform.rotation, m_CharacterTargetRot,
                 smoothTime * Time.deltaTime);
             transform.rotation = Quaternion.Slerp(transform.rotation, m_CharacterTargetRot,
                 smoothTime * Time.deltaTime);
+
+            }
+            else{
+
+              player.transform.rotation = Quaternion.Slerp(player.transform.rotation, m_CharacterTargetRot,
+                  smoothTime * 18 * Time.deltaTime);
+
+
+            }
         }
         else
         {
