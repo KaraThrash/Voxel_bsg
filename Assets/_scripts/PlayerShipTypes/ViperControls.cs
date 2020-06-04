@@ -307,6 +307,7 @@ public float weaponStaminaCost = 0.1f,engineStaminaCost = 0.1f;
         if (col.gameObject.tag == "BulletEnemy")
         {
               myplayer.GetComponent<Player>().vehicletakingdamage(1);
+              myplayer.GetComponent<Player>().gamemanager.imageFade.StartDmgFade();
 
         }
         //check if it is a pickup able object

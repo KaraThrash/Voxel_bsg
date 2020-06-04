@@ -59,7 +59,7 @@ public class AIattackpattern : MonoBehaviour {
           Patrol();
           if (gunCooldown <= 0)
           {
-              gunCooldown = gunCost * 10;
+              gunCooldown = gunCost * 3;
 
               if(myEnemy.inBattle == true)
               {  myEnemy.FindTarget();}
@@ -217,7 +217,7 @@ public class AIattackpattern : MonoBehaviour {
     {
       if(colors.Count > 0 && myRenderer != null)
       {  myRenderer.material = colors[currentAttackPlan + 1];}
-        
+
            float angle = Vector3.Angle(targetship.transform.position - transform.position, transform.forward);
 
            if (angle <= accuracy) { canShoot = true; } else { canShoot = false; }
