@@ -41,6 +41,13 @@ public class ThirdPersonCamera : MonoBehaviour
        Cursor.visible = true;
       }
     }
+
+    public void ResetCameraAngle()
+    {
+      m_CharacterTargetRot = player.transform.rotation;
+      transform.rotation = player.transform.rotation;
+    }
+
     public void Update()
 
     {
@@ -85,17 +92,20 @@ public class ThirdPersonCamera : MonoBehaviour
             {  targetpos = (target.transform.position + target.GetComponent<Rigidbody>().velocity);}
 
 
+            m_CharacterTargetRot = Quaternion.LookRotation ( targetpos - transform.position);
+            transform.rotation = Quaternion.Slerp(transform.rotation, m_CharacterTargetRot,
+                smoothTime * Time.deltaTime);
 
-            transform.rotation = Quaternion.Slerp(transform.rotation, m_CharacterTargetRot,
-                smoothTime * Time.deltaTime);
-            transform.rotation = Quaternion.Slerp(transform.rotation, m_CharacterTargetRot,
-                smoothTime * Time.deltaTime);
 
             }
             else{
+              //rotate camera to catch up to player ship
+              transform.rotation = Quaternion.Slerp(transform.rotation, m_CharacterTargetRot,
+                  smoothTime * Time.deltaTime);
 
-              player.transform.rotation = Quaternion.Slerp(player.transform.rotation, m_CharacterTargetRot,
-                  smoothTime * 18 * Time.deltaTime);
+                  //rotate ship to catch up to camera
+              // player.transform.rotation = Quaternion.Slerp(player.transform.rotation, m_CharacterTargetRot,
+              //     smoothTime * 18 * Time.deltaTime);
 
 
             }
@@ -114,7 +124,11 @@ public class ThirdPersonCamera : MonoBehaviour
               transform.rotation = Quaternion.Lerp (transform.rotation, Quaternion.LookRotation ( targetpos - transform.position), lockOnSpeed * Time.deltaTime);
               m_CharacterTargetRot = transform.rotation;
           }
-          else{transform.rotation = m_CharacterTargetRot;}
+          else{
+
+            transform.rotation = m_CharacterTargetRot;
+
+          }
 
             // transform.rotation = m_CameraTargetRot;
         }

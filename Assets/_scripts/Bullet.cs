@@ -9,7 +9,7 @@ public class Bullet : MonoBehaviour {
     public bool large;
     public GameObject intialExplosion;
     private Rigidbody rb;
-    public float lifeTime;
+    public float lifeTime,impactForce,damage;
     public bool lance,missile,spray,twinLiked; //toggles on instead of being a projectile
     // Use this for initialization
     void Start()
@@ -118,8 +118,10 @@ public class Bullet : MonoBehaviour {
         {
             Instantiate(explosion, transform.position, transform.rotation);
         }
-        lifeTime = 0.1f;
 
+        if(col.gameObject.GetComponent<Enemy>() != null)
+        {HandleEnemyImpact(col.gameObject);}
+          lifeTime = 0.1f;
 
     }
     public void OnTriggerEnter(Collider col)
@@ -131,7 +133,13 @@ public class Bullet : MonoBehaviour {
         }
         //lifeTime = 0.5f;
 
+        if(col.gameObject.GetComponent<Enemy>() != null)
+        {HandleEnemyImpact(col.gameObject);}
+    }
 
+    public void HandleEnemyImpact(GameObject col)
+    {
+      // col.GetComponent<Enemy>().HitByBullet(this.gameObject);
     }
 
     public void Die()

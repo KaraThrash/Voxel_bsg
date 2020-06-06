@@ -19,10 +19,11 @@ public class Enemy : MonoBehaviour {
     public GameObject dradisModel;
     public GameObject squadLeader,myWing;
 
-
+    public Material tookdmgcolor,patrolColor;
+    public Renderer myRenderer;
 
     public int value = 1,itemheldtype;
-    public int hp;
+    public float hp;
     public float speed = 20;
     public float rotForce = 6;
     public float leashDistance;
@@ -32,7 +33,9 @@ public class Enemy : MonoBehaviour {
 
     public bool friendly,conscriptable,destroyed,canShoot,returnHome,inBattle;
     public bool aitest,stationary,alert,inCombat;
-    private float avoidCollisionClock;
+
+
+    private float avoidCollisionClock,controlLockout;
     private Vector3 startPos,openSpotToAvoidCollision;
     private Quaternion targetRotation,startRot;
     private Rigidbody rb;
@@ -86,15 +89,17 @@ public class Enemy : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
-      if(inBattle == false)
-      {
-         FlyOnMap();
+        if(controlLockout <= 0){
+                  if(inBattle == false)
+                  {
+                     FlyOnMap();
 
-       }
-        else
-        {
-          FlyInBattle();
-        }
+                   }
+                    else
+                    {
+                      FlyInBattle();
+                    }
+            }else{controlLockout -= Time.deltaTime;}
 
 
     }
@@ -102,42 +107,60 @@ public class Enemy : MonoBehaviour {
     public void FlyInBattle()
     {
 
-    //during battle enemies will not leash to idle
-      if(alert == true)
-      {
+          //during battle enemies will not leash to idle
+            if(alert == true)
+            {
 
-        AlertActions();
-
-
-      }
-      else{
+              AlertActions();
 
 
-
-          AlertActions();
-
-          if(target == null )
-          {
-            if(friendly == true){
-
-              target = npcManager.GetClosestEnemy(this.gameObject);
-              if(target == this.gameObject){target = null;}
             }
             else{
-                FindTarget();
+
+
+
+                AlertActions();
+
+                if(target == null )
+                {
+                  if(friendly == true){
+
+                    target = npcManager.GetClosestEnemy(this.gameObject);
+                    if(target == this.gameObject){target = null;}
+                  }
+                  else{
+                      FindTarget();
+                  }
+
+
+
+                }
+
+
             }
-
-
-
-          }
-
-
-      }
 
 
 
     }
 
+
+  public void HitByBullet(GameObject hitby)
+  {
+    // hitby.GetComponent<Bullet>()
+    controlLockout = 0.2f;
+    rb.velocity = (transform.position - hitby.transform.position ).normalized * hitby.GetComponent<Bullet>().impactForce;
+    rb.angularVelocity = (transform.position - transform.forward ).normalized * hitby.GetComponent<Bullet>().impactForce * 0.2f;
+
+    if(tookdmgcolor != null && myRenderer != null)
+    {  myRenderer.material = tookdmgcolor;}
+    hp -= hitby.GetComponent<Bullet>().damage;
+
+          if (hp <= 0)
+          {
+              Die();
+          }
+
+  }
 
   public void FlyOnMap()
   {
@@ -307,16 +330,10 @@ public class Enemy : MonoBehaviour {
     }
     public void OnCollisionEnter(Collision col)
     {
-        if (col.gameObject.tag == "Bullet")
+        if (col.gameObject.tag == "Bullet" && hp > 0)
         {
-            Instantiate(explosion, transform.position, transform.rotation);
-            if(hp > 0){
-                  hp -= 1;
-                  if (hp <= 0)
-                  {
-                      Die();
-                  }
-                }
+          HitByBullet(col.gameObject);
+
         }
 
 
@@ -335,13 +352,11 @@ public class Enemy : MonoBehaviour {
         if (other.gameObject.tag == "Bullet")
         {
             if(hp > 0){
-                Instantiate(explosion, transform.position, transform.rotation);
-                // gameManager.GetComponent<GameManager>().RaiderDestroyed(value);
-                hp -= 1;
-                if (hp <= 0)
-                {
-                    Die();
-                }
+              if (other.gameObject.tag == "Bullet")
+              {
+                HitByBullet(other.gameObject);
+
+              }
             }
         }
     }
@@ -404,6 +419,7 @@ public class Enemy : MonoBehaviour {
 
     public void Die()
     {
+      Instantiate(explosion, transform.position, transform.rotation);
         if (npcManager != null)
         {
             npcManager.NPCkilled(GetComponent<Enemy>());

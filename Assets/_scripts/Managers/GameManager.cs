@@ -79,7 +79,8 @@ public FleetManager fleetManager;
         enemyFleetManager.baseStar.gameObject.active = false;
         mapManager.StartNewMap(playerManager.myship.transform);
       }
-
+      //reset player ship rotation to the docking ship
+      cam.ResetCameraAngle();
     }
 
     public void StartBattle()
@@ -146,6 +147,7 @@ public FleetManager fleetManager;
         ResetTheClock();
     }
 
+    //can be called from the ftl menu screen after a target is selected
     public void TravelFromHub(int dest)
     {
         if (playerManager.myship != null)
