@@ -94,7 +94,7 @@ public class NpcManager : MonoBehaviour {
     public void SpawnOne(int whichone,Vector3 where, Quaternion rot)
     {
       //to prevent infinite enemies from spawning by accident check the current quantity active
-      if(enemyparent.transform.childCount >= maxEnemiesOnScreen){return;}
+      if(enemyparent.transform.childCount >= maxEnemiesOnScreen){print("TOO MANY ENEMIES ON SCREEN");return;}
 
         GameObject clone = Instantiate(npcs[whichone], where, rot) as GameObject;
         clone.transform.parent = enemyparent.transform;

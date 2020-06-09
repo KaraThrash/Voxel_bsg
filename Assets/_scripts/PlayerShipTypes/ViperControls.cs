@@ -286,6 +286,15 @@ public float weaponStaminaCost = 0.1f,engineStaminaCost = 0.1f;
             // clone2.transform.parent = this.transform;
             GameObject clone2 = Instantiate(bullet, transform.position, gun2.transform.rotation) as GameObject;
         }
+        else if (bullet.GetComponent<Bullet>().boomerang == true)
+        {
+            // GameObject clone = Instantiate(bullet, gun1.transform.position, gun1.transform.rotation) as GameObject;
+            // clone.transform.parent = this.transform;
+            // GameObject clone2 = Instantiate(bullet, gun2.transform.position, gun2.transform.rotation) as GameObject;
+            // clone2.transform.parent = this.transform;
+            GameObject clone2 = Instantiate(bullet, transform.position + (transform.forward * 5), gun2.transform.rotation) as GameObject;
+            clone2.GetComponent<Bullet>().target = this.gameObject;
+        }
         else
         {
           GameObject clone = Instantiate(bullet, gun2.transform.position, gun2.transform.rotation) as GameObject;

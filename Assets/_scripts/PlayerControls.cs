@@ -77,6 +77,10 @@ public class PlayerControls : MonoBehaviour
 
           }
     }
+
+
+
+
     public void AttemptDodgeRoll()
     {
       print("dodge");
@@ -107,18 +111,26 @@ public class PlayerControls : MonoBehaviour
     {
       velocityDirection = newDir;
     }
+
+    public void SetShipObjectsInactive()
+    {
+      viperShip.active = false;
+      tankShip.active = false;
+      raptorShip.active = false;
+      turnShip.active = false;
+        rb.useGravity = false;
+    }
     public void ChangeShip(PlayerShipStats newplayerStats)
     {
         if(rb == null){  rb = GetComponent<Rigidbody>();}
       playerStats = newplayerStats;
+      SetShipObjectsInactive();
           if(viperShip.active == true)
           {
-            viperShip.active = false;
-            tankShip.active = false;
             playerShip = raptorShip;
-            raptorShip.active = true;
-            turnShip.active = false;
               rb.useGravity = false;
+            raptorShip.active = true;
+
             if(playerShip.GetComponent<RaptorControls>() != null)
             {
 
@@ -127,30 +139,24 @@ public class PlayerControls : MonoBehaviour
 
           }else  if(turnShip.active == true)
           {
-            rb.useGravity = false;
-            raptorShip.active = false;
-            tankShip.active = false;
-          viperShip.active = true;
-          turnShip.active = false;
-          playerShip = viperShip;
+
+              rb.useGravity = false;
+            viperShip.active = true;
+
+            playerShip = viperShip;
 
           }else  if(raptorShip.active == true)
           {
               rb.useGravity = true;
-            raptorShip.active = false;
-          viperShip.active = false;
           tankShip.active = true;
-          turnShip.active = false;
           playerShip = tankShip;
+
             playerShip.GetComponent<TankControls>().SetUp(playerStats.gameObject,newplayerStats,GetComponent<PlayerControls>());
           }else  if(tankShip.active == true)
           {
-              rb.useGravity = false;
-            raptorShip.active = false;
-          viperShip.active = false;
-          tankShip.active = false;
-          turnShip.active = true;
-          playerShip = turnShip;
+                  rb.useGravity = false;
+              turnShip.active = true;
+              playerShip = turnShip;
 
           }
 

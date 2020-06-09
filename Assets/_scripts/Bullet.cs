@@ -9,13 +9,13 @@ public class Bullet : MonoBehaviour {
     public bool large;
     public GameObject intialExplosion;
     private Rigidbody rb;
-    public float lifeTime,impactForce,damage;
-    public bool lance,missile,spray,twinLiked; //toggles on instead of being a projectile
+    public float lifetimeMax = 10.0f,lifeTime,impactForce,damage;
+    public bool lance,missile,spray,twinLiked,boomerang; //toggles on instead of being a projectile
     // Use this for initialization
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        if (lance == false)
+        if (lance == false && missile == false)
         {
             transform.parent = GameObject.Find("BulletParent").transform;
            rb.AddForce(transform.forward * (speed), ForceMode.Impulse);
@@ -37,7 +37,7 @@ public class Bullet : MonoBehaviour {
     void Awake()
     {
         rb = GetComponent<Rigidbody>();
-        if (lance == false)
+        if (lance == false && missile == false)
         {
             transform.parent = GameObject.Find("BulletParent").transform;
             rb.AddForce(transform.forward * (speed), ForceMode.Impulse);
@@ -57,7 +57,7 @@ public class Bullet : MonoBehaviour {
         {
           MissileLogic();
         }
-        if (lifeTime <= 0) { Die(); }
+        if (lifeTime <= 0 || (target != null && transform.position == target.transform.position)) { Die(); }
     }
 
     public void Spray()
@@ -104,11 +104,33 @@ public class Bullet : MonoBehaviour {
 
     public void MissileLogic()
     {
+
+        if(boomerang == true)
+        {
+          rb.velocity = transform.forward * speed  *  Time.deltaTime;
+          if(lifeTime < (lifetimeMax * 0.75f))
+          {
+            if(target != null)
+            {
+              // rb.AddForce(transform.forward * speed  *  Time.deltaTime);
+
+              transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(target.transform.position - transform.position ), rotSpeed * Time.deltaTime);
+             }
+          }
+          transform.GetChild(0).Rotate(transform.forward * rotSpeed * 10 * Time.deltaTime);
+        }
+        else
+        {
+          rb.velocity = transform.forward * speed  *  Time.deltaTime;
           if(target != null)
           {
-            rb.AddForce(transform.forward * speed  *  Time.deltaTime);
+            // rb.AddForce(transform.forward * speed  *  Time.deltaTime);
+
             transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(target.transform.position - transform.position ), rotSpeed * Time.deltaTime);
            }
+        }
+
+
     }
 
     public void OnCollisionEnter(Collision col)
