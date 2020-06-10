@@ -99,25 +99,24 @@ public float weaponStaminaCost = 0.1f,engineStaminaCost = 0.1f;
     }
     public void WeaponSystems()
     {
-      if (guncooldowntimer > 0)
-      {
-
-          guncooldowntimer -= Time.deltaTime;
-      }else
-      {
-        if (Input.GetMouseButton(0) || (Input.GetAxis("10thAxis")) > 0 )
-        {
-
-            if (playerControls.UseStamina(weaponStaminaCost) == true)
+          if (guncooldowntimer > 0)
+          {
+              guncooldowntimer -= Time.deltaTime;
+          }
+          else
+          {
+            if (Input.GetMouseButton(0) || (Input.GetAxis("10thAxis")) > 0 )
             {
 
-                RaycastShootGuns();
+                if (playerControls.UseStamina(weaponStaminaCost) == true)
+                {
 
-                guncooldowntimer = guncooldown;
+                    RaycastShootGuns();
+                    guncooldowntimer = guncooldown;
+                }
+
             }
-
-        }
-      }
+          }
 
 
     }
@@ -157,9 +156,6 @@ public float weaponStaminaCost = 0.1f,engineStaminaCost = 0.1f;
 
 
 
-
-
-
               if  ((Input.GetKey(KeyCode.Space) ) )
               { lift = 1;curdecceleration = acceleration; }
               else  if  ((Input.GetKey(KeyCode.LeftShift)) )
@@ -167,9 +163,6 @@ public float weaponStaminaCost = 0.1f,engineStaminaCost = 0.1f;
                 {  lift = -1; curdecceleration = acceleration;}
 
                 else { lift = 0;}
-
-
-
 
 
         if (Input.GetKey(KeyCode.E)) { roll = -1; }
@@ -219,7 +212,7 @@ public float weaponStaminaCost = 0.1f,engineStaminaCost = 0.1f;
 
               else  if  ((Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.JoystickButton8)) && playerControls.UseStamina(engineStaminaCost * Time.deltaTime) == true)
 
-                {  vert = -0.1f;curdecceleration = acceleration;}
+                {  vert = -0.5f;curdecceleration = acceleration;}
 
                 else { vert = 0;}
 
@@ -252,13 +245,13 @@ public float weaponStaminaCost = 0.1f,engineStaminaCost = 0.1f;
         }
         else{
           targetFlyVelocity = Vector3.Lerp(targetFlyVelocity,tempvel2, acceleration * Time.deltaTime);
-          // targetFlyVelocity = tempvel2;
+
         }
 
-        // newvel = tempvel + tempvel2 + tempvel3 ;
         newvel = targetStrafeVelocity + targetFlyVelocity ;
         velocityDirection = newvel;
-                playerControls.SetVelocityDirection(newvel);
+
+        playerControls.SetVelocityDirection(newvel);
 
         shipRigidBody.velocity = Vector3.Lerp(shipRigidBody.velocity,newvel,   Time.deltaTime);
         shipRigidBody.angularVelocity = Vector3.Lerp(shipRigidBody.angularVelocity,Vector3.zero, acceleration * Time.deltaTime);
@@ -270,10 +263,9 @@ public float weaponStaminaCost = 0.1f,engineStaminaCost = 0.1f;
     {
           if(inputBuffer <= 0)
           {
-            print("ship dodge");
-          inputBuffer = 0.5f;
-          shipRigidBody.velocity = velocityDirection * flySpeed;
-        }
+              inputBuffer = 0.5f;
+              shipRigidBody.velocity = velocityDirection * flySpeed;
+          }
     }
 
     public void RaycastShootGuns()
