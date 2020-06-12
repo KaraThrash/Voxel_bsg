@@ -19,7 +19,7 @@ public class Enemy : MonoBehaviour {
     public GameObject dradisModel;
     public GameObject squadLeader,myWing;
 
-    public Material tookdmgcolor,patrolColor;
+    public Material tookdmgcolor,patrolColor,frozenColor;
     public Renderer myRenderer;
 
     public int value = 1,itemheldtype;
@@ -36,7 +36,7 @@ public class Enemy : MonoBehaviour {
 
 
     private float avoidCollisionClock,controlLockout;
-    private Vector3 startPos,openSpotToAvoidCollision;
+    private Vector3 startPos,openSpotToAvoidCollision,holdVelocity;
     private Quaternion targetRotation,startRot;
     private Rigidbody rb;
 
@@ -89,20 +89,27 @@ public class Enemy : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
-        if(controlLockout <= 0){
-                  if(inBattle == false)
-                  {
-                     FlyOnMap();
 
-                   }
-                    else
+          if(controlLockout <= 0){
+                    if(inBattle == false)
                     {
-                      FlyInBattle();
-                    }
-            }else{controlLockout -= Time.deltaTime;}
+                       FlyOnMap();
+
+                     }
+                      else
+                      {
+                        FlyInBattle();
+                      }
+              }else{
+                controlLockout -= Time.deltaTime;
+                  rb.velocity = holdVelocity;
+                  if(controlLockout <= 0){  holdVelocity = Vector3.zero;}
+
+              }
 
 
     }
+
 
     public void FlyInBattle()
     {
@@ -146,73 +153,85 @@ public class Enemy : MonoBehaviour {
 
   public void HitByBullet(GameObject hitby)
   {
-    // hitby.GetComponent<Bullet>()
-    controlLockout = 0.2f;
-    rb.velocity = (transform.position - hitby.transform.position ).normalized * hitby.GetComponent<Bullet>().impactForce;
-    rb.angularVelocity = (transform.position - transform.forward ).normalized * hitby.GetComponent<Bullet>().impactForce * 0.2f;
 
-    if(tookdmgcolor != null && myRenderer != null)
-    {  myRenderer.material = tookdmgcolor;}
-    hp -= hitby.GetComponent<Bullet>().damage;
+      controlLockout = 0.2f;
+      rb.velocity = (transform.position - hitby.transform.position ).normalized * hitby.GetComponent<Bullet>().impactForce;
+      rb.angularVelocity = (transform.position - transform.forward ).normalized * hitby.GetComponent<Bullet>().impactForce * 0.2f;
 
-          if (hp <= 0)
-          {
-              Die();
-          }
+      if(tookdmgcolor != null && myRenderer != null)
+      {
+        myRenderer.material = tookdmgcolor;
+      }
+      if(frozenColor != null && myRenderer != null && hitby.GetComponent<Bullet>().ice == true)
+      {
+        myRenderer.material = frozenColor;
+        controlLockout = 2.2f;
+        holdVelocity = (rb.velocity.normalized) * Mathf.Max(rb.velocity.magnitude,5.0f);
+      }
+
+      hp -= hitby.GetComponent<Bullet>().damage;
+
+            if (hp <= 0)
+            {
+                Die();
+            }
 
   }
+
 
   public void FlyOnMap()
   {
 
-    //alert enemies are enemies that are in the general area of play.
-    //enemies in area x dont need to active when player is in Y
-    if(alert == true)
-    {
+      //alert enemies are enemies that are in the general area of play.
+      //enemies in area x dont need to active when player is in Y
+          if(alert == true)
+          {
 
-      AlertActions();
-      if(target == null )
-      {
-        if(friendly == true){
+            AlertActions();
+            if(target == null )
+            {
+              if(friendly == true){
 
-          target = npcManager.GetClosestEnemy(this.gameObject);
-          if(target == this.gameObject){target = null;}
+                target = npcManager.GetClosestEnemy(this.gameObject);
+                if(target == this.gameObject){target = null;}
+              }
+              // else{  FindTarget();}
+
+
+
+            }
+
+          }
+          else{
+
+
+            //TODO: have enemies leash back to their start Position
+            if(returnHome == true )
+            {  if(inCombat == false)
+              {ReturnHome();}
+              else
+            {
+              AlertActions();
+              //if targeting something dont return until leashing
+              if(target != null && Vector3.Distance(target.transform.position,transform.position) > leashDistance)
+              {
+                target = null; inCombat = false; alert = false;
+              }
+              else
+              {
+                //the player is out of this enemies home area and the enemy is not targeting anything
+                inCombat = false;
+              }
+            }
+
+          }
+
+
+
         }
-        // else{  FindTarget();}
-
-
-
-      }
-
     }
-    else{
 
 
-      //TODO: have enemies leash back to their start Position
-      if(returnHome == true )
-      {  if(inCombat == false)
-        {ReturnHome();}
-        else
-      {
-        AlertActions();
-        //if targeting something dont return until leashing
-        if(target != null && Vector3.Distance(target.transform.position,transform.position) > leashDistance)
-        {
-          target = null; inCombat = false; alert = false;
-        }
-        else
-        {
-          //the player is out of this enemies home area and the enemy is not targeting anything
-          inCombat = false;
-        }
-      }
-
-    }
-
-
-
-  }
-}
     public void AlertActions()
     {
       if(target != null){inCombat = true;}
@@ -245,6 +264,8 @@ public class Enemy : MonoBehaviour {
         }
 
     }
+
+
     public void ReturnHome()
     {
 
@@ -279,6 +300,8 @@ public class Enemy : MonoBehaviour {
                   }
         }else{AvoidCollision();}
     }
+
+
     public void FindTarget()
     {
 
@@ -289,33 +312,36 @@ public class Enemy : MonoBehaviour {
         target =  target.GetComponent<Fleetship>().GetClosestShipPart(transform.position).gameObject;
         }
 
-
     }
+
+
     public void CheckToNoticePlayer()
     {
       //compare distance from in front to behind the enemy to determine if the player is in a forward cone of vision
       //or if the player is extremely close
 
-      RaycastHit hit;
+          RaycastHit hit;
 
 
 
-      if (Physics.Raycast(transform.position, (npcManager.GetPlayerShip().transform.position - transform.position), out hit, 250.0f) )
-      {
-          //check that the player is in front - if the forward of the enemy is closer than the enemy it can be resonably assumed the player is in front
-            if((npcManager.GetDistanceToPlayer(transform.position + (transform.forward * 4)) < npcManager.GetDistanceToPlayer(transform.position)
-            ||
-            npcManager.GetDistanceToPlayer(transform.position) < 10) && npcManager.GetDistanceToPlayer(transform.position) < leashDistance )
+          if (Physics.Raycast(transform.position, (npcManager.GetPlayerShip().transform.position - transform.position), out hit, 250.0f) )
+          {
+              //check that the player is in front - if the forward of the enemy is closer than the enemy it can be resonably assumed the player is in front
+                if((npcManager.GetDistanceToPlayer(transform.position + (transform.forward * 4)) < npcManager.GetDistanceToPlayer(transform.position)
+                ||
+                npcManager.GetDistanceToPlayer(transform.position) < 10) && npcManager.GetDistanceToPlayer(transform.position) < leashDistance )
 
-            {
-              if(friendly == false){  target = npcManager.GetPlayerShip();}
+                {
+                  if(friendly == false){  target = npcManager.GetPlayerShip();}
 
-            }
-      }
+                }
+          }
 
 
 
     }
+
+
     public void FindSquadMembers()
     {
       //check to find npcs to add to squad

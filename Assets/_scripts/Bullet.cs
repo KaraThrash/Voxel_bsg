@@ -10,7 +10,9 @@ public class Bullet : MonoBehaviour {
     public GameObject intialExplosion;
     private Rigidbody rb;
     public float lifetimeMax = 10.0f,lifeTime,impactForce,damage;
+
     public bool lance,missile,spray,twinLiked,boomerang; //toggles on instead of being a projectile
+    public bool ice;
     // Use this for initialization
     void Start()
     {

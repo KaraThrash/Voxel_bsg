@@ -53,6 +53,7 @@ public class AIattackpattern : MonoBehaviour {
         {
 
           Attack(target);
+
         }
         else
         {

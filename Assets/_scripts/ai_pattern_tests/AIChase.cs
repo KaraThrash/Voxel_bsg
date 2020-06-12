@@ -62,7 +62,7 @@ public class AIChase : MonoBehaviour
 
             if (gunCooldown <= 0)
             {
-                gunCooldown = gunCost * 10;
+                gunCooldown = gunCost * 3;
 
                 if(myEnemy.inBattle == true)
                 {  myEnemy.FindTarget();}
