@@ -66,8 +66,8 @@ public class ThirdPersonCamera : MonoBehaviour
         }
         else
         {
-             yRot = Input.GetAxis("4th Axis") * (1 + XSensitivity);
-             xRot = Input.GetAxis("5th Axis") * -(1 + YSensitivity);
+             yRot = (Input.GetAxis("Mouse X") * XSensitivity) +  Input.GetAxis("4th Axis") * (1 + XSensitivity);
+             xRot = (Input.GetAxis("Mouse Y") * YSensitivity) + Input.GetAxis("5th Axis") * -(1 + YSensitivity);
         }
 
         m_CharacterTargetRot *= Quaternion.Euler(-xRot, yRot, rollz);
@@ -118,7 +118,9 @@ public class ThirdPersonCamera : MonoBehaviour
             //lock on to a place in space based on the target velocity // [better targeting computers give more robust controls?]
             Vector3 targetpos = target.transform.position;
             if(target.GetComponent<Rigidbody>() != null)
-            {  targetpos = (target.transform.position + target.GetComponent<Rigidbody>().velocity);}
+            { // focus on the area the target will be if a bullet is fired now [ignoring bullet speed]
+                targetpos = (target.transform.position + (target.GetComponent<Rigidbody>().velocity * Vector3.Distance(transform.position, target.transform.position)));
+            }
 
 
               transform.rotation = Quaternion.Lerp (transform.rotation, Quaternion.LookRotation ( targetpos - transform.position), lockOnSpeed * Time.deltaTime);

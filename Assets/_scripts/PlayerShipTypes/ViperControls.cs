@@ -22,7 +22,8 @@ public class ViperControls : MonoBehaviour {
     public float liftSpeed;
     public float rollSpeed;
 
-public float weaponStaminaCost = 0.1f,engineStaminaCost = 0.1f;
+
+    public float weaponStaminaCost = 0.1f,engineStaminaCost = 0.1f;
     public float rollMod,engineMod;
     public float acceleration = 1.5f,decceleration = 0.5f;
 
@@ -30,14 +31,16 @@ public float weaponStaminaCost = 0.1f,engineStaminaCost = 0.1f;
 
     public GameObject gun1;
     public GameObject gun2;
-    public GameObject bullet;
+    public GameObject defaultbullet,bullet;
+    private List<Item> equipedAmmoList;
+
     public float guncooldown;
     public float guncooldowntimer;
     public float cameraspeed;
     public float step,groundCollisionTimer;
     public float inputBuffer;
 
-    public int heldresource;
+    public int heldresource,ammoSelected;
 
 
     private float roll;
@@ -46,7 +49,7 @@ public float weaponStaminaCost = 0.1f,engineStaminaCost = 0.1f;
 
 	// Use this for initialization
 	void Start () {
-
+      equipedAmmoList = new List<Item>();
         cameraspeed = 15;
 
     }
@@ -69,6 +72,9 @@ public float weaponStaminaCost = 0.1f,engineStaminaCost = 0.1f;
       engineStaminaCost = playerStats.engineStaminaCost;
       // guncooldown = playerStats
       // cameraspeed = playerStats
+      equipedAmmoList = playerStats.equipedAmmoList;
+      ammoSelected = 0;
+      ChangeAmmo(ammoSelected);
     }
 
 	public void Fly (Rigidbody shipRigidBody) {
@@ -301,7 +307,21 @@ public float weaponStaminaCost = 0.1f,engineStaminaCost = 0.1f;
     }
 
 
+  public void ChangeAmmo(int whichammo)
+  {
+          ammoSelected = whichammo;
+          if(equipedAmmoList != null && equipedAmmoList.Count > 0){
+                if(ammoSelected < equipedAmmoList.Count)
+                {ammoSelected = whichammo;}else{ammoSelected = 0;}
 
+                  string bulletname = "bullet/" + equipedAmmoList[ammoSelected].name;
+                  GameObject loadammo = Resources.Load("bullet/" + equipedAmmoList[ammoSelected].name, typeof(GameObject)) as GameObject;
+                  if(loadammo != null)
+                  {
+                    bullet = loadammo;
+                  }else{bullet = defaultbullet;}
+          }else{bullet = defaultbullet;}
+  }
 
 
 

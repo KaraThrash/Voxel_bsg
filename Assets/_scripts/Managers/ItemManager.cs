@@ -8,6 +8,8 @@ using UnityEngine.UI;
 
 public struct Item {
   public string name;
+  //0 = weapon //1 = hul // 2 = engine // 3 = usable // 4 = ammo
+
   public int type;
   public int placeInMasterList;
   public string stats;
@@ -15,6 +17,7 @@ public struct Item {
     public int armor;
     public int damage;
     public int speed;
+    public bool defaultItem;
   public int getPlayerHeld ( )
          {
           return playerHeldCount;
@@ -24,11 +27,15 @@ public struct Item {
            playerHeldCount = value + playerHeldCount;
          }
 }
+
+
 public class ItemManager : MonoBehaviour {
 
     public int money, fuel;
     public Text fueltext, moneytext,itemstatdisplay,pickUpText,playerShipStatsDisplay;
+    [Header("0:weapon||1:hull||2:engine||3:usable||4:ammo")]
     public GameManager gameManager;
+
     public  List<Item> MasterItemList;
     //public List<GameObject> InInventory; // items available to the player, but not equiped or a recent pick up while on mission
     public List<Vector2> equipedItems; //slot,item
@@ -50,59 +57,74 @@ public class ItemManager : MonoBehaviour {
 
 
 
-public void SetDefaultItemList()
-{
-
-  Item newItem = new Item
- {
-        name = "Default Gun",
-        type = 0,
-        placeInMasterList = 0
-  };
-  newItem.setPlayerHeld(3);
-
-  MasterItemList.Add(newItem);
-   newItem = new Item
- {
-        name = "Default Hull",
-        type = 1,
-        placeInMasterList = 1
-
-  };
-    newItem.setPlayerHeld(3);
-
-    MasterItemList.Add(newItem);
-
-    newItem = new Item
+  public void SetDefaultItemList()
   {
-         name = "Default Engine",
-         type = 2,
-         placeInMasterList = 2
-   };
-     newItem.setPlayerHeld(3);
 
-     MasterItemList.Add(newItem);
-     newItem = new Item
-   {
-          name = "Default Consumable",
-          type = 3,
-          placeInMasterList = 3
-    };
-      newItem.setPlayerHeld(3);
+          Item newItem = new Item
+         {
+                name = "DefaultGun",
+                type = 0,
+                placeInMasterList = 0,
+                defaultItem = true
+          };
+          newItem.setPlayerHeld(1);
 
-      MasterItemList.Add(newItem);
-      playerInventory.Add(new Vector2(0,1));
-      playerInventory.Add(new Vector2(1,1));
-      playerInventory.Add(new Vector2(2,1));
-      playerInventory.Add(new Vector2(3,1));
-      playerInventory.Add(new Vector2(4,1));
-      equipedItems.Add(new Vector2(0,0));
-      equipedItems.Add(new Vector2(0,0));
-      equipedItems.Add(new Vector2(0,0));
-      equipedItems.Add(new Vector2(0,0));
-      equipedItems.Add(new Vector2(0,0));
-      equipedItems.Add(new Vector2(0,0));
-}
+          MasterItemList.Add(newItem);
+           newItem = new Item
+         {
+                name = "DefaultHull",
+                type = 1,
+                placeInMasterList = 1,
+                defaultItem = true
+
+          };
+            newItem.setPlayerHeld(1);
+
+            MasterItemList.Add(newItem);
+
+            newItem = new Item
+          {
+                 name = "DefaultEngine",
+                 type = 2,
+                 placeInMasterList = 2,
+                 defaultItem = true
+           };
+             newItem.setPlayerHeld(1);
+
+             MasterItemList.Add(newItem);
+             newItem = new Item
+           {
+                  name = "DefaultConsumable",
+                  type = 3,
+                  placeInMasterList = 3,
+                  defaultItem = true
+            };
+              newItem.setPlayerHeld(1);
+
+              MasterItemList.Add(newItem);
+
+              newItem = new Item
+            {
+                   name = "DefaultBullet",
+                   type = 4,
+                   placeInMasterList = 4,
+                   defaultItem = true
+             };
+               newItem.setPlayerHeld(1);
+               MasterItemList.Add(newItem);
+
+              playerInventory.Add(new Vector2(0,1));
+              playerInventory.Add(new Vector2(1,1));
+              playerInventory.Add(new Vector2(2,1));
+              playerInventory.Add(new Vector2(3,1));
+              playerInventory.Add(new Vector2(4,1));
+              equipedItems.Add(new Vector2(0,0));
+              equipedItems.Add(new Vector2(0,0));
+              equipedItems.Add(new Vector2(0,0));
+              equipedItems.Add(new Vector2(0,0));
+              equipedItems.Add(new Vector2(0,0));
+              equipedItems.Add(new Vector2(0,0));
+  }
     public void MakeITemListFromFile()
      {
          // string text = File.ReadAllText("./Resources/Items/MasterItemFile.txt");
@@ -126,11 +148,12 @@ public void SetDefaultItemList()
                     newitem.setPlayerHeld(2);
 
               if(tempstring.Length > 1){
-
+//0 = weapon //1 = hul // 2 = engine // 3 = usable // 4 = ammo
                       if(tempstring[1].Trim() == "weapon"){newitem.type = 0;}
                      else if(tempstring[1].Trim() == "hull"){newitem.type = 1;}
                        else if(tempstring[1].Trim() == "engine"){newitem.type = 2;}
                          else if(tempstring[1].Trim() == "usable"){newitem.type = 3;}
+                         else if(tempstring[1].Trim() == "ammo"){newitem.type = 4;}
                          else{}
                }
 
@@ -196,7 +219,11 @@ public void DestroyEquipOnPlayerDeath()
           {
             // Item tempitem = MasterItemList[(int)equipedItems[equipSlot].y];
             Item tempitem2 = MasterItemList[(int)equipedItems[equipSlot].y];//new Item{};
-            tempitem2.setPlayerHeld(1);
+
+            if(tempitem2.defaultItem == false)
+            {tempitem2.setPlayerHeld(1);}
+
+
             gameManager.playerManager.playerShipStats.UnEquipItem(tempitem2);
             MasterItemList[(int)equipedItems[equipSlot].y] = tempitem2;
 
@@ -209,7 +236,9 @@ public void DestroyEquipOnPlayerDeath()
       {
 
         Item tempitem = MasterItemList[whichitem];
-        tempitem.setPlayerHeld(-1);
+        if(tempitem.defaultItem == false)
+        {tempitem.setPlayerHeld(-1);}
+
         MasterItemList[whichitem] = tempitem;
         string statstring = "";
         if(tempitem.armor != 0){statstring += "armor: " + tempitem.armor.ToString() + "\n";}
@@ -239,7 +268,8 @@ public void DestroyEquipOnPlayerDeath()
             // TODO: add item to inventory
               print(MasterItemList[whichitem.GetComponent<PickUp>().itemnumber].getPlayerHeld());
               Item tempitem2 = MasterItemList[(int)whichitem.GetComponent<PickUp>().itemnumber];//new Item{};
-              tempitem2.setPlayerHeld(1);
+              if(tempitem2.defaultItem == false)
+              {tempitem2.setPlayerHeld(1);}
 
               MasterItemList[(int)whichitem.GetComponent<PickUp>().itemnumber] = tempitem2;
 

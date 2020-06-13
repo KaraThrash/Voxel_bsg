@@ -11,6 +11,7 @@ public class Enemy : MonoBehaviour {
 
     public Transform guns;
 
+    [Header("These should be set at run time")]
     public GameObject mapArea,target,patrolparent,patroltarget;
 
     public GameObject bullet;
@@ -28,7 +29,7 @@ public class Enemy : MonoBehaviour {
     public float rotForce = 6;
     public float leashDistance;
 
-      public int stamina,tempHp,tempStamina;
+    public int stamina,tempHp,tempStamina;
     public float  staminaRechargeRate = 1,currentstaminaRechargeBonus,staminaRechargeBonus,currentStamina,engineStaminaCost,gunStaminaCost;//stamina recharges faster when not being used
 
     public bool friendly,conscriptable,destroyed,canShoot,returnHome,inBattle;
@@ -40,7 +41,7 @@ public class Enemy : MonoBehaviour {
     private Quaternion targetRotation,startRot;
     private Rigidbody rb;
 
-    // Use this for initialization
+
     void Start()
     {
       if(rb == null){rb = GetComponent<Rigidbody>();}
@@ -63,7 +64,6 @@ public class Enemy : MonoBehaviour {
       if(hp <= 0){hp = 1;}
       alert = false;
       inCombat = false;
-      // if(patrolparent == null){  patrolparent = GameObject.Find("PatrolPoints");}
       if(patrolparent != null){  patroltarget = patrolparent.transform.GetChild(Random.Range(0,patrolparent.transform.childCount)).gameObject;  }
     }
     public void SetAlert(bool isAlert)
@@ -72,8 +72,11 @@ public class Enemy : MonoBehaviour {
       //TODO: return to rest location // leash
       if(alert == false){returnHome = true;}else{returnHome = false;}
     }
+
+
     public void Conscript(GameObject newsquadLeader)
     {
+      //conscriptable units can join a group and function with group logic
       if(conscriptable == true){
 
         squadLeader = newsquadLeader;
@@ -90,7 +93,10 @@ public class Enemy : MonoBehaviour {
     void Update()
     {
 
+        //getting frozen with ice or using special moves locks the controls
           if(controlLockout <= 0){
+
+                  //space battles have different idle/passive logic than a stage/level has
                     if(inBattle == false)
                     {
                        FlyOnMap();
@@ -101,8 +107,10 @@ public class Enemy : MonoBehaviour {
                         FlyInBattle();
                       }
               }else{
-                controlLockout -= Time.deltaTime;
+
+                  controlLockout -= Time.deltaTime;
                   rb.velocity = holdVelocity;
+                  //if controls were locked because the ship was frozen with ice, reset the target velocity to zero
                   if(controlLockout <= 0){  holdVelocity = Vector3.zero;}
 
               }
@@ -154,19 +162,25 @@ public class Enemy : MonoBehaviour {
   public void HitByBullet(GameObject hitby)
   {
 
+
       controlLockout = 0.2f;
       rb.velocity = (transform.position - hitby.transform.position ).normalized * hitby.GetComponent<Bullet>().impactForce;
       rb.angularVelocity = (transform.position - transform.forward ).normalized * hitby.GetComponent<Bullet>().impactForce * 0.2f;
 
-      if(tookdmgcolor != null && myRenderer != null)
+      if(tookdmgcolor != null)
       {
-        myRenderer.material = tookdmgcolor;
+        SetRenderer(tookdmgcolor);
       }
-      if(frozenColor != null && myRenderer != null && hitby.GetComponent<Bullet>().ice == true)
+      if(hitby.GetComponent<Bullet>().ice == true)
       {
-        myRenderer.material = frozenColor;
         controlLockout = 2.2f;
         holdVelocity = (rb.velocity.normalized) * Mathf.Max(rb.velocity.magnitude,5.0f);
+
+        if(frozenColor != null )
+        {
+            SetRenderer(frozenColor);
+        }
+
       }
 
       hp -= hitby.GetComponent<Bullet>().damage;
@@ -177,7 +191,14 @@ public class Enemy : MonoBehaviour {
             }
 
   }
+  public void SetRenderer(Material newColor)
+  {
+      if(myRenderer != null )
+      {
+        myRenderer.material = frozenColor;
 
+      }
+  }
 
   public void FlyOnMap()
   {

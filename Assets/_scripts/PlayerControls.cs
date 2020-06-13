@@ -165,12 +165,13 @@ public class PlayerControls : MonoBehaviour
     public void SetShipStats(PlayerShipStats newplayerStats)
     {
         if(rb == null){  rb = GetComponent<Rigidbody>();}
-      playerStats = newplayerStats;
 
-            raptorShip.GetComponent<RaptorControls>().SetUp(playerStats.gameObject,newplayerStats,GetComponent<PlayerControls>());
+            playerStats = newplayerStats;
+
+            // raptorShip.GetComponent<RaptorControls>().SetUp(playerStats.gameObject,newplayerStats,GetComponent<PlayerControls>());
               viperShip.GetComponent<ViperControls>().SetUp(playerStats.gameObject,newplayerStats,GetComponent<PlayerControls>());
-            tankShip.GetComponent<TankControls>().SetUp(playerStats.gameObject,newplayerStats,GetComponent<PlayerControls>());
-            turnShip.GetComponent<TurningShip>().SetUp(playerStats.gameObject,newplayerStats,GetComponent<PlayerControls>());
+            // tankShip.GetComponent<TankControls>().SetUp(playerStats.gameObject,newplayerStats,GetComponent<PlayerControls>());
+            // turnShip.GetComponent<TurningShip>().SetUp(playerStats.gameObject,newplayerStats,GetComponent<PlayerControls>());
 
 
     }

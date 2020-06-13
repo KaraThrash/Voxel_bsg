@@ -7,6 +7,7 @@ public class Bullet : MonoBehaviour {
     public float speed,rotSpeed;
     public GameObject explosion,target;
     public bool large;
+    
     public GameObject intialExplosion;
     private Rigidbody rb;
     public float lifetimeMax = 10.0f,lifeTime,impactForce,damage;
