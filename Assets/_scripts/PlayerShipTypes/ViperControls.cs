@@ -355,16 +355,18 @@ public class ViperControls : MonoBehaviour {
                   Destroy(col.gameObject);
 
         }
-        if (col.gameObject.tag == "Enviroment" )
+        
+        if (col.gameObject.tag == "Enviroment" && groundCollisionTimer <= 0)
         {
               //bounce off the ground on contact
               //TODO calculate the right amount of bounce
                 groundCollisionTimer = 0.5f;
                 myplayer.GetComponent<Player>().gamemanager.imageFade.StartDmgFade();
-                if(shipRigidBody.velocity.magnitude < 50 )
-                {shipRigidBody.velocity = (shipRigidBody.transform.position - col.contacts[0].point).normalized *  flySpeed * 1.5f;}
-                  else{shipRigidBody.velocity = (shipRigidBody.transform.position - col.contacts[0].point).normalized *  shipRigidBody.velocity.magnitude;}
+                // if(shipRigidBody.velocity.magnitude < 50 )
+                // {shipRigidBody.velocity = (shipRigidBody.transform.position - col.contacts[0].point).normalized *  flySpeed * 1.5f;}
+                //   else{shipRigidBody.velocity = (shipRigidBody.transform.position - col.contacts[0].point).normalized *  shipRigidBody.velocity.magnitude;}
 
+shipRigidBody.velocity = (shipRigidBody.transform.position - col.contacts[0].point).normalized *  shipRigidBody.velocity.magnitude;
                 shipRigidBody.angularVelocity = (shipRigidBody.transform.position - col.contacts[0].point).normalized *  flySpeed  ;
                   // rb.AddForce((transform.position - col.contacts[0].point).normalized * flySpeed  ,ForceMode.Impulse);
         }
