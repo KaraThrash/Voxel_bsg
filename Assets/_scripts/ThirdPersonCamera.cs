@@ -54,13 +54,7 @@ public class ThirdPersonCamera : MonoBehaviour
         transform.position = player.transform.position;
         if (useController == false)
         {
-          // yRot = Mathf.Sign(Input.GetAxis("Mouse X")) * XSensitivity;
-          // if(Input.GetAxis("Mouse X") != 0)
-          // {yRot = Mathf.Sign(Input.GetAxis("Mouse X")) * XSensitivity;}
-          //   else{yRot = 0;}
-          // if(Input.GetAxis("Mouse Y") != 0)
-          // {xRot = Mathf.Sign(Input.GetAxis("Mouse Y")) * YSensitivity;}
-          //   else{xRot = 0;}
+
              yRot = (Input.GetAxis("Mouse X") * XSensitivity) + ((Input.GetAxis("4th Axis") * ( XSensitivity)))  ;
              xRot = (Input.GetAxis("Mouse Y") * YSensitivity) +  ((Input.GetAxis("5th Axis") * -( YSensitivity)))  ;
         }

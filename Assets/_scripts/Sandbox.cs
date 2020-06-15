@@ -11,7 +11,7 @@ public class Sandbox : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
+      // meth();
     }
 
     // Update is called once per frame
@@ -32,6 +32,75 @@ public class Sandbox : MonoBehaviour
 
 
     }
+
+    public void meth()
+    {
+      int count = 0;
+      int count2 = 0;
+      GameObject clone = gameObj;
+      while (count < 5)
+      {
+
+              if(count < 2){
+                count2 = 0;
+              while (count2 < 30)
+              {
+                  if (count2 < 5)
+                  {
+                      clone = obj0.transform.GetChild(Random.Range(0,obj0.transform.childCount)).gameObject;
+
+                  }
+                  else
+                  {
+                        clone = obj1.transform.GetChild(Random.Range(0,obj1.transform.childCount)).gameObject;
+                  }
+                  GameObject newclone = Instantiate(clone,new Vector3(count ,0,count2 * 2),clone.transform.rotation);
+                  newclone.transform.parent = gameObj.transform;
+                  count2 ++;
+              }
+            }else if(count < 4)
+            {  count2 = 0;
+                    while (count2 < 30)
+                    {
+                        if (count2 < 5)
+                        {
+                            clone = obj1.transform.GetChild(Random.Range(0,obj1.transform.childCount)).gameObject;
+
+                        }
+                        else
+                        {
+                              clone = obj2.transform.GetChild(Random.Range(0,obj2.transform.childCount)).gameObject;
+                        }
+                        GameObject newclone = Instantiate(clone,new Vector3(count ,0,count2 * 2),clone.transform.rotation);
+                        newclone.transform.parent = gameObj.transform;
+                        count2 ++;
+                    }
+            }
+              else{
+                        count2 = 0;
+                  while (count2 < 30)
+                  {
+                      if (count2 < 5)
+                      {
+                          clone = obj2.transform.GetChild(Random.Range(0,obj2.transform.childCount)).gameObject;
+
+                      }
+                      else
+                      {
+                            clone = obj0.transform.GetChild(Random.Range(0,obj0.transform.childCount)).gameObject;
+                      }
+                      GameObject newclone = Instantiate(clone,new Vector3(count ,0,count2 * 2),clone.transform.rotation);
+                      newclone.transform.parent = gameObj.transform;
+                      count2 ++;
+                  }
+
+              }
+
+        count ++;
+      }
+
+    }
+
     public void raycastfromcam(GameObject obj){
         RaycastHit hit;
         Ray ray = camera.ScreenPointToRay(Input.mousePosition);
