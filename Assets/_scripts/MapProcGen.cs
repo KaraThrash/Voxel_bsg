@@ -5,7 +5,7 @@ using UnityEngine;
 public class MapProcGen : MonoBehaviour
 {
   public bool randomizeColors,randomizeChildColors;
-  public float scaleRange = 1.1f,spawnRate,rotRange,col0,col1,col2,col3,col4,col5;
+  public float scaleRange = 1.1f,spawnRate,rotRange,moverange,col0,col1,col2,col3,col4,col5;
   public float rotx,roty,rotz;
   public Renderer myRend;
 
@@ -33,6 +33,12 @@ public class MapProcGen : MonoBehaviour
 
       if(rotx + roty +rotz != 0)
       {RandomizeRotation();}
+
+      if(moverange != 0)
+      {
+        transform.position = new Vector3(transform.position.x + Random.Range(-moverange,moverange),transform.position.y,transform.position.z + Random.Range(-moverange,moverange));
+      }
+
     }
 
     // Update is called once per frame
@@ -49,7 +55,12 @@ public class MapProcGen : MonoBehaviour
     public void RandomizeChildColors()
     {
       Material mat = new Material(Shader.Find("Standard"));
-      mat.color = new Color(Random.Range(col0,col1),Random.Range(col2,col3),Random.Range(col4,col5));
+      if(colors.Count > 0)
+      {
+        mat = colors[Random.Range(0,colors.Count)];
+
+      }else{mat.color = new Color(Random.Range(col0,col1),Random.Range(col2,col3),Random.Range(col4,col5));}
+
       foreach(Transform go in this.transform)
       {
         if(go.GetComponent<Renderer>() != null)
@@ -68,9 +79,18 @@ public class MapProcGen : MonoBehaviour
 
       Material[] intMaterials = new Material[myRend.materials.Length];
      for(int i=0; i < myRend.materials.Length;i++){
-       Material mat = new Material(Shader.Find("Standard"));
-       mat.color = new Color(Random.Range(col0,col1),Random.Range(col2,col3),Random.Range(col4,col5));
-         intMaterials[i] = mat;
+       if(colors.Count > 0)
+       {
+         intMaterials[i] = colors[Random.Range(0,colors.Count)];
+
+       }
+         else
+         {
+           Material mat = new Material(Shader.Find("Standard"));
+           mat.color = new Color(Random.Range(col0,col1),Random.Range(col2,col3),Random.Range(col4,col5));
+             intMaterials[i] = mat;
+         }
+
      }
      myRend.materials = intMaterials;
 

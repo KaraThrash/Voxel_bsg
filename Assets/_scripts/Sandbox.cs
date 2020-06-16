@@ -6,12 +6,12 @@ public class Sandbox : MonoBehaviour
 {
     public Camera camera;
     public Transform obj;
-
+    public GameObject table;
     public GameObject gameObj,obj0,obj1,obj2;
     // Start is called before the first frame update
     void Start()
     {
-      // meth();
+      meth();
     }
 
     // Update is called once per frame
@@ -32,20 +32,31 @@ public class Sandbox : MonoBehaviour
 
 
     }
+    public int spawntable(Vector3 pos, int count)
+    {
+      if(Random.Range(0,4) > 2)
+      {
+        GameObject newclone = Instantiate(table,new Vector3(pos.x,count,pos.z),table.transform.rotation);
+        newclone.transform.parent = gameObj.transform;
+        return spawntable(pos,count + 1);
+      }
+      else{return count;}
 
+
+    }
     public void meth()
     {
       int count = 0;
       int count2 = 0;
       GameObject clone = gameObj;
-      while (count < 5)
+      while (count < 2)
       {
 
-              if(count < 2){
+              if(count < 4){
                 count2 = 0;
-              while (count2 < 30)
+              while (count2 < 15)
               {
-                  if (count2 < 5)
+                  if (count2 < 11)
                   {
                       clone = obj0.transform.GetChild(Random.Range(0,obj0.transform.childCount)).gameObject;
 
@@ -54,15 +65,18 @@ public class Sandbox : MonoBehaviour
                   {
                         clone = obj1.transform.GetChild(Random.Range(0,obj1.transform.childCount)).gameObject;
                   }
-                  GameObject newclone = Instantiate(clone,new Vector3(count ,0,count2 * 2),clone.transform.rotation);
+                  if(Random.Range(0,4) > -1)
+                  {
+                  GameObject newclone = Instantiate(clone,new Vector3(0,0,count2),clone.transform.rotation);
                   newclone.transform.parent = gameObj.transform;
+                }
                   count2 ++;
               }
-            }else if(count < 4)
+            }else if(count < 7)
             {  count2 = 0;
-                    while (count2 < 30)
+                    while (count2 < 15)
                     {
-                        if (count2 < 5)
+                        if (count2 < 11)
                         {
                             clone = obj1.transform.GetChild(Random.Range(0,obj1.transform.childCount)).gameObject;
 
@@ -71,16 +85,19 @@ public class Sandbox : MonoBehaviour
                         {
                               clone = obj2.transform.GetChild(Random.Range(0,obj2.transform.childCount)).gameObject;
                         }
-                        GameObject newclone = Instantiate(clone,new Vector3(count ,0,count2 * 2),clone.transform.rotation);
+                        if(Random.Range(0,4) > -1)
+                        {
+                      GameObject newclone = Instantiate(clone,new Vector3(0,0,count2),clone.transform.rotation);
                         newclone.transform.parent = gameObj.transform;
+                      }
                         count2 ++;
                     }
             }
               else{
                         count2 = 0;
-                  while (count2 < 30)
+                  while (count2 < 15)
                   {
-                      if (count2 < 5)
+                      if (count2 < 11)
                       {
                           clone = obj2.transform.GetChild(Random.Range(0,obj2.transform.childCount)).gameObject;
 
@@ -89,8 +106,11 @@ public class Sandbox : MonoBehaviour
                       {
                             clone = obj0.transform.GetChild(Random.Range(0,obj0.transform.childCount)).gameObject;
                       }
-                      GameObject newclone = Instantiate(clone,new Vector3(count ,0,count2 * 2),clone.transform.rotation);
+                      if(Random.Range(0,4) > -1)
+                      {
+                      GameObject newclone = Instantiate(clone,new Vector3(0,0,count2) ,clone.transform.rotation);
                       newclone.transform.parent = gameObj.transform;
+                    }
                       count2 ++;
                   }
 
