@@ -31,8 +31,8 @@ public class MapProcGen : MonoBehaviour
         RandomizeChildColors();
       }
 
-      if(rotx + roty +rotz != 0)
-      {RandomizeRotation();}
+      // if(rotx + roty +rotz != 0)
+      // {RandomizeRotation();}
 
       if(moverange != 0)
       {

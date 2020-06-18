@@ -21,6 +21,7 @@ public class ViperControls : MonoBehaviour {
     public float  strafeSpeed;
     public float liftSpeed;
     public float rollSpeed;
+    public float camZspeed;
 
 
     public float weaponStaminaCost = 0.1f,engineStaminaCost = 0.1f;
@@ -61,8 +62,10 @@ public class ViperControls : MonoBehaviour {
       playerControls = newplayerControls;
       liftSpeed = playerStats.speed / 4;
       rollSpeed = playerStats.speed / 2;
+
       // rollMod = playerStats
-      turnSpeed = playerStats.speed / 4;
+      turnSpeed = playerStats.speed / 2;
+      camZspeed = rollSpeed * 0.8f;
       flySpeed = playerStats.speed;
       engineMod = 5;
       strafeSpeed = playerStats.speed ;
@@ -143,7 +146,7 @@ public class ViperControls : MonoBehaviour {
         ship.transform.rotation = Quaternion.Lerp(ship.transform.rotation, cam.transform.rotation, Time.deltaTime * rollMod * 0.3f * turnSpeed);
 
 //TODO: change this '20' to a reasonable variable // cam should be slightly behind ship rotation to give the semse of movement
-        cam.GetComponent<ThirdPersonCamera>().rollz = roll * 20 * Time.deltaTime ;
+        cam.GetComponent<ThirdPersonCamera>().rollz = roll * camZspeed * Time.deltaTime ;
 
       }
     }
@@ -355,7 +358,7 @@ public class ViperControls : MonoBehaviour {
                   Destroy(col.gameObject);
 
         }
-        
+
         if (col.gameObject.tag == "Enviroment" && groundCollisionTimer <= 0)
         {
               //bounce off the ground on contact
