@@ -172,12 +172,25 @@ MonoBehaviour:
   dradisModel: {fileID: 0}
   squadLeader: {fileID: 0}
   myWing: {fileID: 0}
+  tookdmgcolor: {fileID: 0}
+  patrolColor: {fileID: 0}
+  frozenColor: {fileID: 0}
+  myRenderer: {fileID: 0}
   value: 1
   itemheldtype: 0
   hp: 1
   speed: 9
   rotForce: 0.5
   leashDistance: 1000
+  stamina: 0
+  tempHp: 0
+  tempStamina: 0
+  staminaRechargeRate: 1
+  currentstaminaRechargeBonus: 0
+  staminaRechargeBonus: 0
+  currentStamina: 0
+  engineStaminaCost: 0
+  gunStaminaCost: 0
   friendly: 0
   conscriptable: 0
   destroyed: 0
@@ -5216,8 +5229,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8067497577191212797}
   m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071067}
-  m_LocalPosition: {x: 0, y: -0.87999916, z: 0}
-  m_LocalScale: {x: 200, y: 199.99988, z: 199.99988}
+  m_LocalPosition: {x: 0, y: -0.72, z: 0.37}
+  m_LocalScale: {x: 200, y: 150, z: 199.99988}
   m_Children: []
   m_Father: {fileID: 706739991728313217}
   m_RootOrder: 1
@@ -5247,8 +5260,8 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 1385b0745e7bf7546a868ecfbc54ea3d, type: 2}
-  - {fileID: 2100000, guid: 7d92ceb2febef2e4c902c21bc60882dc, type: 2}
+  - {fileID: 2100000, guid: cd72ecbac3e049842adc0f176d879a5e, type: 2}
+  - {fileID: 2100000, guid: a9a72fc49f721b240900cf050182567e, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -5296,7 +5309,7 @@ Transform:
   m_GameObject: {fileID: 8067497578181589224}
   m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071067}
   m_LocalPosition: {x: 0, y: -0.8999996, z: 0}
-  m_LocalScale: {x: 198, y: 197.99988, z: 197.99988}
+  m_LocalScale: {x: 198, y: 150, z: 197.99988}
   m_Children: []
   m_Father: {fileID: 706739991728313217}
   m_RootOrder: 0

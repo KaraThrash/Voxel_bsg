@@ -6,6 +6,9 @@ public class Menus : MonoBehaviour {
   public GameManager gameManager;
     public GameObject hubparentmenu,hangarMenu,fleetMenu,mapmenu,ftlmenu,enemyFleetMenu;
 
+    //for when using a controller in the Menu
+    public int menuCount = 5,menuscreen;
+
     // Use this for initialization
     void Start () {
 
@@ -33,9 +36,21 @@ public class Menus : MonoBehaviour {
     }
 
   }
+
+    public void ScrollThroughMenu(int leftOrRight)
+    {
+      menuscreen += leftOrRight;
+      if(menuscreen < 0){menuscreen = menuCount;}
+      if(menuscreen > menuCount){menuscreen = 0;}
+
+      if(menuscreen == 0){HubMenuChange("hangar");}
+      else if(menuscreen == 1){HubMenuChange("fleet");}
+      else if(menuscreen == 2){HubMenuChange("map");}
+      else if(menuscreen == 3){HubMenuChange("ftl");}
+      else{HubMenuChange("enemyfleet");}
+    }
     public void HubMenuChange(string whichmenu)
     {
-
         hangarMenu.active = false;
         fleetMenu.active = false;
         mapmenu.active = false;

@@ -25,24 +25,37 @@ public class Player : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-//TODO: re organize this. it clearly doesnt belong here so figure out where it does go
-          if(atDock == true && (Input.GetKeyDown(KeyCode.Tab) || Input.GetKeyDown(KeyCode.JoystickButton6)))
-          {gamemanager.ActivateMenu();}
 
           if(Input.GetKeyDown(KeyCode.Y))
           {ChangeShips(0);}
-          if(inMenu == false)
-          {
-
-            ControlShip();
-
-
-          }else
-          {
-              myship.GetComponent<Rigidbody>().isKinematic = true;
-          }
 
 	}
+
+  public void InMapActions()
+  {
+    ControlShip();
+    if(atDock == true && (Input.GetKeyDown(KeyCode.Tab) || Input.GetKeyDown(KeyCode.JoystickButton6)))
+    {gamemanager.ActivateMenu();}
+  }
+
+  public void InBattleActions()
+  {
+    ControlShip();
+    if(atDock == true && (Input.GetKeyDown(KeyCode.Tab) || Input.GetKeyDown(KeyCode.JoystickButton6)))
+    {gamemanager.ActivateMenu();}
+  }
+
+  public void InMenuActions()
+  {
+    if(Input.GetKeyDown(KeyCode.Tab) || Input.GetKeyDown(KeyCode.JoystickButton6))
+    {gamemanager.ActivateMenu();}
+    if(Input.GetKeyDown(KeyCode.Q) || Input.GetKeyDown(KeyCode.JoystickButton4))
+    {gamemanager.menuManager.ScrollThroughMenu(-1);}
+    if(Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.JoystickButton5))
+    {gamemanager.menuManager.ScrollThroughMenu(1);}
+
+    myship.GetComponent<Rigidbody>().isKinematic = true;
+  }
 
   public void ChangeShips(int changeto)
   {

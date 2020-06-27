@@ -20,7 +20,7 @@ public FleetManager fleetManager;
   public FtlImageFade imageFade;
 
   public GameObject dockMenu;
-  public bool inMenu,inBattle;
+  public bool inMenu,inBattle,inMap;
 
 
     // Use this for initialization
@@ -31,10 +31,17 @@ public FleetManager fleetManager;
 	// Update is called once per frame
 	void Update () {
 
-    if(Input.GetKeyDown(KeyCode.P))
-    {
-      StartNewMap();
-    }
+          if(inMenu == true){playerManager.InMenuActions();}
+          else if(inBattle == true){playerManager.InBattleActions();}
+          else if(inMap == true){playerManager.InMapActions();}
+          else{}
+
+
+
+          if(Input.GetKeyDown(KeyCode.P))
+          {
+            StartNewMap();
+          }
 
     }
 

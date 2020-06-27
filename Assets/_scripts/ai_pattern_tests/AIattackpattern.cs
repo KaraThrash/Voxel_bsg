@@ -341,17 +341,22 @@ public class AIattackpattern : MonoBehaviour {
                 targetRotation = Quaternion.LookRotation( target.transform.position   - transform.position);
 
             }
-              if(myEnemy.UseStamina(myEnemy.engineStaminaCost * Time.deltaTime) == true){
-                      if(Vector3.Distance(transform.position,(target.transform.position  - (target.transform.forward * closedistance) )) > 30)
-                      {rb.AddForce(transform.forward * speed * Time.deltaTime, ForceMode.Impulse);}
-                      else   if(Vector3.Distance(transform.position,(target.transform.position  - (target.transform.forward * closedistance) )) > 10)
-                        {  rb.AddForce(((target.transform.position  - (target.transform.forward * closedistance)) - transform.position) * speed * Time.deltaTime);}
-                      else
-                      {
-                        transform.position = Vector3.MoveTowards(transform.position,(target.transform.position  - (target.transform.forward * closedistance)),speed * 0.1f * Time.deltaTime);
 
-                      }
-          }
+                if(myEnemy.UseStamina(myEnemy.engineStaminaCost * Time.deltaTime) == true)
+                {
+
+                        if(Vector3.Distance(transform.position,(target.transform.position  - (target.transform.forward * closedistance) )) > 30)
+                        {rb.AddForce(transform.forward * speed * Time.deltaTime, ForceMode.Impulse);}
+                        else   if(Vector3.Distance(transform.position,(target.transform.position  - (target.transform.forward * closedistance) )) > 10)
+                          {  rb.AddForce(((target.transform.position  - (target.transform.forward * closedistance)) - transform.position) * speed * Time.deltaTime);}
+                        else
+                        {
+                          transform.position = Vector3.MoveTowards(transform.position,(target.transform.position  - (target.transform.forward * closedistance)),speed * 0.1f * Time.deltaTime);
+
+                        }
+                  }
+
+
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotForce * Time.deltaTime);
             float angle = Vector3.Angle(targetship.transform.position - transform.position, transform.forward);
 
