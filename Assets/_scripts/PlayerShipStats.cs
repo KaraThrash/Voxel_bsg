@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 public class PlayerShipStats : MonoBehaviour
 {
+    public int shipbasearmor,shipbasedamage,shipbasespeed;
     public int basearmor,basedamage,basespeed;
     public int armor,damage,speed;
     public int dodgeDistance = 50;
@@ -82,6 +83,12 @@ public class PlayerShipStats : MonoBehaviour
       if(newItem.type == 4)
       {
         equipedAmmoList.Add(newItem);
+      }
+      else if (newItem.type == 5)
+      {
+        shipbasearmor = newItem.armor;
+        shipbasedamage = newItem.damage;
+        shipbasespeed = newItem.speed;
       }
       else
       {

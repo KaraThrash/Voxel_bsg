@@ -61,7 +61,7 @@ public class Player : MonoBehaviour {
   {
     //TODO: this need a complete overhaul
 
-      playerControls.ChangeShip(playerShipStats);
+      playerControls.ChangeShip(playerShipStats,changeto);
 
   }
   public void ControlShip()
@@ -191,12 +191,16 @@ public class Player : MonoBehaviour {
       { tempstring += "I"; count++; }
       hpText.text = tempstring;
     }
+
+
     public void startnewlevel()
     {
       RespawnPlayer();
         myship.active = true;
         mycamera.GetComponent<ThirdPersonCamera>().enabled = true;
     }
+
+
     public void endLevel()
     {
         mycamera.GetComponent<ThirdPersonCamera>().enabled = false;
@@ -208,12 +212,17 @@ public class Player : MonoBehaviour {
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
     }
+
+
     public void SetPlayerSpawn(GameObject newSpawn)
     {
       playerSpawn = newSpawn;
     }
+
+
     public void restartlevel() {
         //for web build
         Application.LoadLevel(Application.loadedLevel);
     }
+
 }

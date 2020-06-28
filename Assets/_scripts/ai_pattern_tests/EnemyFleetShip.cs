@@ -37,12 +37,15 @@ public class EnemyFleetShip : MonoBehaviour
     public void FindTarget()
     {
       if(npcManager != null){
-        target = npcManager.GetClosestTarget(transform.position);
 
+        target = npcManager.GetClosestFleetShip(transform.position);
         if(target.GetComponent<Fleetship>() != null)
         {
         target =  target.GetComponent<Fleetship>().GetClosestShipPart(transform.position).gameObject;
         }
+        else
+        {target = npcManager.GetClosestTarget(transform.position);}
+
 
       }
     }
@@ -80,6 +83,7 @@ public class EnemyFleetShip : MonoBehaviour
                   if(target != null){
                   Attack();
 
+                    //if the current target is destroyed find a new one
                     if(target.GetComponent<ShipPart>() != null && target.GetComponent<ShipPart>().destroyed == true)
                     {
                       target =  null;
@@ -118,13 +122,14 @@ public class EnemyFleetShip : MonoBehaviour
     {
       currentHp--;
       if (currentHp <= 0)
-      { dieclock = 10.0f;
+      {
+          dieclock = 10.0f;
           GetComponent<Rigidbody>().useGravity = true;
-            GetComponent<Rigidbody>().isKinematic = false;
+          GetComponent<Rigidbody>().isKinematic = false;
           GetComponent<Rigidbody>().angularDrag = 0;
           GetComponent<Rigidbody>().drag = 0;
           GetComponent<Rigidbody>().velocity = Vector3.down * 5.0f;
-            GetComponent<Rigidbody>().angularVelocity = (Vector3.down +  Vector3.right) * Random.Range(0.01f, 0.2f);
+          GetComponent<Rigidbody>().angularVelocity = (Vector3.down +  Vector3.right) * Random.Range(0.01f, 0.2f);
       }
     }
     public void ShipDestroyed()
@@ -136,6 +141,7 @@ public class EnemyFleetShip : MonoBehaviour
       }
         Destroy(this.gameObject);
     }
+
     public void FaceTarget()
     {
 

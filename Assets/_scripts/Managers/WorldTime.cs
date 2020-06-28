@@ -81,34 +81,40 @@ public class WorldTime : MonoBehaviour
 
 
 
-      if(timeUntilAttack <= 60)
-      {
-        joinAttackButton.active = true;
-
-        //0 attack occurs, if the player isnt there it auto resolves
-        //cant join a battle in progress [wont make it in time if the clock is already at 0]
-        if(timeUntilAttack <= 0)
+        if(timeUntilAttack <= 60)
         {
-          joinAttackButton.active = false;
+              joinAttackButton.active = true;
 
+              //0 attack occurs, if the player isnt there it auto resolves
+              //cant join a battle in progress [wont make it in time if the clock is already at 0]
+              if(timeUntilAttack <= 0)
+              {
+                joinAttackButton.active = false;
+
+              }
         }
-      }else{
+        else
+        {
 
-      joinAttackButton.active = false;
+            joinAttackButton.active = false;
+        }
       }
-      }else{
-        timeUntilAttack = -1;
-        joinAttackButton.active = false;
+      else
+      {
+            timeUntilAttack = -1;
+            joinAttackButton.active = false;
 
       }
 
       timeSinceLastJump += (Time.deltaTime * timerate);
 
-      if(gameManager.fleetManager.engineStrength < timeSinceLastJump ){
+        //for testing keep this low so it's easy to activate
+      if((10 - gameManager.fleetManager.engineStrength) < (timeSinceLastJump ) ){
         fleetJumpButton.active = true;
       }
       else{fleetJumpButton.active = false;}
 
+      //todo: make this a bar that fills, or clock that ticks?
       fleetJumpReadiness.text = (int)timeSinceLastJump + " / " + gameManager.fleetManager.engineStrength;
 
 

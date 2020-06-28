@@ -17,6 +17,7 @@ public struct Item {
     public int armor;
     public int damage;
     public int speed;
+    public int subtype;
     public bool defaultItem;
   public int getPlayerHeld ( )
          {
@@ -33,7 +34,7 @@ public class ItemManager : MonoBehaviour {
 
     public int money, fuel;
     public Text fueltext, moneytext,itemstatdisplay,pickUpText,playerShipStatsDisplay;
-    [Header("0:weapon||1:hull||2:engine||3:usable||4:ammo")]
+    [Header("0:weapon||1:hull||2:engine||3:usable||4:ammo||5:chasis")]
     public GameManager gameManager;
 
     public  List<Item> MasterItemList;
@@ -113,11 +114,22 @@ public class ItemManager : MonoBehaviour {
                newItem.setPlayerHeld(1);
                MasterItemList.Add(newItem);
 
+               newItem = new Item
+             {
+                    name = "DefaultChasis",
+                    type = 5,
+                    placeInMasterList = 5,
+                    defaultItem = true
+              };
+                newItem.setPlayerHeld(1);
+                MasterItemList.Add(newItem);
+
               playerInventory.Add(new Vector2(0,1));
               playerInventory.Add(new Vector2(1,1));
               playerInventory.Add(new Vector2(2,1));
               playerInventory.Add(new Vector2(3,1));
               playerInventory.Add(new Vector2(4,1));
+              equipedItems.Add(new Vector2(0,0));
               equipedItems.Add(new Vector2(0,0));
               equipedItems.Add(new Vector2(0,0));
               equipedItems.Add(new Vector2(0,0));
@@ -141,7 +153,7 @@ public class ItemManager : MonoBehaviour {
                   Item newitem = new Item
                  {
                         name = tempstring[0],
-                        type = 5,
+                        type = 99,
                         placeInMasterList = MasterItemList.Count
                   };
                   //NOTE: set to 1 to have all items
@@ -154,6 +166,7 @@ public class ItemManager : MonoBehaviour {
                        else if(tempstring[1].Trim() == "engine"){newitem.type = 2;}
                          else if(tempstring[1].Trim() == "usable"){newitem.type = 3;}
                          else if(tempstring[1].Trim() == "ammo"){newitem.type = 4;}
+                         else if(tempstring[1].Trim() == "chasis"){newitem.type = 5;}
                          else{}
                }
 
@@ -168,6 +181,9 @@ public class ItemManager : MonoBehaviour {
                      if(tempstring.Length >= 5){
                         if(tempstring[4].Trim() != "x"){newitem.speed = Convert.ToInt32(tempstring[4]);}
                         }
+                        if(tempstring.Length >= 6){
+                           if(tempstring[5].Trim() != "x"){newitem.subtype = Convert.ToInt32(tempstring[5]);}
+                           }
                       //
                       //  if(tempstring[2].Trim() == "stats"){newitem.stats = tempstring[3];
                       //     // print("stats: " + newitem.stats);
@@ -215,7 +231,7 @@ public void DestroyEquipOnPlayerDeath()
       if(equipedItems.Count > equipSlot)
       {
         //default items are always available and dont need to be returned to the inventory count
-          if (equipedItems[equipSlot].y > 3)
+          if (equipedItems[equipSlot].y > 4)
           {
             // Item tempitem = MasterItemList[(int)equipedItems[equipSlot].y];
             Item tempitem2 = MasterItemList[(int)equipedItems[equipSlot].y];//new Item{};
@@ -232,7 +248,7 @@ public void DestroyEquipOnPlayerDeath()
       }
       //structs passed by value, calling a struct gets a copy.
       //check that the item isnt a default item: default items are always available
-      if(whichitem > 3)
+      if(whichitem > 4)
       {
 
         Item tempitem = MasterItemList[whichitem];
@@ -244,9 +260,12 @@ public void DestroyEquipOnPlayerDeath()
         if(tempitem.armor != 0){statstring += "armor: " + tempitem.armor.ToString() + "\n";}
         if(tempitem.damage != 0){statstring += "damage: " + tempitem.damage.ToString() + "\n";}
         if(tempitem.speed != 0){statstring += "speed: " + tempitem.speed.ToString() + "\n";}
+
+        if(tempitem.type == 5){gameManager.playerManager.ChangeShips(tempitem.subtype); }
           itemstatdisplay.text = statstring;
 
           gameManager.playerManager.playerShipStats.EquipItem(tempitem);
+          gameManager.playerManager.playerControls.SetShipStats(gameManager.playerManager.playerShipStats);
       }
 
       equipButtons.GetChild(equipSlot).GetChild(0).GetComponent<Text>().text = MasterItemList[whichitem].name;

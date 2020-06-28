@@ -87,7 +87,7 @@ public class PlayerControls : MonoBehaviour
       int cost = -1;
       if(UseStamina(cost) || true)
       {
-        playerShip.SendMessage("DodgeRoll",rb);
+        // playerShip.SendMessage("DodgeRoll",rb);
         // lockOutEngines = 0.5f;
         //default backwards //TODO: neautral barrel roll?
         // if(velocityDirection == Vector3.zero){  rb.velocity = playerShip.transform.forward *  -playerStats.dodgeDistance;}
@@ -120,39 +120,42 @@ public class PlayerControls : MonoBehaviour
       turnShip.active = false;
         rb.useGravity = false;
     }
-    public void ChangeShip(PlayerShipStats newplayerStats)
+    public void ChangeShip(PlayerShipStats newplayerStats,int changeto)
     {
         if(rb == null){  rb = GetComponent<Rigidbody>();}
-      playerStats = newplayerStats;
-      SetShipObjectsInactive();
-          if(viperShip.active == true)
+
+
+          playerStats = newplayerStats;
+          SetShipObjectsInactive();
+          if(changeto == 0)
+          {
+            rb.useGravity = false;
+          viperShip.active = true;
+
+          playerShip = viperShip;
+
+
+
+
+          }else  if(changeto == 1)
           {
             playerShip = raptorShip;
-              rb.useGravity = false;
+            rb.useGravity = false;
             raptorShip.active = true;
-
             if(playerShip.GetComponent<RaptorControls>() != null)
             {
 
               playerShip.GetComponent<RaptorControls>().SetUp(playerStats.gameObject,newplayerStats,GetComponent<PlayerControls>());
             }
 
-          }else  if(turnShip.active == true)
-          {
-
-              rb.useGravity = false;
-            viperShip.active = true;
-
-            playerShip = viperShip;
-
-          }else  if(raptorShip.active == true)
+          }else  if(changeto == 2)
           {
               rb.useGravity = true;
           tankShip.active = true;
           playerShip = tankShip;
-
             playerShip.GetComponent<TankControls>().SetUp(playerStats.gameObject,newplayerStats,GetComponent<PlayerControls>());
-          }else  if(tankShip.active == true)
+
+          }else  if(changeto == 3)
           {
                   rb.useGravity = false;
               turnShip.active = true;
@@ -168,8 +171,12 @@ public class PlayerControls : MonoBehaviour
 
             playerStats = newplayerStats;
 
+            if(playerShip.GetComponent<ViperControls>() != null)
+            {viperShip.GetComponent<ViperControls>().SetUp(playerStats.gameObject,newplayerStats,GetComponent<PlayerControls>());}
+            else if(playerShip.GetComponent<RaptorControls>() != null)
+            {raptorShip.GetComponent<RaptorControls>().SetUp(playerStats.gameObject,newplayerStats,GetComponent<PlayerControls>());}
             // raptorShip.GetComponent<RaptorControls>().SetUp(playerStats.gameObject,newplayerStats,GetComponent<PlayerControls>());
-              viperShip.GetComponent<ViperControls>().SetUp(playerStats.gameObject,newplayerStats,GetComponent<PlayerControls>());
+
             // tankShip.GetComponent<TankControls>().SetUp(playerStats.gameObject,newplayerStats,GetComponent<PlayerControls>());
             // turnShip.GetComponent<TurningShip>().SetUp(playerStats.gameObject,newplayerStats,GetComponent<PlayerControls>());
 

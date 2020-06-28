@@ -33,7 +33,7 @@ public FleetManager fleetManager;
 
           if(inMenu == true){playerManager.InMenuActions();}
           else if(inBattle == true){playerManager.InBattleActions();}
-          else if(inMap == true){playerManager.InMapActions();}
+          else if(inMap == true){playerManager.InBattleActions();}
           else{}
 
 
@@ -102,7 +102,7 @@ public FleetManager fleetManager;
      //when opening the menu the manager returns true, false if it is closing the menu
      //unlock or lock the mouse based on the menu state
      inMenu = menuManager.OpenMenu();
-
+     inMap = !inMenu;
       cam.SetInMenu(  inMenu);
       timeManager.SetInMenu(inMenu);
       //set the player controller so that when in menu the ship isnt flying around

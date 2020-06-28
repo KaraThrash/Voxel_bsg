@@ -112,8 +112,11 @@ public class ThirdPersonCamera : MonoBehaviour
             //lock on to a place in space based on the target velocity // [better targeting computers give more robust controls?]
             Vector3 targetpos = target.transform.position;
             if(target.GetComponent<Rigidbody>() != null)
-            { // focus on the area the target will be if a bullet is fired now [ignoring bullet speed]
-                targetpos = (target.transform.position + (target.GetComponent<Rigidbody>().velocity * Vector3.Distance(transform.position, target.transform.position)));
+            {
+              // focus on the area the target will be if a bullet is fired now [ignoring bullet speed]
+                // targetpos = (target.transform.position + (target.GetComponent<Rigidbody>().velocity  ));
+                targetpos = (target.transform.position + (target.GetComponent<Rigidbody>().velocity * Vector3.Distance(transform.position, target.transform.position) ));
+                // (target.transform.position + (target.transform.forward * 3 * (Vector3.Distance(transform.position, target.transform.position) * target.GetComponent<Rigidbody>().velocity.magnitude)));
             }
 
 

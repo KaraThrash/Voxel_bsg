@@ -16,10 +16,7 @@ public class ResourceManager : MonoBehaviour {
     public Text moraletext;
     // Use this for initialization
     void Start () {
-        poptext.text = pop.ToString();
-        foodtext.text = food.ToString();
-        fueltext.text = fuel.ToString();
-        moraletext.text = morale.ToString();
+        UpdateResourceText();
     }
 
 	// Update is called once per frame
@@ -27,6 +24,13 @@ public class ResourceManager : MonoBehaviour {
 
 	}
 
+    public void UpdateResourceText()
+    {
+      poptext.text = pop.ToString();
+      foodtext.text = food.ToString();
+      fueltext.text = fuel.ToString();
+      moraletext.text = morale.ToString();
+    }
 
     public void ResourceChange(int popchange,int foodchange,int fuelchange,int moralechage)
     {
@@ -34,9 +38,6 @@ public class ResourceManager : MonoBehaviour {
         food += foodchange;
         fuel += fuelchange;
         morale += moralechage;
-    poptext.text = pop.ToString();
-  foodtext.text = food.ToString();
-    fueltext.text = fuel.ToString();
-    moraletext.text = morale.ToString();
+        UpdateResourceText();
    }
 }

@@ -60,15 +60,15 @@ public class ViperControls : MonoBehaviour {
     {
       myplayer = newmyplayer;
       playerControls = newplayerControls;
-      liftSpeed = playerStats.speed / 4;
-      rollSpeed = playerStats.speed / 2;
+      liftSpeed = playerStats.speed  + playerStats.shipbasespeed;
+      rollSpeed = (playerStats.speed + playerStats.shipbasespeed) / 2;
 
       // rollMod = playerStats
-      turnSpeed = playerStats.speed / 2;
+      turnSpeed = (playerStats.speed + playerStats.shipbasespeed) / 2;
       camZspeed = rollSpeed * 0.8f;
-      flySpeed = playerStats.speed;
+      flySpeed = (playerStats.speed + playerStats.shipbasespeed);
       engineMod = 5;
-      strafeSpeed = playerStats.speed ;
+      strafeSpeed = (playerStats.speed + playerStats.shipbasespeed) ;
       acceleration = playerStats.acceleration;
       decceleration = playerStats.decceleration;
       weaponStaminaCost = playerStats.weaponStaminaCost;
