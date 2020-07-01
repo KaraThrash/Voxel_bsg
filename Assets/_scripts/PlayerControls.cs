@@ -133,7 +133,7 @@ public class PlayerControls : MonoBehaviour
           viperShip.active = true;
 
           playerShip = viperShip;
-
+          playerShip.GetComponent<ViperControls>().SetUp(playerStats.gameObject,newplayerStats,GetComponent<PlayerControls>());
 
 
 
@@ -160,7 +160,7 @@ public class PlayerControls : MonoBehaviour
                   rb.useGravity = false;
               turnShip.active = true;
               playerShip = turnShip;
-
+                playerShip.GetComponent<TurningShip>().SetUp(playerStats.gameObject,newplayerStats,GetComponent<PlayerControls>());
           }
 
     }

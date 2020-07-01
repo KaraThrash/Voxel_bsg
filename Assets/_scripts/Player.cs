@@ -32,7 +32,7 @@ public class Player : MonoBehaviour {
 	}
 
   public void InMapActions()
-  {
+  {  if(  myship.GetComponent<Rigidbody>().isKinematic == true){  myship.GetComponent<Rigidbody>().isKinematic = false;}
     ControlShip();
     if(atDock == true && (Input.GetKeyDown(KeyCode.Tab) || Input.GetKeyDown(KeyCode.JoystickButton6)))
     {gamemanager.ActivateMenu();}
@@ -40,6 +40,7 @@ public class Player : MonoBehaviour {
 
   public void InBattleActions()
   {
+    if(  myship.GetComponent<Rigidbody>().isKinematic == true){  myship.GetComponent<Rigidbody>().isKinematic = false;}
     ControlShip();
     if(atDock == true && (Input.GetKeyDown(KeyCode.Tab) || Input.GetKeyDown(KeyCode.JoystickButton6)))
     {gamemanager.ActivateMenu();}
