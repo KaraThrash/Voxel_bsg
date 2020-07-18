@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 
 public class Enemy : MonoBehaviour {
@@ -328,7 +329,7 @@ public class Enemy : MonoBehaviour {
     public void FindTarget()
     {
 
-        target = npcManager.GetClosestTarget(transform.position);
+        //target = npcManager.GetClosestTarget(transform.position);
 
         if(target != null && target.GetComponent<Fleetship>() != null)
         {
@@ -349,15 +350,19 @@ public class Enemy : MonoBehaviour {
 
           if (Physics.Raycast(transform.position, (npcManager.GetPlayerShip().transform.position - transform.position), out hit, noticePlayerDistance) )
           {
-              //check that the player is in front - if the forward of the enemy is closer than the enemy it can be resonably assumed the player is in front
-                if((npcManager.GetDistanceToPlayer(transform.position + (transform.forward * 4)) < npcManager.GetDistanceToPlayer(transform.position)
-                ||
-                npcManager.GetDistanceToPlayer(transform.position) < 10) && npcManager.GetDistanceToPlayer(transform.position) < leashDistance )
+                    if (hit.transform.gameObject.tag == "Player")
+                    {
+                        print("RAYCASTHIT");
+                        //check that the player is in front - if the forward of the enemy is closer than the enemy it can be resonably assumed the player is in front
+                        if ((npcManager.GetDistanceToPlayer(transform.position + (transform.forward * 4)) < npcManager.GetDistanceToPlayer(transform.position)
+                        ||
+                        npcManager.GetDistanceToPlayer(transform.position) < 10) && npcManager.GetDistanceToPlayer(transform.position) < leashDistance)
 
-                {
-                  if(friendly == false){  target = npcManager.GetPlayerShip(); inCombat = true; }
+                        {
+                            if (friendly == false) { target = npcManager.GetPlayerShip(); inCombat = true; }
 
-                }
+                        }
+                    }
           }
 
 
@@ -387,6 +392,15 @@ public class Enemy : MonoBehaviour {
 
 
     }
+    public void OnTriggerStay(Collider other)
+    {
+        if (other.transform.parent != null && other.transform.parent.gameObject.GetComponent<Enemy>() != null)
+        {
+            transform.position = Vector3.MoveTowards(transform.position,other.transform.position,speed * -Time.deltaTime);
+        }
+    }
+
+
     public void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.tag == "Shippart")

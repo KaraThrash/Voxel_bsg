@@ -43,7 +43,7 @@ public class ViperControls : MonoBehaviour {
 
     public int heldresource,ammoSelected;
 
-
+    public bool glide;
     private float roll;
     private Vector3 velocityDirection,targetFlyVelocity,targetStrafeVelocity; //unit vector for the controllere input direction of travel, to make dashing easier
     private Rigidbody rb;
@@ -264,16 +264,23 @@ public class ViperControls : MonoBehaviour {
 
         targetStrafeVelocity = tempvel + tempvel3;
 
-        if(vert == 0)
+        if (Input.GetKeyDown(KeyCode.JoystickButton8) )
         {
-            //hold button to glide, while still being able to strafe
-            if  (Input.GetKey(KeyCode.JoystickButton8) && playerControls.UseStamina(engineStaminaCost * Time.deltaTime) == true)
+            glide = !glide;
+        }
 
-             {  }
-             else
-             {
-                 targetFlyVelocity = Vector3.zero;
-             }
+        if (vert == 0 && (glide == false || playerControls.UseStamina(engineStaminaCost * Time.deltaTime) == true))
+        {
+            glide = false;
+            targetFlyVelocity = Vector3.zero;
+            //hold button to glide, while still being able to strafe
+            //if  (Input.GetKey(KeyCode.JoystickButton8) && playerControls.UseStamina(engineStaminaCost * Time.deltaTime) == true)
+
+            // {  }
+            // else
+            // {
+            //     targetFlyVelocity = Vector3.zero;
+            // }
 
 
         }
