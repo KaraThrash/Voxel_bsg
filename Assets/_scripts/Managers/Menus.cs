@@ -23,17 +23,17 @@ public class Menus : MonoBehaviour {
 
     //enable menu objects on the canvas if they are currently disabled
     //or turn them off if already in menu
-    if(hubparentmenu.active == false)
-    {
-       hubparentmenu.active = true;
-        HubMenuChange("hangar");
-        return true;
+      if(hubparentmenu.active == false)
+      {
+                hubparentmenu.active = true;
+                HubMenuChange("hangar");
+                return true;
       }
       else
       {
-    hubparentmenu.active = false;
-    return false;
-    }
+                hubparentmenu.active = false;
+                return false;
+      }
 
   }
 

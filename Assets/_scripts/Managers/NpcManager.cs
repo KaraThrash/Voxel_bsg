@@ -250,7 +250,7 @@ public class NpcManager : MonoBehaviour {
       {
         if(Vector3.Distance(go.transform.position,fromObject.transform.position) < rng ){
           go.GetComponent<Enemy>().alert = true;
-          go.GetComponent<Enemy>().target = GetPlayerShip();
+          //go.GetComponent<Enemy>().target = GetPlayerShip();
 
           }
 

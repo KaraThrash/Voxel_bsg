@@ -33,7 +33,8 @@ public class Player : MonoBehaviour {
 
 
   public void InMapActions()
-  {  if(  myship.GetComponent<Rigidbody>().isKinematic == true){  myship.GetComponent<Rigidbody>().isKinematic = false;}
+  {  
+        if(  myship.GetComponent<Rigidbody>().isKinematic == true){  myship.GetComponent<Rigidbody>().isKinematic = false;}
     ControlShip();
     if(atDock == true && (Input.GetKeyDown(KeyCode.Tab) || Input.GetKeyDown(KeyCode.JoystickButton6)))
     {gamemanager.ActivateMenu();}
@@ -43,9 +44,14 @@ public class Player : MonoBehaviour {
   public void InBattleActions()
   {
     if(  myship.GetComponent<Rigidbody>().isKinematic == true){  myship.GetComponent<Rigidbody>().isKinematic = false;}
+
     ControlShip();
     if(atDock == true && (Input.GetKeyDown(KeyCode.Tab) || Input.GetKeyDown(KeyCode.JoystickButton6)))
-    {gamemanager.ActivateMenu();}
+    {
+            
+            gamemanager.ActivateMenu();
+
+     }
   }
 
 
@@ -83,7 +89,7 @@ public class Player : MonoBehaviour {
 
   public void SetInMenu(bool menuStatus)
   {
-      myship.GetComponent<Rigidbody>().isKinematic = false;
+      myship.GetComponent<Rigidbody>().isKinematic = !menuStatus;
     inMenu = menuStatus;
   }
 
@@ -108,8 +114,8 @@ public class Player : MonoBehaviour {
     else
     {
       //if knocked off the dock, exit the menu
-      if(gamemanager.inMenu == true )
-      {gamemanager.ActivateMenu();}
+      //if(gamemanager.inMenu == true )
+      //{gamemanager.ActivateMenu();}
       // contextButtonUi.active = false;
       // contextButton.text = "";
     }

@@ -8,12 +8,16 @@ public class Bullet : MonoBehaviour {
     public GameObject explosion,target;
     public bool large;
     
-    public GameObject intialExplosion;
-    private Rigidbody rb;
+    public GameObject intialExplosion, childObject;
+    
     public float lifetimeMax = 10.0f,lifeTime,impactForce,damage;
 
     public bool lance,missile,spray,twinLiked,boomerang; //toggles on instead of being a projectile
     public bool ice;
+
+    private Vector3 direction,secondaryDirection;
+    private Rigidbody rb;
+
     // Use this for initialization
     void Start()
     {
@@ -33,8 +37,9 @@ public class Bullet : MonoBehaviour {
          TwinLink();
        }
 
-       // if (large == true) { Instantiate(intialExplosion, transform.position, transform.rotation); }
+        // if (large == true) { Instantiate(intialExplosion, transform.position, transform.rotation); }
 
+        if (childObject == null && transform.childCount > 0) { childObject = transform.GetChild(0).gameObject; }
 
     }
     void Awake()
@@ -51,6 +56,22 @@ public class Bullet : MonoBehaviour {
 
 
     }
+
+
+    public void Launched(GameObject newtarget=null)
+    {
+        if (newtarget) { target = newtarget; }
+
+        if (boomerang == true)
+        {
+            direction = (target.transform.forward + target.transform.right).normalized;
+            secondaryDirection = -target.transform.right;
+        }
+        
+
+    }
+
+
     // Update is called once per frame
     void Update()
     {
@@ -108,19 +129,40 @@ public class Bullet : MonoBehaviour {
     public void MissileLogic()
     {
 
+
+        //boomerang has it target set to the player that fired it.
         if(boomerang == true)
         {
-          rb.velocity = transform.forward * speed  *  Time.deltaTime;
-          if(lifeTime < (lifetimeMax * 0.75f))
-          {
-            if(target != null)
+            //rb.velocity = transform.forward * speed  *  Time.deltaTime;
+            //first phase of it's life move away from from the firing object, second phase to what was the alternate side from the firing position
+            //last phase return to the firing object
+            if (lifeTime > (lifetimeMax * 0.75f))
             {
-              // rb.AddForce(transform.forward * speed  *  Time.deltaTime);
+                rb.velocity = direction * speed ;
+                if (target != null)
+                {
+                    // rb.AddForce(transform.forward * speed  *  Time.deltaTime);
 
-              transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(target.transform.position - transform.position ), rotSpeed * Time.deltaTime);
-             }
-          }
-          transform.GetChild(0).Rotate(transform.forward * rotSpeed * 10 * Time.deltaTime);
+                    //transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(target.transform.position - transform.position ), rotSpeed * Time.deltaTime);
+                    transform.rotation = Quaternion.Slerp(transform.rotation, target.transform.rotation, rotSpeed * Time.deltaTime);
+                }
+            }
+            else if (lifeTime > (lifetimeMax * 0.45f))
+            {
+                rb.velocity = Vector3.Slerp(rb.velocity, secondaryDirection * speed, speed * Time.deltaTime);
+                if (target != null)
+                {
+                    // rb.AddForce(transform.forward * speed  *  Time.deltaTime);
+
+                    //transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(target.transform.position - transform.position ), rotSpeed * Time.deltaTime);
+                    transform.rotation = Quaternion.Slerp(transform.rotation, target.transform.rotation, rotSpeed * Time.deltaTime);
+                }
+            }
+            else 
+            {
+                rb.velocity = Vector3.Slerp(rb.velocity, (target.transform.position - transform.position).normalized * speed, speed * Time.deltaTime);
+            }
+              childObject.transform.Rotate(0,rotSpeed * 10 * Time.deltaTime,0);
         }
         else
         {
@@ -152,7 +194,7 @@ public class Bullet : MonoBehaviour {
     public void OnTriggerEnter(Collider col)
     {
         //GetComponent<Collider>().enabled = false;
-        if (explosion != null)
+        if (explosion != null && boomerang == false)
         {
             Instantiate(explosion, transform.position, transform.rotation);
         }

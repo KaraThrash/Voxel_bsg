@@ -5,7 +5,7 @@ using UnityEngine;
 public class AITurnAndMove : MonoBehaviour
 {
 
-    public int currentAttackPlan;
+    public int currentAttackPlan, currentPatrolPoint;
 
   // parameters to change/set how the ship controls
     public float speed = 50,walkspeed = 10;
@@ -42,7 +42,9 @@ public class AITurnAndMove : MonoBehaviour
           patroltarget = myEnemy.patroltarget;
           if(colors.Count > 0 && myRenderer != null)
           {  transform.GetChild(0).GetComponent<Renderer>().material = colors[Random.Range(0,(int)colors.Count) ];}
-      }
+        if (myEnemy.patrolparent != null) { patroltarget = myEnemy.patrolparent.transform.GetChild(Random.Range(0, myEnemy.patrolparent.transform.childCount)).gameObject; }
+        
+    }
 
 
     public void Fly(GameObject target)
@@ -50,14 +52,16 @@ public class AITurnAndMove : MonoBehaviour
 
       myEnemy.RechargeStamina();
 
-          if (target != null)
+          if (target != null && myEnemy.inCombat == true)
           {
 
             Attack(target);
           }
           else
           {
-            Patrol();
+            if (patroltarget != null) { Patrol(); }
+            else { if (myEnemy.patrolparent != null) { patroltarget = myEnemy.patrolparent.transform.GetChild(Random.Range(0, myEnemy.patrolparent.transform.childCount)).gameObject; } }
+            
             if (gunCooldown <= 0)
             {
                 gunCooldown = gunCost * 2;
@@ -126,48 +130,58 @@ public class AITurnAndMove : MonoBehaviour
 
 
 
-      public void Patrol()
-      {
+    public void Patrol()
+    {
 
-        if(patrolColor != null && myRenderer != null)
-        {  myRenderer.material = patrolColor;}
+        if (patrolColor != null && myRenderer != null)
+        { myRenderer.material = patrolColor; }
 
-        if(myEnemy.patrolparent != null){
-            if(patroltarget != null){
+        if (myEnemy.patrolparent != null)
+        {
+            if (patroltarget != null)
+            {
 
-          if (Vector3.Distance(patroltarget.transform.position, transform.position) < 10)
-          { patroltarget = myEnemy.patrolparent.transform.GetChild(Random.Range(0, myEnemy.patrolparent.transform.childCount)).gameObject; }
+                if (Vector3.Distance(myEnemy.patrolparent.transform.GetChild(currentPatrolPoint).position, transform.position) < 10)
+                {
+                    //patroltarget = myEnemy.patrolparent.transform.GetChild(Random.Range(0, myEnemy.patrolparent.transform.childCount)).gameObject; 
 
+                    currentPatrolPoint++;
+                    if (currentPatrolPoint >= myEnemy.patrolparent.transform.childCount)
+                    { currentPatrolPoint = 0; }
 
-          targetRotation = Quaternion.LookRotation(patroltarget.transform.position - transform.position);
+                }
+                patroltarget = myEnemy.patrolparent.transform.GetChild(currentPatrolPoint).gameObject;
 
-          float angle = Vector3.Angle(patroltarget.transform.position - transform.position, transform.forward);
+                targetRotation = Quaternion.LookRotation(patroltarget.transform.position - transform.position);
 
-              transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotForce * Time.deltaTime);
+                float angle = Vector3.Angle(patroltarget.transform.position - transform.position, transform.forward);
 
-              // rb.AddForce(transform.forward * speed * Time.deltaTime, ForceMode.Impulse);
-              transform.position = Vector3.MoveTowards(transform.position, patroltarget.transform.position, walkspeed  * Time.deltaTime);
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotForce * Time.deltaTime);
+
+                // rb.AddForce(transform.forward * speed * Time.deltaTime, ForceMode.Impulse);
+                transform.position = Vector3.MoveTowards(transform.position, patroltarget.transform.position, walkspeed * Time.deltaTime);
             }
             else
             {
-              patroltarget = myEnemy.patrolparent.transform.GetChild(Random.Range(0, myEnemy.patrolparent.transform.childCount)).gameObject;
+                patroltarget = myEnemy.patrolparent.transform.GetChild(Random.Range(0, myEnemy.patrolparent.transform.childCount)).gameObject;
             }
-          }
-          else{
+        }
+        else
+        {
 
-            if(myEnemy.inBattle == true)
-            {  myEnemy.FindTarget();}
-              else{  myEnemy.CheckToNoticePlayer();}
+            if (myEnemy.inBattle == true)
+            { myEnemy.FindTarget(); }
+            else { myEnemy.CheckToNoticePlayer(); }
 
-           }
-
-
-
-      }
+        }
 
 
 
-      public void CheckForward(GameObject target)
+    }
+
+
+
+    public void CheckForward(GameObject target)
       {
           // possible issue with dradis detection
           RaycastHit hit;

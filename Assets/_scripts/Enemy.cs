@@ -27,7 +27,7 @@ public class Enemy : MonoBehaviour {
     public float hp;
     public float speed = 20;
     public float rotForce = 6;
-    public float leashDistance;
+    public float leashDistance, noticePlayerDistance = 50.0f;
 
     public int stamina,tempHp,tempStamina;
     public float  staminaRechargeRate = 1,currentstaminaRechargeBonus,staminaRechargeBonus,currentStamina,engineStaminaCost,gunStaminaCost;//stamina recharges faster when not being used
@@ -255,7 +255,9 @@ public class Enemy : MonoBehaviour {
 
     public void AlertActions()
     {
-      if(target != null){inCombat = true;}
+      if(target != null){
+            //inCombat = true;
+        }
       //if conscripted follow leader, otherwise act as normal
       if(squadLeader != null)
       {
@@ -345,7 +347,7 @@ public class Enemy : MonoBehaviour {
 
 
 
-          if (Physics.Raycast(transform.position, (npcManager.GetPlayerShip().transform.position - transform.position), out hit, 250.0f) )
+          if (Physics.Raycast(transform.position, (npcManager.GetPlayerShip().transform.position - transform.position), out hit, noticePlayerDistance) )
           {
               //check that the player is in front - if the forward of the enemy is closer than the enemy it can be resonably assumed the player is in front
                 if((npcManager.GetDistanceToPlayer(transform.position + (transform.forward * 4)) < npcManager.GetDistanceToPlayer(transform.position)
@@ -353,7 +355,7 @@ public class Enemy : MonoBehaviour {
                 npcManager.GetDistanceToPlayer(transform.position) < 10) && npcManager.GetDistanceToPlayer(transform.position) < leashDistance )
 
                 {
-                  if(friendly == false){  target = npcManager.GetPlayerShip();}
+                  if(friendly == false){  target = npcManager.GetPlayerShip(); inCombat = true; }
 
                 }
           }

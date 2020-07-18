@@ -5,7 +5,7 @@ using UnityEngine;
 public class AIturntest : MonoBehaviour
 {
 
-    public int currentAttackPlan;
+    public int currentAttackPlan,currentPatrolPoint;
 
   // parameters to change/set how the ship controls
     public float speed = 50,walkspeed = 10;
@@ -42,7 +42,8 @@ public class AIturntest : MonoBehaviour
           patroltarget = myEnemy.patroltarget;
           if(colors.Count > 0 && myRenderer != null)
           {  transform.GetChild(0).GetComponent<Renderer>().material = colors[Random.Range(0,(int)colors.Count) ];}
-      }
+        patroltarget = myEnemy.patrolparent.transform.GetChild(Random.Range(0, myEnemy.patrolparent.transform.childCount)).gameObject;
+    }
 
 
     public void Fly(GameObject target)
@@ -50,7 +51,7 @@ public class AIturntest : MonoBehaviour
 
       myEnemy.RechargeStamina();
 
-          if (target != null)
+          if (target != null && myEnemy.inCombat == true)
           {
 
             Attack(target);
@@ -63,12 +64,12 @@ public class AIturntest : MonoBehaviour
             {
                 gunCooldown = gunCost * 3;
 
-                if(myEnemy.inBattle == true)
-                {  myEnemy.FindTarget();}
-                  else{  myEnemy.CheckToNoticePlayer();}
+                //if(myEnemy.inBattle == true)
+                //{  myEnemy.FindTarget();}
+                //  else{  myEnemy.CheckToNoticePlayer();}
+                myEnemy.CheckToNoticePlayer();
 
-
-             }
+            }
 
 
 
@@ -201,9 +202,16 @@ public class AIturntest : MonoBehaviour
         if(myEnemy.patrolparent != null){
             if(patroltarget != null){
 
-          if (Vector3.Distance(patroltarget.transform.position, transform.position) < 10)
-          { patroltarget = myEnemy.patrolparent.transform.GetChild(Random.Range(0, myEnemy.patrolparent.transform.childCount)).gameObject; }
+          if (Vector3.Distance(patrolparent.transform.GetChild(currentPatrolPoint).position, transform.position) < 10)
+          {
+                    //patroltarget = myEnemy.patrolparent.transform.GetChild(Random.Range(0, myEnemy.patrolparent.transform.childCount)).gameObject; 
 
+                    currentPatrolPoint++;
+                    if (currentPatrolPoint >= patrolparent.transform.childCount) 
+                    { currentPatrolPoint = 0; }
+
+          }
+                patroltarget = myEnemy.patrolparent.transform.GetChild(currentPatrolPoint).gameObject;
 
           targetRotation = Quaternion.LookRotation(patroltarget.transform.position - transform.position);
 

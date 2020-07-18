@@ -318,7 +318,8 @@ public class ViperControls : MonoBehaviour {
         {
 
             GameObject clone2 = Instantiate(bullet, transform.position + (transform.forward * 5), gun2.transform.rotation) as GameObject;
-            clone2.GetComponent<Bullet>().target = this.gameObject;
+            clone2.GetComponent<Bullet>().Launched(this.gameObject);
+            
         }
         else
         {
