@@ -20,13 +20,14 @@ public class PlayerShipStats : MonoBehaviour
 
 
     public List<Item> equipedAmmoList;
-    // Start is called before the first frame update
+
+
     void Start()
     {
       equipedAmmoList = new List<Item>();
     }
 
-    // Update is called once per frame
+
     void Update()
     {
 
@@ -79,42 +80,43 @@ public class PlayerShipStats : MonoBehaviour
 
     public void EquipItem(Item newItem)
     {
-      //4 = ammo
-      if(newItem.type == 4)
-      {
-        equipedAmmoList.Add(newItem);
-      }
-      else if (newItem.type == 5)
-      {
-        shipbasearmor = newItem.armor;
-        shipbasedamage = newItem.damage;
-        shipbasespeed = newItem.speed;
-      }
-      else
-      {
+          //4 = ammo
+          if(newItem.type == 4)
+          {
+            equipedAmmoList.Add(newItem);
+          }
+          else if (newItem.type == 5)
+          {
+              shipbasearmor = newItem.armor;
+              shipbasedamage = newItem.damage;
+              shipbasespeed = newItem.speed;
+          }
+          else
+          {
 
-        armor += newItem.armor;
-        damage += newItem.damage;
-        speed += newItem.speed;
-      }
+              armor += newItem.armor;
+              damage += newItem.damage;
+              speed += newItem.speed;
+          }
 
     }
 
+
     public void UnEquipItem(Item oldItem)
     {
-      //4 = ammo
-      if(oldItem.type == 4)
-      {
-        if(equipedAmmoList.Contains(oldItem))
-        {equipedAmmoList.Remove(oldItem);}
+        //4 = ammo
+        if(oldItem.type == 4)
+        {
+            if(equipedAmmoList.Contains(oldItem))
+            {equipedAmmoList.Remove(oldItem);}
 
-      }
-      else
-      {
-        armor -= oldItem.armor;
-          damage -= oldItem.damage;
+        }
+        else
+        {
+            armor -= oldItem.armor;
+            damage -= oldItem.damage;
             speed -= oldItem.speed;
-      }
+        }
     }
 
 
@@ -129,8 +131,10 @@ public class PlayerShipStats : MonoBehaviour
     {
         string statstring = "";
         statstring += "Armor: " + armor.ToString() +"\n";
-          statstring += "Damage: " + damage.ToString() +"\n";
-            statstring += "Speed: " + speed.ToString() +"\n";
-            return statstring;
+        statstring += "Damage: " + damage.ToString() +"\n";
+        statstring += "Speed: " + speed.ToString() +"\n";
+        return statstring;
     }
+
+
 }

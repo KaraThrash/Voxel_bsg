@@ -15,23 +15,28 @@ public class PlayerControls : MonoBehaviour
   private Vector3 velocityDirection;
 
   public float leftRightAxis,updownAxis,accelerationAxis;
-    // Start is called before the first frame update
+
+
     void Start()
     {
               rb = GetComponent<Rigidbody>();
     }
 
-    // Update is called once per frame
+
     void Update()
     {
 
       PlayerInputs();
     }
+
+
     public void PlayerInputs()
     {
       updownAxis = Input.GetAxis("Vertical");
       leftRightAxis = Input.GetAxis("Horizontal");
     }
+
+
     public void ControlShip()
     {
       // if(rb == null){  rb = GetComponent<Rigidbody>();}
@@ -96,6 +101,8 @@ public class PlayerControls : MonoBehaviour
       }
 
     }
+
+
     public bool UseStamina(float cost)
     {
 
@@ -107,10 +114,13 @@ public class PlayerControls : MonoBehaviour
 
         return false;
     }
+
+
     public void SetVelocityDirection(Vector3 newDir)
     {
       velocityDirection = newDir;
     }
+
 
     public void SetShipObjectsInactive()
     {
@@ -120,6 +130,8 @@ public class PlayerControls : MonoBehaviour
       turnShip.active = false;
         rb.useGravity = false;
     }
+
+
     public void ChangeShip(PlayerShipStats newplayerStats,int changeto)
     {
         if(rb == null){  rb = GetComponent<Rigidbody>();}
@@ -164,6 +176,7 @@ public class PlayerControls : MonoBehaviour
           }
 
     }
+
 
     public void SetShipStats(PlayerShipStats newplayerStats)
     {
@@ -215,6 +228,7 @@ public class PlayerControls : MonoBehaviour
 
     }
 
+
     public void OnTriggerExit(Collider col)
     {
       if(playerShip.GetComponent<RaptorControls>() != null)
@@ -230,4 +244,6 @@ public class PlayerControls : MonoBehaviour
 
 
     }
+
+
 }

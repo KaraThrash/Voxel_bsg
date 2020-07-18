@@ -31,12 +31,14 @@ public class Player : MonoBehaviour {
 
 	}
 
+
   public void InMapActions()
   {  if(  myship.GetComponent<Rigidbody>().isKinematic == true){  myship.GetComponent<Rigidbody>().isKinematic = false;}
     ControlShip();
     if(atDock == true && (Input.GetKeyDown(KeyCode.Tab) || Input.GetKeyDown(KeyCode.JoystickButton6)))
     {gamemanager.ActivateMenu();}
   }
+
 
   public void InBattleActions()
   {
@@ -45,6 +47,7 @@ public class Player : MonoBehaviour {
     if(atDock == true && (Input.GetKeyDown(KeyCode.Tab) || Input.GetKeyDown(KeyCode.JoystickButton6)))
     {gamemanager.ActivateMenu();}
   }
+
 
   public void InMenuActions()
   {
@@ -58,6 +61,7 @@ public class Player : MonoBehaviour {
     myship.GetComponent<Rigidbody>().isKinematic = true;
   }
 
+
   public void ChangeShips(int changeto)
   {
     //TODO: this need a complete overhaul
@@ -65,6 +69,8 @@ public class Player : MonoBehaviour {
       playerControls.ChangeShip(playerShipStats,changeto);
 
   }
+
+
   public void ControlShip()
   {
         if(myship.GetComponent<PlayerControls>() != null )
@@ -73,16 +79,21 @@ public class Player : MonoBehaviour {
         }
 
   }
+
+
   public void SetInMenu(bool menuStatus)
   {
       myship.GetComponent<Rigidbody>().isKinematic = false;
     inMenu = menuStatus;
   }
+
+
   public void ListenForInput()
   {
 
 
   }
+
 
   public void NearDock(bool entering)
   {
@@ -105,16 +116,20 @@ public class Player : MonoBehaviour {
 
   }
 
+
   public GameObject GetPlayer()
   {
     return myship;
   }
+
 
   public void PickUpCache()
   {
     money += droppedMoney;
     droppedMoney = 0;
   }
+
+
     public bool SpendMoney(int cost)
     {
 
@@ -182,6 +197,7 @@ public class Player : MonoBehaviour {
 
       playerControls.SetShipStats(playerShipStats);
     }
+
 
     public void SetHPBar()
     {

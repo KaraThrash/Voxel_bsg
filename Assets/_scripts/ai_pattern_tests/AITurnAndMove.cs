@@ -9,7 +9,7 @@ public class AITurnAndMove : MonoBehaviour
 
   // parameters to change/set how the ship controls
     public float speed = 50,walkspeed = 10;
-    public float rotForce = 6;
+    public float rotForce = 6,rotModifier;
     public float accuracy = 1;
 
     public float closedistance = 10,fardistance = 40,plusminus = 5;
