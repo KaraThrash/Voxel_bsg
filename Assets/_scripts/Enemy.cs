@@ -163,11 +163,13 @@ public class Enemy : MonoBehaviour {
   public void HitByBullet(GameObject hitby)
   {
 
-
-      controlLockout = 0.2f;
+        if (hitby.GetComponent<Bullet>() == null)
+        { hitby = hitby.transform.parent.parent.gameObject; }
+        controlLockout = 0.2f;
       rb.velocity = (transform.position - hitby.transform.position ).normalized * hitby.GetComponent<Bullet>().impactForce;
       rb.angularVelocity = (transform.position - transform.forward ).normalized * hitby.GetComponent<Bullet>().impactForce * 0.2f;
 
+       
       if(tookdmgcolor != null)
       {
         SetRenderer(tookdmgcolor);

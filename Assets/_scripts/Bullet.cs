@@ -161,6 +161,7 @@ public class Bullet : MonoBehaviour {
             else 
             {
                 rb.velocity = Vector3.Slerp(rb.velocity, (target.transform.position - transform.position).normalized * speed, speed * Time.deltaTime);
+                if (Vector3.Distance(transform.position, target.transform.position) < 1) { lifeTime = 0; }
             }
               childObject.transform.Rotate(0,rotSpeed * 10 * Time.deltaTime,0);
         }

@@ -197,9 +197,9 @@ GameObject:
   - component: {fileID: 4814326270992176}
   - component: {fileID: 54475773345287974}
   - component: {fileID: 114677664453285392}
-  - component: {fileID: -2808499111046379429}
+  - component: {fileID: -6023626960678286124}
   m_Layer: 0
-  m_Name: TurnEnemy
+  m_Name: PatrolAI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -294,7 +294,7 @@ MonoBehaviour:
   stationary: 0
   alert: 0
   inCombat: 0
---- !u!114 &-2808499111046379429
+--- !u!114 &-6023626960678286124
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -303,21 +303,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 1626289426795938}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c8faf46ea06c1da4bbb801320219a777, type: 3}
+  m_Script: {fileID: 11500000, guid: 48133cabfee122f4982ebcd1fc2244ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   currentAttackPlan: 0
   currentPatrolPoint: 0
-  speed: 35
-  walkspeed: 20
-  rotForce: 6
+  speed: 5
+  walkspeed: 10
+  rotForce: 12
   rotModifier: 0
   accuracy: 1
-  closedistance: 20
-  fardistance: 60
-  plusminus: 1
+  closedistance: 10
+  fardistance: 15
+  plusminus: 5
   gunCost: 1
-  checkForwardDistance: 30
+  checkForwardDistance: 10
   gunCooldown: 0
   avoidCollisionClock: 0
   destroyed: 0
@@ -326,15 +326,16 @@ MonoBehaviour:
   flypast: 0
   patrolparent: {fileID: 0}
   patroltarget: {fileID: 0}
-  avoidingCollisionColor: {fileID: 2100000, guid: 784044197dbedee48b4c248fb314e6b7,
+  avoidingCollisionColor: {fileID: 2100000, guid: 37be5ce992bd4b8438a44ebf3548e536,
     type: 2}
-  patrolColor: {fileID: 2100000, guid: 762833067f3b1364591a320e572a5bea, type: 2}
+  patrolColor: {fileID: 2100000, guid: f7f9089736a910048886e46f247f5e93, type: 2}
   myRenderer: {fileID: 23694501329174740}
   colors:
-  - {fileID: 2100000, guid: 9ecc3ae7982d7834291f3c75af41d0cd, type: 2}
-  - {fileID: 2100000, guid: a37bd1cf7a42e474abf103ada5165897, type: 2}
-  - {fileID: 2100000, guid: 762833067f3b1364591a320e572a5bea, type: 2}
-  - {fileID: 2100000, guid: 784044197dbedee48b4c248fb314e6b7, type: 2}
+  - {fileID: 2100000, guid: 470a713c83e96a4459e86f71b0597b00, type: 2}
+  - {fileID: 2100000, guid: 9a4a3874e452e9a43b9ed34a3b3d7ef6, type: 2}
+  - {fileID: 2100000, guid: 283dd8eddd885244fa9aed780caa2b99, type: 2}
+  - {fileID: 2100000, guid: f66787f1c1b227b4abe4f0f129b8ce17, type: 2}
+  - {fileID: 2100000, guid: 4d4fdf13ed6a9b04d8878e55d27203e5, type: 2}
 --- !u!1 &1892981201632538
 GameObject:
   m_ObjectHideFlags: 0
@@ -5240,7 +5241,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7131764798731410486}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.55999756, z: 0.58}
+  m_LocalPosition: {x: 0.456, y: -0.55999756, z: 2.03}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4814326270992176}
@@ -5257,5 +5258,5 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 3
+  m_Radius: 2
   m_Center: {x: 0, y: 0, z: 0}

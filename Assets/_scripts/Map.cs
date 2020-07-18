@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class Map : MonoBehaviour
 {
-  public int rangeToChangeMapSegement,enemyType;
+  public int rangeToChangeMapSegement,enemyType, enemyType2;
   public bool mapSubSection;
   public Transform mapSubSections;
-  public Transform enemySpawnLocations;
+  public Transform enemySpawnLocations, enemySpawnLocations2;
   public Transform patrolLocations;
   public Transform playerStartSpot;
     // Start is called before the first frame update
@@ -23,4 +23,7 @@ public class Map : MonoBehaviour
     }
     public int GetEnemyType()
     {return enemyType;}
+    
+    public int GetEnemyType2()
+    {return enemyType2;}
 }

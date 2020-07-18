@@ -67,7 +67,25 @@ public class NpcManager : MonoBehaviour {
         clone.GetComponent<Enemy>().mapArea = go.gameObject;
         count++;
       }
-    }
+
+        if (go.GetComponent<Map>().enemySpawnLocations2 != null)
+        {
+            count = 0;
+            while (count < go.GetComponent<Map>().enemySpawnLocations2.childCount)
+            {
+                GameObject clone = Instantiate(npcs[go.GetComponent<Map>().GetEnemyType2()], go.GetComponent<Map>().enemySpawnLocations2.GetChild(count).position, go.GetComponent<Map>().enemySpawnLocations2.GetChild(count).rotation) as GameObject;
+                clone.transform.parent = enemyparent.transform;
+                enemies.Add(clone);
+                clone.GetComponent<Enemy>().ResetToNeutral(GetComponent<NpcManager>());
+                clone.GetComponent<Enemy>().patrolparent = go.GetComponent<Map>().patrolLocations.gameObject;//.GetChild(count);
+                clone.GetComponent<Enemy>().SetAlert(false);
+                clone.GetComponent<Enemy>().mapArea = go.gameObject;
+                count++;
+            }
+        }
+
+
+        }
 
   }
   public void AlertNpcs(GameObject newMapArea)
