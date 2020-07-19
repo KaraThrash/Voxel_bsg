@@ -341,7 +341,7 @@ public class Enemy : MonoBehaviour {
     }
 
 
-    public void CheckToNoticePlayer()
+    public void CheckToNoticePlayer(float distanceToCheck=100.0f)
     {
       //compare distance from in front to behind the enemy to determine if the player is in a forward cone of vision
       //or if the player is extremely close
@@ -350,7 +350,7 @@ public class Enemy : MonoBehaviour {
 
 
 
-          if (Physics.Raycast(transform.position, (npcManager.GetPlayerShip().transform.position - transform.position), out hit, noticePlayerDistance) )
+          if (Physics.Raycast(transform.position, (npcManager.GetPlayerShip().transform.position - transform.position), out hit, distanceToCheck) )
           {
                     if (hit.transform.gameObject.tag == "Player")
                     {
