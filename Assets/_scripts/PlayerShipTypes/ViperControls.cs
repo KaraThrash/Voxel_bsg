@@ -310,6 +310,7 @@ public class ViperControls : MonoBehaviour {
 
     public void RaycastShootGuns()
     {
+        playerControls.SetLastAction("attack");
         if (bullet.GetComponent<Bullet>().lance == true)
         {
 

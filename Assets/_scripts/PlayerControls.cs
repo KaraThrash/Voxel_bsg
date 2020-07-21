@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 
 public class PlayerControls : MonoBehaviour
@@ -12,9 +13,10 @@ public class PlayerControls : MonoBehaviour
   private Rigidbody rb;
   public PlayerSpecialActions playerSpecialActions;
   public float lockOutWeapons,lockOutEngines;
+  public string lastAction;
   private Vector3 velocityDirection;
 
-  public float leftRightAxis,updownAxis,accelerationAxis;
+  public float leftRightAxis,updownAxis,accelerationAxis, lastActionTimer, lastActionCutOffTime= 3.0f;
 
 
     void Start()
@@ -26,7 +28,13 @@ public class PlayerControls : MonoBehaviour
     void Update()
     {
 
-      PlayerInputs();
+        // PlayerInputs();
+        if (lastAction != "") 
+        {
+            lastActionTimer += Time.deltaTime;
+            if (lastActionTimer >= lastActionCutOffTime)
+            { lastAction = ""; lastActionTimer = 0; }
+        }
     }
 
 
@@ -83,12 +91,19 @@ public class PlayerControls : MonoBehaviour
           }
     }
 
+    public string GetLastAction()
+    {
+        return lastAction;
+    }
 
-
+    public void SetLastAction(string action)
+    {
+        lastActionTimer = 0;
+        lastAction = action;
+    }
 
     public void AttemptDodgeRoll()
     {
-      print("dodge");
       int cost = -1;
       if(UseStamina(cost) || true)
       {

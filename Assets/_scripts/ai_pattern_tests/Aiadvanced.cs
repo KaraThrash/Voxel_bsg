@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Security.Cryptography;
+using System.Threading;
 using UnityEngine;
 
 public class Aiadvanced : MonoBehaviour
@@ -10,7 +12,7 @@ public class Aiadvanced : MonoBehaviour
     // parameters to change/set how the ship controls
     public float speed = 50, walkspeed = 10;
     public float rotForce = 6, rotModifier;
-    public float accuracy = 1;
+    public float accuracy = 1,acceleration = 0.2f;
 
     public float closedistance = 10, fardistance = 40, plusminus = 5;
     public float gunCost = 1;
@@ -24,7 +26,7 @@ public class Aiadvanced : MonoBehaviour
     public bool destroyed, canShoot;
     public bool flyaway, flypast;
 
-    public GameObject patrolparent, patroltarget;
+    public GameObject debugWhereToObj,debugLastSeen,patrolparent, patroltarget;
     public Material avoidingCollisionColor, patrolColor;
     public Renderer myRenderer;
     public List<Material> colors;
@@ -36,7 +38,8 @@ public class Aiadvanced : MonoBehaviour
     // Use this for initialization
     void Awake()
     {
-
+        debugWhereToObj.transform.parent = null;
+        debugLastSeen.transform.parent = null;
         rb = GetComponent<Rigidbody>();
         myEnemy = GetComponent<Enemy>();
         patrolparent = myEnemy.patrolparent;
@@ -52,20 +55,25 @@ public class Aiadvanced : MonoBehaviour
     {
 
         myEnemy.RechargeStamina();
-
-        if (target != null && myEnemy.inCombat == true)
+        debugLastSeen.active = myEnemy.inCombat;
+        if (myEnemy.target != null && myEnemy.inCombat == true)
         {
 
             Attack(target);
         }
         else
         {
+            currentAttackPlan = 0;
+            seenTimer = 1;
             if (patroltarget != null) { Patrol(); }
-            else { if (myEnemy.patrolparent != null) { patroltarget = myEnemy.patrolparent.transform.GetChild(Random.Range(0, myEnemy.patrolparent.transform.childCount)).gameObject; } }
+            else { if (myEnemy.patrolparent != null) { 
+
+                    patroltarget = myEnemy.patrolparent.transform.GetChild(Random.Range(0, myEnemy.patrolparent.transform.childCount)).gameObject; } 
+            }
 
             if (gunCooldown <= 0)
             {
-                gunCooldown = gunCost * 2;
+                gunCooldown = gunCost;
 
                 if (myEnemy.inBattle == true)
                 { myEnemy.FindTarget(); }
@@ -92,7 +100,7 @@ public class Aiadvanced : MonoBehaviour
         if (target != null)
         {
 
-            Chicken(target);
+            AttackPlans(target);
 
 
         }
@@ -109,21 +117,73 @@ public class Aiadvanced : MonoBehaviour
     {
         switch (currentAttackPlan)
         {
-            case -1: 
+            case -1:
+
+                if (RaycastAtTarget(target.transform) == true)
+                {
+                    seenTimer += Time.deltaTime * 2;
+                    if (seenTimer > 5.0f) { seenTimer = 5.0f; }
+                    GetBehind(target);
+                    if (Vector3.Distance(transform.position, target.transform.position) > fardistance)
+                    { currentAttackPlan = 0; }
+                }
+                else
+                { currentAttackPlan = 1; }
+                break;
+            case 0: //Can see player
+                if (RaycastAtTarget(target.transform) == true)
+                {
+                    seenTimer += Time.deltaTime * 2;
+                    if (seenTimer > 5.0f) { seenTimer = 5.0f; }
+                    Chase(target);
+                    if (Vector3.Distance(transform.position, target.transform.position) <= closedistance)
+                    { currentAttackPlan = -1; }
+                }
+                else
+                { currentAttackPlan = 1; }
+
 
                 break;
-            case 0: //chicken
-                Chicken(target);
+            case 1: //Had seen player, then player left sight: move to last known location
+                if (RaycastAtTarget(target.transform) == true)
+                { currentAttackPlan = 0; }
+                else 
+                {
+                    TargetLastKnownLocation(target);
+                    seenTimer -= Time.deltaTime ;
+                    if (seenTimer <= -5.1f)
+                    {
+                        seenTimer = -5.1f;
+                        //FindClosestForwardPatrol(target);
+                        //randomzie the last place to check
+                        targetLastSeen = targetLastSeen + (transform.forward * Random.Range(35.0f,80.0f)) + (transform.up * Random.Range(-15.0f, 15.0f)) + (transform.right * Random.Range(-15.0f, 15.0f)) ;
+                        int count = 0;
+                        while (RaycastAtSpace(targetLastSeen) == false && count < 10)
+                        {
+                            targetLastSeen = targetLastSeen + (transform.forward * Random.Range(35.0f, 80.0f)) + (transform.up * Random.Range(-15.0f, 15.0f)) + (transform.right * Random.Range(-15.0f, 15.0f));
 
+                            count++;
+                        }
+                        currentAttackPlan = 2;
+                    }
+                }
+               
+                
                 break;
-            case 1:
-
-                break;
-            case 2:
-
+            case 2: //Can not see player, and last know location empty, move to the closest patrol spot in general forward direction, to investigate before leashing
+                if (RaycastAtTarget(target.transform) == true)
+                { currentAttackPlan = 0; }
+                else
+                {
+                    TargetLastKnownLocation(target);
+                    if (Vector3.Distance(transform.position, patroltarget.transform.position) <= closedistance)
+                    { currentAttackPlan = 3; }
+                }
                 break;
             case 3:
-
+                myEnemy.inCombat = false;
+                currentAttackPlan = 0;
+                seenTimer = 0;
                 break;
             default:
                
@@ -132,7 +192,20 @@ public class Aiadvanced : MonoBehaviour
 
     }
 
+    public bool RaycastAtSpace(Vector3 currenttarget, float distanceToCheck = 1500.0f)
+    {
 
+        RaycastHit hit;
+
+        if (Physics.Raycast(transform.position, currenttarget - transform.position, out hit, 1500.0f))
+        {
+
+                return false;
+            
+        }
+        return true;
+
+    }
     public bool RaycastAtTarget(Transform currenttarget, float distanceToCheck = 1500.0f)
     {
 
@@ -149,8 +222,70 @@ public class Aiadvanced : MonoBehaviour
         }
         return false; 
        
-    }   
+    }
 
+    public void GetBehind(GameObject targetship)
+    {
+
+        RaycastAtTarget(targetship.transform);
+
+        Vector3 targetloc = targetship.transform.position - (targetship.transform.forward * 10) + openSpotToAvoidCollision;
+        debugWhereToObj.transform.position = targetloc;
+        targetRotation = Quaternion.LookRotation(targetship.transform.position - transform.position);
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotForce * Time.deltaTime);
+
+        float angle = Vector3.Angle(targetship.transform.position - transform.position, transform.forward);
+
+
+        if (Vector3.Distance(transform.position, targetloc) >= closedistance * 0.5f)
+        { rb.velocity = Vector3.Lerp(rb.velocity, (targetloc - transform.position).normalized * speed, Time.deltaTime * acceleration); }
+        //else
+        //{ rb.velocity = Vector3.Lerp(rb.velocity, Vector3.zero, Time.deltaTime); }
+
+        if (angle <= accuracy && gunCooldown <= 0 && canShoot == true)
+        {
+
+            myEnemy.FireGuns();
+            gunCooldown = gunCost + Random.Range(0, 3.0f);
+
+        }
+
+    }
+
+    public void Chase(GameObject targetship)
+    {
+
+        RaycastAtTarget(targetship.transform);
+
+        targetLastSeen = targetship.transform.position;
+        debugLastSeen.transform.position = targetLastSeen;
+        targetRotation = Quaternion.LookRotation((targetship.transform.position ) - transform.position);
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotForce * Time.deltaTime);
+
+        float angle = Vector3.Angle(targetship.transform.position - transform.position, transform.forward);
+
+        rb.velocity = Vector3.Lerp(rb.velocity, transform.forward * speed, Time.deltaTime * acceleration);
+        
+
+        if (angle <= accuracy && gunCooldown <= 0 && canShoot == true )
+        {
+
+            myEnemy.FireGuns();
+            gunCooldown = gunCost + Random.Range(0, 3.0f);
+
+        }
+
+    }
+
+    public void TargetLastKnownLocation(GameObject targetship)
+    {
+        targetRotation = Quaternion.LookRotation((targetLastSeen ) - transform.position);
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotForce * Time.deltaTime);
+        debugLastSeen.transform.position = targetLastSeen;
+        rb.velocity = Vector3.Lerp(rb.velocity, transform.forward * speed, Time.deltaTime);
+
+
+    }
 
 
     public void Chicken(GameObject targetship)
@@ -163,28 +298,14 @@ public class Aiadvanced : MonoBehaviour
         if (canseetarget == false)
         {
             seenTimer -= Time.deltaTime;
-            //if the ship reaches the last know location and still can't see the target
-            //if (Vector3.Distance(transform.position, targetLastSeen) < 10 || targetLastSeen == Vector3.zero )
-            //{
-            //    FindClosestForwardPatrol(targetship);
-            //    targetLastSeen = patroltarget.transform.position;
-            //}
-            //tempTargetPos = targetLastSeen;
+
 
         }
         else { seenTimer += Time.deltaTime * 2; targetLastSeen = targetship.transform.position; }
-        if (seenTimer < -0.5f) { seenTimer = 0.5f; }
+        if (seenTimer < -0.5f) { seenTimer = -0.5f; }
         if (seenTimer > 2.0f) { seenTimer = 2.0f; }
         float angle = Vector3.Angle(tempTargetPos - transform.position, transform.forward);
 
-       
-        //if (gunCooldown <= 0 && canShoot == true && canseetarget)
-        //{
-
-        //    myEnemy.FireGuns();
-        //    gunCooldown = gunCost + Random.Range(0, 3.0f);
-
-        //}
 
         if (seenTimer > 0)
         {
@@ -242,6 +363,7 @@ public class Aiadvanced : MonoBehaviour
 
     public void Patrol()
     {
+        
 
         if (patrolColor != null && myRenderer != null)
         { myRenderer.material = patrolColor; }
@@ -251,7 +373,8 @@ public class Aiadvanced : MonoBehaviour
         {
             if (patroltarget != null)
             {
-
+                CheckForward(patroltarget);
+                
                 if (Vector3.Distance(myEnemy.patrolparent.transform.GetChild(currentPatrolPoint).position, transform.position) < 10)
                 {
                     //patroltarget = myEnemy.patrolparent.transform.GetChild(Random.Range(0, myEnemy.patrolparent.transform.childCount)).gameObject; 
@@ -263,14 +386,38 @@ public class Aiadvanced : MonoBehaviour
                 }
                 patroltarget = myEnemy.patrolparent.transform.GetChild(currentPatrolPoint).gameObject;
 
-                targetRotation = Quaternion.LookRotation(patroltarget.transform.position - transform.position);
 
                 float angle = Vector3.Angle(patroltarget.transform.position - transform.position, transform.forward);
 
-                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotForce * Time.deltaTime);
 
+                if (avoidCollisionClock > 0 && Vector3.Distance(transform.position, patroltarget.transform.position) > checkForwardDistance)
+                {
+                    debugWhereToObj.transform.position = openSpotToAvoidCollision;
+                    //targetRotation = Quaternion.LookRotation(openSpotToAvoidCollision - transform.position);
+                    targetRotation = Quaternion.LookRotation(  transform.position - (patroltarget.transform.position));
+
+        
+                    transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotForce * Time.deltaTime);
+
+                   
+
+
+                }
+                else 
+                {
+                    targetRotation = Quaternion.LookRotation((patroltarget.transform.position ) - transform.position);
+
+
+                    transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotForce * Time.deltaTime);
+
+                    
+
+                }
+                if (angle <= accuracy)
+                {  }
                 // rb.AddForce(transform.forward * speed * Time.deltaTime, ForceMode.Impulse);
-                transform.position = Vector3.MoveTowards(transform.position, patroltarget.transform.position, walkspeed * Time.deltaTime);
+                rb.velocity = Vector3.Lerp(rb.velocity, transform.forward * speed, Time.deltaTime);
+                //transform.position = Vector3.MoveTowards(transform.position, patroltarget.transform.position, walkspeed * Time.deltaTime);
             }
             else
             {
@@ -306,44 +453,64 @@ public class Aiadvanced : MonoBehaviour
             {
                 canShoot = true;
                 avoidCollisionClock = 0;
-
+                openSpotToAvoidCollision = Vector3.zero;
             }
             else
             {
                 // if (Vector3.Distance(transform.position,hit.point) < plusminus)
                 // {rb.AddForce(transform.forward * speed * -Time.deltaTime);}
 
+                openSpotToAvoidCollision = (RayCastToFindOpening() * Vector3.Distance(hit.point,transform.position) ) + transform.position;
                 if (avoidCollisionClock <= 0) { avoidCollisionClock = 1.4f; }
-                else { if (avoidCollisionClock < 3) { straferunspot = Vector3.zero; avoidCollisionClock += Time.deltaTime; } }
+                else { if (avoidCollisionClock < 5) { straferunspot = Vector3.zero; avoidCollisionClock += Time.deltaTime; } }
 
             }
 
         }
-        else { avoidCollisionClock -= Time.deltaTime; canShoot = true; }
+        else { 
+            avoidCollisionClock -= Time.deltaTime;
+            //openSpotToAvoidCollision = Vector3.Lerp(openSpotToAvoidCollision, Vector3.zero, Time.deltaTime);
+            canShoot = true;
+            //if (avoidCollisionClock <= 0)
+            //{ openSpotToAvoidCollision = Vector3.zero; }
+        }
     }
 
-    public void RayCastToFindOpening()
+    public Vector3 RayCastToFindOpening()
     {
         RaycastHit hit;
-
-        if (Physics.Raycast(transform.position, transform.forward, out hit, checkForwardDistance))
-        {
-
-            openSpotToAvoidCollision = (myEnemy.target.transform.position - hit.point).normalized;
-            return;
-        }
+        Vector3 raydir = (transform.forward + transform.right).normalized;
+        if (Physics.Raycast(transform.position, raydir, out hit, checkForwardDistance))
+        { raydir = (transform.forward - transform.right).normalized; }
         else
         {
-
-            return;
+            return raydir;
 
         }
+        if (Physics.Raycast(transform.position, raydir, out hit, checkForwardDistance))
+        { raydir = (transform.forward - transform.up).normalized; }
+        else
+        {
+            return raydir;
 
+        }
+        if (Physics.Raycast(transform.position, raydir, out hit, checkForwardDistance))
+        { raydir = (transform.forward + transform.up).normalized; }
+        else
+        {
+            return raydir;
+
+           
+
+        }
+        return -transform.forward;
     }
+
+
     public void AvoidCollision()
     {
         //TODO: scan around to find the open space rather than always rotating away 180
-        RayCastToFindOpening();
+        //RayCastToFindOpening();
         if (avoidingCollisionColor != null && myRenderer != null)
         { myRenderer.material = avoidingCollisionColor; }
 

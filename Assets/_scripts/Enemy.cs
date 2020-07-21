@@ -286,7 +286,11 @@ public class Enemy : MonoBehaviour {
           {
             GetComponent<AISquadLeader>().Fly(target);
           }
-          else{SendMessage("Fly",target);}
+            else if (GetComponent<AIsandbox>() != null)
+            {
+                GetComponent<AIsandbox>().Fly(target);
+            }
+            else {SendMessage("Fly",target);}
         }
 
     }
@@ -354,7 +358,6 @@ public class Enemy : MonoBehaviour {
           {
                     if (hit.transform.gameObject.tag == "Player")
                     {
-                        print("RAYCASTHIT");
                         //check that the player is in front - if the forward of the enemy is closer than the enemy it can be resonably assumed the player is in front
                         if ((npcManager.GetDistanceToPlayer(transform.position + (transform.forward * 4)) < npcManager.GetDistanceToPlayer(transform.position)
                         ||
@@ -396,9 +399,9 @@ public class Enemy : MonoBehaviour {
     }
     public void OnTriggerStay(Collider other)
     {
-        if (other.transform.parent != null && other.transform.parent.gameObject.GetComponent<Enemy>() != null)
+        if ((other.transform.parent != null && other.transform.parent.gameObject.GetComponent<Enemy>() != null) || other.transform.tag == "Enviroment")
         {
-            transform.position = Vector3.MoveTowards(transform.position,other.transform.position,speed * -Time.deltaTime);
+            transform.position = Vector3.MoveTowards(transform.position, transform.position + transform.forward, speed * -Time.deltaTime);
         }
     }
 
