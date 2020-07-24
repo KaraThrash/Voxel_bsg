@@ -61,9 +61,13 @@ public class AIsandbox : MonoBehaviour
 
             Attack(target);
         }
-        
-        
-        gunCooldown -= Time.deltaTime;
+
+        //if (playerTrail.Count > 0 && Input.GetKeyDown(KeyCode.R))
+        //{
+        //    foreach (Vector3 el in playerTrail)
+        //    { Instantiate(debugWhereToObj, el, transform.rotation); }
+        //}
+            gunCooldown -= Time.deltaTime;
 
     }
 
@@ -93,7 +97,7 @@ public class AIsandbox : MonoBehaviour
                     playerTrail.RemoveAt(0);
                 }
 
-                if (playerTrail.Count > 10)
+                if (playerTrail.Count > 12)
                 {
                     playerTrail.RemoveAt(0);
                 }
