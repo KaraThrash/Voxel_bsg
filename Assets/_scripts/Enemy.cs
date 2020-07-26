@@ -405,7 +405,12 @@ public class Enemy : MonoBehaviour {
     {
         if ((other.transform.parent != null && other.transform.parent.gameObject.GetComponent<Enemy>() != null) || other.transform.tag == "Enviroment")
         {
-            //transform.position = Vector3.MoveTowards(transform.position, transform.position + transform.forward, speed * -Time.deltaTime);
+            targetRotation = Quaternion.LookRotation( transform.position - (transform.position - transform.forward));
+
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation,   Time.deltaTime);
+            //rb.velocity = Vector3.Lerp(rb.velocity, Vector3.zero, speed * Time.deltaTime);
+            //transform.position = Vector3.MoveTowards(transform.position, transform.position - (other.transform.position - transform.position),  5 * Time.deltaTime);
+            transform.position = Vector3.MoveTowards(transform.position, transform.position - transform.forward,  5 * Time.deltaTime);
         }
     }
 
