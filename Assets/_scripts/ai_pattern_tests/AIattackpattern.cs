@@ -292,7 +292,7 @@ public class AIattackpattern : MonoBehaviour {
       if(myEnemy.patrolparent != null){
           if(patroltarget != null){
 
-        if (Vector3.Distance(patroltarget.transform.position, transform.position) < 10)
+        if (Vector3.Distance(patroltarget.transform.position, transform.position) < 3)
         { patroltarget = myEnemy.patrolparent.transform.GetChild(Random.Range(0, myEnemy.patrolparent.transform.childCount)).gameObject; }
 
 

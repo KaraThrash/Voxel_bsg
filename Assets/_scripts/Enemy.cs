@@ -290,6 +290,10 @@ public class Enemy : MonoBehaviour {
             {
                 GetComponent<AIsandbox>().Fly(target);
             }
+            else if (GetComponent<AI0>() != null)
+            {
+                GetComponent<AI0>().Fly(target);
+            }
             else {SendMessage("Fly",target);}
         }
 
@@ -401,7 +405,7 @@ public class Enemy : MonoBehaviour {
     {
         if ((other.transform.parent != null && other.transform.parent.gameObject.GetComponent<Enemy>() != null) || other.transform.tag == "Enviroment")
         {
-            transform.position = Vector3.MoveTowards(transform.position, transform.position + transform.forward, speed * -Time.deltaTime);
+            //transform.position = Vector3.MoveTowards(transform.position, transform.position + transform.forward, speed * -Time.deltaTime);
         }
     }
 
