@@ -25,6 +25,7 @@ public class AI0 : MonoBehaviour
     public bool flyaway, flypast;
 
     public GameObject  patrolparent, patroltarget, currentTarget,objToAvoid;
+    public GameObject debug0, debug1, debug2;
     public Material avoidingCollisionColor, patrolColor;
     public Renderer myRenderer;
     public List<Material> colors;
@@ -52,6 +53,7 @@ public class AI0 : MonoBehaviour
     {
 
         myEnemy.RechargeStamina();
+        //check if the ship has been in the same area for too long, indicating it is stuck
         if (Vector3.Distance(transform.position, lastPosition) > distanceToCountAsMoving)
         {
             lastPosition = transform.position;
@@ -173,9 +175,9 @@ public class AI0 : MonoBehaviour
 
         float angle = 0;
         RaycastHit hit;
-       
 
-        if (Physics.SphereCast(transform.position, 4, transform.forward, out hit, Vector3.Distance(transform.position, targetship.transform.position)))
+        //Vector3.Distance(transform.position, targetship.transform.position)
+        if (Physics.SphereCast(transform.position, 4, transform.forward, out hit, rb.velocity.magnitude + 2))
         {
             if (hit.transform.gameObject != targetship && Physics.SphereCast(transform.position, 2, transform.forward, out hit, Mathf.Min(Vector3.Distance(transform.position, targetship.transform.position), rb.velocity.magnitude + 5)))
             {
@@ -186,7 +188,7 @@ public class AI0 : MonoBehaviour
                 transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotForce *  Time.deltaTime);
                 if (angle <= accuracy && Vector3.Distance(transform.position,targetship.transform.position) > fardistance) { rb.velocity = Vector3.Lerp(rb.velocity, transform.forward * speed, Time.deltaTime); }
                 else { rb.velocity = Vector3.Lerp(rb.velocity, Vector3.zero, Time.deltaTime); }
-
+                debug0.transform.position = hit.point;
 
             }
             else
@@ -199,8 +201,8 @@ public class AI0 : MonoBehaviour
                 if (RaycastAtTarget(targetship.transform))
                 { rb.velocity = Vector3.Lerp(rb.velocity, Vector3.zero, Time.deltaTime); }
                 else {  rb.velocity = Vector3.Lerp(rb.velocity, transform.forward * speed, Time.deltaTime); }
+                debug1.transform.position = hit.point;
 
-                
             }
 
 
@@ -213,6 +215,7 @@ public class AI0 : MonoBehaviour
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotForce * Time.deltaTime);
             if (angle <= accuracy && Vector3.Distance(transform.position, targetship.transform.position) > fardistance) { rb.velocity = Vector3.Lerp(rb.velocity, transform.forward * speed, Time.deltaTime); }
             else { if(Vector3.Distance(transform.position, targetship.transform.position) < closedistance){ rb.velocity = Vector3.Lerp(rb.velocity, Vector3.zero, Time.deltaTime); } }
+            debug2.transform.position = hit.point;
         }
 
         
@@ -274,23 +277,25 @@ public class AI0 : MonoBehaviour
         }
     
 
-        if (Physics.SphereCast(transform.position, 4, transform.forward, out hit, Mathf.Min(Vector3.Distance(transform.position, patroltarget.transform.position), rb.velocity.magnitude + 5)))
+        if (Physics.SphereCast(transform.position, 5, transform.forward, out hit, Mathf.Min(Vector3.Distance(transform.position, patroltarget.transform.position), rb.velocity.magnitude + 2)))
         {
-            if (Physics.SphereCast(transform.position, 2, transform.forward, out hit, Mathf.Min(Vector3.Distance(transform.position, patroltarget.transform.position), rb.velocity.magnitude + 5)))
+            if (Physics.SphereCast(transform.position, 3, transform.forward, out hit, Mathf.Min(Vector3.Distance(transform.position, patroltarget.transform.position), rb.velocity.magnitude + 2)))
             {
 
-                targetRotation = Quaternion.LookRotation(transform.position - ( hit.point + ((hit.point - transform.position ).normalized * 2)) );
-                angle = Vector3.Angle(patroltarget.transform.position - transform.position, transform.forward);
+                targetRotation = Quaternion.Inverse(Quaternion.LookRotation( hit.point - transform.position )) ;
+                print(transform.position - (hit.point - transform.position));
+                angle = Vector3.Angle(patroltarget.transform.position - hit.point, transform.forward);
 
-                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotForce  * Time.deltaTime);
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotForce * rotModifier * Time.deltaTime);
                 if (angle <= accuracy) { rb.velocity = Vector3.Lerp(rb.velocity, transform.forward * speed, Time.deltaTime); }
                 //else { rb.velocity = Vector3.Lerp(rb.velocity, Vector3.zero, Time.deltaTime); }
-
+                //debug0.transform.position = hit.point;
 
             }
             else 
             {//narrow forward clear just advance dont rotate
                 rb.velocity = Vector3.Lerp(rb.velocity, transform.forward * speed, Time.deltaTime);
+                //debug1.transform.position = transform.position + transform.forward;
             }
 
 
@@ -303,6 +308,7 @@ public class AI0 : MonoBehaviour
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotForce * Time.deltaTime);
             if (angle <= accuracy) { rb.velocity = Vector3.Lerp(rb.velocity, transform.forward * speed, Time.deltaTime); }
             else { rb.velocity = Vector3.Lerp(rb.velocity, Vector3.zero, Time.deltaTime); }
+            //debug2.transform.position = transform.position + transform.forward;
         }
 
 
