@@ -246,9 +246,10 @@ public class ViperControls : MonoBehaviour {
 
 
 
-        if (Input.GetKey(KeyCode.JoystickButton4)) { roll = 1; }
-        else if (Input.GetKey(KeyCode.JoystickButton5))
+        if (Input.GetKey(KeyCode.JoystickButton4) || Input.GetKey(KeyCode.Q)) { roll = 1; }
+        else if (Input.GetKey(KeyCode.JoystickButton5) || Input.GetKey(KeyCode.E))
         { roll = -1; }
+        //else if(Input.GetKeyUp(Keycode.Q)  || Input.GetKeyUp(Keycode.E)) { roll = 0; }
         else { roll = 0; }
 
         // roll feels really sluggish, x10 the rollSpeed so the number is visually easier to work with
@@ -267,7 +268,7 @@ public class ViperControls : MonoBehaviour {
 
 
         //TODO: need an input manager, to make the buttons editable
-        if (Input.GetKeyDown(KeyCode.JoystickButton8) )
+        if (Input.GetKeyDown(KeyCode.JoystickButton8) || Input.GetKeyDown(KeyCode.LeftAlt))
         {
             glide = !glide; glideIndicator.active = glide;
         }

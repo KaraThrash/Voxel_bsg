@@ -25,7 +25,7 @@ public class Ai2 : MonoBehaviour
     public bool destroyed, canShoot;
     public bool flyaway, flypast;
 
-    public GameObject patrolparent, patroltarget, currentTarget, objToAvoid;
+    public GameObject patrolparent, patroltarget, currentTarget, objToAvoid, lastPatrolPoint;
     public GameObject debug0, debug1, debug2;
     public Material avoidingCollisionColor, patrolColor;
     public Renderer myRenderer;
@@ -43,10 +43,11 @@ public class Ai2 : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         myEnemy = GetComponent<Enemy>();
         patrolparent = myEnemy.patrolparent;
-        patroltarget = myEnemy.patroltarget;
+        
+        //patroltarget = myEnemy.patroltarget;
         if (colors.Count > 0 && myRenderer != null)
         { transform.GetChild(0).GetComponent<Renderer>().material = colors[Random.Range(0, (int)colors.Count)]; }
-        if (myEnemy.patrolparent != null) { patroltarget = myEnemy.patrolparent.transform.GetChild(Random.Range(0, myEnemy.patrolparent.transform.childCount)).gameObject; }
+        //if (myEnemy.patrolparent != null) { patroltarget = myEnemy.patrolparent.transform.GetChild(Random.Range(0, myEnemy.patrolparent.transform.childCount)).gameObject; }
 
         float rnd = Random.Range(0,10.0f);
         if (rnd > 8) { sidetarget = "up"; }
@@ -55,11 +56,41 @@ public class Ai2 : MonoBehaviour
         else if(rnd > 2) { sidetarget = "back"; }
         else  { sidetarget = "down"; }
     }
+    public void FindClosestPatrolPoint(GameObject parentobj)
+    {
+        float dist = 100.0f;
+        GameObject tempclosest = null;
+        if (parentobj.GetComponent<PatrolPoint>() != null)
+        {
+            tempclosest = parentobj.GetComponent<PatrolPoint>().closest[Random.Range(0, parentobj.GetComponent<PatrolPoint>().closest.Count)].gameObject;
+            foreach (Transform el in parentobj.GetComponent<PatrolPoint>().closest)
+            {
+                float tempdist = Vector3.Distance(transform.position + (transform.forward * 2), el.position);
+                if (el.gameObject != patroltarget && el.gameObject != lastPatrolPoint && tempdist < dist)
+                { dist = tempdist; tempclosest = el.gameObject; }
+            }
+            patroltarget = tempclosest;
+        }
+        else 
+        {
+            tempclosest = parentobj.transform.GetChild(0).gameObject;
+            foreach (Transform el in parentobj.transform)
+            {
+                float tempdist = Vector3.Distance(transform.position, el.position);
+                if (el.gameObject != patroltarget && el.gameObject != lastPatrolPoint && tempdist < dist)
+                { dist = tempdist; tempclosest = el.gameObject; }
+            }
+            patroltarget = tempclosest;
 
+        }
+         
+      
+    }
 
     public void Fly(GameObject target)
     {
-
+        if (patroltarget == null)
+        { FindClosestPatrolPoint(myEnemy.patrolparent); }
         myEnemy.RechargeStamina();
         //check if the ship has been in the same area for too long, indicating it is stuck
         if (Vector3.Distance(transform.position, lastPosition) > distanceToCountAsMoving)
@@ -283,7 +314,7 @@ public class Ai2 : MonoBehaviour
         {
             if (Vector3.Distance(transform.position, openSpotToAvoidCollision) < 10)
             {
-                if (Physics.SphereCast(transform.position, 5, transform.forward, out hit, 15))
+                if (Physics.SphereCast(transform.position, 3, transform.forward, out hit, 15))
                 {
                     transform.RotateAround(transform.position, transform.up, Time.deltaTime * rotForce * 5);
                     rb.velocity = Vector3.Lerp(rb.velocity, transform.forward * -walkspeed, Time.deltaTime);
@@ -299,9 +330,9 @@ public class Ai2 : MonoBehaviour
         }
         else
         {
-            if (Physics.SphereCast(transform.position, 5, transform.forward, out hit, 20))
+            if (Physics.SphereCast(transform.position, 4, transform.forward, out hit, 20))
             {
-                if (Physics.SphereCast(transform.position, 5, transform.forward, out hit, 10))
+                if (Physics.SphereCast(transform.position, 2, transform.forward, out hit, 10))
                 {
                     openSpotToAvoidCollision = transform.position;
                 }
@@ -348,20 +379,44 @@ public class Ai2 : MonoBehaviour
         { CantSeePatrol(patroltarget); }
 
 
+        
 
 
 
         if (Vector3.Distance(patroltarget.transform.position, transform.position) <= 2 || Vector3.Distance(patroltarget.transform.position, transform.position) > 150)
         {
+            bool changed = false;
+            GameObject newlastpoint = patroltarget;
+            //if the patrol point correctly has the patrolpoint script it knows its closest next points, use these to patrol instead of searching through everything
+            if (patroltarget.GetComponent<PatrolPoint>() != null && patroltarget.GetComponent<PatrolPoint>().closest.Count > 0)
+            {
+                FindClosestPatrolPoint(patroltarget);
+                //foreach (Transform el in patroltarget.GetComponent<PatrolPoint>().closest)
+                //{
 
-            currentPatrolPoint++;
-            if (currentPatrolPoint >= myEnemy.patrolparent.transform.childCount)
-            { currentPatrolPoint = 0; }
-            patroltarget = myEnemy.patrolparent.transform.GetChild(currentPatrolPoint).gameObject;
+                //    if (changed == false && el.gameObject != lastPatrolPoint)
+                //    {
+                //        lastPatrolPoint = patroltarget;
+                //        patroltarget = el.gameObject;
+                //        changed = true;
+                //    }
 
+                //}
+
+                
+            }
+            else 
+            {
+                currentPatrolPoint++;
+                if (currentPatrolPoint >= myEnemy.patrolparent.transform.childCount)
+                { currentPatrolPoint = 0; }
+                patroltarget = myEnemy.patrolparent.transform.GetChild(currentPatrolPoint).gameObject;
+            }
+
+            lastPatrolPoint = newlastpoint;
         }
 
-
+        
 
 
     }

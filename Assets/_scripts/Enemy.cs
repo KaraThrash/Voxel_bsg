@@ -345,10 +345,11 @@ public class Enemy : MonoBehaviour {
 
         //target = npcManager.GetClosestTarget(transform.position);
 
-        if(target != null && target.GetComponent<Fleetship>() != null)
+        if (target != null && target.GetComponent<Fleetship>() != null)
         {
-        target =  target.GetComponent<Fleetship>().GetClosestShipPart(transform.position).gameObject;
+            target = target.GetComponent<Fleetship>().GetClosestShipPart(transform.position).gameObject;
         }
+        else { target = npcManager.GetClosestTarget(transform.position); }
 
     }
 
