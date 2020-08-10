@@ -75,8 +75,10 @@ public class Fleetship : MonoBehaviour {
             GetComponent<Rigidbody>().drag = 0;
             GetComponent<Rigidbody>().velocity = Vector3.down * 1.2f;
               GetComponent<Rigidbody>().angularVelocity = (Vector3.down +  Vector3.right) * Random.Range(0.01f, 0.2f);
-            fleetManager.ShipDestroyed(GetComponent<Fleetship>());
-              if (hasresources == true)
+            if (fleetManager != null) 
+            { fleetManager.ShipDestroyed(GetComponent<Fleetship>()); }
+            
+              if (hasresources == true && resourcemanager != null)
               {
                   resourcemanager.GetComponent<ResourceManager>().ResourceChange(-pop, -food, -fuel, -morale);
 

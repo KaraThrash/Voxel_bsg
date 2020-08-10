@@ -11,7 +11,7 @@ public class Sandbox : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-      // meth();
+        meth();
     }
 
     // Update is called once per frame
