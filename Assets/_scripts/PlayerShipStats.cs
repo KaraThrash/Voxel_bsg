@@ -64,6 +64,7 @@ public class PlayerShipStats : MonoBehaviour
 
     }
 
+    public float GetStamina() { return currentStamina; }
 
     public bool UseStamina(float cost)
     {

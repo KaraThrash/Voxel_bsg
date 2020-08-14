@@ -298,6 +298,10 @@ public class Enemy : MonoBehaviour {
             {
                 GetComponent<Ai2>().Fly(target);
             }
+            else if (GetComponent<AITurnAndMove>() != null)
+            {
+                GetComponent<AITurnAndMove>().Fly(target);
+            }
             else {SendMessage("Fly",target);}
         }
 

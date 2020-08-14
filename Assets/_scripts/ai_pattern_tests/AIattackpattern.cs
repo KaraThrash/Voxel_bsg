@@ -12,7 +12,7 @@ public class AIattackpattern : MonoBehaviour {
   public float accuracy = 1;
 
   public float closedistance = 10,fardistance = 40,plusminus = 5;
-  public float gunCost = 1;
+  public float gunCost = 1,targetInSight = 0;
   public float checkForwardDistance = 100.0f;
 //
 
@@ -51,7 +51,8 @@ public class AIattackpattern : MonoBehaviour {
 
         if (target != null)
         {
-
+            //how long the target is, or is not in sight
+          TrackTimeTargetIsInSight(target);
           Attack(target);
 
         }
@@ -94,23 +95,32 @@ public class AIattackpattern : MonoBehaviour {
        GetBehind(target);
 
       break;
-      case 2: //strafe
-      GetFarAndComeBack(target);
+      case 2: //strafe run
+      StrafeRun(target);
 
       break;
-      case 3:
+      case 3://zigzag
+                ZigZag(target);
+                break;
+    case 4: //verticalDive
+        VerticalDive(target);
 
-      break;
-      default:
+        break;
+            case 5: //recover
+                Recover(target);
+
+                break;
+            default:
         GetBehind(target);
       break;
     }
 
   }
 
+
   public void Attack(GameObject target)
   {
-    CheckForward(target);
+    //CheckForward(target);
       if(avoidCollisionClock <= 0){
           if (target != null)
           {
@@ -119,6 +129,7 @@ public class AIattackpattern : MonoBehaviour {
 
               if (gunCooldown <= -8.0f)
               {
+                    gunCooldown = 0;
                   CalculateNextMove(target);
                }
           }
@@ -127,28 +138,169 @@ public class AIattackpattern : MonoBehaviour {
         {
           AvoidCollision();
         }
-
+        if (Input.GetKeyDown(KeyCode.M)) { CalculateNextMove(target); }
   }
-  public void GetAway(GameObject targetship)
-  {
-        transform.GetChild(0).GetComponent<Renderer>().material = colors[0];
-        if(colors.Count > 0 && myRenderer != null)
-        {  myRenderer.material = colors[0];}
-    targetRotation = Quaternion.LookRotation(tempTargetSpot - transform.position );
-    //not impulse, momentuem based
 
-    if(myEnemy.UseStamina(myEnemy.engineStaminaCost * Time.deltaTime) == true)
+    public float DistanceToTarget(GameObject target)
+    { return Vector3.Distance(transform.position, target.transform.position); }
+
+    public float DistanceToTarget(Transform target)
+    { return Vector3.Distance(transform.position, target.position); }
+
+    public float DistanceToTarget(Vector3 target)
+    { return Vector3.Distance(transform.position, target); }
+
+
+    //how long the target is, or is not in sight
+    public void TrackTimeTargetIsInSight(GameObject target)
     {
-    rb.AddForce(transform.forward * speed  *  Time.deltaTime,ForceMode.Impulse);
+        if (RaycastAtTarget(target.transform) == true)
+        {
+            if (targetInSight < 0) { targetInSight = 0; }
+            targetInSight += Time.deltaTime;
+        }
+        else
+        {
+            if (targetInSight > 0) { targetInSight = 0; }
+            targetInSight -= Time.deltaTime;
+        }
+    }
 
-   }
-   transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotForce * Time.deltaTime);
-    if (gunCooldown <= -3.0f || Vector3.Distance(transform.position, targetship.transform.position) > fardistance)
+    public bool RaycastAtTarget(Transform currenttarget, float distanceToCheck = 1500.0f)
     {
-        CalculateNextMove(targetship);
-     }
 
-  }
+        RaycastHit hit;
+
+        if (Physics.Raycast(transform.position, currenttarget.position - transform.position, out hit, distanceToCheck))
+        {
+
+            if (hit.transform == currenttarget)
+            {
+                return true;
+            }
+        }
+        return false;
+
+    }
+
+    public void Recover(GameObject targetship)
+    {
+        if (colors.Count > 5 && myRenderer != null)
+        { myRenderer.material = colors[5]; }
+        if (myEnemy.stamina > 5 || DistanceToTarget(targetship) < closedistance) { CalculateNextMove(targetship); }
+    }
+
+      public void GetAway(GameObject targetship)
+      {
+                transform.GetChild(0).GetComponent<Renderer>().material = colors[0];
+                if(colors.Count > 0 && myRenderer != null)
+                {  myRenderer.material = colors[0];}
+                targetRotation = Quaternion.LookRotation(tempTargetSpot - transform.position );
+                //not impulse, momentuem based
+
+                if(myEnemy.UseStamina(myEnemy.engineStaminaCost * Time.deltaTime) == true)
+                {
+                      rb.AddForce(transform.forward * speed  *  Time.deltaTime,ForceMode.Impulse);
+
+                }
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotForce * Time.deltaTime);
+                if (DistanceToTarget(targetship) > fardistance || DistanceToTarget(tempTargetSpot) < closedistance)
+                {
+                     CalculateNextMove(targetship);
+                }
+
+    }
+
+    public void StrafeRun(GameObject targetship)
+    {
+
+        if (colors.Count > 2 && myRenderer != null)
+        { myRenderer.material = colors[2]; }
+
+        targetRotation = Quaternion.LookRotation(targetship.transform.position - transform.position);
+        //not impulse, momentuem based
+
+        if (myEnemy.UseStamina(myEnemy.engineStaminaCost * Time.deltaTime) == true)
+        {
+            rb.AddForce((tempTargetSpot - transform.position).normalized * speed * Time.deltaTime, ForceMode.Impulse);
+
+        }
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotForce * Time.deltaTime);
+
+        if (DistanceToTarget(tempTargetSpot) < 1)
+        {
+            //target has low stamina and is vunerable to follow up
+            if (targetship.GetComponent<PlayerControls>().playerStats.GetStamina() < 3)
+            {
+                tempTargetSpot = targetship.transform.position + (transform.up * closedistance);
+                currentAttackPlan = 4; 
+            }
+            else { CalculateNextMove(targetship); }
+        }
+
+    }
+
+    public void VerticalDive(GameObject targetship)
+    {
+
+        if (colors.Count > 4 && myRenderer != null)
+        { myRenderer.material = colors[4]; }
+
+        targetRotation = Quaternion.LookRotation(targetship.transform.position - transform.position);
+        //not impulse, momentuem based
+
+        if (myEnemy.UseStamina(myEnemy.engineStaminaCost * Time.deltaTime) == true)
+        {
+            rb.AddForce((tempTargetSpot - transform.position).normalized * speed * Time.deltaTime, ForceMode.Impulse);
+
+        }
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotForce * Time.deltaTime);
+
+        if (DistanceToTarget(tempTargetSpot) < 1)
+        {
+            //target has low stamina and is vunerable to follow up
+            if (targetship.GetComponent<PlayerControls>().playerStats.GetStamina() < 3)
+            {
+                tempTargetSpot = targetship.transform.position - (transform.up * closedistance);
+                currentAttackPlan = 4;
+            }
+            else { CalculateNextMove(targetship); }
+        }
+
+    }
+
+    public void ZigZag(GameObject targetship) 
+    {
+        //dodge up down left right when the player has stamina to shoot and is facing you
+        if (DistanceToTarget(tempTargetSpot) < 2)
+        {
+            float rnd = Random.Range(0, 10.0f);
+            if (rnd > 8) { tempTargetSpot = transform.position + (transform.up * 5) + (transform.forward * 5); }
+            else if (rnd > 6) { tempTargetSpot = transform.position + (transform.right * 5) + (transform.forward * 5); }
+            else if (rnd > 4) { tempTargetSpot = transform.position - (transform.right * 5) + (transform.forward * 5); }
+            else  { tempTargetSpot = transform.position - (transform.up * 5) + (transform.forward * 5); }
+        }
+
+        if (colors.Count > 3 && myRenderer != null)
+        { myRenderer.material = colors[3]; }
+
+        targetRotation = Quaternion.LookRotation(targetship.transform.position - transform.position);
+        //not impulse, momentuem based
+
+        if (myEnemy.UseStamina(myEnemy.engineStaminaCost * Time.deltaTime) == true)
+        {
+            rb.AddForce((tempTargetSpot - transform.position).normalized * speed * Time.deltaTime, ForceMode.Impulse);
+
+        }
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotForce * Time.deltaTime);
+
+        if (DistanceToTarget(targetship) < closedistance || targetship.GetComponent<PlayerControls>().playerStats.GetStamina() < 2)
+        {
+            CalculateNextMove(targetship);
+        }
+    }
+
+
   public void Chicken(GameObject targetship)
   {
     if(colors.Count > 0 && myRenderer != null)
@@ -182,35 +334,74 @@ public class AIattackpattern : MonoBehaviour {
   {
         bool targetinfront = Vector3.Distance((transform.position + transform.forward),targetship.transform.position ) < Vector3.Distance((transform.position - transform.forward),targetship.transform.position ) ;
         bool targetfacingme = Vector3.Distance((targetship.transform.position + targetship.transform.forward),transform.position ) < Vector3.Distance((targetship.transform.position - targetship.transform.forward),transform.position );
-        if(targetinfront == true )
-        {
-          //target In Front
-            if(targetfacingme == true )
-            {
-              currentAttackPlan = 0; // chicken
-            }
+        float targetStamina = targetship.GetComponent<PlayerControls>().playerStats.GetStamina();
 
+
+        if (targetfacingme == true)
+        {
+            if (targetStamina > 2)
+            {
+                tempTargetSpot = transform.position + (transform.right * 5);
+                currentAttackPlan = 3; // zigzag
+            }
+            else if (myEnemy.stamina > gunCost * 3)
+            {
+                //pick a spot to the side of the target
+                tempTargetSpot = targetship.transform.position + (transform.right * closedistance);
+                currentAttackPlan = 2; // strafe run
+            }
             else
             {
-              currentAttackPlan = 1; // chase / get behind
+                currentAttackPlan = 0; // chicken
+            }
+        }
+        else 
+        {
+            if (targetinfront == true)
+            {
+                //target In Front
+
+                currentAttackPlan = 1; // getbehind
+            }
+            else { currentAttackPlan = 5;//recover 
             }
 
 
-        }
-        else
-        { //target behind
-                if(targetfacingme == true )
-                {
-                    currentAttackPlan = 2;
-                }
+            
 
-                else
-                {
-                  currentAttackPlan = 1;
-                }
+
+            
         }
-        if(colors.Count > 0 && myRenderer != null)
-        {  myRenderer.material = colors[currentAttackPlan + 1];}
+
+        //if (targetinfront == true )
+        //{
+        //  //target In Front
+        //    if(targetfacingme == true )
+        //    {
+        //      currentAttackPlan = 0; // chicken
+        //    }
+
+        //    else
+        //    {
+        //      currentAttackPlan = 1; // chase / get behind
+        //    }
+
+
+        //}
+        //else
+        //{ //target behind
+        //        if(targetfacingme == true )
+        //        {
+        //            currentAttackPlan = 2;
+        //        }
+
+        //        else
+        //        {
+        //          currentAttackPlan = 1;
+        //        }
+        //}
+        //if(colors.Count > 0 && myRenderer != null)
+        //{  myRenderer.material = colors[currentAttackPlan + 1];}
 
   }
 
@@ -326,8 +517,8 @@ public class AIattackpattern : MonoBehaviour {
     public void GetBehind(GameObject targetship)
     {
 
-      if(colors.Count > 0 && myRenderer != null)
-      {  myRenderer.material = colors[currentAttackPlan + 1];}
+      if(colors.Count > currentAttackPlan && myRenderer != null)
+      {  myRenderer.material = colors[currentAttackPlan];}
 
           GameObject target = myEnemy.target;
 
