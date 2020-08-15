@@ -302,7 +302,11 @@ public class Enemy : MonoBehaviour {
             {
                 GetComponent<AITurnAndMove>().Fly(target);
             }
-            else {SendMessage("Fly",target);}
+            else if(GetComponent<AIsquadunit>() != null)
+          {
+                GetComponent<AIsquadunit>().Fly(target);
+            }else
+            { SendMessage("Fly",target);}
         }
 
     }
@@ -340,7 +344,7 @@ public class Enemy : MonoBehaviour {
                       rb.velocity = Vector3.zero;
                     }
                   }
-        }else{AvoidCollision();}
+        }else{}
     }
 
 
@@ -531,20 +535,31 @@ public class Enemy : MonoBehaviour {
 
 
     }
-    public void AvoidCollision()
-    {
-      //TODO: scan around to find the open space rather than always rotating away 180
-      RayCastToFindOpening();
 
-        targetRotation = Quaternion.LookRotation( transform.position -   (openSpotToAvoidCollision ));
-        // targetRotation = Quaternion.LookRotation(  (transform.position  + (transform.up * 50) - (transform.forward * 50) ) - transform.position  );
-        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotForce * 0.3f * Time.deltaTime);
-        //either move forwad to avoid the obstacle of slow down to not collide
-        if(avoidCollisionClock < 1){rb.AddForce(transform.forward * speed * Time.deltaTime,ForceMode.Impulse);}
-        else{ rb.AddForce(-transform.forward * speed * Time.deltaTime,ForceMode.Impulse);}
-        // rb.velocity = Vector3.Lerp(rb.velocity,transform.forward * walkspeed,Time.deltaTime * speed );
-        if(returnHome == true && Vector3.Distance(transform.position,startPos) < 15.0f)
-        {avoidCollisionClock = 0;}
+    public float DistanceToTarget(GameObject target)
+    { return Vector3.Distance(transform.position, target.transform.position); }
+
+    public float DistanceToTarget(Transform target)
+    { return Vector3.Distance(transform.position, target.position); }
+
+    public float DistanceToTarget(Vector3 target)
+    { return Vector3.Distance(transform.position, target); }
+
+    public bool RaycastAtTarget(Transform currenttarget, float distanceToCheck = 1500.0f)
+    {
+
+        RaycastHit hit;
+
+        if (Physics.Raycast(transform.position, currenttarget.position - transform.position, out hit, distanceToCheck))
+        {
+
+            if (hit.transform == currenttarget)
+            {
+                return true;
+            }
+        }
+        return false;
+
     }
 
 

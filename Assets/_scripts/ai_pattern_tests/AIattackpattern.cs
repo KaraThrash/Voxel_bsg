@@ -99,7 +99,7 @@ public class AIattackpattern : MonoBehaviour {
       StrafeRun(target);
 
       break;
-      case 3://zigzag
+      case 3:// be evasive
                 ZigZag(target);
                 break;
     case 4: //verticalDive

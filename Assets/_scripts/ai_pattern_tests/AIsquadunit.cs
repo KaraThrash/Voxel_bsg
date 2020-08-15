@@ -18,9 +18,9 @@ public class AIsquadunit : MonoBehaviour
   public Transform lookTarget;
   public GameObject squadLeader,patroltarget,patrolparent;
   public Material conscriptedColor,avoidingCollisionColor,patrolColor;
-  public List<Material> colors;
-
-  private Vector3 openSpotToAvoidCollision,positionTarget;
+    public Renderer myRenderer;
+    public List<Material> colors;
+    private Vector3 openSpotToAvoidCollision,positionTarget, tempTargetSpot;
   private Quaternion targetRotation;
   private Rigidbody rb;
   private Enemy myEnemy;
@@ -43,24 +43,28 @@ public class AIsquadunit : MonoBehaviour
   public void Fly(GameObject target)
   {
 
-
-      if (squadLeader != null)
+        if (Input.GetKeyDown(KeyCode.O))
+        {
+            currentAttackPlan = 0;
+        }
+        if (squadLeader != null)
       {
-
-              CheckForward(target);
-                if(avoidCollisionClock <= 0){
-                    FollowOrder();
-                  }
-                  else
-                  {
-                    AvoidCollision();
-                  }
+            Attack(target);
+            //CheckForward(target);
+            //    if(avoidCollisionClock <= 0){
+                   
+            //      }
+            //      else
+            //      {
+            //        AvoidCollision();
+            //      }
 
 
 
       }
       else
       {
+            Attack(target);
         // Patrol();
         // if (gunCooldown <= 0)
         // {
@@ -76,135 +80,261 @@ public class AIsquadunit : MonoBehaviour
 
   }
   //set where the squad member should go and what it should look at// all relative to the squad leader
-    public void GetOrder(Vector3 newpositionTarget,Transform newlookTarget)
+    public void GetOrder(Vector3 newpositionTarget,Transform newlookTarget,int newplan=-1)
   {
-    positionTarget = newpositionTarget;
-    lookTarget = newlookTarget;
-  }
-  public void FollowOrder()
+        transform.localScale = new Vector3(1, 1, 1);
+        positionTarget = newpositionTarget;
+        lookTarget = newlookTarget;
+        if (newplan != -1 && currentAttackPlan < 3) {
+            if (newplan == 1)
+            { tempTargetSpot = transform.position + (newlookTarget.up * closedistance); }
+            else if (newplan == 3)
+            { tempTargetSpot = transform.position + (transform.right * closedistance); }
+            else if (newplan == 4)
+            { tempTargetSpot = newlookTarget.position + (newlookTarget.right * closedistance); }
+            else if (newplan == 5)
+            { tempTargetSpot = newlookTarget.position + (newlookTarget.up * closedistance); }
+            else { tempTargetSpot = newlookTarget.position + (newlookTarget.up * closedistance); }
+            currentAttackPlan = newplan; 
+        
+        }
+        positionTarget = tempTargetSpot;
+    }
+
+  public void GetInFormation()
   {
-    Transform centerTransform = squadLeader.transform;
+        Transform centerTransform = squadLeader.transform;
 
-    if(centerSquad == false && lookTarget != null)
-    {
-      centerTransform = lookTarget;
+        if(centerSquad == false && lookTarget != null)
+        {
+          //centerTransform = lookTarget;
 
-    }
+        }
 
-    //if far from target position face it and move forward
-    //otherwise face the look target
-    if(Vector3.Distance(transform.position, positionTarget + centerTransform.position ) < bufferForTargetPosition)
-    {
-       targetRotation = Quaternion.LookRotation( (lookTarget.position)   - transform.position);
-
-       if(Vector3.Distance(transform.position, positionTarget + centerTransform.position ) < bufferForTargetPosition * 0.5f)
-       {
-          targetRotation = Quaternion.LookRotation( (lookTarget.position)   - transform.position);
-          transform.position = Vector3.MoveTowards(transform.position, positionTarget + centerTransform.position, walkspeed  * Time.deltaTime);
-
-
-
-       }else{rb.AddForce(((positionTarget + centerTransform.position) - transform.position) * speed * Time.deltaTime, ForceMode.Impulse);}
-
-
-    }
-    else{
-
-      targetRotation = Quaternion.LookRotation( (positionTarget + centerTransform.position)   - transform.position);
-       rb.AddForce(transform.forward * speed * Time.deltaTime, ForceMode.Impulse);
-    }
+        targetRotation = Quaternion.LookRotation((lookTarget.position) - transform.position);
+        rb.velocity = Vector3.Lerp(rb.velocity, ((positionTarget + centerTransform.position) - transform.position).normalized * speed,Time.deltaTime);
+        rb.AddForce(((positionTarget + centerTransform.position) - transform.position).normalized * speed * Time.deltaTime);
+    
 
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotForce * Time.deltaTime);
 
 
   }
-  public void AttackPlans(GameObject target)
+
+
+    public void GetInFrontOfLeader()
+    {
+        Transform centerTransform = squadLeader.transform;
+
+        if (centerSquad == false && lookTarget != null)
+        {
+            //centerTransform = lookTarget;
+
+        }
+        transform.localScale = new Vector3(1.5f,1.5f,1.5f);
+        targetRotation = Quaternion.LookRotation((lookTarget.position) - transform.position);
+        rb.velocity = Vector3.Lerp(rb.velocity, (((centerTransform.forward * 20) + centerTransform.position) - transform.position).normalized * speed, Time.deltaTime);
+        //rb.AddForce(((positionTarget + centerTransform.position) - transform.position).normalized * speed * Time.deltaTime);
+
+
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotForce * Time.deltaTime);
+
+
+    }
+    public void AttackPlans(GameObject target)
   {
       switch(currentAttackPlan)
       {
 
         case 0: //get behind
-         GetBehind(target);
+         GetInFormation();
 
         break;
         case 1: //get behind
-         GetBehind(target);
+         GetBehindTarget(target);
 
         break;
-        case 2: //strafe
+        case 2: //
+        GetInFrontOfLeader();
 
-
-        break;
+                break;
         case 3:
-
+                ZigZag(target);
         break;
-        default:
-          GetBehind(target);
+            case 4:
+                StrafeRun(target);
+                break;
+            case 5:
+                VerticalDive(target);
+                break;
+            case 6:
+                VerticalDive(target);
+                break;
+            default:
+                GetInFormation();
         break;
       }
 
   }
 
-  public void Attack(GameObject target)
-  {
-  CheckForward(target);
-    if(avoidCollisionClock <= 0){
-        if (target != null)
+
+
+    public void FollowOrder(GameObject target)
+    {
+        if (Input.GetKeyDown(KeyCode.O))
         {
-
-              AttackPlans(target);
-
-            if (gunCooldown <= -8.0f)
-            {
-                CalculateNextMove(target);
-             }
+            currentAttackPlan = 0;
         }
-      }
-      else
-      {
-        AvoidCollision();
-      }
+        AttackPlans(target);
+    }
 
-  }
+
+     public void Attack(GameObject target)
+     {
+        AttackPlans(target);
+
+        //CheckForward(target);
+        //if (avoidCollisionClock <= 0)
+        //{
+        //    if (target != null)
+        //    {
+
+        //        AttackPlans(target);
+
+        //        if (gunCooldown <= -8.0f)
+        //        {
+        //            CalculateNextMove(target);
+        //        }
+        //    }
+        //}
+        //else
+        //{
+        //    AvoidCollision();
+        //}
+
+    }
 
 
   public void CalculateNextMove(GameObject targetship)
   {
-      bool targetinfront = Vector3.Distance((transform.position + transform.forward),targetship.transform.position ) < Vector3.Distance((transform.position - transform.forward),targetship.transform.position ) ;
-      bool targetfacingme = Vector3.Distance((targetship.transform.position + targetship.transform.forward),transform.position ) < Vector3.Distance((targetship.transform.position - targetship.transform.forward),transform.position );
-      if(targetinfront == true )
-      {
-        //target In Front
-          if(targetfacingme == true )
-          {
-            currentAttackPlan = 0; // chicken
-          }
+      //bool targetinfront = Vector3.Distance((transform.position + transform.forward),targetship.transform.position ) < Vector3.Distance((transform.position - transform.forward),targetship.transform.position ) ;
+      //bool targetfacingme = Vector3.Distance((targetship.transform.position + targetship.transform.forward),transform.position ) < Vector3.Distance((targetship.transform.position - targetship.transform.forward),transform.position );
+      //if(targetinfront == true )
+      //{
+      //  //target In Front
+      //    if(targetfacingme == true )
+      //    {
+      //      currentAttackPlan = 0; // chicken
+      //    }
 
-          else
-          {
-            currentAttackPlan = 1; // chase / get behind
-          }
+      //    else
+      //    {
+      //      currentAttackPlan = 1; // chase / get behind
+      //    }
 
 
-      }
-      else
-      { //target behind
-              if(targetfacingme == true )
-              {
-                  currentAttackPlan = 2;
-              }
+      //}
+      //else
+      //{ //target behind
+      //        if(targetfacingme == true )
+      //        {
+      //            currentAttackPlan = 2;
+      //        }
 
-              else
-              {
-                currentAttackPlan = 1;
-              }
-      }
-      transform.GetChild(0).GetComponent<Renderer>().material = colors[currentAttackPlan + 1];
+      //        else
+      //        {
+      //          currentAttackPlan = 1;
+      //        }
+      //}
+      //transform.GetChild(0).GetComponent<Renderer>().material = colors[currentAttackPlan + 1];
   }
 
 
+    public void ZigZag(GameObject targetship)
+    {
+        //dodge up down left right when the player has stamina to shoot and is facing you
+        if (myEnemy.DistanceToTarget(tempTargetSpot) < 2)
+        {
+            float rnd = Random.Range(0, 10.0f);
+            if (rnd > 8) { tempTargetSpot = transform.position + (transform.up * 5) + (transform.forward * 5); }
+            else if (rnd > 6) { tempTargetSpot = transform.position + (transform.right * 5) + (transform.forward * 5); }
+            else if (rnd > 4) { tempTargetSpot = transform.position - (transform.right * 5) + (transform.forward * 5); }
+            else { tempTargetSpot = transform.position - (transform.up * 5) + (transform.forward * 5); }
+        }
 
-  public void Patrol()
+
+
+        targetRotation = Quaternion.LookRotation(targetship.transform.position - transform.position);
+        //not impulse, momentuem based
+
+        //if (myEnemy.UseStamina(myEnemy.engineStaminaCost * Time.deltaTime) == true)
+        //{
+        //    rb.AddForce((tempTargetSpot - transform.position).normalized * speed * Time.deltaTime, ForceMode.Impulse);
+
+        //}
+        rb.velocity = Vector3.Lerp(rb.velocity, (tempTargetSpot - transform.position).normalized * speed, Time.deltaTime);
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotForce * Time.deltaTime);
+
+    }
+
+    public void StrafeRun(GameObject targetship)
+    {
+
+        if (colors.Count > 2 && myRenderer != null)
+        { myRenderer.material = colors[2]; }
+
+        targetRotation = Quaternion.LookRotation(targetship.transform.position - transform.position);
+        //not impulse, momentuem based
+
+        //if (myEnemy.UseStamina(myEnemy.engineStaminaCost * Time.deltaTime) == true)
+        //{
+        //    rb.AddForce((tempTargetSpot - transform.position).normalized * speed * Time.deltaTime, ForceMode.Impulse);
+
+        //}
+        rb.velocity = Vector3.Lerp(rb.velocity, (tempTargetSpot - transform.position).normalized * speed, Time.deltaTime);
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotForce * Time.deltaTime);
+
+        if (myEnemy.DistanceToTarget(tempTargetSpot) < 4)
+        {
+
+            if (myEnemy.DistanceToTarget(targetship) < closedistance)
+            {
+
+                tempTargetSpot = transform.position + (transform.right * 5) - (transform.forward * 5);
+            }
+            else { tempTargetSpot = transform.position + (transform.right * 5) + (transform.forward * 1); }
+        }
+
+    }
+
+    public void VerticalDive(GameObject targetship)
+    {
+
+        if (colors.Count > 4 && myRenderer != null)
+        { myRenderer.material = colors[4]; }
+
+        targetRotation = Quaternion.LookRotation(targetship.transform.position - transform.position);
+        //not impulse, momentuem based
+
+        //if (myEnemy.UseStamina(myEnemy.engineStaminaCost * Time.deltaTime) == true)
+        //{
+        //    rb.AddForce((tempTargetSpot - transform.position).normalized * speed * Time.deltaTime, ForceMode.Impulse);
+
+        //}
+        rb.velocity = Vector3.Lerp(rb.velocity, (tempTargetSpot - transform.position).normalized * speed, Time.deltaTime);
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotForce * Time.deltaTime);
+
+        if (myEnemy.DistanceToTarget(tempTargetSpot) < 4)
+        {
+            if (currentAttackPlan == 6) { currentAttackPlan = 0; }
+            else { currentAttackPlan = 6; tempTargetSpot = targetship.transform.position - (transform.up * 25); }
+            
+        }
+
+    }
+
+
+    public void Patrol()
   {
 
     transform.GetChild(0).GetComponent<Renderer>().material = patrolColor;
@@ -241,7 +371,7 @@ public class AIsquadunit : MonoBehaviour
   }
 
 
-  public void GetBehind(GameObject targetship)
+  public void GetBehindTarget(GameObject targetship)
   {
       transform.GetChild(0).GetComponent<Renderer>().material = colors[currentAttackPlan + 1];
         GameObject target = myEnemy.target;
