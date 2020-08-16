@@ -47,7 +47,7 @@ public class AIattackpattern : MonoBehaviour {
   public void Fly(GameObject target)
   {
 
-    myEnemy.RechargeStamina();
+        myEnemy.RechargeStamina();
 
         if (target != null)
         {
