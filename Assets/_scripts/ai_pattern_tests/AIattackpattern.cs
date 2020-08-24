@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
 
 public class AIattackpattern : MonoBehaviour {
@@ -11,7 +12,7 @@ public class AIattackpattern : MonoBehaviour {
   public float rotForce = 6;
   public float accuracy = 1;
 
-  public float closedistance = 10,fardistance = 40,plusminus = 5;
+  public float closedistance = 10,fardistance = 40,plusminus = 5,acceleration = 0.3f;
   public float gunCost = 1,targetInSight = 0;
   public float checkForwardDistance = 100.0f;
 //
@@ -185,9 +186,11 @@ public class AIattackpattern : MonoBehaviour {
 
     public void Recover(GameObject targetship)
     {
+        rb.velocity = Vector3.Lerp(rb.velocity, Vector3.zero, Time.deltaTime * acceleration);
+        myEnemy.currentStamina += Time.deltaTime * myEnemy.staminaRechargeRate;
         if (colors.Count > 5 && myRenderer != null)
         { myRenderer.material = colors[5]; }
-        if (myEnemy.stamina > 5 || DistanceToTarget(targetship) < closedistance) { CalculateNextMove(targetship); }
+        if (myEnemy.stamina > 5 ) { CalculateNextMove(targetship); }
     }
 
       public void GetAway(GameObject targetship)
@@ -200,7 +203,7 @@ public class AIattackpattern : MonoBehaviour {
 
                 if(myEnemy.UseStamina(myEnemy.engineStaminaCost * Time.deltaTime) == true)
                 {
-                      rb.AddForce(transform.forward * speed  *  Time.deltaTime,ForceMode.Impulse);
+                    rb.velocity = Vector3.Lerp(rb.velocity, transform.forward * speed, Time.deltaTime * acceleration);
 
                 }
                 transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotForce * Time.deltaTime);
@@ -222,7 +225,7 @@ public class AIattackpattern : MonoBehaviour {
 
         if (myEnemy.UseStamina(myEnemy.engineStaminaCost * Time.deltaTime) == true)
         {
-            rb.AddForce((tempTargetSpot - transform.position).normalized * speed * Time.deltaTime, ForceMode.Impulse);
+            rb.velocity = Vector3.Lerp(rb.velocity, (tempTargetSpot - transform.position).normalized * speed, Time.deltaTime * acceleration);
 
         }
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotForce * Time.deltaTime);
@@ -251,7 +254,7 @@ public class AIattackpattern : MonoBehaviour {
 
         if (myEnemy.UseStamina(myEnemy.engineStaminaCost * Time.deltaTime) == true)
         {
-            rb.AddForce((tempTargetSpot - transform.position).normalized * speed * Time.deltaTime, ForceMode.Impulse);
+            rb.velocity = Vector3.Lerp(rb.velocity, (tempTargetSpot - transform.position).normalized * speed, Time.deltaTime * acceleration);
 
         }
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotForce * Time.deltaTime);
@@ -275,21 +278,21 @@ public class AIattackpattern : MonoBehaviour {
         if (DistanceToTarget(tempTargetSpot) < 2)
         {
             float rnd = Random.Range(0, 10.0f);
-            if (rnd > 8) { tempTargetSpot = transform.position + (transform.up * 5) + (transform.forward * 5); }
-            else if (rnd > 6) { tempTargetSpot = transform.position + (transform.right * 5) + (transform.forward * 5); }
-            else if (rnd > 4) { tempTargetSpot = transform.position - (transform.right * 5) + (transform.forward * 5); }
-            else  { tempTargetSpot = transform.position - (transform.up * 5) + (transform.forward * 5); }
+            if (rnd > 8) { tempTargetSpot = transform.position + (transform.up * 15) + (transform.forward * 5); }
+            else if (rnd > 6) { tempTargetSpot = transform.position + (transform.right * 15) + (transform.forward * 5); }
+            else if (rnd > 4) { tempTargetSpot = transform.position - (transform.right * 15) + (transform.forward * 5); }
+            else  { tempTargetSpot = transform.position - (transform.up * 15) + (transform.forward * 5); }
         }
 
         if (colors.Count > 3 && myRenderer != null)
         { myRenderer.material = colors[3]; }
 
         targetRotation = Quaternion.LookRotation(targetship.transform.position - transform.position);
-        //not impulse, momentuem based
+
 
         if (myEnemy.UseStamina(myEnemy.engineStaminaCost * Time.deltaTime) == true)
         {
-            rb.AddForce((tempTargetSpot - transform.position).normalized * speed * Time.deltaTime, ForceMode.Impulse);
+            rb.velocity = Vector3.Lerp(rb.velocity, (tempTargetSpot - transform.position).normalized * speed, Time.deltaTime * acceleration);
 
         }
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotForce * Time.deltaTime);
@@ -323,7 +326,7 @@ public class AIattackpattern : MonoBehaviour {
 
           transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotForce * Time.deltaTime);
       }
-      rb.AddForce(transform.forward * speed * 10 *  Time.deltaTime);
+        rb.velocity = Vector3.Lerp(rb.velocity, transform.forward * speed,Time.deltaTime);
       if(Vector3.Distance(targetship.transform.position,transform.position) < 7)
       {
         tempTargetSpot = transform.position + (transform.forward * closedistance);
@@ -332,6 +335,13 @@ public class AIattackpattern : MonoBehaviour {
   }
   public void CalculateNextMove(GameObject targetship)
   {
+        if (((float)myEnemy.stamina / myEnemy.currentStamina) < 0.2f)
+        {
+            //low stamina, need to recover
+            currentAttackPlan = 5;
+            return;
+        }
+
         bool targetinfront = Vector3.Distance((transform.position + transform.forward),targetship.transform.position ) < Vector3.Distance((transform.position - transform.forward),targetship.transform.position ) ;
         bool targetfacingme = Vector3.Distance((targetship.transform.position + targetship.transform.forward),transform.position ) < Vector3.Distance((targetship.transform.position - targetship.transform.forward),transform.position );
         float targetStamina = targetship.GetComponent<PlayerControls>().playerStats.GetStamina();
@@ -357,14 +367,26 @@ public class AIattackpattern : MonoBehaviour {
         }
         else 
         {
-            if (targetinfront == true)
-            {
-                //target In Front
 
-                currentAttackPlan = 1; // getbehind
+            if (((float)myEnemy.stamina / myEnemy.currentStamina) < 0.2f)
+            {
+                //low stamina, need to recover
+                currentAttackPlan = 5;
             }
-            else { currentAttackPlan = 5;//recover 
+            else
+            {
+                if (targetinfront == true)
+                {
+                    //target In Front
+
+                    currentAttackPlan = 1; // getbehind
+                }
+                else
+                {
+                    currentAttackPlan = 5;//recover 
+                }
             }
+          
 
 
             
@@ -469,7 +491,7 @@ public class AIattackpattern : MonoBehaviour {
 
               if(myEnemy.UseStamina(myEnemy.engineStaminaCost * Time.deltaTime) == true)
               {
-            rb.AddForce(transform.forward * speed * Time.deltaTime, ForceMode.Impulse);
+            rb.velocity = Vector3.Lerp(rb.velocity, transform.forward * speed, Time.deltaTime * acceleration);
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotForce * Time.deltaTime);
           }
     }
@@ -537,9 +559,11 @@ public class AIattackpattern : MonoBehaviour {
                 {
 
                         if(Vector3.Distance(transform.position,(target.transform.position  - (target.transform.forward * closedistance) )) > 30)
-                        {rb.AddForce(transform.forward * speed * Time.deltaTime, ForceMode.Impulse);}
+            { rb.velocity = Vector3.Lerp(rb.velocity, transform.forward * speed, Time.deltaTime * acceleration); }
                         else   if(Vector3.Distance(transform.position,(target.transform.position  - (target.transform.forward * closedistance) )) > 10)
-                          {  rb.AddForce(((target.transform.position  - (target.transform.forward * closedistance)) - transform.position) * speed * Time.deltaTime);}
+                          {
+                                rb.velocity = Vector3.Lerp(rb.velocity, ((target.transform.position - (target.transform.forward * closedistance)) - transform.position) * speed, Time.deltaTime * acceleration);
+                            }
                         else
                         {
                           transform.position = Vector3.MoveTowards(transform.position,(target.transform.position  - (target.transform.forward * closedistance)),speed * 0.1f * Time.deltaTime);
@@ -558,8 +582,8 @@ public class AIattackpattern : MonoBehaviour {
                 myEnemy.FireGuns();
                 gunCooldown = gunCost + Random.Range(0, 3.0f);
 
-                // CalculateNextMove(target);
-            }
+            CalculateNextMove(target);
+        }
 
     }
 
@@ -582,7 +606,7 @@ public class AIattackpattern : MonoBehaviour {
             else
             {
                 if (Vector3.Distance(transform.position,hit.point) < plusminus)
-                {rb.AddForce(transform.forward * speed * -Time.deltaTime);}
+                { rb.velocity = Vector3.Lerp(rb.velocity, transform.forward * -speed, Time.deltaTime * acceleration); }
 
                   if (avoidCollisionClock <= 0) { avoidCollisionClock = 1.4f; }
                   else { if (avoidCollisionClock < 3) { straferunspot = Vector3.zero; avoidCollisionClock += Time.deltaTime; } }

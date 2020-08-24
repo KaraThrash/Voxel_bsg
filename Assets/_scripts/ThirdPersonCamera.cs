@@ -4,12 +4,12 @@ using UnityEngine;
 using UnityStandardAssets.CrossPlatformInput;
 public class ThirdPersonCamera : MonoBehaviour
 {
-    public GameObject myfwdobj;
+    public GameObject myfwdobj,reticle;
     public GameObject player,target;
     public Quaternion newrot;
     public bool inMenu,movetowards;
-    public float lockOnSpeed,damping;
-    public float flyspeed;
+    public float lockOnSpeed,damping,inputbufferforlockon; 
+    public float flyspeed,distanceToCatchPlayer;
     public float XSensitivity = 2f;
     public float YSensitivity = 2f;
     public bool clampVerticalRotation = true;
@@ -51,6 +51,7 @@ public class ThirdPersonCamera : MonoBehaviour
     public void Update()
 
     {
+        
         transform.position = player.transform.position;
         if (useController == false)
         {
@@ -79,22 +80,49 @@ public class ThirdPersonCamera : MonoBehaviour
         {
           if(target != null){
 
+                
+                
+                //lock on to a place in space based on the target velocity // [better targeting computers give more robust controls?]
+                Vector3 targetpos = target.transform.position;
+               
+                if (target != player)
+                {
+                    reticle.active = true;
+                    reticle.transform.position = targetpos;
+                    reticle.transform.LookAt(transform.position);
 
-            //lock on to a place in space based on the target velocity // [better targeting computers give more robust controls?]
-            Vector3 targetpos = target.transform.position;
-            if(target.GetComponent<Rigidbody>() != null)
+                }
+                if (target.GetComponent<Rigidbody>() != null)
             {  targetpos = (target.transform.position + target.GetComponent<Rigidbody>().velocity);}
 
+                if (xRot == 0 && yRot == 0 )
+                {
 
-            m_CharacterTargetRot = Quaternion.LookRotation ( targetpos - transform.position);
+                    if (inputbufferforlockon < 0)
+                    {
+
+                        m_CharacterTargetRot = Quaternion.LookRotation(targetpos - transform.position); inputbufferforlockon -= Time.deltaTime;
+                    }
+                    else { inputbufferforlockon -= Time.deltaTime; }
+                }
+                else
+                {
+                    if (inputbufferforlockon < 0.5f) 
+                    {
+                        inputbufferforlockon += Time.deltaTime;
+                    }
+                        
+                }
             transform.rotation = Quaternion.Slerp(transform.rotation, m_CharacterTargetRot,
                 smoothTime * Time.deltaTime);
 
 
             }
-            else{
-              //rotate camera to catch up to player ship
-              transform.rotation = Quaternion.Slerp(transform.rotation, m_CharacterTargetRot,
+            else
+            {
+                reticle.active = false;
+                //rotate camera to catch up to player ship
+                transform.rotation = Quaternion.Slerp(transform.rotation, m_CharacterTargetRot,
                   smoothTime * Time.deltaTime);
 
                   //rotate ship to catch up to camera
@@ -111,7 +139,13 @@ public class ThirdPersonCamera : MonoBehaviour
 
             //lock on to a place in space based on the target velocity // [better targeting computers give more robust controls?]
             Vector3 targetpos = target.transform.position;
-            if(target.GetComponent<Rigidbody>() != null)
+            if (target != player)
+            {
+                reticle.active = true;
+                reticle.transform.position = targetpos;
+                reticle.transform.LookAt(transform.position);
+            }
+            if (target.GetComponent<Rigidbody>() != null)
             {
               // focus on the area the target will be if a bullet is fired now [ignoring bullet speed]
                 // targetpos = (target.transform.position + (target.GetComponent<Rigidbody>().velocity  ));
@@ -124,8 +158,8 @@ public class ThirdPersonCamera : MonoBehaviour
               m_CharacterTargetRot = transform.rotation;
           }
           else{
-
-            transform.rotation = m_CharacterTargetRot;
+                reticle.active = false;
+                transform.rotation = m_CharacterTargetRot;
 
           }
 

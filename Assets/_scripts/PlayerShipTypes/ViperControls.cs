@@ -145,7 +145,7 @@ public class ViperControls : MonoBehaviour {
         }
         else
         {
-            cam.transform.position = ship.transform.position;
+            //cam.transform.position = ship.transform.position;
             // targetRotation = Quaternion.LookRotation((camera.transform.position + camera.transform.forward) - transform.position);
             // step = Mathf.Min(0.5f * Time.deltaTime, 1.5f);
              step = Mathf.Min(4 * Time.deltaTime, 1.5f);
