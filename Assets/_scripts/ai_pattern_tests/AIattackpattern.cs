@@ -562,7 +562,7 @@ public class AIattackpattern : MonoBehaviour {
             { rb.velocity = Vector3.Lerp(rb.velocity, transform.forward * speed, Time.deltaTime * acceleration); }
                         else   if(Vector3.Distance(transform.position,(target.transform.position  - (target.transform.forward * closedistance) )) > 10)
                           {
-                                rb.velocity = Vector3.Lerp(rb.velocity, ((target.transform.position - (target.transform.forward * closedistance)) - transform.position) * speed, Time.deltaTime * acceleration);
+                                rb.velocity = Vector3.Lerp(rb.velocity, ((target.transform.position - (target.transform.forward * closedistance)) - transform.position).normalized * speed, Time.deltaTime * acceleration);
                             }
                         else
                         {

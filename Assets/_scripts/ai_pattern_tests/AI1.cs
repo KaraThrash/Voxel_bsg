@@ -236,9 +236,9 @@ public class AI1 : MonoBehaviour
         if (angle <= accuracy)
         {
             if (Vector3.Distance(transform.position, curtarget.transform.position) > fardistance)
-            { rb.velocity = Vector3.Lerp(rb.velocity, transform.forward * speed, Time.deltaTime); }
+            { rb.velocity = Vector3.Lerp(rb.velocity, transform.forward * speed, Time.deltaTime * acceleration); }
             if (Vector3.Distance(transform.position, curtarget.transform.position) < closedistance)
-            { rb.velocity = Vector3.Lerp(rb.velocity, Vector3.zero, Time.deltaTime); }
+            { rb.velocity = Vector3.Lerp(rb.velocity, Vector3.zero, Time.deltaTime * acceleration); }
 
             if ( gunCooldown <= 0 && canShoot == true)
             {
@@ -264,12 +264,12 @@ public class AI1 : MonoBehaviour
                         if (Physics.SphereCast(transform.position, 5, transform.forward, out hit, 15))
                         {
                             transform.RotateAround(transform.position, transform.up, Time.deltaTime * rotForce * 5);
-                            rb.velocity = Vector3.Lerp(rb.velocity, transform.forward * -walkspeed, Time.deltaTime);
+                            rb.velocity = Vector3.Lerp(rb.velocity, transform.forward * -walkspeed, Time.deltaTime * acceleration);
                         }
                         else
                         {
 
-                            rb.velocity = Vector3.Lerp(rb.velocity, transform.forward * speed, Time.deltaTime);
+                            rb.velocity = Vector3.Lerp(rb.velocity, transform.forward * speed, Time.deltaTime * acceleration);
                         }
 
                     }
@@ -283,7 +283,7 @@ public class AI1 : MonoBehaviour
                             {
                                 openSpotToAvoidCollision = transform.position;
                             }
-                            else { rb.velocity = Vector3.Lerp(rb.velocity, transform.forward * speed, Time.deltaTime); }
+                            else { rb.velocity = Vector3.Lerp(rb.velocity, transform.forward * speed, Time.deltaTime * acceleration); }
                     }
                     else
                     {
@@ -292,7 +292,7 @@ public class AI1 : MonoBehaviour
                         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotForce * Time.deltaTime);
                         angle = Vector3.Angle(curtarget.transform.position - transform.position, transform.forward);
 
-                        if (angle <= accuracy) { rb.velocity = Vector3.Lerp(rb.velocity, transform.forward * speed, Time.deltaTime); }
+                        if (angle <= accuracy) { rb.velocity = Vector3.Lerp(rb.velocity, transform.forward * speed, Time.deltaTime * acceleration); }
 
                     }
 
@@ -311,8 +311,8 @@ public class AI1 : MonoBehaviour
         angle = Vector3.Angle(curtarget.transform.position - transform.position, transform.forward);
 
         //    transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotForce * Time.deltaTime);
-        if (angle <= accuracy) { rb.velocity = Vector3.Lerp(rb.velocity, transform.forward * speed, Time.deltaTime); }
-        else { rb.velocity = Vector3.Lerp(rb.velocity, Vector3.zero, Time.deltaTime); }
+        if (angle <= accuracy) { rb.velocity = Vector3.Lerp(rb.velocity, transform.forward * speed, Time.deltaTime * acceleration); }
+        else { rb.velocity = Vector3.Lerp(rb.velocity, Vector3.zero, Time.deltaTime * acceleration); }
     
     }
 

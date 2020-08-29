@@ -4,204 +4,290 @@ using UnityEngine;
 
 public class AIChase : MonoBehaviour
 {
-  // Always try to move behind
+    public int currentAttackPlan;
 
+    // parameters to change/set how the ship controls
+    public float speed = 50, walkspeed = 10;
+    public float rotForce = 6;
+    public float accuracy = 1;
 
-  public int currentAttackPlan;
+    public float closedistance = 10, fardistance = 40, plusminus = 5, acceleration = 0.3f;
+    public float gunCost = 1, targetInSight = 0;
+    public float checkForwardDistance = 100.0f;
+    //
 
-  public float speed = 50,walkspeed = 10;
-  public float rotForce = 6;
-  public float accuracy = 1;
+    public float gunCooldown;
 
-  public float closedistance = 10,fardistance = 40;
-  public float gunCost = 1;
-  public float checkForwardDistance = 100.0f;
+    public float avoidCollisionClock;
 
-  public float gunCooldown;
+    public bool destroyed, canShoot;
+    public bool flyaway, flypast;
 
-  public float avoidCollisionClock;
+    public GameObject patrolparent, patroltarget;
+    public Material avoidingCollisionColor, patrolColor;
+    public Renderer myRenderer;
+    public List<Material> colors;
 
-  public bool destroyed,canShoot;
-  public bool flyaway,flypast;
-
-  public GameObject patrolparent,patroltarget;
-  public Material avoidingCollisionColor,patrolColor;
-  public Renderer myRenderer;
-  public List<Material> colors;
-
-  private Vector3 straferunspot,tempTargetSpot,openSpotToAvoidCollision;
-  private Quaternion targetRotation;
-  private Rigidbody rb;
-  private Enemy myEnemy;
-    // Start is called before the first frame update
-    void Start()
+    private Vector3 straferunspot, tempTargetSpot, openSpotToAvoidCollision;
+    private Quaternion targetRotation;
+    private Rigidbody rb;
+    private Enemy myEnemy;
+    // Use this for initialization
+    void Awake()
     {
-
 
         rb = GetComponent<Rigidbody>();
         myEnemy = GetComponent<Enemy>();
         patrolparent = myEnemy.patrolparent;
         patroltarget = myEnemy.patroltarget;
-        if(colors.Count > 0 && myRenderer != null)
-        {  transform.GetChild(0).GetComponent<Renderer>().material = colors[Random.Range(0,(int)colors.Count) ];}
-
-
+        if (colors.Count > 0 && myRenderer != null)
+        { transform.GetChild(0).GetComponent<Renderer>().material = colors[Random.Range(0, (int)colors.Count)]; }
     }
+
 
     public void Fly(GameObject target)
     {
 
+        myEnemy.RechargeStamina();
 
-          if (target != null)
-          {
-
+        if (target != null)
+        {
+            //how long the target is, or is not in sight
+            TrackTimeTargetIsInSight(target);
             Attack(target);
-          }
-          else
-          {
 
+        }
+        else
+        {
+            Patrol();
             if (gunCooldown <= 0)
             {
                 gunCooldown = gunCost * 3;
 
-                if(myEnemy.inBattle == true)
-                {  myEnemy.FindTarget();}
-                  else{  myEnemy.CheckToNoticePlayer();}
+                if (myEnemy.inBattle == true)
+                { myEnemy.FindTarget(); }
+                else { myEnemy.CheckToNoticePlayer(); }
 
 
-             }
+            }
 
 
 
-          }
-          // if (gunCooldown > 0)
-          // { gunCooldown -= Time.deltaTime; }
-           gunCooldown -= Time.deltaTime;
+        }
+        // if (gunCooldown > 0)
+        // { gunCooldown -= Time.deltaTime; }
+        gunCooldown -= Time.deltaTime;
 
     }
+
+    public void AttackPlans(GameObject target)
+    {
+        switch (currentAttackPlan)
+        {
+           
+            case 0: //closein
+                CloseIn(target);
+
+                break;
+            case 1: //chicken
+                Chicken(target);
+
+                break;
+            case -1: //recover
+                Recover(target);
+
+                break;
+            default:
+                Chicken(target);
+                break;
+        }
+
+    }
+
+
     public void Attack(GameObject target)
     {
-        CheckForward(target);
-
-        if(currentAttackPlan == 0 || currentAttackPlan == 2)
-        {
-          if(Vector3.Distance(target.transform.position,transform.position) < fardistance)
-          {
-            currentAttackPlan = 1;
-          }
-        }
-        else if(currentAttackPlan == 1 || currentAttackPlan == 2)
-        {
-          if(Vector3.Distance(target.transform.position - (target.transform.forward * closedistance),transform.position) > (fardistance ))
-          {
-            currentAttackPlan = 0;
-          }
-          else   if(Vector3.Distance(target.transform.position ,transform.position) < (closedistance ))
+       
+            if (target != null)
             {
-              currentAttackPlan = 2;
-            }
-        }
-        if (target != null)
-        {
 
-          if(currentAttackPlan == 0)
-            {
-              if(avoidCollisionClock <= 0){
-                      Approach(target);
-                }
-                else
+                AttackPlans(target);
+
+                if (gunCooldown <= -8.0f)
                 {
-                  AvoidCollision();
+                    gunCooldown = 0;
                 }
-
-
             }
-              else if(currentAttackPlan == 1)
-                {TryToAttack(target);}
-                else if(currentAttackPlan == 2)
-                  {  rb.AddForce(transform.forward * -speed  *  Time.deltaTime,ForceMode.Impulse);}
-                else  {TryToAttack(target);}
+        
+      
+    }
+
+    public float DistanceToTarget(GameObject target)
+    { return Vector3.Distance(transform.position, target.transform.position); }
+
+    public float DistanceToTarget(Transform target)
+    { return Vector3.Distance(transform.position, target.position); }
+
+    public float DistanceToTarget(Vector3 target)
+    { return Vector3.Distance(transform.position, target); }
 
 
-
-
+    //how long the target is, or is not in sight
+    public void TrackTimeTargetIsInSight(GameObject target)
+    {
+        if (RaycastAtTarget(target.transform) == true)
+        {
+            if (targetInSight < 0) { targetInSight = 0; }
+            targetInSight += Time.deltaTime;
         }
-
-
-    }
-    //move towards the target's area, to approach from above
-    public void Approach(GameObject target)
-    {
-      targetRotation = Quaternion.LookRotation((target.transform.position - (target.transform.forward * closedistance)) - transform.position );
-      //not impulse, momentuem based
-      rb.AddForce(transform.forward * speed  *  Time.deltaTime,ForceMode.Impulse);
-      transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotForce * Time.deltaTime);
+        else
+        {
+            if (targetInSight > 0) { targetInSight = 0; }
+            targetInSight -= Time.deltaTime;
+        }
     }
 
-    //when in range try and get above the target, if from that vantage it cant see, it tries to get below
-    public void TryToAttack(GameObject target)
+    public bool RaycastAtTarget(Transform currenttarget, float distanceToCheck = 1500.0f)
     {
-            targetRotation = Quaternion.LookRotation(target.transform.position  - transform.position );
-            if(RayCastAt(target,fardistance + 5) == true)
+
+        RaycastHit hit;
+
+        if (Physics.Raycast(transform.position, currenttarget.position - transform.position, out hit, distanceToCheck))
+        {
+
+            if (hit.transform == currenttarget)
             {
-              if (gunCooldown <= 0 )
-              {
-
-                  myEnemy.FireGuns();
-                  gunCooldown = gunCost + Random.Range(0, 3.0f);
-
-                  // CalculateNextMove(target);
-              }
+                return true;
             }
-            else{
+        }
+        return false;
 
-                  if(RayCastAt(((transform.forward + transform.right)), 15) == true){  rb.AddForce((transform.up + transform.right) * -speed  *  Time.deltaTime,ForceMode.Impulse);}
-                  else{    rb.AddForce((transform.forward + transform.right) * speed  *  Time.deltaTime,ForceMode.Impulse);}
+    }
 
+    public void Recover(GameObject targetship)
+    {
+        rb.velocity = Vector3.Lerp(rb.velocity, Vector3.zero, Time.deltaTime * acceleration);
+        myEnemy.currentStamina += Time.deltaTime * myEnemy.staminaRechargeRate;
+        if (colors.Count > 5 && myRenderer != null)
+        { myRenderer.material = colors[5]; }
+        if (myEnemy.currentStamina > 5) { currentAttackPlan = 0; }
+    }
 
-            }
+   
+
+ 
+
+   
+
+    
+
+    public void CloseIn(GameObject targetship)
+    {
+        if (colors.Count > 0 && myRenderer != null)
+        { myRenderer.material = colors[currentAttackPlan + 1]; }
+        float angle = Vector3.Angle((targetship.transform.position + targetship.GetComponent<Rigidbody>().velocity) - transform.position, transform.forward);
+
+        if (angle <= accuracy) { canShoot = true; } else { canShoot = false; }
+        if (gunCooldown <= 0 && canShoot == true)
+        {
+
+            myEnemy.FireGuns();
+            gunCooldown = gunCost + Random.Range(0, 3.0f);
+
+            // CalculateNextMove(target);
+        }
+        targetRotation = Quaternion.LookRotation(targetship.transform.position - transform.position);
+        if (myEnemy.UseStamina(myEnemy.engineStaminaCost * Time.deltaTime) == true)
+        {
+            
+            //not impulse, momentuem based
 
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotForce * Time.deltaTime);
+            rb.velocity = Vector3.Lerp(rb.velocity, transform.forward * speed, Time.deltaTime);
+        }
+       
+        if (Vector3.Distance(targetship.transform.position, transform.position) < closedistance)
+        {
+            //tempTargetSpot = targetship.transform.position + ((targetship.transform.position - transform.position).normalized * fardistance);
+            tempTargetSpot = transform.forward * fardistance;
+            currentAttackPlan = 1;
+        }
     }
 
-    public bool RayCastAt(GameObject target,float rng)
+    public void Chicken(GameObject targetship)
+    {
+        if (colors.Count > 0 && myRenderer != null)
+        { myRenderer.material = colors[currentAttackPlan + 1]; }
+        float angle = Vector3.Angle((targetship.transform.position + targetship.GetComponent<Rigidbody>().velocity) - transform.position, transform.forward);
+
+        if (angle <= accuracy) { canShoot = true; } else { canShoot = false; }
+        if (gunCooldown <= 0 && canShoot == true)
+        {
+
+            myEnemy.FireGuns();
+            gunCooldown = gunCost + Random.Range(0, 3.0f);
+
+            // CalculateNextMove(target);
+        }
+
+        //targetRotation = Quaternion.LookRotation(tempTargetSpot - transform.position);
+        //transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotForce * Time.deltaTime);
+        
+        rb.velocity = Vector3.Lerp(rb.velocity, transform.forward * speed, Time.deltaTime);
+        if (Vector3.Distance(targetship.transform.position, transform.position) > fardistance)
+        {
+            if (myEnemy.stamina > 5) { currentAttackPlan = 0; } else { currentAttackPlan = -1; }
+        }
+    }
+
+    
+
+   
+
+    public void Patrol()
     {
 
-      RaycastHit hit;
+        if (patrolColor != null && myRenderer != null)
+        { myRenderer.material = patrolColor; }
 
-
-
-      if (Physics.Raycast(transform.position, (target.transform.position - transform.position), out hit, rng))
-      {
-
-
-            if (hit.transform.gameObject == target)
+        if (myEnemy.patrolparent != null)
+        {
+            if (patroltarget != null)
             {
-                return true;
 
+                if (Vector3.Distance(patroltarget.transform.position, transform.position) < 3)
+                { patroltarget = myEnemy.patrolparent.transform.GetChild(Random.Range(0, myEnemy.patrolparent.transform.childCount)).gameObject; }
+
+
+                targetRotation = Quaternion.LookRotation(patroltarget.transform.position - transform.position);
+
+                float angle = Vector3.Angle(patroltarget.transform.position - transform.position, transform.forward);
+
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotForce * Time.deltaTime);
+
+                // rb.AddForce(transform.forward * speed * Time.deltaTime, ForceMode.Impulse);
+                transform.position = Vector3.MoveTowards(transform.position, patroltarget.transform.position, walkspeed * Time.deltaTime);
             }
+            else
+            {
+                patroltarget = myEnemy.patrolparent.transform.GetChild(Random.Range(0, myEnemy.patrolparent.transform.childCount)).gameObject;
+            }
+        }
+        else
+        {
 
-      }
-      return false;
+            if (myEnemy.inBattle == true)
+            { myEnemy.FindTarget(); }
+            else { myEnemy.CheckToNoticePlayer(); }
 
-    }
-
-    public bool RayCastAt(Vector3 dir,float rng)
-    {
-
-      RaycastHit hit;
+        }
 
 
-
-      if (Physics.Raycast(transform.position, dir, out hit, rng))
-      {
-
-                return true;
-
-      }
-      return false;
 
     }
+
+
+
     public void CheckForward(GameObject target)
     {
         // possible issue with dradis detection
@@ -220,47 +306,18 @@ public class AIChase : MonoBehaviour
             }
             else
             {
+                if (Vector3.Distance(transform.position, hit.point) < plusminus)
+                { rb.velocity = Vector3.Lerp(rb.velocity, transform.forward * -speed, Time.deltaTime * acceleration); }
 
-                if (avoidCollisionClock < 0) { avoidCollisionClock = 1.4f; }
+                if (avoidCollisionClock <= 0) { avoidCollisionClock = 1.4f; }
                 else { if (avoidCollisionClock < 3) { straferunspot = Vector3.zero; avoidCollisionClock += Time.deltaTime; } }
+
             }
 
         }
         else { avoidCollisionClock -= Time.deltaTime; canShoot = true; }
     }
 
-    public void RayCastToFindOpening()
-    {
-      RaycastHit hit;
 
-      if (Physics.Raycast(transform.position, transform.forward, out hit, checkForwardDistance))
-      {
-
-        openSpotToAvoidCollision =  (myEnemy.target.transform.position -  hit.point).normalized ;
-        return;
-      }else{
-
-        return;
-
-      }
-
-    }
-    public void AvoidCollision()
-    {
-      //TODO: scan around to find the open space rather than always rotating away 180
-      RayCastToFindOpening();
-      if(avoidingCollisionColor != null && myRenderer != null)
-      {  myRenderer.material = avoidingCollisionColor;}
-
-        targetRotation = Quaternion.LookRotation( transform.position -   (openSpotToAvoidCollision ));
-        // targetRotation = Quaternion.LookRotation(  (transform.position  + (transform.up * 50) - (transform.forward * 50) ) - transform.position  );
-        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotForce * 0.3f * Time.deltaTime);
-        //either move forwad to avoid the obstacle of slow down to not collide
-        if(avoidCollisionClock < 1){rb.AddForce(transform.forward * walkspeed * Time.deltaTime,ForceMode.Impulse);}
-        else{ rb.AddForce(-transform.forward * walkspeed * Time.deltaTime,ForceMode.Impulse);}
-        // rb.velocity = Vector3.Lerp(rb.velocity,transform.forward * walkspeed,Time.deltaTime * speed );
-
-    }
-
-
+   
 }

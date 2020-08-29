@@ -139,6 +139,37 @@ public class NpcManager : MonoBehaviour {
 
     }
 
+    public GameObject SpawnOne(int whichone, Vector3 where, Quaternion rot,bool inbattle=false)
+    {
+        //to prevent infinite enemies from spawning by accident check the current quantity active
+        if (enemyparent.transform.childCount >= maxEnemiesOnScreen) { print("TOO MANY ENEMIES ON SCREEN"); return null; }
+
+        GameObject clone = Instantiate(npcs[whichone], where, rot) as GameObject;
+        clone.transform.parent = enemyparent.transform;
+        enemies.Add(clone);
+
+
+        if (clone.GetComponent<EnemyFleetShip>() != null)
+        {
+            clone.GetComponent<EnemyFleetShip>().npcManager = gameManager.npcManager;
+            clone.GetComponent<EnemyFleetShip>().enemyFleetManager = gameManager.GetComponent<EnemyFleet>();
+        }
+        if (clone.GetComponent<Enemy>() != null)
+        {
+            clone.GetComponent<Enemy>().ResetToNeutral(GetComponent<NpcManager>());
+            // clone.GetComponent<Enemy>().patrolparent = go.GetComponent<Map>().patrolLocations.gameObject;//.GetChild(count);
+            clone.GetComponent<Enemy>().SetAlert(false);
+           clone.GetComponent<Enemy>().inBattle = inbattle; 
+        }
+
+
+
+        return clone;
+
+
+    }
+
+
 
     public GameObject SpawnNewController(int whichone, Vector3 where, Quaternion rot)
     {
@@ -151,7 +182,7 @@ public class NpcManager : MonoBehaviour {
     {
       foreach(GameObject go in enemies)
       {
-        if(go.GetComponent<Enemy>().target == gameManager.playerManager.myship)
+        if(go != null && go.GetComponent<Enemy>().target == gameManager.playerManager.myship)
         {
           go.GetComponent<Enemy>().target = null;
         }
