@@ -14,14 +14,15 @@ public class PlayerControls : MonoBehaviour
   public PlayerSpecialActions playerSpecialActions;
   public float lockOutWeapons,lockOutEngines;
   public string lastAction;
-  private Vector3 velocityDirection;
-
+  private Vector3 velocityDirection,forwardVelocity,strafeVelocity;
+    private PlayerMovementTypes playerMovement;
   public float leftRightAxis,updownAxis,accelerationAxis, lastActionTimer, lastActionCutOffTime= 3.0f;
 
 
     void Start()
     {
               rb = GetComponent<Rigidbody>();
+            playerMovement = GetComponent<PlayerMovementTypes>();
     }
 
 
@@ -53,11 +54,21 @@ public class PlayerControls : MonoBehaviour
           if(playerShip.GetComponent<ViperControls>() != null)
           {
             if(lockOutWeapons <= 0)
-            {playerShip.GetComponent<ViperControls>().WeaponSystems();}
+            {
+                playerShip.GetComponent<ViperControls>().WeaponSystems();
+            
+            }
             if(lockOutEngines <= 0)
             {
-              playerShip.GetComponent<ViperControls>().ControlCamera(camerasphere,this.gameObject);
-                playerShip.GetComponent<ViperControls>().Fly(rb);
+                //seperate strafe and forward to be able to maneuver while gliding
+                strafeVelocity = playerMovement.ViperVelocityStrafe(GetComponent<PlayerControls>(), playerStats, rb);
+                forwardVelocity = playerMovement.ViperVelocityForward(GetComponent<PlayerControls>(), playerStats, rb);
+                velocityDirection = strafeVelocity + forwardVelocity;
+
+                rb.angularVelocity = Vector3.Lerp(rb.angularVelocity, Vector3.zero,  Time.deltaTime);
+                rb.velocity = Vector3.Lerp(rb.velocity, velocityDirection, Time.deltaTime);
+                transform.Rotate(0,0,playerMovement.ViperRoll(GetComponent<PlayerControls>(), playerStats, rb));
+                playerMovement.ControlCamera(playerStats,camerasphere, this.gameObject);
             }
 
 
@@ -89,6 +100,11 @@ public class PlayerControls : MonoBehaviour
             playerStats.RechargeStamina();
 
           }
+    }
+
+    public void FightStyleViper()
+    {
+    
     }
 
     public string GetLastAction()
@@ -260,5 +276,9 @@ public class PlayerControls : MonoBehaviour
 
     }
 
+    public Vector3 GetStrafeVelocity()
+    { return strafeVelocity; }
+    public Vector3 GetForwardVelocity()
+    { return forwardVelocity; }
 
 }

@@ -6,7 +6,7 @@ public class PlayerShipStats : MonoBehaviour
 {
     public int shipbasearmor,shipbasedamage,shipbasespeed;
     public int basearmor,basedamage,basespeed;
-    public int armor,damage,speed;
+    public int armor,damage,speed,roll;
     public int dodgeDistance = 50;
 
     public int hp = 10,stamina,tempHp,tempStamina;
@@ -15,7 +15,11 @@ public class PlayerShipStats : MonoBehaviour
     public float staminaRechargeRate = 1,currentstaminaRechargeBonus,staminaRechargeBonus,currentStamina;//stamina recharges faster when not being used
 
     public float acceleration = 3.5f,decceleration = 0.1f;//stamina recharges faster when not being used
+    public float flySpeed, strafeSpeed, rollSpeed, rollMod, liftSpeed;
+    public float turnSpeed, camZspeed, engineMod, ammoSelected;
     public int currentHp = 10;
+    public bool glide;
+    public GameObject glideIndicator;
     public Text stamText;
 
 
@@ -25,6 +29,7 @@ public class PlayerShipStats : MonoBehaviour
     void Start()
     {
       equipedAmmoList = new List<Item>();
+        ViperSetUp();
     }
 
 
@@ -137,5 +142,27 @@ public class PlayerShipStats : MonoBehaviour
         return statstring;
     }
 
+
+    public void ViperSetUp()
+    {
+        liftSpeed = speed + shipbasespeed;
+        rollSpeed = (speed + shipbasespeed) / 2;
+
+        // rollMod = playerStats
+        turnSpeed = (speed + shipbasespeed) / 2;
+        camZspeed = rollSpeed * 0.8f;
+        flySpeed = (speed + shipbasespeed);
+        engineMod = 5;
+        strafeSpeed = (speed + shipbasespeed);
+        acceleration = acceleration;
+        decceleration = decceleration;
+        weaponStaminaCost = weaponStaminaCost;
+        engineStaminaCost = engineStaminaCost;
+        // guncooldown = playerStats
+        // cameraspeed = playerStats
+        equipedAmmoList = equipedAmmoList;
+        ammoSelected = 0;
+        rollMod = 1;
+    }
 
 }

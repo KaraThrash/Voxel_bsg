@@ -84,7 +84,6 @@ public class ViperControls : MonoBehaviour {
 	public void Fly (Rigidbody shipRigidBody) {
 
        inputBuffer -= Time.deltaTime;
-
        if(groundCollisionTimer <= 0)
        {
              //lock inputs after special actions like dodge/spin as to not override their affect
@@ -192,12 +191,10 @@ public class ViperControls : MonoBehaviour {
 
 
 
-        Vector3 tempvel = shipRigidBody.transform.position - (shipRigidBody.transform.position + shipRigidBody.transform.right);
-        tempvel *= strafeSpeed * -hort;
-        Vector3 tempvel2 = shipRigidBody.transform.position - (shipRigidBody.transform.position + shipRigidBody.transform.forward);
-        tempvel2 *= flySpeed * -vert;
-        Vector3 tempvel3 = transform.position - (transform.position + transform.up);
-        tempvel3 *= strafeSpeed * -lift;
+        Vector3 tempvel = shipRigidBody.transform.right * strafeSpeed * hort;
+        Vector3 tempvel2 = shipRigidBody.transform.forward * flySpeed * -vert; 
+  
+        Vector3 tempvel3 = transform.up * strafeSpeed * -lift;
 
         newvel = tempvel + tempvel2 + tempvel3 ;
         velocityDirection = newvel;
