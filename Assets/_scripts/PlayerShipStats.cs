@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 public class PlayerShipStats : MonoBehaviour
 {
+    public int strafetype, forwardtype, cameratype, weapontype; //for the different control patterns, layouts
     public int shipbasearmor,shipbasedamage,shipbasespeed;
     public int basearmor,basedamage,basespeed;
     public int armor,damage,speed,roll;
@@ -11,12 +12,14 @@ public class PlayerShipStats : MonoBehaviour
 
     public int hp = 10,stamina,tempHp,tempStamina;
 
-    public float weaponStaminaCost = 0.1f,engineStaminaCost = 0.1f;
+    public float weaponStaminaCost = 0.1f,engineStaminaCost = 0.1f, guncooldown = 0.1f;
     public float staminaRechargeRate = 1,currentstaminaRechargeBonus,staminaRechargeBonus,currentStamina;//stamina recharges faster when not being used
 
     public float acceleration = 3.5f,decceleration = 0.1f;//stamina recharges faster when not being used
     public float flySpeed, strafeSpeed, rollSpeed, rollMod, liftSpeed;
     public float turnSpeed, camZspeed, engineMod, ammoSelected;
+
+    public GameObject defaultBullet, bulletSelected;
     public int currentHp = 10;
     public bool glide;
     public GameObject glideIndicator;

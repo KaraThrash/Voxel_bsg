@@ -10,10 +10,32 @@ public class PlayerMovementTypes : MonoBehaviour
         
     }
 
-    // Update is called once per frame
-    void Update()
+    public Vector3 ForwardMovement(int movementtype, PlayerControls playerControls, PlayerShipStats playerStats, Rigidbody shipRigidBody)
     {
+        switch (movementtype)
+        {
+            case 0:
+                return ViperVelocityForward( playerControls,  playerStats,  shipRigidBody);
+                break;
+            default:
+                return ViperVelocityForward(playerControls, playerStats, shipRigidBody);
+                break;
         
+        }
+    }
+
+    public Vector3 StrafeMovement(int movementtype, PlayerControls playerControls, PlayerShipStats playerStats, Rigidbody shipRigidBody)
+    {
+        switch (movementtype)
+        {
+            case 0:
+                return ViperVelocityStrafe(playerControls, playerStats, shipRigidBody);
+                break;
+            default:
+                return ViperVelocityStrafe(playerControls, playerStats, shipRigidBody);
+                break;
+
+        }
     }
 
     public void ControlCamera(PlayerShipStats playerStats,GameObject cam, GameObject ship)
@@ -38,6 +60,7 @@ public class PlayerMovementTypes : MonoBehaviour
 
         }
     }
+
 
     public float ViperRoll(PlayerControls playerControls, PlayerShipStats playerStats, Rigidbody shipRigidBody)
     {

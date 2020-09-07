@@ -25,7 +25,7 @@ public class Bullet : MonoBehaviour {
         if (lance == false && missile == false)
         {
             transform.parent = GameObject.Find("BulletParent").transform;
-           rb.AddForce(transform.forward * (speed), ForceMode.Impulse);
+           //rb.AddForce(transform.forward * (speed), ForceMode.Impulse);
         }
          if (spray == true)
         {
@@ -48,7 +48,7 @@ public class Bullet : MonoBehaviour {
         if (lance == false && missile == false)
         {
             transform.parent = GameObject.Find("BulletParent").transform;
-            rb.AddForce(transform.forward * (speed), ForceMode.Impulse);
+            rb.velocity = (transform.forward * speed);
         }
 
 
@@ -77,9 +77,13 @@ public class Bullet : MonoBehaviour {
     {
 
         lifeTime -= Time.deltaTime;
-        if(missile == true)
+        if (missile == true)
         {
-          MissileLogic();
+            MissileLogic();
+        }
+        else 
+        {
+            rb.velocity = (transform.forward * speed);
         }
         if (lifeTime <= 0 || (target != null && transform.position == target.transform.position)) { Die(); }
     }
