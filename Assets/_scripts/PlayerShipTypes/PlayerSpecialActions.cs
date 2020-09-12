@@ -10,6 +10,7 @@ public class PlayerSpecialActions : MonoBehaviour
 
   public string leftkey,rightkey,upkey,downkey;
 
+    public GameObject reticle, markedTarget;
   private float keyPressedTimer;
     // Start is called before the first frame update
     void Start()
@@ -21,6 +22,20 @@ public class PlayerSpecialActions : MonoBehaviour
     void Update()
     {
       if(keyPressedTimer > 0){keyPressedTimer -= Time.deltaTime;}
+        if (markedTarget != null)
+        {
+            reticle.active = true;
+            Vector3 targetpos = markedTarget.transform.position;
+
+            if (markedTarget.GetComponent<Rigidbody>() != null)
+            {
+                targetpos = (markedTarget.transform.position + (markedTarget.GetComponent<Rigidbody>().velocity ));
+            }
+            reticle.transform.position = targetpos;
+            reticle.transform.LookAt(playerControls.transform.position);
+        }
+        else { reticle.active = false; }
+
     }
 
     public void ListenToButtonPresses()
@@ -40,6 +55,8 @@ public class PlayerSpecialActions : MonoBehaviour
              // if(Input.GetKeyDown("1"))
              if(Input.GetKeyDown(KeyCode.Alpha1))
              {LockOn();}
+            if(Input.GetKeyDown(KeyCode.Alpha2))
+             {MarkTarget();}
              // if(Input.GetKeyDown(KeyCode.JoystickButton1))
              // {DodgeRoll(vKey);}
 
@@ -120,6 +137,17 @@ public class PlayerSpecialActions : MonoBehaviour
         else{playerControls.lockOnTarget = null; playerControls.camerasphere.GetComponent<ThirdPersonCamera>().target = null;}
 
     }
+
+    public void MarkTarget()
+    {
+        if (markedTarget == null)
+        {
+            markedTarget = GetComponent<Player>().gamemanager.npcManager.GetClosestEnemy(playerControls.playerShip);
+        }
+        else { markedTarget = null; reticle.active = false ; }
+
+    }
+
     public void DodgeRoll(string direction)
     {
         playerControls.AttemptDodgeRoll();

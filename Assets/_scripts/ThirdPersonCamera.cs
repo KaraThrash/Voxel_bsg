@@ -141,9 +141,9 @@ public class ThirdPersonCamera : MonoBehaviour
             Vector3 targetpos = target.transform.position;
             if (target != player)
             {
-                reticle.active = true;
-                reticle.transform.position = targetpos;
-                reticle.transform.LookAt(transform.position);
+                //reticle.active = true;
+                //reticle.transform.position = targetpos;
+                //reticle.transform.LookAt(transform.position);
             }
             if (target.GetComponent<Rigidbody>() != null)
             {
@@ -158,7 +158,7 @@ public class ThirdPersonCamera : MonoBehaviour
               m_CharacterTargetRot = transform.rotation;
           }
           else{
-                reticle.active = false;
+                //reticle.active = false;
                 transform.rotation = m_CharacterTargetRot;
 
           }
