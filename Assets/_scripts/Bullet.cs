@@ -12,7 +12,9 @@ public class Bullet : MonoBehaviour {
     
     public float lifetimeMax = 10.0f,lifeTime,impactForce,damage;
 
-    public bool lance,missile,spray,twinLiked,boomerang; //toggles on instead of being a projectile
+    public float timeIncrement = 1.0f,incrementTimer = 1.0f, spiralRange = 40.0f;
+    private int toggleValue = 1;
+    public bool lance,missile,spray,twinLiked,boomerang,spiral; //toggles on instead of being a projectile
     public bool ice;
 
     private Vector3 direction,secondaryDirection;
@@ -81,6 +83,11 @@ public class Bullet : MonoBehaviour {
         {
             MissileLogic();
         }
+        else if (spiral == true)
+        {
+            Spiral();
+            rb.velocity = (transform.forward * speed);
+        }
         else 
         {
             rb.velocity = (transform.forward * speed);
@@ -90,40 +97,58 @@ public class Bullet : MonoBehaviour {
 
     public void Spray()
     {
-      Vector3 tempvec = transform.position + (transform.forward * 3);
+      Vector3 tempvec = transform.position + (transform.forward * 5);
       spray = false;
-      GameObject clone = Instantiate(this.gameObject,transform.position + transform.forward,transform.rotation);
-      // tempvec = (tempvec * -1);
 
-      clone.GetComponent<Rigidbody>().AddForce((clone.transform.position - transform.position ) * (speed), ForceMode.Impulse);
-      clone = Instantiate(this.gameObject,tempvec + transform.up,transform.rotation);
-      clone.GetComponent<Rigidbody>().AddForce((clone.transform.position - transform.position ) * (speed), ForceMode.Impulse);
-      clone = Instantiate(this.gameObject,tempvec - transform.up,transform.rotation);
-      clone.GetComponent<Rigidbody>().AddForce((clone.transform.position - transform.position ) * (speed), ForceMode.Impulse);
-      clone = Instantiate(this.gameObject,tempvec + transform.up + transform.up,transform.rotation);
-      clone.GetComponent<Rigidbody>().AddForce((clone.transform.position - transform.position ) * (speed), ForceMode.Impulse);
-      clone = Instantiate(this.gameObject,tempvec - transform.up - transform.up,transform.rotation);
-      clone.GetComponent<Rigidbody>().AddForce((clone.transform.position - transform.position ) * (speed), ForceMode.Impulse);
-      tempvec = transform.position + transform.right + (transform.forward * 3);
-      clone = Instantiate(this.gameObject,tempvec ,transform.rotation);
-      clone.GetComponent<Rigidbody>().AddForce((clone.transform.position - transform.position ) * (speed), ForceMode.Impulse);
-      clone = Instantiate(this.gameObject,tempvec + transform.right,transform.rotation);
-      clone.GetComponent<Rigidbody>().AddForce((clone.transform.position - transform.position ) * (speed), ForceMode.Impulse);
-    clone = Instantiate(this.gameObject,tempvec + transform.up,transform.rotation);
-    clone.GetComponent<Rigidbody>().AddForce((clone.transform.position - transform.position ) * (speed), ForceMode.Impulse);
-    clone = Instantiate(this.gameObject,tempvec - transform.up,transform.rotation);
-    clone.GetComponent<Rigidbody>().AddForce((clone.transform.position - transform.position ) * (speed), ForceMode.Impulse);
-      tempvec = transform.position - transform.right + (transform.forward * 3);
-      clone = Instantiate(this.gameObject,tempvec ,transform.rotation);
-      clone.GetComponent<Rigidbody>().AddForce((clone.transform.position - transform.position ) * (speed), ForceMode.Impulse);
-      clone = Instantiate(this.gameObject,tempvec - transform.right ,transform.rotation);
-      clone.GetComponent<Rigidbody>().AddForce((clone.transform.position - transform.position ) * (speed), ForceMode.Impulse);
-      clone = Instantiate(this.gameObject,tempvec + transform.up,transform.rotation);
-      clone.GetComponent<Rigidbody>().AddForce((clone.transform.position - transform.position ) * (speed), ForceMode.Impulse);
-      clone = Instantiate(this.gameObject,tempvec - transform.up,transform.rotation);
-      clone.GetComponent<Rigidbody>().AddForce((clone.transform.position - transform.position ) * (speed), ForceMode.Impulse);
+        //SpawnBullet(tempvec, this.gameObject);
+
+        SpawnBullet(tempvec + transform.up, this.gameObject);
+        SpawnBullet(tempvec - transform.up, this.gameObject);
+        SpawnBullet(tempvec + transform.right, this.gameObject);
+        SpawnBullet(tempvec - transform.right, this.gameObject);
+
+        tempvec = transform.position + (transform.forward * 3);
+
+        SpawnBullet(tempvec + transform.up + transform.right, this.gameObject);
+        SpawnBullet(tempvec - transform.up + transform.right, this.gameObject);
+
+        SpawnBullet(tempvec + transform.up - transform.right, this.gameObject);
+        SpawnBullet(tempvec - transform.up - transform.right, this.gameObject);
+
+        SpawnBullet(tempvec + transform.up + transform.up, this.gameObject);
+        SpawnBullet(tempvec - transform.up - transform.up, this.gameObject);
+        SpawnBullet(tempvec + transform.right + transform.right, this.gameObject);
+        SpawnBullet(tempvec - transform.right - transform.right, this.gameObject);
+
 
     }
+
+
+    public GameObject SpawnBullet(Vector3 spawnLoc, GameObject toSpawn)
+    {
+
+        GameObject clone = Instantiate(toSpawn, spawnLoc, transform.rotation);
+        Vector3 direction = clone.transform.position - transform.position;
+        clone.transform.rotation = Quaternion.LookRotation(direction);
+        return clone;
+
+    }
+
+    public void Spiral()
+    {
+        float inc =  Time.deltaTime;
+        incrementTimer -= inc;
+        transform.Rotate(transform.right * inc * toggleValue);
+        transform.Rotate(transform.up * inc * toggleValue * spiralRange);
+        if (incrementTimer <= 0)
+        {
+            incrementTimer = timeIncrement;
+
+            toggleValue *= -1;
+        }
+    }
+
+
     public void TwinLink()
     {
 
