@@ -170,7 +170,6 @@ public class NpcManager : MonoBehaviour {
     }
 
 
-
     public GameObject SpawnNewController(int whichone, Vector3 where, Quaternion rot)
     {
         GameObject clone = Instantiate(npcs[whichone], where, rot) as GameObject;

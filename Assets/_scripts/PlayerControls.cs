@@ -19,7 +19,7 @@ public class PlayerControls : MonoBehaviour
     private PlayerMovementTypes playerMovement;
   public float leftRightAxis,updownAxis,accelerationAxis, lastActionTimer, lastActionCutOffTime= 3.0f;
     private float gunoffset = 1f; //so bullets dont step on eachother
-
+    public TrailRenderer trail;
     void Start()
     {
               rb = GetComponent<Rigidbody>();
@@ -37,6 +37,7 @@ public class PlayerControls : MonoBehaviour
             if (lastActionTimer >= lastActionCutOffTime)
             { lastAction = ""; lastActionTimer = 0; }
         }
+
     }
 
 
@@ -52,6 +53,9 @@ public class PlayerControls : MonoBehaviour
       // if(rb == null){  rb = GetComponent<Rigidbody>();}
         playerSpecialActions.ListenToButtonPresses();
         inputBuffer -= Time.deltaTime;
+
+        if (trail != null) { trail.time = 4 * (rb.velocity.magnitude / playerStats.speed); }
+
         if (groundCollisionTimer <= 0)
         {
             //lock inputs after special actions like dodge/spin as to not override their affect
