@@ -6,13 +6,14 @@ public class Sandbox : MonoBehaviour
 {
     public Camera camera;
     public Transform obj,newmapObj, spawnablesToPickFrom;
+    public Transform object0, object1;
     public GameObject table;
     public GameObject gameObj,obj0,obj1,obj2,obstacles;
     // Start is called before the first frame update
     void Start()
     {
 
-        SpawnPrimitiveCuveEnviroment();
+        //SpawnPrimitiveCuveEnviroment();
         //meth();
     }
 
@@ -21,19 +22,34 @@ public class Sandbox : MonoBehaviour
     {
       if(Input.GetKeyDown(KeyCode.T))
       {
-            SpawnPrimitiveCuveEnviroment();
+            UnParent(object0);
+            foreach (Transform el in object1)
+            {
+                if (el.GetComponent<MeshRenderer>() != null) { }
+                else { Destroy(el.gameObject); }
+            }
+            //SpawnPrimitiveCuveEnviroment();
             //raycastfromcam(obj0);
-      }
+        }
       if(Input.GetKeyDown(KeyCode.Y))
       {
-        raycastfromcam(obj1);
+        //raycastfromcam(obj1);
       }
       if(Input.GetKeyDown(KeyCode.U))
       {
-        raycastfromcam(obj2);
+        //raycastfromcam(obj2);
       }
 
 
+    }
+
+    public void UnParent(Transform tempobj )
+    {
+        foreach(Transform el in tempobj)
+        {
+            if (el.childCount > 0) { UnParent(el); }
+            else { el.parent = object1; }
+        }
     }
 
 
