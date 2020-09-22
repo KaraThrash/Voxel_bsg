@@ -5,7 +5,7 @@ using UnityEngine;
 public class Fleetship : MonoBehaviour {
     public GameObject gameManager;
     public FleetManager fleetManager;
-    public Transform shipParts;
+    public Transform shipParts,rotatingPart;
     public int pop;
     public int food;
     public int fuel;
@@ -16,6 +16,8 @@ public class Fleetship : MonoBehaviour {
     public bool hasresources;
     public int value; //points
     public string name;
+
+    public Vector3 idlerotspeed;
     // Use this for initialization
     void Start () {
         gameManager = GameObject.Find("GameManager");
@@ -36,6 +38,8 @@ public class Fleetship : MonoBehaviour {
 
 
         }
+        if (idlerotspeed != Vector3.zero && rotatingPart != null)
+        { rotatingPart.Rotate(idlerotspeed * Time.deltaTime); }
 	}
 
   public Transform GetShipParts()
