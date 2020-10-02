@@ -22,7 +22,7 @@ public class Sandbox : MonoBehaviour
     {
       if(Input.GetKeyDown(KeyCode.T))
       {
-            UnParent(object0);
+            //UnParent(object0);
             foreach (Transform el in object1)
             {
                 if (el.GetComponent<MeshRenderer>() != null) { }
@@ -33,6 +33,7 @@ public class Sandbox : MonoBehaviour
         }
       if(Input.GetKeyDown(KeyCode.Y))
       {
+            SpawnPrimitiveCuveEnviroment();
         //raycastfromcam(obj1);
       }
       if(Input.GetKeyDown(KeyCode.U))
@@ -62,15 +63,15 @@ public class Sandbox : MonoBehaviour
         int spawnedcount = 0;
         //while (spawnedcount < 16)
         //{
-            while (countz < 4)
+            while (countz < 12)
             {
-                while (county < 4)
+                while (county < 1)
                 {
-                    while (countx < 4)
+                    while (countx < 12)
                     {
-                        GameObject newobj = Instantiate(spawnablesToPickFrom.GetChild((int)Random.Range(0, spawnablesToPickFrom.childCount)).gameObject, new Vector3(5 * countx, 5 * county, 5 * countz), transform.rotation);
+                        GameObject newobj = Instantiate(spawnablesToPickFrom.GetChild((int)Random.Range(0, spawnablesToPickFrom.childCount)).gameObject, new Vector3(5 * countx, 1, 5 * countz), transform.rotation);
 
-                    newobj.transform.Rotate(90 * (int)Random.Range(0,4), 90 * (int)Random.Range(0, 4), 90 * (int)Random.Range(0, 4));
+                    //newobj.transform.Rotate(90 * (int)Random.Range(0,4), 90 * (int)Random.Range(0, 4), 90 * (int)Random.Range(0, 4));
                     newobj.transform.parent = newmapObj;
                     countx++;
                     }
