@@ -18,7 +18,6 @@ public FleetManager fleetManager;
   public AttackManager attackManager;
   public ThirdPersonCamera cam;
   public FtlImageFade imageFade;
-
   public GameObject dockMenu;
   public bool inMenu,inBattle,inMap;
 

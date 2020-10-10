@@ -6,7 +6,7 @@ public class PickUp : MonoBehaviour {
   public ItemManager itemManager;
     public int type;
     public int value, itemnumber; //if engine speed, if gun attack cooldown
-    public bool playerCache;
+    public bool playerCache,primaryResource;
     public Material[] colors; //green,red,blue,yellow
 	// Use this for initialization
 	void Start () {

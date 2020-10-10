@@ -20,6 +20,7 @@ public class PlayerControls : MonoBehaviour
   public float leftRightAxis,updownAxis,accelerationAxis, lastActionTimer, lastActionCutOffTime= 3.0f;
     private float gunoffset = 1f; //so bullets dont step on eachother
     public TrailRenderer trail;
+    public ParticleSystem enginesystem;
     void Start()
     {
               rb = GetComponent<Rigidbody>();
@@ -54,7 +55,9 @@ public class PlayerControls : MonoBehaviour
         playerSpecialActions.ListenToButtonPresses();
         inputBuffer -= Time.deltaTime;
 
-        if (trail != null) { trail.time = 4 * (rb.velocity.magnitude / playerStats.speed); }
+        if (trail != null) { trail.time = 3 * (rb.velocity.magnitude / playerStats.speed); }
+
+       
 
         if (groundCollisionTimer <= 0)
         {
@@ -72,6 +75,16 @@ public class PlayerControls : MonoBehaviour
                     //seperate strafe and forward to be able to maneuver while gliding
                     strafeVelocity = playerMovement.StrafeMovement(playerStats.forwardtype,GetComponent<PlayerControls>(), playerStats, rb);
                     forwardVelocity = playerMovement.ForwardMovement(playerStats.strafetype, GetComponent<PlayerControls>(), playerStats, rb);
+                    if (enginesystem != null)
+                    {
+                        if (forwardVelocity.magnitude > 0.5f)
+                        {
+                            enginesystem.startSpeed = 3 * (rb.velocity.magnitude / playerStats.speed);
+                            enginesystem.emissionRate = 75 * (rb.velocity.magnitude / playerStats.speed);
+                        }
+                        else { enginesystem.emissionRate = 0; }
+                    }
+
                     velocityDirection = strafeVelocity + forwardVelocity;
 
                     rb.angularVelocity = Vector3.Lerp(rb.angularVelocity, Vector3.zero, Time.deltaTime);
@@ -95,52 +108,12 @@ public class PlayerControls : MonoBehaviour
 
         }
 
-        //if (playerShip.GetComponent<ViperControls>() != null)
-        //  {
-        //    if(lockOutWeapons <= 0)
-        //    {
-        //        playerShip.GetComponent<ViperControls>().WeaponSystems();
-            
-        //    }
-        //    if(lockOutEngines <= 0)
-        //    {
-        //        //seperate strafe and forward to be able to maneuver while gliding
-        //        strafeVelocity = playerMovement.ViperVelocityStrafe(GetComponent<PlayerControls>(), playerStats, rb);
-        //        forwardVelocity = playerMovement.ViperVelocityForward(GetComponent<PlayerControls>(), playerStats, rb);
-        //        velocityDirection = strafeVelocity + forwardVelocity;
-
-        //        rb.angularVelocity = Vector3.Lerp(rb.angularVelocity, Vector3.zero,  Time.deltaTime);
-        //        rb.velocity = Vector3.Lerp(rb.velocity, velocityDirection, Time.deltaTime);
-        //        transform.Rotate(0,0,playerMovement.ViperRoll(GetComponent<PlayerControls>(), playerStats, rb));
-        //        playerMovement.ControlCamera(playerStats,camerasphere, this.gameObject);
-        //    }
-
-
-
-        //  }else if(playerShip.GetComponent<RaptorControls>() != null)
-        //    {
-        //      playerShip.GetComponent<RaptorControls>().Fly(rb);
-        //      playerShip.GetComponent<RaptorControls>().WeaponSystems();
-        //      playerShip.GetComponent<RaptorControls>().ControlCamera(camerasphere,this.gameObject);
-        //    }
-        //    else if(playerShip.GetComponent<TankControls>() != null)
-        //      {
-        //        playerShip.GetComponent<TankControls>().Fly(rb);
-        //        playerShip.GetComponent<TankControls>().WeaponSystems();
-        //        playerShip.GetComponent<TankControls>().ControlCamera(camerasphere,this.gameObject);
-        //      }
-        //      else if(playerShip.GetComponent<TurningShip>() != null)
-        //        {
-        //          playerShip.GetComponent<TurningShip>().Fly(rb);
-        //          playerShip.GetComponent<TurningShip>().WeaponSystems();
-        //          playerShip.GetComponent<TurningShip>().ControlCamera(camerasphere,this.gameObject);
-        //        }
-        //      else{}
 
                 if(lockOutEngines > 0 || lockOutWeapons > 0)
                 {  
                       lockOutEngines -= Time.deltaTime;lockOutWeapons -= Time.deltaTime;
                 }
+
                 if(playerStats != null)
                 {
                       playerStats.RechargeStamina();
@@ -202,7 +175,8 @@ public class PlayerControls : MonoBehaviour
                     if (gunoffset == 1)
                     {
                         GameObject clone = Instantiate(bullet, gun.position , gun.rotation) as GameObject;
-                        clone.GetComponent<Rigidbody>().velocity = clone.GetComponent<Rigidbody>().velocity + forwardVelocity;
+                        //clone.GetComponent<Rigidbody>().velocity = clone.GetComponent<Rigidbody>().velocity ;
+                        clone.GetComponent<Bullet>().SetRelativeVelocity(GetForwardVelocity());
                     }
                     gunoffset *= -1;
                 }

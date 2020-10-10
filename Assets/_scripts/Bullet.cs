@@ -17,7 +17,7 @@ public class Bullet : MonoBehaviour {
     public bool lance,missile,spray,twinLiked,boomerang,spiral; //toggles on instead of being a projectile
     public bool ice;
 
-    private Vector3 direction,secondaryDirection;
+    private Vector3 direction,secondaryDirection, relativeVelocity;
     private Rigidbody rb;
 
     // Use this for initialization
@@ -72,7 +72,8 @@ public class Bullet : MonoBehaviour {
         
 
     }
-
+    public void SetRelativeVelocity(Vector3 newvel)
+    { relativeVelocity = newvel; }
 
     // Update is called once per frame
     void Update()
@@ -86,11 +87,11 @@ public class Bullet : MonoBehaviour {
         else if (spiral == true)
         {
             Spiral();
-            rb.velocity = (transform.forward * speed);
+            rb.velocity = (transform.forward * speed) + relativeVelocity;
         }
         else 
         {
-            rb.velocity = (transform.forward * speed);
+            rb.velocity = (transform.forward * speed) + relativeVelocity;
         }
         if (lifeTime <= 0 || (target != null && transform.position == target.transform.position)) { Die(); }
     }
