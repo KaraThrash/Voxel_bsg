@@ -281,31 +281,31 @@ public void DestroyEquipOnPlayerDeath()
           //zero is just money/points for simplicity of enemies that dont drop special items
           if(whichitem.GetComponent<PickUp>().itemnumber == 0 || whichitem.GetComponent<PickUp>().itemnumber >= MasterItemList.Count)
           {
-
-                if (whichitem.GetComponent<PickUp>().itemnumber == 0 )
-                {
-
-                    gameManager.fleetManager.resourceManager.ResourceChange(1,0,0,0);
-                }
+                SpendMoney(-1);
+                
+            }
+            else if (whichitem.GetComponent<PickUp>().primaryResource == true )
+            {
                 if (whichitem.GetComponent<PickUp>().itemnumber == 1)
                 {
 
-                    gameManager.fleetManager.resourceManager.ResourceChange(0, 1, 0, 0);
+                    gameManager.fleetManager.resourceManager.ResourceChange(1, 0, 0, 0);
                 }
                 if (whichitem.GetComponent<PickUp>().itemnumber == 2)
                 {
 
-                    gameManager.fleetManager.resourceManager.ResourceChange(0, 0, 1, 0);
+                    gameManager.fleetManager.resourceManager.ResourceChange(0, 1, 0, 0);
                 }
                 if (whichitem.GetComponent<PickUp>().itemnumber == 3)
                 {
 
+                    gameManager.fleetManager.resourceManager.ResourceChange(0, 0, 1, 0);
+                }
+                if (whichitem.GetComponent<PickUp>().itemnumber == 4)
+                {
+
                     gameManager.fleetManager.resourceManager.ResourceChange(0, 0, 0, 1);
                 }
-            }
-            else if (whichitem.GetComponent<PickUp>().primaryResource == true )
-            {
-                SpendMoney(-1);
             }
             else
             {

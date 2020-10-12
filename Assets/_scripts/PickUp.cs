@@ -33,6 +33,21 @@ public class PickUp : MonoBehaviour {
 
 
     }
+
+    public void SetWhichItem(int newitemnumber = 0, int newvalue = 0, bool isprimaryresource = false)
+    {
+        primaryResource = isprimaryresource;
+        value = newvalue;
+        itemnumber = newitemnumber;
+
+        if (isprimaryresource == true && transform.GetChild(0).GetComponent<Renderer>() != null && colors.Length > newitemnumber)
+        {
+            transform.GetChild(0).GetComponent<Renderer>().material = colors[newitemnumber];
+     
+        }
+
+    }
+
     public void SetAsPlayerCache()
     {
       playerCache = true;
