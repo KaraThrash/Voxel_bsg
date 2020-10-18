@@ -80,7 +80,7 @@ public FleetManager fleetManager;
       }else
       {
 
-        fleetManager.fleetShips.gameObject.active = false;
+        //fleetManager.fleetShips.gameObject.active = false;
         fleetManager.galactica.gameObject.active = false;
         enemyFleetManager.baseStar.gameObject.active = false;
         mapManager.StartNewMap(playerManager.myship.transform);

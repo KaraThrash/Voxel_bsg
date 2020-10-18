@@ -154,7 +154,7 @@ public class AITurret : MonoBehaviour
     public void FaceTarget(GameObject targetship)
     {
 
-        if (myEnemy.RaycastAtTarget(targetship.transform) == true)
+        if (myEnemy.RaycastAtTarget(targetship.transform, checkForwardDistance) == true)
         {
 
                 float angle = Vector3.Angle((targetship.transform.position + targetship.GetComponent<Rigidbody>().velocity) - turretHead.position, turretHead.forward);

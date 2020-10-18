@@ -75,6 +75,11 @@ public class PlayerControls : MonoBehaviour
                     //seperate strafe and forward to be able to maneuver while gliding
                     strafeVelocity = playerMovement.StrafeMovement(playerStats.forwardtype,GetComponent<PlayerControls>(), playerStats, rb);
                     forwardVelocity = playerMovement.ForwardMovement(playerStats.strafetype, GetComponent<PlayerControls>(), playerStats, rb);
+
+                    //do some ships have a minium velocity, or is the engine a dial and not a button hold
+                    //if (forwardVelocity.magnitude < playerStats.minVelocityMagnitude) { forwardVelocity = transform.forward * playerStats.minVelocityMagnitude; }
+
+
                     if (enginesystem != null)
                     {
                         if (forwardVelocity.magnitude > 0.5f)

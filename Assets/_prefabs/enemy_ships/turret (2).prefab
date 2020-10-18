@@ -559,10 +559,17 @@ MonoBehaviour:
   destroyedIndicator: {fileID: 1231154604169057105}
   damagedIndicator: {fileID: 1231154604169057105}
   healthyIndicator: {fileID: 1231154603649771749}
+  itemDrop: {fileID: 0}
   hp: 5
+  maxhp: 0
+  itemvalue: 0
+  itemnumber: 0
   partType: turret
   destroyed: 0
   cannotBeHit: 0
+  holdsPrimaryResource: 0
+  dieTime: -1
+  dieTimer: 0
 --- !u!65 &1231154603356658530
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -593,7 +600,7 @@ MonoBehaviour:
   currentAttackPlan: 0
   speed: 50
   walkspeed: 10
-  rotForce: 6
+  rotForce: 2
   accuracy: 1
   closedistance: 10
   fardistance: 40
@@ -601,7 +608,7 @@ MonoBehaviour:
   acceleration: 0.3
   gunCost: 1
   targetInSight: 0
-  checkForwardDistance: 100
+  checkForwardDistance: 150
   gunCooldown: 0
   destroyed: 0
   canShoot: 0
@@ -624,7 +631,7 @@ MonoBehaviour:
   target: {fileID: 0}
   patrolparent: {fileID: 0}
   patroltarget: {fileID: 0}
-  bullet: {fileID: 1854357067856306, guid: 7c20892db9eec574889df3b8fcf44ef3, type: 3}
+  bullet: {fileID: 1854357067856306, guid: 7f6535fb4eeca7042be63cccb11c3785, type: 3}
   leadDistanceTarget: {fileID: 0}
   explosion: {fileID: 0}
   dradisModel: {fileID: 0}

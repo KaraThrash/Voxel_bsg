@@ -67,6 +67,8 @@ public class Enemy : MonoBehaviour {
       inCombat = false;
       if(patrolparent != null){  patroltarget = patrolparent.transform.GetChild(Random.Range(0,patrolparent.transform.childCount)).gameObject;  }
     }
+
+
     public void SetAlert(bool isAlert)
     {
       alert = isAlert;
@@ -217,44 +219,48 @@ public class Enemy : MonoBehaviour {
           if(alert == true)
           {
 
-            AlertActions();
-            if(target == null )
-            {
-              if(friendly == true){
+                    AlertActions();
+                    if(target == null )
+                    {
+                              if(friendly == true){
 
-                target = npcManager.GetClosestEnemy(this.gameObject);
-                if(target == this.gameObject){target = null;}
-              }
-              // else{  FindTarget();}
-
-
-
-            }
-
-          }
-          else{
+                                target = npcManager.GetClosestEnemy(this.gameObject);
+                                if(target == this.gameObject){target = null;}
+                              }
+                              // else{  FindTarget();}
 
 
-            //TODO: have enemies leash back to their start Position
-            if(returnHome == true )
-            {  if(inCombat == false)
-              {ReturnHome();}
-              else
-            {
-              AlertActions();
-              //if targeting something dont return until leashing
-              if(target != null && Vector3.Distance(target.transform.position,transform.position) > leashDistance)
-              {
-                target = null; inCombat = false; alert = false;
-              }
-              else
-              {
-                //the player is out of this enemies home area and the enemy is not targeting anything
-                inCombat = false;
-              }
-            }
+
+                    }
 
           }
+          else
+          {
+
+
+                        //TODO: have enemies leash back to their start Position
+                        if(returnHome == true )
+                        {  
+                                if(inCombat == false)
+                                {
+                                      ReturnHome();
+                                }
+                                  else
+                                {
+                                      AlertActions();
+                                      //if targeting something dont return until leashing
+                                      if(target != null && Vector3.Distance(target.transform.position,transform.position) > leashDistance)
+                                      {
+                                        target = null; inCombat = false; alert = false;
+                                      }
+                                      else
+                                      {
+                                        //the player is out of this enemies home area and the enemy is not targeting anything
+                                        inCombat = false;
+                                      }
+                                }
+
+                      }
 
 
 
@@ -311,8 +317,15 @@ public class Enemy : MonoBehaviour {
             else if(GetComponent<AIsquadunit>() != null)
           {
                 GetComponent<AIsquadunit>().Fly(target);
-            }else
-            { SendMessage("Fly",target);}
+            }
+            else if (GetComponent<AITurret>() != null)
+            {
+                GetComponent<AITurret>().Fly(target);
+            }
+            else
+            { 
+                //SendMessage("Fly",target);
+            }
         }
 
     }

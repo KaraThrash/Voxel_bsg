@@ -517,8 +517,8 @@ public class AIattackpattern : MonoBehaviour {
           }
         }
         else{
-
-          if(myEnemy.inBattle == true)
+            patroltarget = myEnemy.patrolparent.transform.GetChild(Random.Range(0, myEnemy.patrolparent.transform.childCount)).gameObject;
+            if (myEnemy.inBattle == true)
           {  myEnemy.FindTarget();}
             else{  myEnemy.CheckToNoticePlayer();}
 

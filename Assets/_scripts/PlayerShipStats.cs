@@ -18,7 +18,7 @@ public class PlayerShipStats : MonoBehaviour
     public float acceleration = 3.5f,decceleration = 0.1f;//stamina recharges faster when not being used
     public float flySpeed, strafeSpeed, rollSpeed, rollMod, liftSpeed;
     public float turnSpeed, camZspeed, engineMod, ammoSelected;
-
+    public float minVelocityMagnitude;
     public GameObject defaultBullet, bulletSelected;
     public int currentHp = 10;
     public bool glide;
