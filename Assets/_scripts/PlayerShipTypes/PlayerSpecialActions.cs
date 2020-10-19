@@ -27,12 +27,18 @@ public class PlayerSpecialActions : MonoBehaviour
             reticle.active = true;
             Vector3 targetpos = markedTarget.transform.position;
 
+            Vector3 leadtargetvelocity = -1 * (playerControls.GetComponent<Rigidbody>().velocity * (Vector3.Distance(playerControls.transform.position, targetpos) / GetComponent<PlayerShipStats>().bulletSelected.GetComponent<Bullet>().speed)) * 0.9f;
             if (markedTarget.GetComponent<Rigidbody>() != null)
             {
-                targetpos = (markedTarget.transform.position + (markedTarget.GetComponent<Rigidbody>().velocity ));
+
+                 leadtargetvelocity += (markedTarget.GetComponent<Rigidbody>().velocity * (Vector3.Distance(playerControls.transform.position, targetpos) / GetComponent<PlayerShipStats>().bulletSelected.GetComponent<Bullet>().speed)) * 0.9f;
+             
             }
-            reticle.transform.position = targetpos;
+            targetpos = (markedTarget.transform.position + leadtargetvelocity);
+            //reticle.transform.position = targetpos;
+            reticle.transform.position = Vector3.MoveTowards(reticle.transform.position, targetpos, Time.deltaTime * (10 + Vector3.Distance(reticle.transform.position,targetpos)));
             reticle.transform.LookAt(playerControls.transform.position);
+
         }
         else { reticle.active = false; }
 
@@ -143,6 +149,7 @@ public class PlayerSpecialActions : MonoBehaviour
         if (markedTarget == null)
         {
             markedTarget = GetComponent<Player>().gamemanager.npcManager.GetClosestEnemy(playerControls.playerShip);
+            reticle.transform.position = markedTarget.transform.position;
         }
         else { markedTarget = null; reticle.active = false ; }
 

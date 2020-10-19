@@ -318,7 +318,7 @@ public class AI0 : MonoBehaviour
                 transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotForce * Time.deltaTime);
 
                 // rb.AddForce(transform.forward * speed * Time.deltaTime, ForceMode.Impulse);
-                transform.position = Vector3.MoveTowards(transform.position, patrolpos, walkspeed * Time.deltaTime);
+                rb.velocity = Vector3.Lerp(rb.velocity, transform.forward * walkspeed, Time.deltaTime * acceleration);
             }
             else
             {

@@ -48,9 +48,10 @@ public class PlayerShipStats : MonoBehaviour
 
           float count = 0.5f;
           string tempstring = "";
+        float staminapercentage = (currentStamina / stamina) * 100;
           if(currentStamina >= 1){
-              while (count < currentStamina)
-              { tempstring += "."; count++; }
+              while (count < staminapercentage)
+              { tempstring += "."; count+= 10; }
           }
           stamText.text = tempstring;
     }

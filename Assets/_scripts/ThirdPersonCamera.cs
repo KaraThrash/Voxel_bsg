@@ -87,9 +87,9 @@ public class ThirdPersonCamera : MonoBehaviour
                
                 if (target != player)
                 {
-                    reticle.active = true;
-                    reticle.transform.position = targetpos;
-                    reticle.transform.LookAt(transform.position);
+                    //reticle.active = true;
+                    //reticle.transform.position = targetpos;
+                    //reticle.transform.LookAt(transform.position);
 
                 }
                 if (target.GetComponent<Rigidbody>() != null)

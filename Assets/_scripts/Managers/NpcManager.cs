@@ -259,7 +259,7 @@ public class NpcManager : MonoBehaviour {
       GameObject closestEnemy = fromObject;//enemies[0];
       foreach(GameObject go in enemies)
       {
-        if(go != fromObject && Vector3.Distance(go.transform.position,fromObject.transform.position) < currentDistance)
+        if(go != fromObject && go.GetComponent<Enemy>().hp > 0 && Vector3.Distance(go.transform.position,fromObject.transform.position) < currentDistance)
         {
           currentDistance = Vector3.Distance(go.transform.position,fromObject.transform.position);
           closestEnemy = go;

@@ -173,26 +173,30 @@ public class Enemy : MonoBehaviour {
            { hitby = hitby.transform.parent.parent.gameObject; }
         
             controlLockout = 0.2f;
-            rb.velocity = (transform.position - hitby.transform.position).normalized * hitby.GetComponent<Bullet>().impactForce;
-            rb.angularVelocity = (transform.position - transform.forward).normalized * hitby.GetComponent<Bullet>().impactForce * 0.2f;
-
-
-            if (tookdmgcolor != null)
+            if (rb != null)
             {
-                SetRenderer(tookdmgcolor);
-            }
-            if (hitby.GetComponent<Bullet>().ice == true)
-            {
-                controlLockout = 2.2f;
-                holdVelocity = (rb.velocity.normalized) * Mathf.Max(rb.velocity.magnitude, 5.0f);
+                rb.velocity = (transform.position - hitby.transform.position).normalized * hitby.GetComponent<Bullet>().impactForce;
+                rb.angularVelocity = (transform.position - transform.forward).normalized * hitby.GetComponent<Bullet>().impactForce * 0.2f;
 
-                if (frozenColor != null)
+
+
+
+                if (tookdmgcolor != null)
                 {
-                    SetRenderer(frozenColor);
+                    SetRenderer(tookdmgcolor);
                 }
+                if (hitby.GetComponent<Bullet>().ice == true)
+                {
+                    controlLockout = 2.2f;
+                    holdVelocity = (rb.velocity.normalized) * Mathf.Max(rb.velocity.magnitude, 5.0f);
 
+                    if (frozenColor != null)
+                    {
+                        SetRenderer(frozenColor);
+                    }
+
+                }
             }
-
             hp -= hitby.GetComponent<Bullet>().damage;
 
             if (hp <= 0)

@@ -19,6 +19,8 @@ public FleetManager fleetManager;
   public ThirdPersonCamera cam;
   public FtlImageFade imageFade;
   public GameObject dockMenu;
+  public ScrollingText scrollingText;
+  public Text contextText;
   public bool inMenu,inBattle,inMap;
 
 

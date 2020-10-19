@@ -61,6 +61,7 @@ public class Map : MonoBehaviour
 
         if (mapevents[eventNumber] == "spawn one wing")
         {
+            gameManager.scrollingText.NewLine("Dradis Contact");
             Vector3 newpos = enemySpawnLocations.GetChild(0).position;
             int count = 0;
             
@@ -77,6 +78,7 @@ public class Map : MonoBehaviour
         }
         else if (mapevents[eventNumber] == "spawn all wings")
         {
+            gameManager.scrollingText.NewLine("Multiple Dradis Contact");
             foreach (Transform el in enemySpawnLocations)
             {
                 Vector3 newpos = el.position;
