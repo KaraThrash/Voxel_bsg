@@ -170,7 +170,7 @@ public class PlayerControls : MonoBehaviour
             clone2.GetComponent<Bullet>().Launched(this.gameObject);
 
         }
-        else
+        else if (bullet.GetComponent<Bullet>().twinlinked == true)
         {
             Transform gunparent = playerShip.transform.Find("gunparent");
             if (gunparent != null)
@@ -188,6 +188,21 @@ public class PlayerControls : MonoBehaviour
                 gunoffset *= -1;
             }
             
+
+        }
+        else 
+        {
+            Transform gunparent = playerShip.transform.Find("gunparent");
+            if (gunparent != null)
+            {
+             
+                   
+                        GameObject clone = Instantiate(bullet, gunparent.position, gunparent.rotation) as GameObject;
+                        //clone.GetComponent<Rigidbody>().velocity = clone.GetComponent<Rigidbody>().velocity ;
+                        clone.GetComponent<Bullet>().SetRelativeVelocity(GetForwardVelocity());
+
+            }
+
 
         }
 

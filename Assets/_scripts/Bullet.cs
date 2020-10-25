@@ -14,7 +14,7 @@ public class Bullet : MonoBehaviour {
 
     public float timeIncrement = 1.0f,incrementTimer = 1.0f, spiralRange = 40.0f;
     private int toggleValue = 1;
-    public bool lance,missile,spray,twinLiked,boomerang,spiral; //toggles on instead of being a projectile
+    public bool lance,missile,spray,twinlinked,boomerang,spiral; //toggles on instead of being a projectile
     public bool ice;
 
     private Vector3 direction,secondaryDirection, relativeVelocity;
@@ -34,7 +34,7 @@ public class Bullet : MonoBehaviour {
           spray = false;
           Spray();
         }
-        if (twinLiked == true)
+        if (twinlinked == true)
        {
          TwinLink();
        }
