@@ -150,7 +150,7 @@ public class PlayerShipStats : MonoBehaviour
     public void ViperSetUp()
     {
         liftSpeed = speed + shipbasespeed;
-        rollSpeed = (speed + shipbasespeed) / 2;
+        rollSpeed = (speed + shipbasespeed) ;
 
         // rollMod = playerStats
         turnSpeed = (speed + shipbasespeed) / 2;
