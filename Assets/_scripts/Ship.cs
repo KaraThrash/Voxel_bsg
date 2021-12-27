@@ -36,4 +36,3 @@ public class Ship : MonoBehaviour
     }
 }
 
-public enum ShipSystem { armor, body, engine, gun, navigation }

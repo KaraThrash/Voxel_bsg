@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
+
+public enum ShipSystem { armor, body, engine, gun, navigation }
+
 public enum PlayerTypes { left, right, observer, test, neutral, enemy }
 public enum GameState { playing, inOverTime, rest, upgradeScreen, lobby, playersdead, bonusRound, tutorial, inactive,attractMode }
 public enum GunType { auto, semiauto, shotgun, spread, laser }
@@ -53,71 +56,6 @@ public enum ActionList { idle,attack,impact,block,special,gethit,spawn,land } //
 
 
 
-
-public class GameStateSnapshot
-{
-    //Capture events as early as possible in the action: the snapshot should be the game state when the action is taken, not the resulting state afterward
-
-    public DateTime timestamp;
-    public GameEvents gameEvent;
-
-    public float playerHealth, p1points, p2points;
-    public int enemiesOnScreen, player1AmmoReserve, player2AmmoReserve;
-    public int p1AmmoInGun, p2AmmoInGun;
-    public PlayerTypes whichPlayer; //0 is enemies or game
-
-    public DamageEvent damageEvent;
-
-    public void SetTimeStamp()
-    { timestamp = DateTime.UtcNow; }
-
-    public void GameEvent(GameEvents _event)
-    { gameEvent = _event; }
-    public GameEvents GameEvent()
-    { return gameEvent; }
-
-
-    public void SetDamageEvent(DamageEvent _event)
-    { damageEvent = _event; }
-    public DamageEvent GetDamageEvent()
-    { return damageEvent; }
-
-
-    public string EventReport()
-    {
-        string report = "";
-
-        report += gameEvent.ToString();
-
-        if (whichPlayer == PlayerTypes.left || whichPlayer == PlayerTypes.right)
-        {
-            report += " :Player-";
-            report += whichPlayer.ToString();
-
-        }
-
-        report += " :playerHealth-";
-        report += playerHealth.ToString();
-        report += " :p1points-";
-        report += p1points.ToString();
-        report += " :player1AmmoReserve-";
-        report += player1AmmoReserve.ToString();
-        report += " :p1AmmoInGun-";
-        report += p1AmmoInGun.ToString();
-        report += " :p2points-";
-        report += p2points.ToString();
-        report += " :player2AmmoReserve-";
-        report += player2AmmoReserve.ToString();
-        report += " :p2AmmoInGun-";
-        report += p2AmmoInGun.ToString();
-        report += " :enemiesOnScreen-";
-        report += enemiesOnScreen.ToString();
-
-        return report;
-    }
-
-
-}
 
 
 public static class EnumGroups
@@ -369,94 +307,6 @@ public static class EnumGroups
 
 
 
-
-    public static string EnemySoundToString(EnemySound _sound)
-    {
-        if (_sound == EnemySound.idle)
-        { return "idle"; }
-        else if (_sound == EnemySound.spawn)
-        { return "spawn"; }
-        else if (_sound == EnemySound.attack)
-        { return "attack"; }
-        else if (_sound == EnemySound.hurt)
-        { return "hurt"; }
-        else if (_sound == EnemySound.bodyhurt)
-        { return "bodyhurt"; }
-        else if (_sound == EnemySound.limbhurt)
-        { return "limbhurt"; }
-        else if (_sound == EnemySound.headhurt)
-        { return "headhurt"; }
-        else if (_sound == EnemySound.death)
-        { return "death"; }
-        else if (_sound == EnemySound.land)
-        { return "land"; }
-        else if (_sound == EnemySound.walk)
-        { return "walk"; }
-        else if (_sound == EnemySound.jog)
-        { return "jog"; }
-        else if (_sound == EnemySound.run)
-        { return "run"; }
-        else if (_sound == EnemySound.jump)
-        { return "jump"; }
-        else if (_sound == EnemySound.special)
-        { return "special"; }
-        else if (_sound == EnemySound.chainsaw)
-        { return "chainsaw"; }
-        else if (_sound == EnemySound.hookshot)
-        { return "hookshot"; }
-        else if (_sound == EnemySound.explosion)
-        { return "explosion"; }
-        else if (_sound == EnemySound.air)
-        { return "air"; }
-        else if (_sound == EnemySound.voice)
-        { return "voice"; }
-        return "idle";
-    }
-
-    public static EnemySound EnemySoundFromString(string _sound)
-    {
-        if (_sound.ToLower().Equals("idle"))
-        { return EnemySound.idle; }
-        else if (_sound.ToLower().Equals("spawn"))
-        { return EnemySound.spawn; }
-        else if (_sound.ToLower().Equals("attack"))
-        { return EnemySound.attack; }
-        else if (_sound.ToLower().Equals("hurt"))
-        { return EnemySound.hurt; }
-        else if (_sound.ToLower().Equals("bodyhurt"))
-        { return EnemySound.bodyhurt; }
-        else if (_sound.ToLower().Equals("limbhurt"))
-        { return EnemySound.limbhurt; }
-        else if (_sound.ToLower().Equals("headhurt"))
-        { return EnemySound.headhurt; }
-        else if (_sound.ToLower().Equals("death"))
-        { return EnemySound.death; }
-        else if (_sound.ToLower().Equals("land"))
-        { return EnemySound.land; }
-        else if (_sound.ToLower().Equals("walk"))
-        { return EnemySound.walk; }
-        else if (_sound.ToLower().Equals("jog"))
-        { return EnemySound.jog; }
-        else if (_sound.ToLower().Equals("run"))
-        { return EnemySound.run; }
-        else if (_sound.ToLower().Equals("jump"))
-        { return EnemySound.jump; }
-        else if (_sound.ToLower().Equals("special"))
-        { return EnemySound.special; }
-        else if (_sound.ToLower().Equals("chainsaw"))
-        { return EnemySound.chainsaw; }
-        else if (_sound.ToLower().Equals("hookshot"))
-        { return EnemySound.hookshot; }
-        else if (_sound.ToLower().Equals("explosion"))
-        { return EnemySound.explosion; }
-        else if (_sound.ToLower().Equals("air"))
-        { return EnemySound.air; }
-        else if (_sound.ToLower().Equals("voice"))
-        { return EnemySound.voice; }
-
-
-        return EnemySound.idle;
-    }
 
 
 
