@@ -27,7 +27,7 @@ public class AIattackpattern : MonoBehaviour {
   public Material avoidingCollisionColor,patrolColor;
   public Renderer myRenderer;
   public List<Material> colors;
-
+    public Vector3 plannedVelocity;
   private Vector3 straferunspot,tempTargetSpot,openSpotToAvoidCollision;
   private Quaternion targetRotation;
   private Rigidbody rb;
@@ -43,41 +43,55 @@ public class AIattackpattern : MonoBehaviour {
         {  transform.GetChild(0).GetComponent<Renderer>().material = colors[Random.Range(0,(int)colors.Count) ];}
     }
 
-
-  public void Fly(GameObject target)
-  {
-
-        myEnemy.RechargeStamina();
-
-        if (target != null)
-        {
-            //how long the target is, or is not in sight
-          TrackTimeTargetIsInSight(target);
-          Attack(target);
-
-        }
-        else
-        {
-          Patrol();
-          if (gunCooldown <= 0)
-          {
-              gunCooldown = gunCost * 3;
-
-              if(myEnemy.inBattle == true)
-              {  myEnemy.FindTarget();}
-                else{  myEnemy.CheckToNoticePlayer();}
+    void Update()
+    {
+        if (myEnemy.alert == true && myEnemy.GetControlLockout() <= 0) { Fly(); }
+    }
+    public void Fly(GameObject target)
+    { Fly(); }
 
 
-           }
+    public void Fly( )
+    {
+            GameObject target = myEnemy.target;
+            myEnemy.RechargeStamina();
+
+            if (target != null)
+            {
+                //how long the target is, or is not in sight
+                TrackTimeTargetIsInSight(target);
+                Attack(target);
+
+            }
+            else
+            {
+                Patrol();
+                if (gunCooldown <= 0)
+                {
+                    gunCooldown = gunCost * 3;
+
+                    if(myEnemy.inBattle == true)
+                    {  myEnemy.FindTarget();}
+                    else{  myEnemy.CheckToNoticePlayer();}
+
+
+                }
 
 
 
-        }
-        // if (gunCooldown > 0)
-        // { gunCooldown -= Time.deltaTime; }
-         gunCooldown -= Time.deltaTime;
+            }
 
-  }
+            //check that the intended velocity hasn't been reached, then check the stamina. shouldnt use the stamina if it is already going the correct speed
+            if (Vector3.Distance(rb.velocity , plannedVelocity) > 1.0f && myEnemy.UseStamina(myEnemy.engineStaminaCost * Time.deltaTime) == true)
+            {
+                rb.velocity = Vector3.Lerp(rb.velocity,plannedVelocity, Time.deltaTime);
+            }
+
+            // if (gunCooldown > 0)
+            // { gunCooldown -= Time.deltaTime; }
+            gunCooldown -= Time.deltaTime;
+
+    }
 
   public void AttackPlans(GameObject target)
   {
@@ -92,6 +106,7 @@ public class AIattackpattern : MonoBehaviour {
 
       break;
       case 1: //get behind
+
        GetBehind(target);
 
       break;
@@ -138,17 +153,10 @@ public class AIattackpattern : MonoBehaviour {
         {
           AvoidCollision();
         }
-        if (Input.GetKeyDown(KeyCode.M)) { CalculateNextMove(target); }
+        if (Input.GetKeyDown(KeyCode.M)) { gunCooldown = 0; CalculateNextMove(target); }
   }
 
-    public float DistanceToTarget(GameObject target)
-    { return Vector3.Distance(transform.position, target.transform.position); }
 
-    public float DistanceToTarget(Transform target)
-    { return Vector3.Distance(transform.position, target.position); }
-
-    public float DistanceToTarget(Vector3 target)
-    { return Vector3.Distance(transform.position, target); }
 
 
     //how long the target is, or is not in sight
@@ -187,7 +195,7 @@ public class AIattackpattern : MonoBehaviour {
     {
         if (colors.Count > 5 && myRenderer != null)
         { myRenderer.material = colors[5]; }
-        if (myEnemy.stamina > 5 || DistanceToTarget(targetship) < closedistance) { CalculateNextMove(targetship); }
+        if (myEnemy.stamina > 5 || myEnemy.DistanceToTarget(targetship) < closedistance) { CalculateNextMove(targetship); }
     }
 
       public void GetAway(GameObject targetship)
@@ -196,15 +204,12 @@ public class AIattackpattern : MonoBehaviour {
                 if(colors.Count > 0 && myRenderer != null)
                 {  myRenderer.material = colors[0];}
                 targetRotation = Quaternion.LookRotation(tempTargetSpot - transform.position );
-                //not impulse, momentuem based
 
-                if(myEnemy.UseStamina(myEnemy.engineStaminaCost * Time.deltaTime) == true)
-                {
-                      rb.AddForce(transform.forward * speed  *  Time.deltaTime,ForceMode.Impulse);
-
-                }
+                //set the velocity this enemy wants to travel in
+                 plannedVelocity = transform.forward * speed;
+                
                 transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotForce * Time.deltaTime);
-                if (DistanceToTarget(targetship) > fardistance || DistanceToTarget(tempTargetSpot) < closedistance)
+                if (myEnemy.DistanceToTarget(targetship) > fardistance || myEnemy.DistanceToTarget(tempTargetSpot) < closedistance)
                 {
                      CalculateNextMove(targetship);
                 }
@@ -218,24 +223,22 @@ public class AIattackpattern : MonoBehaviour {
         { myRenderer.material = colors[2]; }
 
         targetRotation = Quaternion.LookRotation(targetship.transform.position - transform.position);
-        //not impulse, momentuem based
 
-        if (myEnemy.UseStamina(myEnemy.engineStaminaCost * Time.deltaTime) == true)
-        {
-            rb.AddForce((tempTargetSpot - transform.position).normalized * speed * Time.deltaTime, ForceMode.Impulse);
-
-        }
+        //set the velocity this enemy wants to travel in
+        plannedVelocity = (tempTargetSpot - transform.position).normalized * speed;
+       
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotForce * Time.deltaTime);
 
-        if (DistanceToTarget(tempTargetSpot) < 1)
+        if (myEnemy.DistanceToTarget(tempTargetSpot) < 1)
         {
             //target has low stamina and is vunerable to follow up
             if (targetship.GetComponent<PlayerControls>().playerStats.GetStamina() < 3)
             {
+                gunCooldown = 0;
                 tempTargetSpot = targetship.transform.position + (transform.up * closedistance);
                 currentAttackPlan = 4; 
             }
-            else { CalculateNextMove(targetship); }
+            else { gunCooldown = 0; CalculateNextMove(targetship); }
         }
 
     }
@@ -247,16 +250,13 @@ public class AIattackpattern : MonoBehaviour {
         { myRenderer.material = colors[4]; }
 
         targetRotation = Quaternion.LookRotation(targetship.transform.position - transform.position);
-        //not impulse, momentuem based
+        //set the velocity this enemy wants to travel in
+        plannedVelocity = (tempTargetSpot - transform.position).normalized * speed;
 
-        if (myEnemy.UseStamina(myEnemy.engineStaminaCost * Time.deltaTime) == true)
-        {
-            rb.AddForce((tempTargetSpot - transform.position).normalized * speed * Time.deltaTime, ForceMode.Impulse);
-
-        }
+  
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotForce * Time.deltaTime);
 
-        if (DistanceToTarget(tempTargetSpot) < 1)
+        if (myEnemy.DistanceToTarget(tempTargetSpot) < 1)
         {
             //target has low stamina and is vunerable to follow up
             if (targetship.GetComponent<PlayerControls>().playerStats.GetStamina() < 3)
@@ -264,7 +264,7 @@ public class AIattackpattern : MonoBehaviour {
                 tempTargetSpot = targetship.transform.position - (transform.up * closedistance);
                 currentAttackPlan = 4;
             }
-            else { CalculateNextMove(targetship); }
+            else { gunCooldown = 0;  CalculateNextMove(targetship); }
         }
 
     }
@@ -272,7 +272,7 @@ public class AIattackpattern : MonoBehaviour {
     public void ZigZag(GameObject targetship) 
     {
         //dodge up down left right when the player has stamina to shoot and is facing you
-        if (DistanceToTarget(tempTargetSpot) < 2)
+        if (myEnemy.DistanceToTarget(tempTargetSpot) < 2)
         {
             float rnd = Random.Range(0, 10.0f);
             if (rnd > 8) { tempTargetSpot = transform.position + (transform.up * 5) + (transform.forward * 5); }
@@ -285,17 +285,15 @@ public class AIattackpattern : MonoBehaviour {
         { myRenderer.material = colors[3]; }
 
         targetRotation = Quaternion.LookRotation(targetship.transform.position - transform.position);
-        //not impulse, momentuem based
 
-        if (myEnemy.UseStamina(myEnemy.engineStaminaCost * Time.deltaTime) == true)
-        {
-            rb.AddForce((tempTargetSpot - transform.position).normalized * speed * Time.deltaTime, ForceMode.Impulse);
-
-        }
+        //set the velocity this enemy wants to travel in
+        plannedVelocity = (tempTargetSpot - transform.position).normalized * speed;
+   
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotForce * Time.deltaTime);
 
-        if (DistanceToTarget(targetship) < closedistance || targetship.GetComponent<PlayerControls>().playerStats.GetStamina() < 2)
+        if (myEnemy.DistanceToTarget(targetship) < closedistance || targetship.GetComponent<PlayerControls>().playerStats.GetStamina() < 2)
         {
+            gunCooldown = 0;
             CalculateNextMove(targetship);
         }
     }
@@ -323,7 +321,10 @@ public class AIattackpattern : MonoBehaviour {
 
           transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotForce * Time.deltaTime);
       }
-      rb.AddForce(transform.forward * speed * 10 *  Time.deltaTime);
+
+        //set the velocity this enemy wants to travel in
+        plannedVelocity = transform.forward * speed * 10;
+
       if(Vector3.Distance(targetship.transform.position,transform.position) < 7)
       {
         tempTargetSpot = transform.position + (transform.forward * closedistance);
@@ -339,7 +340,7 @@ public class AIattackpattern : MonoBehaviour {
 
         if (targetfacingme == true)
         {
-            if (targetStamina > 2)
+            if (targetStamina > 8)
             {
                 tempTargetSpot = transform.position + (transform.right * 5);
                 currentAttackPlan = 3; // zigzag
@@ -357,13 +358,21 @@ public class AIattackpattern : MonoBehaviour {
         }
         else 
         {
-            if (targetinfront == true)
+            if (currentAttackPlan == 1)
+            {
+                //target In Front
+
+                currentAttackPlan = 4; // getbehind
+            }
+            else if (targetinfront == true)
             {
                 //target In Front
 
                 currentAttackPlan = 1; // getbehind
             }
-            else { currentAttackPlan = 5;//recover 
+            else {
+                
+                currentAttackPlan = 5;//recover 
             }
 
 
@@ -469,7 +478,8 @@ public class AIattackpattern : MonoBehaviour {
 
               if(myEnemy.UseStamina(myEnemy.engineStaminaCost * Time.deltaTime) == true)
               {
-            rb.AddForce(transform.forward * speed * Time.deltaTime, ForceMode.Impulse);
+            //set the velocity this enemy wants to travel in
+            plannedVelocity = transform.forward * speed;
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotForce * Time.deltaTime);
           }
     }
@@ -537,12 +547,19 @@ public class AIattackpattern : MonoBehaviour {
                 {
 
                         if(Vector3.Distance(transform.position,(target.transform.position  - (target.transform.forward * closedistance) )) > 30)
-                        {rb.AddForce(transform.forward * speed * Time.deltaTime, ForceMode.Impulse);}
+                        {
+                            //set the velocity this enemy wants to travel in
+                            plannedVelocity = transform.forward * speed;
+                        }
                         else   if(Vector3.Distance(transform.position,(target.transform.position  - (target.transform.forward * closedistance) )) > 10)
-                          {  rb.AddForce(((target.transform.position  - (target.transform.forward * closedistance)) - transform.position) * speed * Time.deltaTime);}
+                          {
+                             //set the velocity this enemy wants to travel in
+                         plannedVelocity = ((target.transform.position - (target.transform.forward * closedistance)) - transform.position).normalized * speed;
+                         }
                         else
                         {
-                          transform.position = Vector3.MoveTowards(transform.position,(target.transform.position  - (target.transform.forward * closedistance)),speed * 0.1f * Time.deltaTime);
+                            plannedVelocity = Vector3.zero;
+                         transform.position = Vector3.MoveTowards(transform.position,(target.transform.position  - (target.transform.forward * closedistance)),speed * 0.1f * Time.deltaTime);
 
                         }
                   }

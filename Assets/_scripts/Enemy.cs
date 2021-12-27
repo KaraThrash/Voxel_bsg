@@ -16,7 +16,6 @@ public class Enemy : MonoBehaviour {
     public GameObject mapArea,target,patrolparent,patroltarget;
 
     public GameObject bullet;
-    public GameObject leadDistanceTarget;
     public GameObject explosion;
     public GameObject dradisModel;
     public GameObject squadLeader,myWing;
@@ -25,8 +24,9 @@ public class Enemy : MonoBehaviour {
     public Renderer myRenderer;
 
     public int value = 1,itemheldtype;
+
     public float hp;
-    public float speed = 20;
+    public float speed = 21;
     public float rotForce = 6;
     public float leashDistance, noticePlayerDistance = 50.0f;
 
@@ -58,15 +58,20 @@ public class Enemy : MonoBehaviour {
     public void ResetToNeutral(NpcManager npcmanager)
     {
 
-      npcManager = npcmanager;
-      startPos = transform.position;
-      startRot = transform.rotation;
-      if(rb == null){rb = GetComponent<Rigidbody>();}
-      if(hp <= 0){hp = 1;}
-      alert = false;
-      inCombat = false;
-      if(patrolparent != null){  patroltarget = patrolparent.transform.GetChild(Random.Range(0,patrolparent.transform.childCount)).gameObject;  }
+        npcManager = npcmanager;
+        startPos = transform.position;
+        startRot = transform.rotation;
+        if(rb == null){rb = GetComponent<Rigidbody>();}
+        if(hp <= 0){hp = 1;}
+        alert = false;
+        inCombat = false;
+        if(patrolparent != null)
+        { 
+            patroltarget = patrolparent.transform.GetChild(Random.Range(0,patrolparent.transform.childCount)).gameObject; 
+        }
     }
+
+
     public void SetAlert(bool isAlert)
     {
       alert = isAlert;
@@ -90,31 +95,36 @@ public class Enemy : MonoBehaviour {
       }
 
     }
+
+
     // Update is called once per frame
     void Update()
     {
 
         //getting frozen with ice or using special moves locks the controls
-          if(controlLockout <= 0){
+        if(controlLockout <= 0)
+        {
 
-                  //space battles have different idle/passive logic than a stage/level has
-                    if(inBattle == false)
-                    {
-                       FlyOnMap();
+                //space battles have different idle/passive logic than a stage/level has
+                if(inBattle == false)
+                {
+                     FlyOnMap();
 
-                     }
-                      else
-                      {
-                        FlyInBattle();
-                      }
-              }else{
+                }
+                else
+                {
+                    FlyInBattle();
+                }
+        }
+        else
+        {
 
-                  controlLockout -= Time.deltaTime;
-                  rb.velocity = holdVelocity;
-                  //if controls were locked because the ship was frozen with ice, reset the target velocity to zero
-                  if(controlLockout <= 0){  holdVelocity = Vector3.zero;}
+                controlLockout -= Time.deltaTime;
+                rb.velocity = holdVelocity;
+                //if controls were locked because the ship was frozen with ice, reset the target velocity to zero
+                if(controlLockout <= 0){  holdVelocity = Vector3.zero;}
 
-              }
+        }
 
 
     }
@@ -131,26 +141,28 @@ public class Enemy : MonoBehaviour {
 
 
             }
-            else{
-
-
+            else
+            {
 
                 AlertActions();
 
                 if(target == null )
                 {
-                  if(friendly == true){
 
-                    target = npcManager.GetClosestEnemy(this.gameObject);
-                    if(target == this.gameObject){target = null;}
-                  }
-                  else{
-                      FindTarget();
-                  }
+                        if(friendly == true)
+                        {
+
+                            target = npcManager.GetClosestEnemy(this.gameObject);
+                            if(target == this.gameObject){target = null;}
+                        }
+                        else
+                        {
+                              FindTarget();
+                        }
 
 
 
-                }
+                 }
 
 
             }
@@ -562,6 +574,8 @@ public class Enemy : MonoBehaviour {
 
     }
 
+    public float GetControlLockout()
+    { return controlLockout; }
 
 
 
