@@ -9,7 +9,7 @@ public class AITurnAndMove : MonoBehaviour
 
   // parameters to change/set how the ship controls
     public float speed = 50,walkspeed = 10;
-    public float rotForce = 6,rotModifier;
+    public float rotForce = 6,rotModifier, rotmodifiermax = 5;
     public float accuracy = 1;
 
     public float closedistance = 10,fardistance = 40,plusminus = 5;
@@ -109,8 +109,15 @@ public class AITurnAndMove : MonoBehaviour
       {  myRenderer.material = colors[currentAttackPlan + 1];}
       float angle = Vector3.Angle((targetship.transform.position + targetship.GetComponent<Rigidbody>().velocity) - transform.position, transform.forward);
 
-      if (angle <= accuracy) { canShoot = true; } else { canShoot = false; }
-      if (gunCooldown <= 0 && canShoot == true)
+
+        //turn faster the longer locked on
+      if (angle <= accuracy) { 
+            canShoot = true;
+            rotModifier += Time.deltaTime * 5;
+        } else { canShoot = false; rotModifier -= Time.deltaTime; }
+        rotModifier = Mathf.Clamp(rotModifier, 0, rotmodifiermax);
+
+        if (gunCooldown <= 0 && canShoot == true)
       {
 
           myEnemy.FireGuns();
@@ -123,7 +130,7 @@ public class AITurnAndMove : MonoBehaviour
             rb.AddForce(transform.forward * speed * 10 *  Time.deltaTime);
         }
         targetRotation = Quaternion.LookRotation(targetship.transform.position - transform.position );
-        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotForce * Time.deltaTime);
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, (rotForce + rotModifier) * Time.deltaTime);
 
     }
 
@@ -195,6 +202,8 @@ public class AITurnAndMove : MonoBehaviour
               {
                   canShoot = true;
                   avoidCollisionClock = 0;
+                Mathf.Clamp(rotModifier + Time.deltaTime,0,rotmodifiermax);
+                
 
               }
               else
@@ -204,11 +213,11 @@ public class AITurnAndMove : MonoBehaviour
 
                     if (avoidCollisionClock <= 0) { avoidCollisionClock = 1.4f; }
                     else { if (avoidCollisionClock < 3) { straferunspot = Vector3.zero; avoidCollisionClock += Time.deltaTime; } }
-
-              }
+                Mathf.Clamp(rotModifier - Time.deltaTime, 0, rotmodifiermax);
+            }
 
           }
-          else { avoidCollisionClock -= Time.deltaTime; canShoot = true; }
+          else { avoidCollisionClock -= Time.deltaTime; canShoot = true; Mathf.Clamp(rotModifier - Time.deltaTime, 0, rotmodifiermax); }
       }
 
       public void RayCastToFindOpening()

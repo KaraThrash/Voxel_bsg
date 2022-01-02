@@ -109,7 +109,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a67b379af63c18446b431be7b5d6ce10, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 9
+  speed: 22
   rotSpeed: 0
   explosion: {fileID: 0}
   target: {fileID: 0}
@@ -120,11 +120,14 @@ MonoBehaviour:
   lifeTime: 20
   impactForce: 0
   damage: 0
+  timeIncrement: 1
+  incrementTimer: 1
   lance: 0
   missile: 0
   spray: 0
   twinLiked: 0
   boomerang: 0
+  spiral: 0
   ice: 0
 --- !u!54 &54334647453984332
 Rigidbody:

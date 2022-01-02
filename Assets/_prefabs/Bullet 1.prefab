@@ -72,10 +72,11 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: c99c1e44d659f7847b21397cddee5382, type: 2}
+  - {fileID: 2100000, guid: 82d9e4b5ec844ba42bf1b61bbf59afbd, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -108,15 +109,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a67b379af63c18446b431be7b5d6ce10, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 25
+  speed: 150
   rotSpeed: 0
   explosion: {fileID: 0}
   target: {fileID: 0}
   large: 0
   intialExplosion: {fileID: 0}
+  childObject: {fileID: 0}
+  lifetimeMax: 10
   lifeTime: 10
+  impactForce: 0
+  damage: 1
+  timeIncrement: 1
+  incrementTimer: 1
+  spiralRange: 40
   lance: 0
   missile: 0
+  spray: 0
+  twinlinked: 0
+  boomerang: 0
+  spiral: 0
+  ice: 0
 --- !u!54 &54334647453984332
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -150,6 +163,7 @@ MonoBehaviour:
   value: 0
   itemnumber: 0
   playerCache: 0
+  primaryResource: 0
   colors: []
 --- !u!136 &1597250401199796602
 CapsuleCollider:
@@ -161,7 +175,7 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.5
-  m_Height: 1
+  m_Radius: 0.65
+  m_Height: 1.1
   m_Direction: 2
   m_Center: {x: 0, y: 0, z: 0}

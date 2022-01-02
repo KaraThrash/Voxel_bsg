@@ -4,18 +4,25 @@ using UnityEngine;
 using UnityEngine.UI;
 public class PlayerShipStats : MonoBehaviour
 {
+    public int strafetype, forwardtype, cameratype, weapontype; //for the different control patterns, layouts
     public int shipbasearmor,shipbasedamage,shipbasespeed;
     public int basearmor,basedamage,basespeed;
-    public int armor,damage,speed;
+    public int armor,damage,speed,roll;
     public int dodgeDistance = 50;
 
     public int hp = 10,stamina,tempHp,tempStamina;
 
-    public float weaponStaminaCost = 0.1f,engineStaminaCost = 0.1f;
+    public float weaponStaminaCost = 0.1f,engineStaminaCost = 0.1f, guncooldown = 0.1f;
     public float staminaRechargeRate = 1,currentstaminaRechargeBonus,staminaRechargeBonus,currentStamina;//stamina recharges faster when not being used
 
     public float acceleration = 3.5f,decceleration = 0.1f;//stamina recharges faster when not being used
+    public float flySpeed, strafeSpeed, rollSpeed, rollMod, liftSpeed;
+    public float turnSpeed, camZspeed, engineMod, ammoSelected;
+    public float minVelocityMagnitude;
+    public GameObject defaultBullet, bulletSelected;
     public int currentHp = 10;
+    public bool glide;
+    public GameObject glideIndicator;
     public Text stamText;
 
 
@@ -25,6 +32,7 @@ public class PlayerShipStats : MonoBehaviour
     void Start()
     {
       equipedAmmoList = new List<Item>();
+        ViperSetUp();
     }
 
 
@@ -40,9 +48,10 @@ public class PlayerShipStats : MonoBehaviour
 
           float count = 0.5f;
           string tempstring = "";
+        float staminapercentage = (currentStamina / stamina) * 100;
           if(currentStamina >= 1){
-              while (count < currentStamina)
-              { tempstring += "."; count++; }
+              while (count < staminapercentage)
+              { tempstring += "."; count+= 10; }
           }
           stamText.text = tempstring;
     }
@@ -137,5 +146,27 @@ public class PlayerShipStats : MonoBehaviour
         return statstring;
     }
 
+
+    public void ViperSetUp()
+    {
+        liftSpeed = speed + shipbasespeed;
+        rollSpeed = (speed + shipbasespeed) ;
+
+        // rollMod = playerStats
+        turnSpeed = (speed + shipbasespeed) / 2;
+        camZspeed = rollSpeed * 0.8f;
+        flySpeed = (speed + shipbasespeed);
+        engineMod = 5;
+        strafeSpeed = (speed + shipbasespeed);
+        acceleration = acceleration;
+        decceleration = decceleration;
+        weaponStaminaCost = weaponStaminaCost;
+        engineStaminaCost = engineStaminaCost;
+        // guncooldown = playerStats
+        // cameraspeed = playerStats
+        equipedAmmoList = equipedAmmoList;
+        ammoSelected = 0;
+        rollMod = 1;
+    }
 
 }

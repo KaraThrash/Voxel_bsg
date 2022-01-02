@@ -18,8 +18,9 @@ public FleetManager fleetManager;
   public AttackManager attackManager;
   public ThirdPersonCamera cam;
   public FtlImageFade imageFade;
-
   public GameObject dockMenu;
+  public ScrollingText scrollingText;
+  public Text contextText;
   public bool inMenu,inBattle,inMap;
 
 
@@ -81,7 +82,7 @@ public FleetManager fleetManager;
       }else
       {
 
-        fleetManager.fleetShips.gameObject.active = false;
+        //fleetManager.fleetShips.gameObject.active = false;
         fleetManager.galactica.gameObject.active = false;
         enemyFleetManager.baseStar.gameObject.active = false;
         mapManager.StartNewMap(playerManager.myship.transform);

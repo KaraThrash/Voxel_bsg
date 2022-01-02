@@ -21,16 +21,26 @@ public class MapManager : MonoBehaviour {
   {
       if(activeMapArea != null && currentMap.gameObject.active == true)
       {
-        //check the location of the player ship against the map segment to start enabling adjacent npcs
-        GameObject playerShip = gameManager.playerManager.GetPlayer();
-        if(Vector3.Distance(playerShip.transform.position,activeMapArea.transform.position) > rangeToChangeMapSegement)
-        {
-          //enable next spot
-          activeMapArea = FindClosestArea(playerShip.transform);
-          gameManager.npcManager.AlertNpcs(activeMapArea);
-        }
+            DetermineActiveArea();
+
+            currentMap.TrackMapEvents(gameManager);
       }
 	}
+
+
+    public void DetermineActiveArea()
+    {
+        //check the location of the player ship against the map segment to start enabling adjacent npcs
+        GameObject playerShip = gameManager.playerManager.GetPlayer();
+        if (Vector3.Distance(playerShip.transform.position, activeMapArea.transform.position) > rangeToChangeMapSegement)
+        {
+            //enable next spot
+            activeMapArea = FindClosestArea(playerShip.transform);
+            gameManager.npcManager.AlertNpcs(activeMapArea);
+        }
+    }
+
+
   public GameObject GetCurrentArea()
   {
     return activeMapArea;

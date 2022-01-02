@@ -5,7 +5,7 @@ using UnityEngine;
 public class Fleetship : MonoBehaviour {
     public GameObject gameManager;
     public FleetManager fleetManager;
-    public Transform shipParts;
+    public Transform shipParts,rotatingPart,visualHealthBar;
     public int pop;
     public int food;
     public int fuel;
@@ -16,6 +16,8 @@ public class Fleetship : MonoBehaviour {
     public bool hasresources;
     public int value; //points
     public string name;
+
+    public Vector3 idlerotspeed;
     // Use this for initialization
     void Start () {
         gameManager = GameObject.Find("GameManager");
@@ -23,6 +25,7 @@ public class Fleetship : MonoBehaviour {
         {
             resourcemanager.GetComponent<ResourceManager>().ResourceChange(pop, food, fuel, morale);
         }
+        UpdateHealthBar();
     }
 
 	// Update is called once per frame
@@ -36,6 +39,8 @@ public class Fleetship : MonoBehaviour {
 
 
         }
+        if (idlerotspeed != Vector3.zero && rotatingPart != null)
+        { rotatingPart.Rotate(idlerotspeed * Time.deltaTime); }
 	}
 
   public Transform GetShipParts()
@@ -68,6 +73,7 @@ public class Fleetship : MonoBehaviour {
     public void SystemDestroyed()
     {
         totalsubsystems--;
+        UpdateHealthBar();
         if (totalsubsystems <= 0)
         { dieclock = 10.0f;
             GetComponent<Rigidbody>().useGravity = true;
@@ -90,6 +96,27 @@ public class Fleetship : MonoBehaviour {
         }
 
     }
+
+    public void UpdateHealthBar()
+    {
+        if (visualHealthBar != null)
+        {
+            //check that there are more children then hp to accuratly represent the current status
+            if (visualHealthBar.childCount > totalsubsystems)
+            {
+                int count = 0;
+                while (count < visualHealthBar.childCount && count < 10)
+                {
+                    if (count < totalsubsystems)
+                    { visualHealthBar.GetChild(count).gameObject.active = true; }
+                    else { visualHealthBar.GetChild(count).gameObject.active = false; }
+                    count++;
+                }
+            }
+        }
+    }
+
+
     public void ShipDestroyed()
     {
       if(rubble != null){

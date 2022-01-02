@@ -56,8 +56,8 @@ public class ThirdPersonCamera : MonoBehaviour
         if (useController == false)
         {
 
-             yRot = (Input.GetAxis("Mouse X") * XSensitivity) + ((Input.GetAxis("4th Axis") * ( XSensitivity)))  ;
-             xRot = (Input.GetAxis("Mouse Y") * YSensitivity) +  ((Input.GetAxis("5th Axis") * -( YSensitivity)))  ;
+             yRot = (Input.GetAxis("Mouse X") * XSensitivity) + ((Input.GetAxis("4th Axis") * ( 3 * XSensitivity)))  ;
+             xRot = (Input.GetAxis("Mouse Y") * YSensitivity) +  ((Input.GetAxis("5th Axis") * -(3 *  YSensitivity)))  ;
         }
         else
         {
@@ -87,13 +87,21 @@ public class ThirdPersonCamera : MonoBehaviour
                
                 if (target != player)
                 {
-                    reticle.active = true;
-                    reticle.transform.position = targetpos;
-                    reticle.transform.LookAt(transform.position);
+                    //reticle.active = true;
+                    //reticle.transform.position = targetpos;
+                    //reticle.transform.LookAt(transform.position);
 
                 }
                 if (target.GetComponent<Rigidbody>() != null)
-            {  targetpos = (target.transform.position + target.GetComponent<Rigidbody>().velocity);}
+            {
+
+                    //targetpos = (target.transform.position + target.GetComponent<Rigidbody>().velocity) + player.GetComponent<Rigidbody>().velocity;
+                    Vector3 temp = (player.GetComponent<Rigidbody>().velocity).normalized;
+                    //should the distance calculation factor in the bullet type?
+                    temp *= Vector3.Distance(transform.position, target.transform.position) * 0.1f;
+                    targetpos = target.transform.position + target.GetComponent<Rigidbody>().velocity - temp;
+
+                }
 
                 if (xRot == 0 && yRot == 0 )
                 {
@@ -141,9 +149,9 @@ public class ThirdPersonCamera : MonoBehaviour
             Vector3 targetpos = target.transform.position;
             if (target != player)
             {
-                reticle.active = true;
-                reticle.transform.position = targetpos;
-                reticle.transform.LookAt(transform.position);
+                //reticle.active = true;
+                //reticle.transform.position = targetpos;
+                //reticle.transform.LookAt(transform.position);
             }
             if (target.GetComponent<Rigidbody>() != null)
             {
@@ -158,7 +166,7 @@ public class ThirdPersonCamera : MonoBehaviour
               m_CharacterTargetRot = transform.rotation;
           }
           else{
-                reticle.active = false;
+                //reticle.active = false;
                 transform.rotation = m_CharacterTargetRot;
 
           }

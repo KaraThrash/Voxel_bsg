@@ -10,18 +10,21 @@ public class PlayerControls : MonoBehaviour
   public GameObject camerasphere;
   public bool inMenu;
   public PlayerShipStats playerStats;
+    public Player player;
   private Rigidbody rb;
   public PlayerSpecialActions playerSpecialActions;
-  public float lockOutWeapons,lockOutEngines;
+  public float lockOutWeapons,lockOutEngines, inputBuffer,groundCollisionTimer, guncooldowntimer;
   public string lastAction;
-  private Vector3 velocityDirection;
-
+  private Vector3 velocityDirection,forwardVelocity,strafeVelocity;
+    private PlayerMovementTypes playerMovement;
   public float leftRightAxis,updownAxis,accelerationAxis, lastActionTimer, lastActionCutOffTime= 3.0f;
-
-
+    private float gunoffset = 1f; //so bullets dont step on eachother
+    public TrailRenderer trail;
+    public ParticleSystem enginesystem;
     void Start()
     {
               rb = GetComponent<Rigidbody>();
+            playerMovement = GetComponent<PlayerMovementTypes>();
     }
 
 
@@ -35,6 +38,7 @@ public class PlayerControls : MonoBehaviour
             if (lastActionTimer >= lastActionCutOffTime)
             { lastAction = ""; lastActionTimer = 0; }
         }
+
     }
 
 
@@ -49,46 +53,159 @@ public class PlayerControls : MonoBehaviour
     {
       // if(rb == null){  rb = GetComponent<Rigidbody>();}
         playerSpecialActions.ListenToButtonPresses();
+        inputBuffer -= Time.deltaTime;
 
-          if(playerShip.GetComponent<ViperControls>() != null)
-          {
-            if(lockOutWeapons <= 0)
-            {playerShip.GetComponent<ViperControls>().WeaponSystems();}
-            if(lockOutEngines <= 0)
+        if (trail != null) { trail.time = 3 * (rb.velocity.magnitude / playerStats.speed); }
+
+       
+
+        if (groundCollisionTimer <= 0)
+        {
+            //lock inputs after special actions like dodge/spin as to not override their affect
+            if (inputBuffer <= 0)
             {
-              playerShip.GetComponent<ViperControls>().ControlCamera(camerasphere,this.gameObject);
-                playerShip.GetComponent<ViperControls>().Fly(rb);
-            }
 
-
-
-          }else if(playerShip.GetComponent<RaptorControls>() != null)
-            {
-              playerShip.GetComponent<RaptorControls>().Fly(rb);
-              playerShip.GetComponent<RaptorControls>().WeaponSystems();
-              playerShip.GetComponent<RaptorControls>().ControlCamera(camerasphere,this.gameObject);
-            }
-            else if(playerShip.GetComponent<TankControls>() != null)
-              {
-                playerShip.GetComponent<TankControls>().Fly(rb);
-                playerShip.GetComponent<TankControls>().WeaponSystems();
-                playerShip.GetComponent<TankControls>().ControlCamera(camerasphere,this.gameObject);
-              }
-              else if(playerShip.GetComponent<TurningShip>() != null)
+                if (lockOutWeapons <= 0)
                 {
-                  playerShip.GetComponent<TurningShip>().Fly(rb);
-                  playerShip.GetComponent<TurningShip>().WeaponSystems();
-                  playerShip.GetComponent<TurningShip>().ControlCamera(camerasphere,this.gameObject);
+                   WeaponSystems();
+
                 }
-              else{}
+                if (lockOutEngines <= 0)
+                {
+                    //seperate strafe and forward to be able to maneuver while gliding
+                    strafeVelocity = playerMovement.StrafeMovement(playerStats.forwardtype,GetComponent<PlayerControls>(), playerStats, rb);
+                    forwardVelocity = playerMovement.ForwardMovement(playerStats.strafetype, GetComponent<PlayerControls>(), playerStats, rb);
 
-              if(lockOutEngines > 0 || lockOutWeapons > 0)
-              {  lockOutEngines -= Time.deltaTime;lockOutWeapons -= Time.deltaTime;}
-          if(playerStats != null)
-          {
-            playerStats.RechargeStamina();
+                    //do some ships have a minium velocity, or is the engine a dial and not a button hold
+                    //if (forwardVelocity.magnitude < playerStats.minVelocityMagnitude) { forwardVelocity = transform.forward * playerStats.minVelocityMagnitude; }
 
-          }
+
+                    if (enginesystem != null)
+                    {
+                        if (forwardVelocity.magnitude > 0.5f)
+                        {
+                            enginesystem.startSpeed = 3 * (rb.velocity.magnitude / playerStats.speed);
+                            enginesystem.emissionRate = 75 * (rb.velocity.magnitude / playerStats.speed);
+                        }
+                        else { enginesystem.emissionRate = 0; }
+                    }
+
+                    velocityDirection = strafeVelocity + forwardVelocity;
+
+                    rb.angularVelocity = Vector3.Lerp(rb.angularVelocity, Vector3.zero, Time.deltaTime);
+                    rb.velocity = Vector3.Lerp(rb.velocity, velocityDirection, Time.deltaTime);
+
+                    transform.Rotate(0, 0, playerMovement.ViperRoll(GetComponent<PlayerControls>(), playerStats, rb));
+                    playerMovement.ControlCamera(playerStats, camerasphere, this.gameObject);
+                }
+            }
+            else
+            {
+
+                rb.velocity = forwardVelocity + strafeVelocity;
+            }
+
+        }
+        else
+        {
+
+            groundCollisionTimer -= Time.deltaTime;
+
+        }
+
+
+                if(lockOutEngines > 0 || lockOutWeapons > 0)
+                {  
+                      lockOutEngines -= Time.deltaTime;lockOutWeapons -= Time.deltaTime;
+                }
+
+                if(playerStats != null)
+                {
+                      playerStats.RechargeStamina();
+
+                }
+    }
+
+
+    public void WeaponSystems()
+    {
+        if (guncooldowntimer > 0)
+        {
+            guncooldowntimer -= Time.deltaTime;
+        }
+        else
+        {
+            if (Input.GetMouseButton(0) || (Input.GetAxis("10thAxis")) > 0)
+            {
+
+                if (UseStamina(playerStats.weaponStaminaCost) == true)
+                {
+
+                    FireGuns();
+                    guncooldowntimer = playerStats.guncooldown;
+                }
+
+            }
+        }
+
+
+    }
+
+    public void FireGuns()
+    {
+        SetLastAction("attack");
+        GameObject bullet = playerStats.bulletSelected;
+
+        if (bullet.GetComponent<Bullet>().lance == true)
+        {
+
+            GameObject clone2 = Instantiate(bullet, transform.position, transform.rotation) as GameObject;
+            clone2.transform.parent = this.transform;
+
+        }
+        else if (bullet.GetComponent<Bullet>().boomerang == true)
+        {
+
+            GameObject clone2 = Instantiate(bullet, transform.position + (transform.forward * 5), transform.rotation) as GameObject;
+            clone2.GetComponent<Bullet>().Launched(this.gameObject);
+
+        }
+        else if (bullet.GetComponent<Bullet>().twinlinked == true)
+        {
+            Transform gunparent = playerShip.transform.Find("gunparent");
+            if (gunparent != null)
+            {
+                foreach (Transform gun in gunparent)
+                {
+                    if (gunoffset == 1)
+                    {
+                        GameObject clone = Instantiate(bullet, gun.position , gun.rotation) as GameObject;
+                        //clone.GetComponent<Rigidbody>().velocity = clone.GetComponent<Rigidbody>().velocity ;
+                        clone.GetComponent<Bullet>().SetRelativeVelocity(GetForwardVelocity());
+                    }
+                    gunoffset *= -1;
+                }
+                gunoffset *= -1;
+            }
+            
+
+        }
+        else 
+        {
+            Transform gunparent = playerShip.transform.Find("gunparent");
+            if (gunparent != null)
+            {
+             
+                   
+                        GameObject clone = Instantiate(bullet, gunparent.position, gunparent.rotation) as GameObject;
+                        //clone.GetComponent<Rigidbody>().velocity = clone.GetComponent<Rigidbody>().velocity ;
+                        clone.GetComponent<Bullet>().SetRelativeVelocity(GetForwardVelocity());
+
+            }
+
+
+        }
+
     }
 
     public string GetLastAction()
@@ -96,11 +213,13 @@ public class PlayerControls : MonoBehaviour
         return lastAction;
     }
 
+
     public void SetLastAction(string action)
     {
         lastActionTimer = 0;
         lastAction = action;
     }
+
 
     public void AttemptDodgeRoll()
     {
@@ -153,6 +272,7 @@ public class PlayerControls : MonoBehaviour
 
 
           playerStats = newplayerStats;
+          //only the active ship type should be enabled
           SetShipObjectsInactive();
           if(changeto == 0)
           {
@@ -214,51 +334,81 @@ public class PlayerControls : MonoBehaviour
 
     public void OnCollisionEnter(Collision col)
     {
-      if(playerShip.GetComponent<RaptorControls>() != null)
-      {
-        playerShip.GetComponent<RaptorControls>().HandleCollisionEnter(col,rb);
-      }else
-      {
-        if(playerShip.GetComponent<ViperControls>() != null)
+        if (col.gameObject.tag == "BulletEnemy")
         {
-          playerShip.GetComponent<ViperControls>().HandleCollisionEnter(col,rb);
-        }else{}
-      }
+           player.vehicletakingdamage(1);
+            player.gamemanager.imageFade.StartDmgFade();
+
+        }
+        //check if it is a pickup able object
+        if (col.gameObject.tag == "Resource")
+        {
+            //check if its the players dropped resources from the last time theydied
+            if (col.gameObject.GetComponent<PickUp>() != null && col.gameObject.GetComponent<PickUp>().playerCache == true)
+            {
+                player.PickUpCache();
+            }
+            else
+            {
+                //if not the player cache send to item manager to add to inventory
+                if (col.gameObject.GetComponent<PickUp>() != null)
+                {
+                    player.gamemanager.itemManager.ItemPickUp(col.gameObject);
+                }
+
+            }
+
+
+            //heldresource = col.gameObject.GetComponent<PickUp>().type;
+            Destroy(col.gameObject);
+
+        }
+
+        if (col.gameObject.tag == "Enviroment" && groundCollisionTimer <= 0)
+        {
+            //bounce off the ground on contact
+            //TODO calculate the right amount of bounce
+            groundCollisionTimer = 0.5f;
+            player.gamemanager.imageFade.StartDmgFade();
+            rb.velocity = (transform.position - col.contacts[0].point).normalized * rb.velocity.magnitude;
+            rb.angularVelocity = (transform.position - col.contacts[0].point).normalized * playerStats.flySpeed;
+        }
 
     }
 
 
     public void OnTriggerEnter(Collider col)
     {
-      if(playerShip.GetComponent<RaptorControls>() != null)
-      {
-        playerShip.GetComponent<RaptorControls>().HandleTriggerEnter(col,rb);
-      }else
-      {
-        if(playerShip.GetComponent<ViperControls>() != null)
+        if (col.gameObject.tag == "Exit")
         {
-          playerShip.GetComponent<ViperControls>().HandleTriggerEnter(col,rb);
-        }else{}
-      }
+           player.endLevel();
+
+        }
+        else if (col.gameObject.tag == "Dock")
+        {
+            player.NearDock(true);
+
+        }
+        else { }
 
     }
 
 
     public void OnTriggerExit(Collider col)
     {
-      if(playerShip.GetComponent<RaptorControls>() != null)
-      {
-        playerShip.GetComponent<RaptorControls>().HandleTriggerExit(col,rb);
-      }else
-      {
-        if(playerShip.GetComponent<ViperControls>() != null)
+        if (col.gameObject.tag == "Dock")
         {
-          playerShip.GetComponent<ViperControls>().HandleTriggerExit(col,rb);
-        }else{}
-      }
+            player.NearDock(false);
+
+        }
+        else { }
 
 
     }
 
+    public Vector3 GetStrafeVelocity()
+    { return strafeVelocity; }
+    public Vector3 GetForwardVelocity()
+    { return forwardVelocity; }
 
 }

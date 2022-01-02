@@ -139,7 +139,7 @@ public class NpcManager : MonoBehaviour {
 
     }
 
-    public GameObject SpawnOne(int whichone, Vector3 where, Quaternion rot,bool inbattle=false)
+    public GameObject SpawnOne(int whichone, Vector3 where, Quaternion rot,bool inbattle=false, bool alert=false, bool resettoneutral = true)
     {
         //to prevent infinite enemies from spawning by accident check the current quantity active
         if (enemyparent.transform.childCount >= maxEnemiesOnScreen) { print("TOO MANY ENEMIES ON SCREEN"); return null; }
@@ -156,9 +156,11 @@ public class NpcManager : MonoBehaviour {
         }
         if (clone.GetComponent<Enemy>() != null)
         {
-            clone.GetComponent<Enemy>().ResetToNeutral(GetComponent<NpcManager>());
+            if (resettoneutral == true)
+            { clone.GetComponent<Enemy>().ResetToNeutral(GetComponent<NpcManager>()); }
+            clone.GetComponent<Enemy>().npcManager = gameManager.npcManager;
             // clone.GetComponent<Enemy>().patrolparent = go.GetComponent<Map>().patrolLocations.gameObject;//.GetChild(count);
-            clone.GetComponent<Enemy>().SetAlert(false);
+            clone.GetComponent<Enemy>().SetAlert(alert);
            clone.GetComponent<Enemy>().inBattle = inbattle; 
         }
 
@@ -168,7 +170,6 @@ public class NpcManager : MonoBehaviour {
 
 
     }
-
 
 
     public GameObject SpawnNewController(int whichone, Vector3 where, Quaternion rot)
@@ -258,7 +259,7 @@ public class NpcManager : MonoBehaviour {
       GameObject closestEnemy = fromObject;//enemies[0];
       foreach(GameObject go in enemies)
       {
-        if(go != fromObject && Vector3.Distance(go.transform.position,fromObject.transform.position) < currentDistance)
+        if(go != fromObject && go.GetComponent<Enemy>().hp > 0 && Vector3.Distance(go.transform.position,fromObject.transform.position) < currentDistance)
         {
           currentDistance = Vector3.Distance(go.transform.position,fromObject.transform.position);
           closestEnemy = go;

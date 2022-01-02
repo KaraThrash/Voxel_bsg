@@ -142,14 +142,7 @@ public class AIattackpattern : MonoBehaviour {
         if (Input.GetKeyDown(KeyCode.M)) { CalculateNextMove(target); }
   }
 
-    public float DistanceToTarget(GameObject target)
-    { return Vector3.Distance(transform.position, target.transform.position); }
-
-    public float DistanceToTarget(Transform target)
-    { return Vector3.Distance(transform.position, target.position); }
-
-    public float DistanceToTarget(Vector3 target)
-    { return Vector3.Distance(transform.position, target); }
+    
 
 
     //how long the target is, or is not in sight
@@ -207,7 +200,7 @@ public class AIattackpattern : MonoBehaviour {
 
                 }
                 transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotForce * Time.deltaTime);
-                if (DistanceToTarget(targetship) > fardistance || DistanceToTarget(tempTargetSpot) < closedistance)
+                if (myEnemy.DistanceToTarget(targetship) > fardistance || myEnemy.DistanceToTarget(tempTargetSpot) < closedistance)
                 {
                      CalculateNextMove(targetship);
                 }
@@ -230,7 +223,7 @@ public class AIattackpattern : MonoBehaviour {
         }
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotForce * Time.deltaTime);
 
-        if (DistanceToTarget(tempTargetSpot) < 1)
+        if (myEnemy.DistanceToTarget(tempTargetSpot) < 1)
         {
             //target has low stamina and is vunerable to follow up
             if (targetship.GetComponent<PlayerControls>().playerStats.GetStamina() < 3)
@@ -259,7 +252,7 @@ public class AIattackpattern : MonoBehaviour {
         }
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotForce * Time.deltaTime);
 
-        if (DistanceToTarget(tempTargetSpot) < 1)
+        if (myEnemy.DistanceToTarget(tempTargetSpot) < 1)
         {
             //target has low stamina and is vunerable to follow up
             if (targetship.GetComponent<PlayerControls>().playerStats.GetStamina() < 3)
@@ -275,7 +268,7 @@ public class AIattackpattern : MonoBehaviour {
     public void ZigZag(GameObject targetship) 
     {
         //dodge up down left right when the player has stamina to shoot and is facing you
-        if (DistanceToTarget(tempTargetSpot) < 2)
+        if (myEnemy.DistanceToTarget(tempTargetSpot) < 2)
         {
             float rnd = Random.Range(0, 10.0f);
             if (rnd > 8) { tempTargetSpot = transform.position + (transform.up * 15) + (transform.forward * 5); }
@@ -297,7 +290,7 @@ public class AIattackpattern : MonoBehaviour {
         }
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotForce * Time.deltaTime);
 
-        if (DistanceToTarget(targetship) < closedistance || targetship.GetComponent<PlayerControls>().playerStats.GetStamina() < 2)
+        if (myEnemy.DistanceToTarget(targetship) < closedistance || targetship.GetComponent<PlayerControls>().playerStats.GetStamina() < 2)
         {
             CalculateNextMove(targetship);
         }
@@ -524,8 +517,8 @@ public class AIattackpattern : MonoBehaviour {
           }
         }
         else{
-
-          if(myEnemy.inBattle == true)
+            patroltarget = myEnemy.patrolparent.transform.GetChild(Random.Range(0, myEnemy.patrolparent.transform.childCount)).gameObject;
+            if (myEnemy.inBattle == true)
           {  myEnemy.FindTarget();}
             else{  myEnemy.CheckToNoticePlayer();}
 

@@ -67,6 +67,8 @@ public class Enemy : MonoBehaviour {
       inCombat = false;
       if(patrolparent != null){  patroltarget = patrolparent.transform.GetChild(Random.Range(0,patrolparent.transform.childCount)).gameObject;  }
     }
+
+
     public void SetAlert(bool isAlert)
     {
       alert = isAlert;
@@ -110,9 +112,12 @@ public class Enemy : MonoBehaviour {
               }else{
 
                   controlLockout -= Time.deltaTime;
-                  rb.velocity = holdVelocity;
-                  //if controls were locked because the ship was frozen with ice, reset the target velocity to zero
-                  if(controlLockout <= 0){  holdVelocity = Vector3.zero;}
+                        if (rb != null)
+                        {
+                            rb.velocity = holdVelocity;
+                            //if controls were locked because the ship was frozen with ice, reset the target velocity to zero
+                            if (controlLockout <= 0) { holdVelocity = Vector3.zero; }
+                        }
 
               }
 
@@ -162,36 +167,43 @@ public class Enemy : MonoBehaviour {
 
   public void HitByBullet(GameObject hitby)
   {
-
-        if (hitby.GetComponent<Bullet>() == null)
-        { hitby = hitby.transform.parent.parent.gameObject; }
-        controlLockout = 0.2f;
-      rb.velocity = (transform.position - hitby.transform.position ).normalized * hitby.GetComponent<Bullet>().impactForce;
-      rb.angularVelocity = (transform.position - transform.forward ).normalized * hitby.GetComponent<Bullet>().impactForce * 0.2f;
-
-       
-      if(tookdmgcolor != null)
-      {
-        SetRenderer(tookdmgcolor);
-      }
-      if(hitby.GetComponent<Bullet>().ice == true)
-      {
-        controlLockout = 2.2f;
-        holdVelocity = (rb.velocity.normalized) * Mathf.Max(rb.velocity.magnitude,5.0f);
-
-        if(frozenColor != null )
+        if (hp > 0)
         {
-            SetRenderer(frozenColor);
-        }
+            if (hitby.GetComponent<Bullet>() == null)
+           { hitby = hitby.transform.parent.parent.gameObject; }
+        
+            controlLockout = 0.2f;
+            if (rb != null)
+            {
+                rb.velocity = (transform.position - hitby.transform.position).normalized * hitby.GetComponent<Bullet>().impactForce;
+                rb.angularVelocity = (transform.position - transform.forward).normalized * hitby.GetComponent<Bullet>().impactForce * 0.2f;
 
-      }
 
-      hp -= hitby.GetComponent<Bullet>().damage;
+
+
+                if (tookdmgcolor != null)
+                {
+                    SetRenderer(tookdmgcolor);
+                }
+                if (hitby.GetComponent<Bullet>().ice == true)
+                {
+                    controlLockout = 2.2f;
+                    holdVelocity = (rb.velocity.normalized) * Mathf.Max(rb.velocity.magnitude, 5.0f);
+
+                    if (frozenColor != null)
+                    {
+                        SetRenderer(frozenColor);
+                    }
+
+                }
+            }
+            hp -= hitby.GetComponent<Bullet>().damage;
 
             if (hp <= 0)
             {
                 Die();
             }
+        }
 
   }
   public void SetRenderer(Material newColor)
@@ -211,44 +223,48 @@ public class Enemy : MonoBehaviour {
           if(alert == true)
           {
 
-            AlertActions();
-            if(target == null )
-            {
-              if(friendly == true){
+                    AlertActions();
+                    if(target == null )
+                    {
+                              if(friendly == true){
 
-                target = npcManager.GetClosestEnemy(this.gameObject);
-                if(target == this.gameObject){target = null;}
-              }
-              // else{  FindTarget();}
-
-
-
-            }
-
-          }
-          else{
+                                target = npcManager.GetClosestEnemy(this.gameObject);
+                                if(target == this.gameObject){target = null;}
+                              }
+                              // else{  FindTarget();}
 
 
-            //TODO: have enemies leash back to their start Position
-            if(returnHome == true )
-            {  if(inCombat == false)
-              {ReturnHome();}
-              else
-            {
-              AlertActions();
-              //if targeting something dont return until leashing
-              if(target != null && Vector3.Distance(target.transform.position,transform.position) > leashDistance)
-              {
-                target = null; inCombat = false; alert = false;
-              }
-              else
-              {
-                //the player is out of this enemies home area and the enemy is not targeting anything
-                inCombat = false;
-              }
-            }
+
+                    }
 
           }
+          else
+          {
+
+
+                        //TODO: have enemies leash back to their start Position
+                        if(returnHome == true )
+                        {  
+                                if(inCombat == false)
+                                {
+                                      ReturnHome();
+                                }
+                                  else
+                                {
+                                      AlertActions();
+                                      //if targeting something dont return until leashing
+                                      if(target != null && Vector3.Distance(target.transform.position,transform.position) > leashDistance)
+                                      {
+                                        target = null; inCombat = false; alert = false;
+                                      }
+                                      else
+                                      {
+                                        //the player is out of this enemies home area and the enemy is not targeting anything
+                                        inCombat = false;
+                                      }
+                                }
+
+                      }
 
 
 
@@ -305,8 +321,15 @@ public class Enemy : MonoBehaviour {
             else if(GetComponent<AIsquadunit>() != null)
           {
                 GetComponent<AIsquadunit>().Fly(target);
-            }else
-            { SendMessage("Fly",target);}
+            }
+            else if (GetComponent<AITurret>() != null)
+            {
+                GetComponent<AITurret>().Fly(target);
+            }
+            else
+            { 
+                //SendMessage("Fly",target);
+            }
         }
 
     }
@@ -454,10 +477,15 @@ public class Enemy : MonoBehaviour {
     {
         if(UseStamina(gunStaminaCost) == true)
         {
-            foreach(Transform go in guns)
+            if (guns.childCount > 0)
             {
-              GameObject clone = Instantiate(bullet, go.transform.position, go.transform.rotation);
+                foreach (Transform go in guns)
+                {
+                    GameObject clone = Instantiate(bullet, go.transform.position, go.transform.rotation);
+                }
             }
+            else { GameObject clone = Instantiate(bullet, guns.position, guns.rotation); }
+           
         }
     }
     public void CheckForward()

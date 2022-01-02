@@ -10,6 +10,7 @@ public class PlayerSpecialActions : MonoBehaviour
 
   public string leftkey,rightkey,upkey,downkey;
 
+    public GameObject reticle, markedTarget;
   private float keyPressedTimer;
     // Start is called before the first frame update
     void Start()
@@ -21,6 +22,26 @@ public class PlayerSpecialActions : MonoBehaviour
     void Update()
     {
       if(keyPressedTimer > 0){keyPressedTimer -= Time.deltaTime;}
+        if (markedTarget != null)
+        {
+            reticle.active = true;
+            Vector3 targetpos = markedTarget.transform.position;
+
+            Vector3 leadtargetvelocity = -1 * (playerControls.GetComponent<Rigidbody>().velocity * (Vector3.Distance(playerControls.transform.position, targetpos) / GetComponent<PlayerShipStats>().bulletSelected.GetComponent<Bullet>().speed)) * 0.9f;
+            if (markedTarget.GetComponent<Rigidbody>() != null)
+            {
+
+                 leadtargetvelocity += (markedTarget.GetComponent<Rigidbody>().velocity * (Vector3.Distance(playerControls.transform.position, targetpos) / GetComponent<PlayerShipStats>().bulletSelected.GetComponent<Bullet>().speed)) * 0.9f;
+             
+            }
+            targetpos = (markedTarget.transform.position + leadtargetvelocity);
+            //reticle.transform.position = targetpos;
+            reticle.transform.position = Vector3.MoveTowards(reticle.transform.position, targetpos, Time.deltaTime * (10 + Vector3.Distance(reticle.transform.position,targetpos)));
+            reticle.transform.LookAt(playerControls.transform.position);
+
+        }
+        else { reticle.active = false; }
+
     }
 
     public void ListenToButtonPresses()
@@ -40,6 +61,8 @@ public class PlayerSpecialActions : MonoBehaviour
              // if(Input.GetKeyDown("1"))
              if(Input.GetKeyDown(KeyCode.Alpha1))
              {LockOn();}
+            if(Input.GetKeyDown(KeyCode.Alpha2))
+             {MarkTarget();}
              // if(Input.GetKeyDown(KeyCode.JoystickButton1))
              // {DodgeRoll(vKey);}
 
@@ -120,6 +143,18 @@ public class PlayerSpecialActions : MonoBehaviour
         else{playerControls.lockOnTarget = null; playerControls.camerasphere.GetComponent<ThirdPersonCamera>().target = null;}
 
     }
+
+    public void MarkTarget()
+    {
+        if (markedTarget == null)
+        {
+            markedTarget = GetComponent<Player>().gamemanager.npcManager.GetClosestEnemy(playerControls.playerShip);
+            reticle.transform.position = markedTarget.transform.position;
+        }
+        else { markedTarget = null; reticle.active = false ; }
+
+    }
+
     public void DodgeRoll(string direction)
     {
         playerControls.AttemptDodgeRoll();

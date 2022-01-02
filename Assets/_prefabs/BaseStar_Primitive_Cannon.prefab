@@ -462,7 +462,7 @@ Transform:
   m_GameObject: {fileID: 3448271105738270074}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 255.7, y: 917, z: -685}
-  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 3448271107534770576}
   - {fileID: 3448271107021670903}
@@ -2655,11 +2655,15 @@ MonoBehaviour:
   lifeTime: 40
   impactForce: 0
   damage: 0
+  timeIncrement: 1
+  incrementTimer: 1
+  spiralRange: 40
   lance: 0
   missile: 0
   spray: 0
   twinLiked: 0
   boomerang: 0
+  spiral: 0
   ice: 0
 --- !u!54 &8298625426216596514
 Rigidbody:

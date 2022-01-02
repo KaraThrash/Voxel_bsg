@@ -6,7 +6,7 @@ public class PickUp : MonoBehaviour {
   public ItemManager itemManager;
     public int type;
     public int value, itemnumber; //if engine speed, if gun attack cooldown
-    public bool playerCache;
+    public bool playerCache,primaryResource;
     public Material[] colors; //green,red,blue,yellow
 	// Use this for initialization
 	void Start () {
@@ -33,6 +33,21 @@ public class PickUp : MonoBehaviour {
 
 
     }
+
+    public void SetWhichItem(int newitemnumber = 0, int newvalue = 0, bool isprimaryresource = false)
+    {
+        primaryResource = isprimaryresource;
+        value = newvalue;
+        itemnumber = newitemnumber;
+
+        if (isprimaryresource == true && transform.GetChild(0).GetComponent<Renderer>() != null && colors.Length > newitemnumber)
+        {
+            transform.GetChild(0).GetComponent<Renderer>().material = colors[newitemnumber];
+     
+        }
+
+    }
+
     public void SetAsPlayerCache()
     {
       playerCache = true;
