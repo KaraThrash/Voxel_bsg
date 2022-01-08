@@ -7,7 +7,7 @@ public enum SystemType { armor,body,engine,guidance,maneuver,targeting}
 
 public enum PlayerTypes { left, right, observer, test, neutral, enemy }
 public enum GameState { playing, inOverTime, rest, upgradeScreen, lobby, playersdead, bonusRound, tutorial, inactive,attractMode }
-public enum GunType { auto, semiauto, shotgun, spread, laser }
+public enum GunType { auto,burst, semiauto, shotgun, spread, laser }
 
 
 public enum GunState { idle, reload, shoot, hookshot, chainsaw, broken, menu, power,sandbox }
