@@ -74,15 +74,7 @@ public class ShipPart : MonoBehaviour {
             return;
         }
 
-      if(myship.GetComponent<BaseStar>() != null)
-      {
-       
-         
-
-        //if this is on the basestar update the enemy fleet stats
-        myship.GetComponent<BaseStar>().SystemDestroyed(partType);
-      }
-      else if(myship.GetComponent<ShipPart>() != null)
+      if(myship.GetComponent<ShipPart>() != null)
       {
         //set the ship part to indicate that it is destroyed
          

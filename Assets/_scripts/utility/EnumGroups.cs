@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public enum SystemType { armor,body,engine,guidance,maneuver,targeting}
+public enum SystemState { on,off,locked,broken,damaged}
 
 public enum PlayerTypes { left, right, observer, test, neutral, enemy }
 public enum GameState { playing, inOverTime, rest, upgradeScreen, lobby, playersdead, bonusRound, tutorial, inactive,attractMode }

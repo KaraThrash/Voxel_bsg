@@ -72,8 +72,7 @@ public class WorldTime : MonoBehaviour
     {
 
 
-      if(gameManager.GetInBattle() == false)
-      {
+     
         if(timeUntilAttack > 0){  timeUntilAttack -= (Time.deltaTime * timerate);}
 
         currentMinutes = (int)timeUntilAttack / 60;
@@ -98,24 +97,14 @@ public class WorldTime : MonoBehaviour
 
             joinAttackButton.active = false;
         }
-      }
-      else
-      {
-            timeUntilAttack = -1;
-            joinAttackButton.active = false;
-
-      }
+      
+    
 
       timeSinceLastJump += (Time.deltaTime * timerate);
 
-        //for testing keep this low so it's easy to activate
-      if((10 - gameManager.fleetManager.engineStrength) < (timeSinceLastJump ) ){
-        fleetJumpButton.active = true;
-      }
-      else{fleetJumpButton.active = false;}
 
       //todo: make this a bar that fills, or clock that ticks?
-      fleetJumpReadiness.text = (int)timeSinceLastJump + " / " + gameManager.fleetManager.engineStrength;
+     
 
 
       SetClockText();

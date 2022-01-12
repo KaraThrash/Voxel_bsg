@@ -17,6 +17,8 @@ public class Gun : ShipSystem
     public GameObject bullet;
     public GunType gunType;
 
+ 
+
     [Min(0.01f)]
     public float burstTime,cooldownTime;
     public float burstTracker,cooldownTracker;
@@ -108,6 +110,7 @@ public class Gun : ShipSystem
 
     public override void Activate()
     {
+        
         on = true;
 
         if (GetGunType() == GunType.burst) 
@@ -142,6 +145,9 @@ public class Gun : ShipSystem
     {
         on = false;
     }
+
+
+
 
 
     public void FireBullet()
