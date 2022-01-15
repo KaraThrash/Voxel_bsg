@@ -5,4 +5,6 @@ using UnityEngine;
 public static class DebugControls
 {
     public static bool debugEnabled = false;
+
+
 }

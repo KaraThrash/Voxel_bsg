@@ -9,15 +9,30 @@ public class Thruster : ShipSystem
 
     public float currentAcc,throttle;
 
+
+
     public override void Act()
     {
         if (GetSystemState() == SystemState.on )
         {
-            if (currentAcc < 1 - accelerationRate)
+            if (axis.Length > 0)
             {
-                currentAcc = Mathf.Lerp(currentAcc, 1, accelerationRate * Time.deltaTime);
+                throttle = Input.GetAxis(axis);
             }
-            else { currentAcc = 1; }
+            else 
+            {
+                if (Input.GetButton(activateButton))
+                { throttle = 1; }
+                else { throttle = 0; }
+            }
+
+            currentAcc = Mathf.Lerp(currentAcc, throttle, accelerationRate * Time.deltaTime);
+
+            //if (currentAcc < Input.GetAxis(axis) - accelerationRate)
+            //{
+            //    currentAcc = Mathf.Lerp(currentAcc, Input.GetAxis(axis), accelerationRate * Time.deltaTime);
+            //}
+            //else { currentAcc = Input.GetAxis(axis); }
         }
         else if (GetSystemState() == SystemState.locked)
         {
@@ -41,15 +56,14 @@ public class Thruster : ShipSystem
         if (ship && ship.CanAct() && currentAcc != 0)
         {
             float pwr = power * currentAcc * Time.deltaTime;
-            throttle = 0;
 
             //todo: glide/throttle lock/cruise control
-            if (axis.Length > 0 && Input.GetAxis(axis) != 0)
-            {
-                throttle = Input.GetAxis(axis);
-            }
+            //if (axis.Length > 0 && Input.GetAxis(axis) != 0)
+            //{
+            //    throttle = Input.GetAxis(axis);
+            //}
 
-            RbTarget().AddForce(transform.forward * (pwr * throttle), ForceMode.Impulse );
+            RbTarget().AddForce(transform.forward * (pwr * 1), ForceMode.Impulse );
 
         }
 

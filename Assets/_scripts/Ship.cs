@@ -11,6 +11,8 @@ public class Ship : MonoBehaviour
 
     public float stamina, maxStamina, staminaRechargeRate;
 
+
+
     // Start is called before the first frame update
     void Start()
     {

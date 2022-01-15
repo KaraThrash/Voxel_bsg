@@ -7,20 +7,11 @@ public enum SystemType { armor,body,engine,guidance,maneuver,targeting}
 public enum SystemState { on,off,locked,broken,damaged}
 
 public enum PlayerTypes { left, right, observer, test, neutral, enemy }
+
+
 public enum GameState { playing, inOverTime, rest, upgradeScreen, lobby, playersdead, bonusRound, tutorial, inactive,attractMode }
 public enum GunType { auto,burst, semiauto, shotgun, spread, laser }
 
-
-public enum GunState { idle, reload, shoot, hookshot, chainsaw, broken, menu, power,sandbox }
-
-//Try to determine the pace the players are performing at and adjust accordingly when possible
-//thinking of Resident Evil 4 
-public enum CurrentPace { normal, slow, fast, losing, winning, confused }
-public enum playerCommands { shootStart, shootEnd, hookshotStart, hookshotEnd, chainsawStart, chainsawEnd, reload }
-public enum DeathCondition { bullet, headshot, explosion, largeExplosion, chainsaw, hookshot, none }
-
-public enum LevelTypes { basic,bonus,upgrade,tutorial,other }
-public enum RoundEndCondition { time, kills, points, endless }
 
 public enum AiState { 
     recovering, pregrabbed, grabbed, 
@@ -32,20 +23,11 @@ public enum AiState {
     ragdolling
 }
 
-public enum LocationType { barricade, mortar, air, stage }
 
 public enum UpgradeType { ammo, health, chainsawReward, damage, clipsize, firerate, ammoPickupBonus }
-public enum EnemySound { idle, spawn, attack, hurt, bodyhurt, limbhurt, headhurt, death, chainsaw, hookshot, air, explosion, voice, land, walk, jog, run, jump, special, pickup, load }
-public enum AnimationEvent { spawn, attack, mortarFire, die, impact, stand,land, rage, pickup, drop }
-public enum ConditionalDamage { headshot,bomb,basic,immune,none }
 
 public enum EnemyType { basic, mortar, jetpack, boss }
-public enum SurfaceMaterial { flesh, sand, bone, metal, ground, stone, fire, none }
-public enum BodyParts { chest, head, arm, leg, other, armor, weapon }
 public enum ItemTypes { sword, shield, mortarShell,fireBall,none }
-public enum GameEvents { shootGun, gunHitBullet, gunHitEnemy, gunMiss, shootHookshot, hitHookshot, endHookshot, activateChainsaw, hitChainsaw, endChainsaw, reload, enemyDie, damageEvent, takeDamage, playerDie, dryFire, enemySpawn, roundEnd, standardInterval, useUpgrade, startGame }
-public enum SpawnZone { middle,middleClose,middleFar,middleVeryClose,middleVeryFar,side,sideClose,sideFar,leftside,rightSide,ground,air }
-public enum ActionList { idle,attack,impact,block,special,gethit,spawn,land } //us an int to send to the ragdolls animator
 
 
 
@@ -81,28 +63,6 @@ public static class EnumGroups
 
 
 
-
-
-
-    public static string SurfaceMaterialToString(SurfaceMaterial _type)
-    {
-
-        return _type.ToString();
-    }
-
-    public static SurfaceMaterial SurfaceMaterialToString(string _type)
-    {
-
-        foreach (SurfaceMaterial el in (SurfaceMaterial[])Enum.GetValues(typeof(SurfaceMaterial)))
-        {
-            if (el.ToString().Equals(_type))
-            { return el; }
-        }
-
-
-        return SurfaceMaterial.flesh;
-
-    }
 
 
 
@@ -151,22 +111,6 @@ public static class EnumGroups
 
 
 
-    public static string DeathConditionToString(DeathCondition _type)
-    {
-        return _type.ToString();
-    }
-    public static DeathCondition DeathConditionFromString(string _type)
-    {
-        foreach (DeathCondition el in (DeathCondition[])Enum.GetValues(typeof(DeathCondition)))
-        {
-            if (el.ToString().Equals(_type))
-            { return el; }
-        }
-
-
-        return DeathCondition.bullet;
-
-    }
 
 
 
@@ -187,27 +131,6 @@ public static class EnumGroups
 
     }
 
-
-    public static string GunStateToString(GunState _type)
-    {
-
-
-        return _type.ToString();
-    }
-
-    public static GunState GunStateFromString(string _type)
-    {
-
-        foreach (GunState el in (GunState[])Enum.GetValues(typeof(GunState)))
-        {
-            if (el.ToString().Equals(_type))
-            { return el; }
-        }
-        
-
-        return GunState.idle;
-
-    }
 
 
     public static string ItemToString(ItemTypes _type)
@@ -231,28 +154,6 @@ public static class EnumGroups
 
     }
 
-
-
-    public static string LocationTypeToString(LocationType _type)
-    {
-
-
-        return _type.ToString();
-    }
-
-    public static LocationType LocationTypeFromString(string _type)
-    {
-
-        foreach (LocationType el in (LocationType[])Enum.GetValues(typeof(LocationType)))
-        {
-            if (el.ToString().Equals(_type))
-            { return el; }
-        }
-
-
-        return LocationType.barricade;
-
-    }
 
 
 
@@ -279,115 +180,9 @@ public static class EnumGroups
 
         return EnemyType.basic;
     }
-    public static string ConditionalDamageToString(ConditionalDamage _type)
-    {
-        return _type.ToString();
-    }
-
-    public static ConditionalDamage ConditionalDamageFromString(string _type)
-    {
-
-        foreach (ConditionalDamage el in (ConditionalDamage[])Enum.GetValues(typeof(ConditionalDamage)))
-        {
-            if (el.ToString().Equals(_type))
-            { return el; }
-        }
 
 
 
-        return ConditionalDamage.basic;
-    }
-
-
-
-
-    public static string EnemySoundToString(EnemySound _sound)
-    {
-        if (_sound == EnemySound.idle)
-        { return "idle"; }
-        else if (_sound == EnemySound.spawn)
-        { return "spawn"; }
-        else if (_sound == EnemySound.attack)
-        { return "attack"; }
-        else if (_sound == EnemySound.hurt)
-        { return "hurt"; }
-        else if (_sound == EnemySound.bodyhurt)
-        { return "bodyhurt"; }
-        else if (_sound == EnemySound.limbhurt)
-        { return "limbhurt"; }
-        else if (_sound == EnemySound.headhurt)
-        { return "headhurt"; }
-        else if (_sound == EnemySound.death)
-        { return "death"; }
-        else if (_sound == EnemySound.land)
-        { return "land"; }
-        else if (_sound == EnemySound.walk)
-        { return "walk"; }
-        else if (_sound == EnemySound.jog)
-        { return "jog"; }
-        else if (_sound == EnemySound.run)
-        { return "run"; }
-        else if (_sound == EnemySound.jump)
-        { return "jump"; }
-        else if (_sound == EnemySound.special)
-        { return "special"; }
-        else if (_sound == EnemySound.chainsaw)
-        { return "chainsaw"; }
-        else if (_sound == EnemySound.hookshot)
-        { return "hookshot"; }
-        else if (_sound == EnemySound.explosion)
-        { return "explosion"; }
-        else if (_sound == EnemySound.air)
-        { return "air"; }
-        else if (_sound == EnemySound.voice)
-        { return "voice"; }
-        return "idle";
-    }
-
-    public static EnemySound EnemySoundFromString(string _sound)
-    {
-        if (_sound.ToLower().Equals("idle"))
-        { return EnemySound.idle; }
-        else if (_sound.ToLower().Equals("spawn"))
-        { return EnemySound.spawn; }
-        else if (_sound.ToLower().Equals("attack"))
-        { return EnemySound.attack; }
-        else if (_sound.ToLower().Equals("hurt"))
-        { return EnemySound.hurt; }
-        else if (_sound.ToLower().Equals("bodyhurt"))
-        { return EnemySound.bodyhurt; }
-        else if (_sound.ToLower().Equals("limbhurt"))
-        { return EnemySound.limbhurt; }
-        else if (_sound.ToLower().Equals("headhurt"))
-        { return EnemySound.headhurt; }
-        else if (_sound.ToLower().Equals("death"))
-        { return EnemySound.death; }
-        else if (_sound.ToLower().Equals("land"))
-        { return EnemySound.land; }
-        else if (_sound.ToLower().Equals("walk"))
-        { return EnemySound.walk; }
-        else if (_sound.ToLower().Equals("jog"))
-        { return EnemySound.jog; }
-        else if (_sound.ToLower().Equals("run"))
-        { return EnemySound.run; }
-        else if (_sound.ToLower().Equals("jump"))
-        { return EnemySound.jump; }
-        else if (_sound.ToLower().Equals("special"))
-        { return EnemySound.special; }
-        else if (_sound.ToLower().Equals("chainsaw"))
-        { return EnemySound.chainsaw; }
-        else if (_sound.ToLower().Equals("hookshot"))
-        { return EnemySound.hookshot; }
-        else if (_sound.ToLower().Equals("explosion"))
-        { return EnemySound.explosion; }
-        else if (_sound.ToLower().Equals("air"))
-        { return EnemySound.air; }
-        else if (_sound.ToLower().Equals("voice"))
-        { return EnemySound.voice; }
-
-
-        return EnemySound.idle;
-    }
 
 
 

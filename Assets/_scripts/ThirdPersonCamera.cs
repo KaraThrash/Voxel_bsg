@@ -10,8 +10,11 @@ public class ThirdPersonCamera : MonoBehaviour
     public bool inMenu,movetowards;
     public float lockOnSpeed,damping,inputbufferforlockon; 
     public float flyspeed,distanceToCatchPlayer;
+
     public float XSensitivity = 2f;
     public float YSensitivity = 2f;
+    public float ZSensitivity = 2f;
+
     public bool clampVerticalRotation = true;
     public float MinimumX = -90F;
     public float MaximumX = 90F;
@@ -29,6 +32,7 @@ public class ThirdPersonCamera : MonoBehaviour
     public float yRot;
     public void Start()
     {
+     //   InputControls.cameraHorizontal = "4th Axis"; InputControls.cameraVertical = "5th Axis";
         m_CharacterTargetRot = transform.rotation;
 
     }
@@ -38,7 +42,7 @@ public class ThirdPersonCamera : MonoBehaviour
       if(inMenu == true)
       {
         Cursor.lockState = CursorLockMode.None;
-       Cursor.visible = true;
+        Cursor.visible = true;
       }
     }
 
@@ -48,33 +52,42 @@ public class ThirdPersonCamera : MonoBehaviour
       transform.rotation = player.transform.rotation;
     }
 
+
+    private float idleTimer; //how long after no camera input to change the rotation back
+    public float resetCameraSmooth = 0.2f, timeToResetRotation = 5;
+
     public void Update()
 
     {
         
         transform.position = player.transform.position;
-        if (useController == false)
+
+       
+        yRot = (Input.GetAxis("Mouse X") * XSensitivity) + (InputControls.CameraHorizontalAxis() * XSensitivity) ;
+        xRot = (Input.GetAxis("Mouse Y") * YSensitivity) +  (InputControls.CameraVerticalAxis() *  YSensitivity) ;
+
+        rollz = Mathf.Lerp(rollz, player.transform.rotation.z - transform.rotation.z, Time.deltaTime * ZSensitivity);
+
+        if (xRot == 0 && yRot == 0)
         {
-
-             yRot = (Input.GetAxis("Mouse X") * XSensitivity) + ((Input.GetAxis("4th Axis") * ( 3 * XSensitivity)))  ;
-             xRot = (Input.GetAxis("Mouse Y") * YSensitivity) +  ((Input.GetAxis("5th Axis") * -(3 *  YSensitivity)))  ;
+            
+            idleTimer += Time.deltaTime;
+            if (idleTimer > timeToResetRotation)
+            { m_CharacterTargetRot = player.transform.rotation; }
         }
-        else
+        else 
         {
-             yRot = (Input.GetAxis("Mouse X") * XSensitivity) +  Input.GetAxis("4th Axis") * (1 + XSensitivity);
-             xRot = (Input.GetAxis("Mouse Y") * YSensitivity) + Input.GetAxis("5th Axis") * -(1 + YSensitivity);
+            m_CharacterTargetRot *= Quaternion.Euler(-xRot, yRot, rollz);
+            idleTimer = 0;
         }
 
-        m_CharacterTargetRot *= Quaternion.Euler(-xRot, yRot, rollz);
-        //   m_CameraTargetRot *= Quaternion.Euler(-xRot, 0f, 0f);
-
-          Quaternion rotationDelta = Quaternion.FromToRotation(transform.forward, player.transform.forward);
+        Quaternion rotationDelta = Quaternion.FromToRotation(transform.forward, player.transform.forward);
 
 
 
 
-        if (clampVerticalRotation)
-            m_CameraTargetRot = ClampRotationAroundXAxis(m_CameraTargetRot);
+        if (clampVerticalRotation) { m_CameraTargetRot = ClampRotationAroundXAxis(m_CameraTargetRot); }
+           
 
         if (smooth)
         {
@@ -93,7 +106,7 @@ public class ThirdPersonCamera : MonoBehaviour
 
                 }
                 if (target.GetComponent<Rigidbody>() != null)
-            {
+                {
 
                     //targetpos = (target.transform.position + target.GetComponent<Rigidbody>().velocity) + player.GetComponent<Rigidbody>().velocity;
                     Vector3 temp = (player.GetComponent<Rigidbody>().velocity).normalized;
@@ -121,21 +134,41 @@ public class ThirdPersonCamera : MonoBehaviour
                     }
                         
                 }
-            transform.rotation = Quaternion.Slerp(transform.rotation, m_CharacterTargetRot,
-                smoothTime * Time.deltaTime);
 
+                if (idleTimer > timeToResetRotation)
+                {
+                    
+                    transform.rotation = Quaternion.Slerp(transform.rotation, player.transform.rotation,
+                    resetCameraSmooth * Time.deltaTime);
+                }
+                else 
+                {
+                    transform.rotation = Quaternion.Slerp(transform.rotation, m_CharacterTargetRot,
+                      smoothTime * Time.deltaTime);
+                }
+
+              
 
             }
             else
             {
                 reticle.active = false;
                 //rotate camera to catch up to player ship
-                transform.rotation = Quaternion.Slerp(transform.rotation, m_CharacterTargetRot,
-                  smoothTime * Time.deltaTime);
+                if (idleTimer > timeToResetRotation)
+                {
 
-                  //rotate ship to catch up to camera
-              // player.transform.rotation = Quaternion.Slerp(player.transform.rotation, m_CharacterTargetRot,
-              //     smoothTime * 18 * Time.deltaTime);
+                    transform.rotation = Quaternion.Slerp(transform.rotation, player.transform.rotation,
+                    resetCameraSmooth * Time.deltaTime);
+                }
+                else
+                {
+                    transform.rotation = Quaternion.Slerp(transform.rotation, m_CharacterTargetRot,
+                      smoothTime * Time.deltaTime);
+                }
+
+                //rotate ship to catch up to camera
+                // player.transform.rotation = Quaternion.Slerp(player.transform.rotation, m_CharacterTargetRot,
+                //     smoothTime * 18 * Time.deltaTime);
 
 
             }

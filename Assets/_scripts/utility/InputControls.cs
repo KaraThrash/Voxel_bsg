@@ -7,10 +7,13 @@ public static class InputControls
     public static bool gamePad;
     //controller buttons
     public static string hortAxis = "ControllerHorizontal", vertAxis = "ControllerVertical", interactButton = "A", pickupButton = "Y", actionButton = "B", nextButton = "RB", previousButton = "LB";
+
     public static string leftTrigger = "LeftTrigger", rightTrigger = "RightTrigger";
+
     public static string menuButton = "Start";
     //controller axis as buttons
     public static string dPadVertButton = "DpadVert",dPadHortButton = "DpadHort";
+    public static string cameraHorizontal = "4th Axis",cameraVertical = "5th Axis";
     public static bool dPadVertPressed,dPadHortPressed,vertPressed,hortPressed;
 
     public static KeyCode interactKey = KeyCode.Space, pickupKey = KeyCode.LeftControl, actionKey = KeyCode.RightControl, nextKey = KeyCode.E, previousKey = KeyCode.Q, dPadDownKey = KeyCode.DownArrow;
@@ -181,11 +184,17 @@ public static class InputControls
     public static float VerticalAxis()
     { return Input.GetAxis(vertAxis) + Input.GetAxis("Vertical"); ; }
 
+    public static float CameraHorizontalAxis()
+    { return Input.GetAxis(cameraHorizontal) ; }
+
+    public static float CameraVerticalAxis()
+    { return Input.GetAxis(cameraVertical) ;  }
+
     public static float LeftTrigger()
-    { return Input.GetAxis(leftTrigger) + Input.GetAxis("LeftTrigger"); }
+    { return Input.GetAxis(leftTrigger) ; }
 
     public static float RightTrigger()
-    { return Input.GetAxis(rightTrigger) + Input.GetAxis("RightTrigger"); ; }
+    { return Input.GetAxis(rightTrigger); }
 
     public static float DpadHort()
     {
