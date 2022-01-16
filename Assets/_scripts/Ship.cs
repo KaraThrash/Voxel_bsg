@@ -11,7 +11,7 @@ public class Ship : MonoBehaviour
 
     public float stamina, maxStamina, staminaRechargeRate;
 
-
+    public float acceleration;
 
     // Start is called before the first frame update
     void Start()
@@ -53,6 +53,10 @@ public class Ship : MonoBehaviour
 
     public void Act()
     {
+        GetComponent<Rigidbody>().velocity = Vector3.Lerp(GetComponent<Rigidbody>().velocity,GetTargetVelocity(),Time.deltaTime * acceleration);
+
+        GetComponent<Rigidbody>().angularVelocity = Vector3.Lerp(GetComponent<Rigidbody>().angularVelocity, GetTargetAngularVelocity(),Time.deltaTime * acceleration);
+
         if (InputControls.ActionButtonDown())
         {
             Debug.Log("InputControls.RightTrigger() <>" + InputControls.RightTrigger());
@@ -156,8 +160,39 @@ public class Ship : MonoBehaviour
     { return canAct; }
 
 
+    public Vector3 targetVelocity, targetAngularVelocity;
+    public Vector3 GetTargetVelocity( )
+    {
+        Vector3 newvel = Vector3.zero;
+        foreach (ShipSystem el in systems)
+        {
 
+            if (el.GetComponent<Thruster>())
+            {
+                newvel += el.GetComponent<Thruster>().GetThrust();
 
+            }
+        }
+        return newvel;
+    }
+
+    public Vector3 GetTargetAngularVelocity( )
+    {
+
+        Vector3 newvel = Vector3.zero;
+
+        foreach (ShipSystem el in systems)
+        {
+
+            if (el.GetComponent<Thruster>())
+            {
+                newvel += el.GetComponent<Thruster>().GetAngularThrust();
+
+            }
+        }
+
+        return newvel;
+    }
 
 
     /// UI

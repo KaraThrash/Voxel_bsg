@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public enum SystemType { armor,body,engine,guidance,maneuver,targeting}
-public enum SystemState { on,off,locked,broken,damaged}
+public enum SystemState { on,off,locked,broken,damaged, menuLocked} //menulocked for points that everything is paused by still observable
 
 public enum PlayerTypes { left, right, observer, test, neutral, enemy }
 

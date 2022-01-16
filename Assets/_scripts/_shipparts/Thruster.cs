@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Thruster : ShipSystem
 {
+    public float torquePower;
     [Min(0.01f)]
     public float accelerationRate, decelRate;
 
@@ -17,6 +18,7 @@ public class Thruster : ShipSystem
         {
             if (axis.Length > 0)
             {
+                
                 throttle = Input.GetAxis(axis);
             }
             else 
@@ -26,6 +28,7 @@ public class Thruster : ShipSystem
                 else { throttle = 0; }
             }
 
+            
             currentAcc = Mathf.Lerp(currentAcc, throttle, accelerationRate * Time.deltaTime);
 
             //if (currentAcc < Input.GetAxis(axis) - accelerationRate)
@@ -55,7 +58,8 @@ public class Thruster : ShipSystem
 
         if (ship && ship.CanAct() && currentAcc != 0)
         {
-            float pwr = power * currentAcc * Time.deltaTime;
+            //float pwr = power * currentAcc * Time.deltaTime;
+            //float torquepwr = torquePower * currentAcc * Time.deltaTime;
 
             //todo: glide/throttle lock/cruise control
             //if (axis.Length > 0 && Input.GetAxis(axis) != 0)
@@ -63,14 +67,34 @@ public class Thruster : ShipSystem
             //    throttle = Input.GetAxis(axis);
             //}
 
-            RbTarget().AddForce(transform.forward * (pwr * 1), ForceMode.Impulse );
+            //RbTarget().AddForce(transform.forward * (pwr * 1), ForceMode.Impulse );
+            //RbTarget().AddTorque(transform.forward * (torquepwr * 1), ForceMode.Impulse);
+
+            //RbTarget().velocity = Vector3.Lerp(RbTarget().velocity,transform.forward , Time.deltaTime * pwr);
+            //RbTarget().AddTorque(transform.forward * (torquepwr * 1), ForceMode.Impulse);
 
         }
 
         
     }
 
+    public Vector3 GetThrust()
+    {
+        if (GetSystemState() == SystemState.on && throttle != 0)
+        {
+            return transform.forward * (power * currentAcc * 1);
+        }
+        return Vector3.zero;
+    }
 
+    public Vector3 GetAngularThrust()
+    {
+        if (GetSystemState() == SystemState.on && throttle != 0)
+        {
+            return transform.forward * (torquePower * currentAcc  * 1);
+        }
+        return Vector3.zero;
+    }
 
     public override void Control(KeyCode _input)
     {

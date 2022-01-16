@@ -33,11 +33,11 @@ public class ShipSystem : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        if (ship != null && ship.GetComponent<Rigidbody>() != null && RbTarget() != null)
+        if (ship != null && ship.GetComponent<Rigidbody>() != null && GetComponent<Rigidbody>() != null)
         {
 
             FixedJoint joint = ship.gameObject.AddComponent<FixedJoint>();
-            joint.connectedBody = RbTarget();
+            joint.connectedBody = GetComponent<Rigidbody>();
         }
         deactivateKey = activateKey;
         deactivateButton = activateButton;
