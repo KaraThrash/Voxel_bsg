@@ -5,6 +5,10 @@ using UnityEngine.UI;
 
 public class Ship : MonoBehaviour
 {
+    public Rigidbody rb;
+
+    public Transform cam;
+
     public bool canAct;
 
     public List<ShipSystem> systems;
@@ -12,6 +16,10 @@ public class Ship : MonoBehaviour
     public float stamina, maxStamina, staminaRechargeRate;
 
     public float acceleration;
+
+    public Quaternion rotationTarget;
+    public Vector3 velocityTarget;
+
 
     // Start is called before the first frame update
     void Start()
@@ -38,9 +46,9 @@ public class Ship : MonoBehaviour
     {
         if (canAct)
         {
-            Act();
+           // Act();
 
-            RechargeStamina();
+           // RechargeStamina();
             
         }
 
@@ -48,26 +56,61 @@ public class Ship : MonoBehaviour
 
     }
 
-   
 
 
+    public bool useAngularVelocity;
+    
     public void Act()
     {
-        GetComponent<Rigidbody>().velocity = Vector3.Lerp(GetComponent<Rigidbody>().velocity,GetTargetVelocity(),Time.deltaTime * acceleration);
-
-        GetComponent<Rigidbody>().angularVelocity = Vector3.Lerp(GetComponent<Rigidbody>().angularVelocity, GetTargetAngularVelocity(),Time.deltaTime * acceleration);
-
-        if (InputControls.ActionButtonDown())
+        if (!canAct)
         {
-            Debug.Log("InputControls.RightTrigger() <>" + InputControls.RightTrigger());
-            Control(SystemType.engine, 1);
+            return;
+
         }
 
-        else if (InputControls.ActionButtonUp())
+
+        RechargeStamina();
+
+       // Rigidbody().velocity = Vector3.Lerp(Rigidbody().velocity,targetVelocity,Time.deltaTime * acceleration);
+
+        if (useAngularVelocity)
         {
-            Control(SystemType.engine, false);
+           // Rigidbody().angularVelocity = Vector3.Lerp(Rigidbody().angularVelocity, GetTargetAngularVelocity(), Time.deltaTime * acceleration);
+
         }
+        else 
+        {
+           // transform.rotation = Quaternion.Lerp(transform.rotation, cam.rotation, Time.deltaTime * GetRotationMagnitude());
+        }
+
+        //cam.transform.rotation
+
+
+        // Rigidbody().angularVelocity = new Vector3(pitch, yaw, roll);
+        //if (InputControls.ActionButtonDown())
+        //{
+        //    Debug.Log("InputControls.RightTrigger() <>" + InputControls.RightTrigger());
+        //    Control(SystemType.engine, 1);
+        //}
+
+        //else if (InputControls.ActionButtonUp())
+        //{
+        //    Control(SystemType.engine, false);
+        //}
+
     }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     public virtual void Control(SystemType _system, bool _on)
@@ -141,7 +184,7 @@ public class Ship : MonoBehaviour
 
     public bool UseStamina(float _cost)
     {
-        // round stamina check so that a cost of 0.2 will use 0.1 stamina leaving -0.1
+        // round stamina check so that a cost of 0.2relativeRot.will use 0.1 stamina leaving -0.1
         if (_cost <= Mathf.Ceil(stamina) ) 
         { 
             stamina -= _cost;
@@ -194,6 +237,24 @@ public class Ship : MonoBehaviour
         return newvel;
     }
 
+    public float GetRotationMagnitude()
+    {
+
+        float magnitude = 0;
+
+        foreach (ShipSystem el in systems)
+        {
+
+            if (el.GetComponent<Thruster>())
+            {
+                magnitude += el.GetComponent<Thruster>().GetAngularThrust().magnitude;
+
+            }
+        }
+
+        return magnitude;
+    }
+
 
     /// UI
     /// 
@@ -208,7 +269,14 @@ public class Ship : MonoBehaviour
     ///
 
 
-
+    public Rigidbody Rigidbody()
+    {
+        if (rb == null)
+        {
+            rb = GetComponent<Rigidbody>();
+        }
+        return rb;
+    }
 
 
 }

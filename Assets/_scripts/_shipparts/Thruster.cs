@@ -12,24 +12,46 @@ public class Thruster : ShipSystem
 
 
 
+
+
     public override void Act()
     {
         if (GetSystemState() == SystemState.on )
         {
+
             if (axis.Length > 0)
             {
-                
+
                 throttle = Input.GetAxis(axis);
+            }
+            else if (positiveButton.Length > 0)
+            {
+                if (Input.GetButton(positiveButton))
+                {
+
+                    if (Input.GetButton(negativeButton))
+                    {
+                        throttle = 0;
+                    }
+                    else
+                    {
+                        throttle = 1;
+                    }
+
+                }
+                else if (Input.GetButton(negativeButton))
+                {
+                    throttle = -1;
+                }
+                else { throttle = 0; }
             }
             else 
             {
-                if (Input.GetButton(activateButton))
-                { throttle = 1; }
-                else { throttle = 0; }
+                throttle = 1;
             }
 
             
-            currentAcc = Mathf.Lerp(currentAcc, throttle, accelerationRate * Time.deltaTime);
+            currentAcc = Mathf.Lerp(currentAcc, Mathf.Abs(throttle), accelerationRate * Time.deltaTime);
 
             //if (currentAcc < Input.GetAxis(axis) - accelerationRate)
             //{
@@ -91,7 +113,7 @@ public class Thruster : ShipSystem
     {
         if (GetSystemState() == SystemState.on && throttle != 0)
         {
-            return transform.forward * (torquePower * currentAcc  * 1);
+            return transform.forward * (torquePower * currentAcc  * Mathf.Sign(throttle));
         }
         return Vector3.zero;
     }

@@ -19,6 +19,7 @@ public class ShipSystem : MonoBehaviour
 
     public KeyCode activateKey,deactivateKey;
     public string activateButton,deactivateButton, axis;
+    public string positiveButton,negativeButton;
 
     public void SetActivateKey(KeyCode _key) { activateKey = _key; }
     public void SetActivateButton(string _key) { activateButton = _key; }

@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityStandardAssets.CrossPlatformInput;
 public class ThirdPersonCamera : MonoBehaviour
 {
+    public bool playerControlled;
+
     public GameObject myfwdobj,reticle;
     public GameObject player,target;
     public Quaternion newrot;
@@ -65,25 +67,56 @@ public class ThirdPersonCamera : MonoBehaviour
         
         transform.position = player.transform.position;
 
+
+        if (!playerControlled)
+        {
+            ShipControlled();
+        }
+    }
+
+
+    public void ShipControlled()
+    {
        
-        yRot = (Input.GetAxis("Mouse X") * XSensitivity) + (InputControls.CameraHorizontalAxis() * XSensitivity) ;
-        xRot = (Input.GetAxis("Mouse Y") * YSensitivity) +  (InputControls.CameraVerticalAxis() *  YSensitivity) ;
 
-        rollz = Mathf.Lerp(rollz, player.transform.rotation.z - transform.rotation.z, Time.deltaTime * ZSensitivity);
 
+               
+                    transform.rotation = Quaternion.Slerp(transform.rotation, player.transform.rotation,
+                        resetCameraSmooth * 1 * Time.deltaTime);
+               
+
+
+            
+        
         
 
-        if (xRot == 0 && yRot == 0)
+        UpdateCursorLock();
+
+    }
+
+
+    public void PlayerControlled()
+    {
+        yRot = (Input.GetAxis("Mouse X") * XSensitivity) + (InputControls.CameraHorizontalAxis() * XSensitivity);
+        xRot = (Input.GetAxis("Mouse Y") * YSensitivity) + (InputControls.CameraVerticalAxis() * YSensitivity);
+
+        // rollz = Mathf.Lerp(rollz, player.transform.rotation.z - transform.rotation.z, Time.deltaTime * ZSensitivity);
+        rollz = Mathf.Lerp(rollz, Input.GetAxis("3rd Axis"), Time.deltaTime * ZSensitivity);
+        rollz =Input.GetAxis("3rd Axis");
+
+        m_CharacterTargetRot *= Quaternion.Euler(-xRot, yRot, -rollz * ZSensitivity);
+
+        if (xRot == 0 && yRot == 0 && rollz == 0)
         {
-            
-            
+
+
         }
-        else 
+        else
         {
-            m_CharacterTargetRot *= Quaternion.Euler(-xRot, yRot, rollz);
+
             idleTimer = 0;
             currentAcc = 0;
-            
+
         }
 
         idleTimer += Time.deltaTime;
@@ -101,126 +134,144 @@ public class ThirdPersonCamera : MonoBehaviour
 
 
         if (clampVerticalRotation) { m_CameraTargetRot = ClampRotationAroundXAxis(m_CameraTargetRot); }
-           
+
 
         if (smooth)
         {
-                      if(target != null){
+            if (target != null)
+            {
 
-                
-                
-                            //lock on to a place in space based on the target velocity // [better targeting computers give more robust controls?]
-                            Vector3 targetpos = target.transform.position;
-               
-                            if (target != player)
-                            {
-                                //reticle.active = true;
-                                //reticle.transform.position = targetpos;
-                                //reticle.transform.LookAt(transform.position);
 
-                            }
-                            if (target.GetComponent<Rigidbody>() != null)
-                            {
 
-                                //targetpos = (target.transform.position + target.GetComponent<Rigidbody>().velocity) + player.GetComponent<Rigidbody>().velocity;
-                                Vector3 temp = (player.GetComponent<Rigidbody>().velocity).normalized;
-                                //should the distance calculation factor in the bullet type?
-                                temp *= Vector3.Distance(transform.position, target.transform.position) * 0.1f;
-                                targetpos = target.transform.position + target.GetComponent<Rigidbody>().velocity - temp;
+                //lock on to a place in space based on the target velocity // [better targeting computers give more robust controls?]
+                Vector3 targetpos = target.transform.position;
 
-                            }
+                if (target != player)
+                {
+                    //reticle.active = true;
+                    //reticle.transform.position = targetpos;
+                    //reticle.transform.LookAt(transform.position);
 
-                            if (xRot == 0 && yRot == 0 )
-                            {
+                }
+                if (target.GetComponent<Rigidbody>() != null)
+                {
 
-                                if (inputbufferforlockon < 0)
-                                {
+                    //targetpos = (target.transform.position + target.GetComponent<Rigidbody>().velocity) + player.GetComponent<Rigidbody>().velocity;
+                    Vector3 temp = (player.GetComponent<Rigidbody>().velocity).normalized;
+                    //should the distance calculation factor in the bullet type?
+                    temp *= Vector3.Distance(transform.position, target.transform.position) * 0.1f;
+                    targetpos = target.transform.position + target.GetComponent<Rigidbody>().velocity - temp;
 
-                                    m_CharacterTargetRot = Quaternion.LookRotation(targetpos - transform.position); inputbufferforlockon -= Time.deltaTime;
-                                }
-                                else { inputbufferforlockon -= Time.deltaTime; }
-                            }
-                            else
-                            {
-                                if (inputbufferforlockon < 0.5f) 
-                                {
-                                    inputbufferforlockon += Time.deltaTime;
-                                }
-                        
-                            }
+                }
 
-                            if (idleTimer > timeToResetRotation)
-                            {
-                    
-                                transform.rotation = Quaternion.Slerp(transform.rotation, player.transform.rotation,
-                                resetCameraSmooth * Time.deltaTime);
-                            }
-                            else 
-                            {
-                                transform.rotation = Quaternion.Slerp(transform.rotation, m_CharacterTargetRot,
-                                  smoothTime * Time.deltaTime);
-                            }
+                if (xRot == 0 && yRot == 0)
+                {
 
-              
+                    if (inputbufferforlockon < 0)
+                    {
+
+                        m_CharacterTargetRot = Quaternion.LookRotation(targetpos - transform.position); inputbufferforlockon -= Time.deltaTime;
+                    }
+                    else { inputbufferforlockon -= Time.deltaTime; }
+                }
+                else
+                {
+                    if (inputbufferforlockon < 0.5f)
+                    {
+                        inputbufferforlockon += Time.deltaTime;
+                    }
+
+                }
+
+                if (idleTimer > timeToResetRotation)
+                {
+
+                    transform.rotation = Quaternion.Slerp(transform.rotation, player.transform.rotation,
+                    resetCameraSmooth * Time.deltaTime);
+                }
+                else
+                {
+                    transform.rotation = Quaternion.Slerp(transform.rotation, m_CharacterTargetRot,
+                      smoothTime * Time.deltaTime);
+                }
+
+
 
             }
             else
             {
-                    
-                    //rotate camera to catch up to player ship
-                    if (idleTimer > timeToResetRotation)
-                    {
+
+                //rotate camera to catch up to player ship
+                if (idleTimer > timeToResetRotation)
+                {
 
                     transform.rotation = Quaternion.Slerp(transform.rotation, player.transform.rotation,
                         resetCameraSmooth * 1 * Time.deltaTime);
-                    }
-                    else
-                    {
-                        transform.rotation = Quaternion.Slerp(transform.rotation, m_CharacterTargetRot,
-                            smoothTime * Time.deltaTime);
-                    }
+                }
+                else
+                {
+                    transform.rotation = Quaternion.Slerp(transform.rotation, m_CharacterTargetRot,
+                        smoothTime * Time.deltaTime);
+                }
 
 
             }
         }
         else
         {
-                    if(target != null)
-                    {
+            if (target != null)
+            {
 
 
-                            //lock on to a place in space based on the target velocity // [better targeting computers give more robust controls?]
-                            Vector3 targetpos = target.transform.position;
-                            if (target != player)
-                            {
-                                //reticle.active = true;
-                                //reticle.transform.position = targetpos;
-                                //reticle.transform.LookAt(transform.position);
-                            }
-                            if (target.GetComponent<Rigidbody>() != null)
-                            {
-                                // focus on the area the target will be if a bullet is fired now [ignoring bullet speed]
-                                // targetpos = (target.transform.position + (target.GetComponent<Rigidbody>().velocity  ));
-                                targetpos = (target.transform.position + (target.GetComponent<Rigidbody>().velocity * Vector3.Distance(transform.position, target.transform.position) ));
-                                // (target.transform.position + (target.transform.forward * 3 * (Vector3.Distance(transform.position, target.transform.position) * target.GetComponent<Rigidbody>().velocity.magnitude)));
-                            }
+                //lock on to a place in space based on the target velocity // [better targeting computers give more robust controls?]
+                Vector3 targetpos = target.transform.position;
+                if (target != player)
+                {
+                    //reticle.active = true;
+                    //reticle.transform.position = targetpos;
+                    //reticle.transform.LookAt(transform.position);
+                }
+                if (target.GetComponent<Rigidbody>() != null)
+                {
+                    // focus on the area the target will be if a bullet is fired now [ignoring bullet speed]
+                    // targetpos = (target.transform.position + (target.GetComponent<Rigidbody>().velocity  ));
+                    targetpos = (target.transform.position + (target.GetComponent<Rigidbody>().velocity * Vector3.Distance(transform.position, target.transform.position)));
+                    // (target.transform.position + (target.transform.forward * 3 * (Vector3.Distance(transform.position, target.transform.position) * target.GetComponent<Rigidbody>().velocity.magnitude)));
+                }
 
 
-                                transform.rotation = Quaternion.Lerp (transform.rotation, Quaternion.LookRotation ( targetpos - transform.position), lockOnSpeed * Time.deltaTime);
-                                m_CharacterTargetRot = transform.rotation;
-                    }
-                    else
-                    {
-                        //reticle.active = false;
-                        transform.rotation = m_CharacterTargetRot;
+                transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(targetpos - transform.position), lockOnSpeed * Time.deltaTime);
+                m_CharacterTargetRot = transform.rotation;
+            }
+            else
+            {
+                //reticle.active = false;
+                transform.rotation = m_CharacterTargetRot;
 
-                    }
+            }
 
             // transform.rotation = m_CameraTargetRot;
         }
 
         UpdateCursorLock();
+
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     public void SetCursorLock(bool value)
     {
