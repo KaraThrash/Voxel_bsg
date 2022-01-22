@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class EngineBasic : ShipSystem
 {
-    // Start is called before the first frame update
+    public LateralThruster lateralEngine;
+
+    public float lateralPower;
     public float torquePower;
     [Min(0.01f)]
     public float accelerationRate, decelRate;
@@ -12,7 +14,46 @@ public class EngineBasic : ShipSystem
     public float currentAcc, throttle;
 
 
-  
+    public void Throttle(int _value)
+    {
+        throttle = _value;
+
+    }
+
+    public override void PlayerInput()
+    {
+        if (axis.Length > 0)
+        {
+
+            throttle = Input.GetAxis(axis);
+        }
+        else if (positiveButton.Length > 0)
+        {
+            if (Input.GetButton(positiveButton))
+            {
+
+                if (Input.GetButton(negativeButton))
+                {
+                    throttle = 0;
+                }
+                else
+                {
+                    throttle = 1;
+                }
+
+            }
+            else if (Input.GetButton(negativeButton))
+            {
+                throttle = -1;
+            }
+            else { throttle = 0; }
+        }
+        else
+        {
+            throttle = 1;
+        }
+
+    }
 
 
     public override void Act()
@@ -20,36 +61,7 @@ public class EngineBasic : ShipSystem
         if (GetSystemState() == SystemState.on)
         {
 
-            if (axis.Length > 0)
-            {
-
-                throttle = Input.GetAxis(axis);
-            }
-            else if (positiveButton.Length > 0)
-            {
-                if (Input.GetButton(positiveButton))
-                {
-
-                    if (Input.GetButton(negativeButton))
-                    {
-                        throttle = 0;
-                    }
-                    else
-                    {
-                        throttle = 1;
-                    }
-
-                }
-                else if (Input.GetButton(negativeButton))
-                {
-                    throttle = -1;
-                }
-                else { throttle = 0; }
-            }
-            else
-            {
-                throttle = 1;
-            }
+           
 
 
             currentAcc = Mathf.Lerp(currentAcc, Mathf.Abs(throttle), accelerationRate * Time.deltaTime);
@@ -76,7 +88,19 @@ public class EngineBasic : ShipSystem
 
         if (ship && ship.CanAct() && power != 0)
         {
-            RbTarget().velocity = Vector3.Lerp(RbTarget().velocity,transform.forward * power * currentAcc, Time.deltaTime * accelerationRate);
+            Vector3 targetVelocity = transform.forward * power * currentAcc;
+
+            if (lateralEngine != null)
+            {
+                targetVelocity += lateralEngine.Lateral() * lateralPower;
+            }
+
+            RbTarget().velocity = Vector3.Lerp(RbTarget().velocity, targetVelocity, Time.deltaTime * accelerationRate);
+
+            if (RbTarget().velocity.magnitude < (transform.forward * power).magnitude * 0.5f)
+            {
+                RbTarget().velocity = Vector3.Lerp(RbTarget().velocity, targetVelocity, Time.deltaTime * (10 + (RbTarget().velocity.magnitude /(1 + (transform.forward * power).magnitude) )));
+            }
         }
 
         if (ship && ship.CanAct() && torquePower != 0)

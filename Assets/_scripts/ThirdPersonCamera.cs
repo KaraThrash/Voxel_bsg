@@ -6,7 +6,7 @@ public class ThirdPersonCamera : MonoBehaviour
 {
     public bool playerControlled;
 
-    public GameObject myfwdobj,reticle;
+    public GameObject realCamera,myfwdobj,reticle;
     public GameObject player,target;
     public Quaternion newrot;
     public bool inMenu,movetowards;
@@ -90,7 +90,7 @@ public class ThirdPersonCamera : MonoBehaviour
         
         
 
-        UpdateCursorLock();
+       // UpdateCursorLock();
 
     }
 
@@ -98,13 +98,21 @@ public class ThirdPersonCamera : MonoBehaviour
     public void PlayerControlled()
     {
         yRot = (Input.GetAxis("Mouse X") * XSensitivity) + (InputControls.CameraHorizontalAxis() * XSensitivity);
-        xRot = (Input.GetAxis("Mouse Y") * YSensitivity) + (InputControls.CameraVerticalAxis() * YSensitivity);
+        xRot = (Input.GetAxis("Mouse Y") * -YSensitivity) + (InputControls.CameraVerticalAxis() * YSensitivity);
+
 
         // rollz = Mathf.Lerp(rollz, player.transform.rotation.z - transform.rotation.z, Time.deltaTime * ZSensitivity);
-        rollz = Mathf.Lerp(rollz, Input.GetAxis("3rd Axis"), Time.deltaTime * ZSensitivity);
+       // rollz = Mathf.Lerp(rollz, Input.GetAxis("3rd Axis"), Time.deltaTime * ZSensitivity);
         rollz = InputControls.RollAxis();
 
-        m_CharacterTargetRot *= Quaternion.Euler(-xRot, yRot, -rollz * ZSensitivity);
+        if (InputControls.PreviousButton())
+        {
+            rollz = -1;
+        }else if (InputControls.NextButton())
+        {
+            rollz = 1;
+        }
+        m_CharacterTargetRot *= Quaternion.Euler(xRot, yRot, -rollz * ZSensitivity);
 
         if (xRot == 0 && yRot == 0 && rollz == 0)
         {
@@ -125,7 +133,7 @@ public class ThirdPersonCamera : MonoBehaviour
         {
             currentAcc += (Time.deltaTime * idleCameraAcceleration);
             if (currentAcc > 1) { currentAcc = 1; }
-            m_CharacterTargetRot = player.transform.rotation;
+           // m_CharacterTargetRot = player.transform.rotation;
         }
 
         Quaternion rotationDelta = Quaternion.FromToRotation(transform.forward, player.transform.forward);
@@ -205,8 +213,8 @@ public class ThirdPersonCamera : MonoBehaviour
                 if (idleTimer > timeToResetRotation)
                 {
 
-                    transform.rotation = Quaternion.Slerp(transform.rotation, player.transform.rotation,
-                        resetCameraSmooth * 1 * Time.deltaTime);
+                  //  transform.rotation = Quaternion.Slerp(transform.rotation, player.transform.rotation,
+                    //    resetCameraSmooth * 1 * Time.deltaTime);
                 }
                 else
                 {
@@ -252,6 +260,7 @@ public class ThirdPersonCamera : MonoBehaviour
 
             // transform.rotation = m_CameraTargetRot;
         }
+
 
         UpdateCursorLock();
 

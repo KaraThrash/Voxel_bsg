@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class ShipSystem : MonoBehaviour
 {
+    public bool listenForPlayerInput;
     public SystemType systemType;
     public SystemState systemState;
 
@@ -48,7 +49,16 @@ public class ShipSystem : MonoBehaviour
     void Update()
     {
         Act();
+
+        if (listenForPlayerInput)
+        {
+            PlayerInput();
+        }
+
+
     }
+
+
 
     public virtual void Act()
     {
@@ -56,6 +66,11 @@ public class ShipSystem : MonoBehaviour
         {
             
         }
+    }
+
+    public virtual void PlayerInput()
+    {
+
     }
 
 

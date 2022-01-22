@@ -7,7 +7,7 @@ public class Ship : MonoBehaviour
 {
     public Rigidbody rb;
 
-    public Transform cam;
+    public Transform rotationTarget;
 
     public bool canAct;
 
@@ -20,7 +20,6 @@ public class Ship : MonoBehaviour
     public ShipSystem primaryEngine;// primary engine for moving forward
     public ShipSystem secondaryEngine;//secondary for turns and adjustments [can be the same engine]
 
-    public Quaternion rotationTarget;
     public Vector3 velocityTarget;
 
 
@@ -49,9 +48,9 @@ public class Ship : MonoBehaviour
     {
         if (canAct)
         {
-           // Act();
+            Act();
 
-           // RechargeStamina();
+            //RechargeStamina();
             
         }
 
@@ -222,7 +221,7 @@ public class Ship : MonoBehaviour
     public Quaternion RotationTarget()
     {
 
-        return cam.rotation;
+        return rotationTarget.rotation;
     }
 
 

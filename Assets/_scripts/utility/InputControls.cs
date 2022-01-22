@@ -2,6 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum Axises { Horizontal, Vertical }
+public enum Buttons { A,B,X,Y,LB,RB }
+
+
 public static class InputControls 
 {
     public static bool gamePad;
@@ -22,7 +26,6 @@ public static class InputControls
     public static KeyCode menuKey = KeyCode.Return;
 
     private static float deadtime = 0.5f, deadClock; //holding an axis while using as a button
-
 
 
 
@@ -122,14 +125,14 @@ public static class InputControls
 
     public static bool NextButton()
     {
-        if (Input.GetButtonDown(nextButton) || Input.GetKeyDown(nextKey) )
+        if (Input.GetButton(nextButton) || Input.GetKey(nextKey) )
         {  return true; }
         return false;
     }
 
     public static bool PreviousButton()
     {
-        if (Input.GetButtonDown(previousButton) || Input.GetKeyDown(previousKey) )
+        if (Input.GetButton(previousButton) || Input.GetKey(previousKey) )
         {  return true; }
         return false;
     }
