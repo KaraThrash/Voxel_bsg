@@ -102,7 +102,7 @@ public class ThirdPersonCamera : MonoBehaviour
 
         // rollz = Mathf.Lerp(rollz, player.transform.rotation.z - transform.rotation.z, Time.deltaTime * ZSensitivity);
         rollz = Mathf.Lerp(rollz, Input.GetAxis("3rd Axis"), Time.deltaTime * ZSensitivity);
-        rollz =Input.GetAxis("3rd Axis");
+        rollz = InputControls.RollAxis();
 
         m_CharacterTargetRot *= Quaternion.Euler(-xRot, yRot, -rollz * ZSensitivity);
 

@@ -9,6 +9,8 @@ public static class InputControls
     public static string hortAxis = "ControllerHorizontal", vertAxis = "ControllerVertical", interactButton = "A", pickupButton = "Y", actionButton = "B", nextButton = "RB", previousButton = "LB";
 
     public static string leftTrigger = "LeftTrigger", rightTrigger = "RightTrigger";
+    public static string primaryEngineAxis = "RightTrigger", rollAxis = "RollAxis";
+
 
     public static string menuButton = "Start";
     //controller axis as buttons
@@ -177,6 +179,12 @@ public static class InputControls
         }
         return false;
     }
+
+    public static float RollAxis()
+    { return Input.GetAxis(rollAxis); }
+
+    public static float PrimaryEngineAxis()
+    { return Input.GetAxis(primaryEngineAxis); }
 
     public static float HorizontalAxis()
     { return Input.GetAxis(hortAxis) + Input.GetAxis("Horizontal"); }

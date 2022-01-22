@@ -17,6 +17,9 @@ public class Ship : MonoBehaviour
 
     public float acceleration;
 
+    public ShipSystem primaryEngine;// primary engine for moving forward
+    public ShipSystem secondaryEngine;//secondary for turns and adjustments [can be the same engine]
+
     public Quaternion rotationTarget;
     public Vector3 velocityTarget;
 
@@ -203,57 +206,30 @@ public class Ship : MonoBehaviour
     { return canAct; }
 
 
-    public Vector3 targetVelocity, targetAngularVelocity;
-    public Vector3 GetTargetVelocity( )
-    {
-        Vector3 newvel = Vector3.zero;
-        foreach (ShipSystem el in systems)
-        {
 
-            if (el.GetComponent<Thruster>())
-            {
-                newvel += el.GetComponent<Thruster>().GetThrust();
-
-            }
-        }
-        return newvel;
-    }
-
-    public Vector3 GetTargetAngularVelocity( )
+    public ShipSystem PrimaryEngine()
     {
 
-        Vector3 newvel = Vector3.zero;
-
-        foreach (ShipSystem el in systems)
-        {
-
-            if (el.GetComponent<Thruster>())
-            {
-                newvel += el.GetComponent<Thruster>().GetAngularThrust();
-
-            }
-        }
-
-        return newvel;
+        return primaryEngine;
     }
-
-    public float GetRotationMagnitude()
+    public ShipSystem SecondaryEngine()
     {
 
-        float magnitude = 0;
-
-        foreach (ShipSystem el in systems)
-        {
-
-            if (el.GetComponent<Thruster>())
-            {
-                magnitude += el.GetComponent<Thruster>().GetAngularThrust().magnitude;
-
-            }
-        }
-
-        return magnitude;
+        return secondaryEngine;
     }
+
+
+    public Quaternion RotationTarget()
+    {
+
+        return cam.rotation;
+    }
+
+
+
+
+
+
 
 
     /// UI
