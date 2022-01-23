@@ -14,12 +14,11 @@ public enum GunType { auto,burst, semiauto, shotgun, spread, laser }
 
 
 public enum AiState { 
-    recovering, pregrabbed, grabbed, 
-    launched, takingDamage, 
+    recovering, takingDamage, 
     pathfinding, moving, attacking, 
     adjusting, special, dying, 
     idle, spawned,
-    chainsawed,tutorial,inactive,
+    inactive,
     ragdolling
 }
 

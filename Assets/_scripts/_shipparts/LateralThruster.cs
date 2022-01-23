@@ -25,18 +25,24 @@ public class LateralThruster : ShipSystem
 
     public override void PlayerInput()
     {
-        if (axis.Length > 0)
-        {
 
-            vertical = Input.GetAxis(axis);
+        if (axis.Length == 0 || hortAxis.Length == 0)
+        {
+            return ;
         }
 
-        if (hortAxis.Length > 0)
+        if ((Input.GetAxis(axis) != 0 || Input.GetAxis(hortAxis) != 0) && ship.UseStamina(staminaCost))
         {
+            vertical = Input.GetAxis(axis);
+
             horizontal = Input.GetAxis(hortAxis);
 
         }
-
+        else 
+        {
+            vertical = 0;
+            horizontal = 0;
+        }
     }
 
     public override void Act()

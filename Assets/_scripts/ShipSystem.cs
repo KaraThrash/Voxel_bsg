@@ -38,8 +38,8 @@ public class ShipSystem : MonoBehaviour
         if (ship != null && ship.GetComponent<Rigidbody>() != null && GetComponent<Rigidbody>() != null)
         {
 
-            FixedJoint joint = ship.gameObject.AddComponent<FixedJoint>();
-            joint.connectedBody = GetComponent<Rigidbody>();
+           // FixedJoint joint = ship.gameObject.AddComponent<FixedJoint>();
+           // joint.connectedBody = GetComponent<Rigidbody>();
         }
         deactivateKey = activateKey;
         deactivateButton = activateButton;

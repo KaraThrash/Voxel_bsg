@@ -196,6 +196,16 @@ public class Ship : MonoBehaviour
         return false;
     }
 
+    public bool CheckStamina(float _cost)
+    {
+        // round stamina check so that a cost of 0.2relativeRot.will use 0.1 stamina leaving -0.1
+        if (_cost <= Mathf.Ceil(stamina))
+        {
+            return true;
+        }
+
+        return false;
+    }
 
 
     public void CanAct(bool _on)

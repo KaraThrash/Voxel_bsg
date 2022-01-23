@@ -11,25 +11,30 @@ public class EngineBasic : ShipSystem
     [Min(0.01f)]
     public float accelerationRate, decelRate;
 
-    public float currentAcc, throttle;
+    public float currentAcc, throttle,torqueThrottle = 1;
 
 
-    public void Throttle(int _value)
+    public void Throttle(float _value, float _torqueValue)
     {
         throttle = _value;
-
+        torqueThrottle = _torqueValue;
     }
 
     public override void PlayerInput()
     {
         if (axis.Length > 0)
         {
+            if ((Input.GetAxis(axis) != 0) && ship.UseStamina(staminaCost))
+            {
+                throttle = Input.GetAxis(axis);
 
-            throttle = Input.GetAxis(axis);
+            }
+            else { throttle = 0; }
+           
         }
-        else if (positiveButton.Length > 0)
+        else if (positiveButton.Length > 0 && ship.CheckStamina(staminaCost))
         {
-            if (Input.GetButton(positiveButton))
+            if (Input.GetButton(positiveButton) )
             {
 
                 if (Input.GetButton(negativeButton))
@@ -50,7 +55,7 @@ public class EngineBasic : ShipSystem
         }
         else
         {
-            throttle = 1;
+            throttle = 0;
         }
 
     }
@@ -105,7 +110,7 @@ public class EngineBasic : ShipSystem
 
         if (ship && ship.CanAct() && torquePower != 0)
         {
-            ship.transform.rotation = Quaternion.Lerp(ship.transform.rotation, ship.RotationTarget(), Time.deltaTime * torquePower );
+            ship.transform.rotation = Quaternion.Lerp(ship.transform.rotation, ship.RotationTarget(), Time.deltaTime * torquePower * torqueThrottle);
         }
     }
 
