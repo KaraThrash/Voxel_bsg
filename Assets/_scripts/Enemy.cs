@@ -8,6 +8,7 @@ public class Enemy : MonoBehaviour {
     public NpcManager npcManager;
     public Ship ship;
     public bool canAct;
+
     public AiState state;
     public AiState pendingState;
 
@@ -20,17 +21,20 @@ public class Enemy : MonoBehaviour {
     public bool alert;
 
 
-    public float brainTime;
-    private float timer;
+    public float brainTime,stateTime; //brain time for small changes, state time for state specific holds
+
+    private float stateTimer,brainTimer;
 
     protected float stuckCounter, timeSinceLastAction; // check if stuck
 
    
 
     public AiState State() { return state; }
+
     public void State(AiState _state) 
     {
         OnStateChange(_state);
+
         state = _state;
     }
 
@@ -62,21 +66,23 @@ public class Enemy : MonoBehaviour {
 
         if (_newstate == AiState.attacking)
         {
-            ship.secondaryEngine.GetComponent<LateralThruster>().Throttle(0, 0);
+            stateTimer = 0;
             ship.primaryEngine.GetComponent<EngineBasic>().Throttle(1,0);
+            ship.secondaryEngine.GetComponent<LateralThruster>().Throttle(0, 0);
 
-      
 
         }
         else if (_newstate == AiState.adjusting)
         {
-            ship.secondaryEngine.GetComponent<LateralThruster>().Throttle(0, 0);
+            stateTimer = 0;
             ship.primaryEngine.GetComponent<EngineBasic>().Throttle(0,1);
+            ship.secondaryEngine.GetComponent<LateralThruster>().Throttle(0, 0);
         }
         else if (_newstate == AiState.recovering)
         {
-            timer = brainTime;
+            stateTimer = stateTime;
             ship.primaryEngine.GetComponent<EngineBasic>().Throttle(1, 0);
+            ship.secondaryEngine.GetComponent<LateralThruster>().Throttle(0, 0);
         }
 
 
@@ -116,6 +122,16 @@ public class Enemy : MonoBehaviour {
       alert = isAlert;
     }
 
+    public bool CheckBrain()
+    {
+        if(brainTimer <= 0)
+        {
+            brainTimer = brainTime;
+            return true;
+        }
+        return false;
+    }
+
 
     public void Conscript( )
     {
@@ -134,15 +150,25 @@ public class Enemy : MonoBehaviour {
 
     public void Act()
     {
+        Debug.Log(Vector3.Angle(transform.position + transform.forward, ship.rotationTarget.position + ship.rotationTarget.forward));
+
         if (target == null || ship == null) { return; }
 
-        Debug.Log(Vector3.Angle(transform.forward, (target.position - transform.position).normalized));
+        if(brainTimer > 0){brainTimer -= Time.deltaTime;}
+
         ship.rotationTarget.LookAt(target);
+
         if (State() == AiState.adjusting)
         { 
             ship.rotationTarget.LookAt(target);
 
-            if (Vector3.Angle(transform.forward, (target.position - transform.position).normalized) < 10)
+            if (CheckBrain())
+            {
+                ship.secondaryEngine.GetComponent<LateralThruster>().Throttle(1, 1);
+                ship.primaryEngine.GetComponent<EngineBasic>().Throttle(0.1f, 1);
+            }
+
+            if (Vector3.Angle(transform.forward, ship.rotationTarget.forward) < 10)
             {
                 State(AiState.attacking);
             }
@@ -155,19 +181,43 @@ public class Enemy : MonoBehaviour {
 
             if (Vector3.Distance(target.position, ship.transform.position) < 10)
             {
-                ship.secondaryEngine.GetComponent<LateralThruster>().Throttle(0, 0);
-                ship.primaryEngine.GetComponent<EngineBasic>().Throttle(0, 1);
+                if(CheckBrain())
+                {
+                    ship.secondaryEngine.GetComponent<LateralThruster>().Throttle(1, 1);
+                    ship.primaryEngine.GetComponent<EngineBasic>().Throttle(1, 0);
+                }
+                
+
+                stateTimer += Time.deltaTime;
+                if (stateTimer >= stateTime)
+                {
+                    State(AiState.recovering);
+                    pendingState = AiState.adjusting;
+                }
                
+            }
+            else if (Vector3.Distance(target.position, ship.transform.position) < 30)
+            {
+
+                if(CheckBrain())
+                {
+                    ship.secondaryEngine.GetComponent<LateralThruster>().Throttle(1,1);
+                    ship.primaryEngine.GetComponent<EngineBasic>().Throttle(1.0f, 0.1f);
+                }
             }
             else 
             {
+                if(CheckBrain())
+                {
+                    ship.primaryEngine.GetComponent<EngineBasic>().Throttle(1 - ((Vector3.Angle(ship.transform.forward, (target.position - ship.transform.position).normalized))/90), 1.0f);
+                }
                // ship.rotationTarget.rotation = ship.transform.rotation;
             }
 
-            if (Vector3.Angle(transform.forward, (target.position - transform.position).normalized) > 80)
+            if (Vector3.Angle(ship.transform.forward, (target.position - transform.position).normalized) > 80)
             {
-                timer += Time.deltaTime;
-                if (timer >= brainTime)
+                stateTimer += Time.deltaTime;
+                if (stateTimer >= brainTime)
                 {
                     State(AiState.recovering);
                     pendingState = AiState.adjusting;
@@ -179,8 +229,11 @@ public class Enemy : MonoBehaviour {
         }
         else if (State() == AiState.recovering)
         {
-            timer -= Time.deltaTime;
-            if (timer<= 0)
+             ship.primaryEngine.GetComponent<EngineBasic>().Throttle(1.0f, 1);
+            ship.secondaryEngine.GetComponent<LateralThruster>().Throttle(1, 1);
+
+            stateTimer -= Time.deltaTime;
+            if (stateTimer <= 0)
             {
                 State(pendingState);
             }
@@ -188,7 +241,7 @@ public class Enemy : MonoBehaviour {
 
         }
 
-        if (Vector3.Angle(transform.position, target.position) < 10 || Vector3.Angle(transform.position, target.position) > 80)
+        if (Vector3.Angle(ship.transform.position, target.position) < 10 || Vector3.Angle(ship.transform.position, target.position) > 80)
         { 
         
         }

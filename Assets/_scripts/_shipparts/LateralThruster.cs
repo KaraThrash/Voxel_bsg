@@ -98,14 +98,26 @@ public class LateralThruster : ShipSystem
         if (ship && ship.CanAct() && power != 0)
         {
              targetPos = new Vector3(boundary.x * horizontal, boundary.y * vertical,0);
-             targetPos = new Vector3(targetPos.x , targetPos.y,-(Mathf.Abs(targetPos.x) + Mathf.Abs(targetPos.y)));
+            // targetPos = new Vector3(targetPos.x , targetPos.y,-(Mathf.Abs(targetPos.x) + Mathf.Abs(targetPos.y)));
+             targetPos = new Vector3(targetPos.x , targetPos.y,0);
              target.localPosition = Vector3.Lerp(target.localPosition, targetPos, Time.deltaTime * power);
         }
 
         if (ship && ship.CanAct() && torquePower != 0)
         {
 
-            target.transform.rotation = Quaternion.Lerp(target.rotation, Quaternion.LookRotation((rotationTarget.position + (rotationTarget.forward * focalDepth)) - rotationTarget.position, rotationTarget.up), Time.deltaTime * torquePower);
+            // target.transform.rotation = Quaternion.Lerp(target.rotation, Quaternion.LookRotation((rotationTarget.position + (rotationTarget.forward * focalDepth)) - rotationTarget.position, rotationTarget.up), Time.deltaTime * torquePower);
+            if (focalDepth == 0)
+            {
+                target.transform.rotation = Quaternion.Lerp(target.rotation, rotationTarget.rotation, Time.deltaTime * torquePower);
+
+            }
+            else 
+            {
+             target.transform.rotation = Quaternion.Lerp(target.rotation, Quaternion.LookRotation((rotationTarget.position + (rotationTarget.forward * focalDepth)) - target.position, rotationTarget.up), Time.deltaTime * torquePower);
+
+            }
+
         }
     }
 

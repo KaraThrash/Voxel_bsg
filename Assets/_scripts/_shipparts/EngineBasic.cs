@@ -100,9 +100,15 @@ public class EngineBasic : ShipSystem
                 targetVelocity += lateralEngine.Lateral() * lateralPower;
             }
 
-            RbTarget().velocity = Vector3.Lerp(RbTarget().velocity, targetVelocity, Time.deltaTime * accelerationRate);
+            float  acc = accelerationRate;
+            if(throttle == 0)
+            {
+                acc = decelRate;    
 
-            if (RbTarget().velocity.magnitude < (transform.forward * power).magnitude * 0.5f)
+            }
+            RbTarget().velocity = Vector3.Lerp(RbTarget().velocity, targetVelocity, Time.deltaTime * acc);
+
+            if (RbTarget().velocity.magnitude < (transform.forward * power).magnitude * 0.5f && throttle != 0)
             {
                 RbTarget().velocity = Vector3.Lerp(RbTarget().velocity, targetVelocity, Time.deltaTime * (10 + (RbTarget().velocity.magnitude /(1 + (transform.forward * power).magnitude) )));
             }
