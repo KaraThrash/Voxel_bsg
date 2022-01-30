@@ -17,9 +17,20 @@ public enum AiState {
     recovering, takingDamage, 
     pathfinding, moving, attacking, 
     adjusting, special, dying, 
+    dodging,fleeing,
     idle, spawned,
     inactive,
     ragdolling
+}
+
+public enum Stance
+{
+    neutral,defensive,aggressive,special
+}
+
+public enum RangeBand
+{
+    ideal,close,far,extreme,unknown,infinity
 }
 
 

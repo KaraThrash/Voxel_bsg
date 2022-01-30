@@ -94,8 +94,72 @@ public class ThirdPersonCamera : MonoBehaviour
 
     }
 
-
     public void PlayerControlled()
+    {
+        yRot = (Input.GetAxis("Mouse X") * XSensitivity) + (InputControls.CameraHorizontalAxis() * XSensitivity);
+        xRot = (Input.GetAxis("Mouse Y") * -YSensitivity) + (InputControls.CameraVerticalAxis() * YSensitivity);
+
+
+        rollz = InputControls.RollAxis();
+
+        if (InputControls.PreviousButton())
+        {
+            rollz = -1;
+        }
+        else if (InputControls.NextButton())
+        {
+            rollz = 1;
+        }
+        m_CharacterTargetRot *= Quaternion.Euler(xRot, yRot, -rollz * ZSensitivity);
+
+        if (xRot == 0 && yRot == 0 && rollz == 0)
+        { }
+        else
+        {
+            idleTimer = 0;
+            currentAcc = 0;
+        }
+
+        idleTimer += Time.deltaTime;
+
+        if (idleTimer > timeToResetRotation)
+        {
+            currentAcc += (Time.deltaTime * idleCameraAcceleration);
+            if (currentAcc > 1) { currentAcc = 1; }
+        }
+
+        if (clampVerticalRotation) { m_CameraTargetRot = ClampRotationAroundXAxis(m_CameraTargetRot); }
+
+
+        if (smooth)
+        {
+           
+                if (idleTimer > timeToResetRotation)
+                {
+
+                }
+                else
+                {
+                    transform.Rotate(new Vector3(xRot, yRot, -rollz * ZSensitivity) * Time.deltaTime);
+
+                }
+            
+        }
+        else
+        {
+            
+                transform.rotation = m_CharacterTargetRot;
+
+            
+
+        }
+
+
+        UpdateCursorLock();
+
+    }
+
+    public void oldPlayerControlled()
     {
         yRot = (Input.GetAxis("Mouse X") * XSensitivity) + (InputControls.CameraHorizontalAxis() * XSensitivity);
         xRot = (Input.GetAxis("Mouse Y") * -YSensitivity) + (InputControls.CameraVerticalAxis() * YSensitivity);
@@ -136,7 +200,7 @@ public class ThirdPersonCamera : MonoBehaviour
            // m_CharacterTargetRot = player.transform.rotation;
         }
 
-        Quaternion rotationDelta = Quaternion.FromToRotation(transform.forward, player.transform.forward);
+        Quaternion rotationDelta = Quaternion.FromToRotation(transform.rotation.eulerAngles, m_CharacterTargetRot.eulerAngles);
 
 
 
@@ -218,8 +282,9 @@ public class ThirdPersonCamera : MonoBehaviour
                 }
                 else
                 {
-                    transform.rotation = Quaternion.Slerp(transform.rotation, m_CharacterTargetRot,
-                        smoothTime * Time.deltaTime);
+                    transform.Rotate(new Vector3(xRot, yRot, -rollz * ZSensitivity) * Time.deltaTime );
+                   // transform.rotation = Quaternion.Slerp(transform.rotation, m_CharacterTargetRot,
+                     //   smoothTime * Time.deltaTime);
                 }
 
 

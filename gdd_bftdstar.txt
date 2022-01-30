@@ -1,0 +1,115 @@
+Battle for the dark star:
+
+Dark souls + Star fox -> with a Battlestar Galactica theme [Humans vs Robots (simple is better, no need to  get clever obscuring Cylons. Wear inspiration as a badge)]
+--Use clever movement and positioning to defeat enemies
+    e.g.: 
+        -get behind and shoot them down while they cannot shoot you
+        -Fly through difficult terrain to cause the enemy to impact the enviroment and hurt themselves while you escape
+        -maneuver so enemies attempting to shoot you from different directions miss and shoot each other
+        -trade shots with an enemy while trying to [bullet hell style] avoid their incoming shots
+
+--Collect money to improve your current loadout:
+    e.g.:
+        -repair fighters
+        -upgrade fighters
+        -repair fleetships
+        -upgrade fleetships
+        -use fleetship abilities
+        -maintain fleetship abilities
+        -buy consumables like missiles or flares
+    Done by: Killing enemies, finding treasure, finishing events
+
+--Explore to find NPCs to bring back to the fleet or find upgrades
+    e.g.:
+        -Find Npcs to bring back to the fleet.
+        -Find new upgrades to the fleet
+        -Find targets[Events/bosses] for special bonuses or overall progress.
+        -Use the right ship type/loadout for each area/zone/mission [e.g.: landmaster tank for planetary stuff. Viper for space, Raptor for hauling items/npcs etc]
+
+        
+
+
+
+
+Player:
+
+Enemies: 
+    F.E.A.R enemy tactics
+    Lean into the robotic AI of the enemy
+
+    Ai:
+        --brain power:
+            Enemies make decisions at intervals based on their 'brain power'
+                --e.g.: every Xseconds assess the state of the world and make a decision.
+
+Enemy Fleet: Acts similar to the player's talent tree to confer benefits to the enemies, either globally or locally[current map/zone] depending on the specifics of each Enemyfleetship type
+
+        
+NPCs:
+
+
+Fleet: 
+    Acts like a talent tree to confer benefits, generate or hold resources for the player. Lost if the ship is destroyed.
+    Talent tree:
+        -Generate or hold resources.
+        -Provides stat improvements.
+        -Provides special abilities. [e.g. call orbital strike]
+
+
+Progression:
+
+
+
+Movement:
+    3rd person:
+        camera: Controled by the right analog stick or the mouse to look in the direction the player directs it.
+                -or looks at the target if locking on.
+                Roll is orientation is controlled by the camera.
+        ship:
+        >> the Ship is two objects. The entire system which the primary velocity, damage, collision are on, and the secondary system [collider for the ship] which can move lateral in place without the enite ship moving
+            --allows the player to react quickly and dodge attacks in a small area but cannot make major movements in lateral directions 
+            Engines:
+                -Rotates to face the camera direction at a speed determined by the engines.
+                    --can be a toggle to have the ship only rotate when moving
+                -Propel the ship forward based on its current facing NOT the facing of the camera
+                    --can be a toggle to have it be camera relative.
+                -Lateral movement relative to the camera within a designated boundary
+                    -- when at the boundary max the entire ship system adds that lateral movement to the target velocity
+                  
+    External forces: Collisions, getting shot, losing stamina, or firing weapons like a rail gun apply external forces that the engine tracks and includes in its calculations.
+        --Handled by the engine and modified by the enviroment [high friction, gracity etc]
+
+Enviroment Levels:
+    Enviroment type determine gravity, friction, and ambient forces [e.g.: Sand decreases engine effectiveness increases durability loss]
+
+
+
+
+--comparison to dark souls:
+
+Souls:
+Player Respawns:
+Enemy Respawns:
+Upgrades:
+
+
+
+
+Thoughts and design whiteboard:
+    Pursuit: If always being pursued it needs to be core to everything being a time pressure and not just skill decision in battle. Pursuit as an addition would probably feel comubersum to the player.
+            -- could it be a special sometimes event e.g.: being pursued until X happens/is killed, or for X jumps?
+        --Or part of a Back4Blood corruption cards mechanic since the enemy fleets work as a talent tree already.
+                >> Pursued until the ship giving the pursuit benefit is destroyed OR the player finds a way to hide the fleet and escape? >> I like that
+
+
+
+
+glossary:
+
+Enemy: The ships trying to kill the player and destroy the fleet. Bosses are considered enemies.
+Enemyfleetship: Functions similar to the player's fleet ships.
+Events: An objective location, enemy, or item that confers a special bonus. Timed version of Targets. 
+Fighter: the ship that the player and enemies fly around in.
+Fleetship: Npcs, confer stats, affects, or hold resources.
+Fleet: Collection of npc ships that work like a talent tree.
+Targets: An objective location, enemy, or item that confers a special bonus.Not Timed version of Events.

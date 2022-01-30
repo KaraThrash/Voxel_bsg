@@ -11,25 +11,43 @@ public class Enemy : MonoBehaviour {
 
     public AiState state;
     public AiState pendingState;
+    public Stance stance;
+    public RangeBand rangeBand;
 
-    public Transform mapArea,target,patrolparent,patroltarget;
+    public Transform mapArea,attackTarget,patrolparent,patroltarget;
 
     public float hp;
 
+
+
+
+    //AI stuff
+    /// 
+    /// 
+    /// 
     public float leashDistance, noticePlayerDistance = 50.0f;
 
     public bool alert;
 
 
-    public float brainTime,stateTime; //brain time for small changes, state time for state specific holds
+    public float brainTime,stateTime; //brain time for checking if the enemy responds to an external condition [e.g. player being in their line of fire], state time for state specific holds
 
-    private float stateTimer,brainTimer;
+    public int substate; // differences within the same AI state: e.g. attcking when the playing is facing this enemy or facing away
+
+    protected Vector3 targetPos; //for strafing/dodging/ fly bys
+
+    protected float stateTimer,brainTimer;
 
     protected float stuckCounter, timeSinceLastAction; // check if stuck
 
-   
+    public int closeRange, farRange;
+    public float rangeVarience; //check against varience not against the opposite range e.g.: when close check if further than close+varience to prevent riding the line  
 
-    public AiState State() { return state; }
+    /// 
+    /// 
+    /// 
+    //AI stuff
+
 
     public void State(AiState _state) 
     {
@@ -61,7 +79,7 @@ public class Enemy : MonoBehaviour {
         else if (State() == AiState.adjusting)
         {
 
-            if (Vector3.Angle(transform.forward, (target.position - transform.position).normalized) < 10 || Vector3.Angle(transform.forward, (target.position - transform.position).normalized) > 80) { }
+            if (Vector3.Angle(transform.forward, (AttackTarget().position - transform.position).normalized) < 10 || Vector3.Angle(transform.forward, (AttackTarget().position - transform.position).normalized) > 80) { }
         }
 
         if (_newstate == AiState.attacking)
@@ -92,10 +110,35 @@ public class Enemy : MonoBehaviour {
 
 
 
+    //public enum AiState
+    //{
+    //    recovering, takingDamage,
+    //    pathfinding, moving, attacking,
+    //    adjusting, special, dying,
+    //    idle, spawned,
+    //    inactive,
+    //    ragdolling
+    //}
 
 
+    public virtual void Recovering() { }
+    public virtual void TakingDamage() { }
+    public virtual void Moving() { }
+    public virtual void Pathfinding() { }
+    public virtual void Attacking() { }
+    public virtual void Adjusting() { }
+    public virtual void Special() { }
+    public virtual void Dying() { }
+    public virtual void Idle() { }
+    public virtual void Dodging() { }
+    public virtual void Fleeing() { }
+    public virtual void Spawned() { }
+    public virtual void Inactive() { }
+    public virtual void Ragdolling() { }
 
 
+    //check if the current state of play is in the enemies advantage, and whether they should defend or attack
+    public virtual bool CheckAdvantage() { return false; }
 
 
 
@@ -106,7 +149,7 @@ public class Enemy : MonoBehaviour {
 
     void Start()
     {
-        if (target == null || ship == null) { return; }
+        if (AttackTarget() == null || ship == null) { return; }
         State(AiState.adjusting);
        
     }
@@ -148,19 +191,19 @@ public class Enemy : MonoBehaviour {
     }
 
 
-    public void Act()
+    public virtual void Act()
     {
         Debug.Log(Vector3.Angle(transform.position + transform.forward, ship.rotationTarget.position + ship.rotationTarget.forward));
 
-        if (target == null || ship == null) { return; }
+        if (AttackTarget() == null || ship == null) { return; }
 
         if(brainTimer > 0){brainTimer -= Time.deltaTime;}
 
-        ship.rotationTarget.LookAt(target);
+        ship.rotationTarget.LookAt(AttackTarget());
 
         if (State() == AiState.adjusting)
         { 
-            ship.rotationTarget.LookAt(target);
+            ship.rotationTarget.LookAt(AttackTarget());
 
             if (CheckBrain())
             {
@@ -179,7 +222,7 @@ public class Enemy : MonoBehaviour {
         {
 
 
-            if (Vector3.Distance(target.position, ship.transform.position) < 10)
+            if (Vector3.Distance(AttackTarget().position, ship.transform.position) < 10)
             {
                 if(CheckBrain())
                 {
@@ -196,7 +239,7 @@ public class Enemy : MonoBehaviour {
                 }
                
             }
-            else if (Vector3.Distance(target.position, ship.transform.position) < 30)
+            else if (Vector3.Distance(AttackTarget().position, ship.transform.position) < 30)
             {
 
                 if(CheckBrain())
@@ -209,12 +252,12 @@ public class Enemy : MonoBehaviour {
             {
                 if(CheckBrain())
                 {
-                    ship.primaryEngine.GetComponent<EngineBasic>().Throttle(1 - ((Vector3.Angle(ship.transform.forward, (target.position - ship.transform.position).normalized))/90), 1.0f);
+                    ship.primaryEngine.GetComponent<EngineBasic>().Throttle(1 - ((Vector3.Angle(ship.transform.forward, (AttackTarget().position - ship.transform.position).normalized))/90), 1.0f);
                 }
                // ship.rotationTarget.rotation = ship.transform.rotation;
             }
 
-            if (Vector3.Angle(ship.transform.forward, (target.position - transform.position).normalized) > 80)
+            if (Vector3.Angle(ship.transform.forward, (AttackTarget().position - transform.position).normalized) > 80)
             {
                 stateTimer += Time.deltaTime;
                 if (stateTimer >= brainTime)
@@ -241,7 +284,7 @@ public class Enemy : MonoBehaviour {
 
         }
 
-        if (Vector3.Angle(ship.transform.position, target.position) < 10 || Vector3.Angle(ship.transform.position, target.position) > 80)
+        if (Vector3.Angle(ship.transform.position, AttackTarget().position) < 10 || Vector3.Angle(ship.transform.position, AttackTarget().position) > 80)
         { 
         
         }
@@ -311,6 +354,24 @@ public class Enemy : MonoBehaviour {
     {
        
     }
+
+
+
+
+
+    public Transform AttackTarget()
+    {
+        return attackTarget;
+    }
+
+
+
+
+
+
+
+
+
     public void CheckForward()
     {
         // possible issue with dradis detection
@@ -342,7 +403,43 @@ public class Enemy : MonoBehaviour {
 
     }
 
-  
+
+
+
+
+    public AiState State() { return state; }
+    public Stance Stance() { return stance; }
+    public void Stance(Stance _stance) { stance = _stance; }
+
+    public RangeBand RangeZone() { return rangeBand; }
+    public void RangeZone(RangeBand _rangeBand) { rangeBand = _rangeBand; }
+
+    public void DetermineRangeZone(Vector3 _pos) 
+    {
+        float currentRange = 0;
+        if (RangeZone() == RangeBand.close)
+        {currentRange = closeRange;}
+        else if (RangeZone() == RangeBand.ideal)
+        { currentRange = closeRange; }
+        else if (RangeZone() == RangeBand.far)
+        { currentRange = closeRange; }
+
+        float dist = Vector3.Distance(_pos, transform.position);
+        //to prevent riding the line of range bands dont change if within the assigned varience
+        if (Mathf.Abs(dist  - currentRange) <= rangeVarience)
+        { return; }
+
+        if (dist <= closeRange)
+        { RangeZone(RangeBand.close); }
+        else if (dist <= farRange)
+        { RangeZone(RangeBand.ideal); }
+        else if (dist > farRange * 2)
+        { RangeZone(RangeBand.extreme); }
+        else { RangeZone(RangeBand.far); }
+
+    }
+
+
 
     public float DistanceToTarget(GameObject target)
     { return Vector3.Distance(transform.position, target.transform.position); }

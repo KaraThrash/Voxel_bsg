@@ -20,6 +20,10 @@ public class Sandbox : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        Debug.Log("transform.forward:  " + Vector3.Angle(transform.forward, (obj.position - transform.position).normalized));
+        Debug.Log("transform.right:  " + Vector3.Angle(transform.right, (obj.position - transform.position).normalized));
+        Debug.Log("transform.up:  " + Vector3.Angle(transform.up, (obj.position - transform.position).normalized));
+
       if(Input.GetKeyDown(KeyCode.T))
       {
             
@@ -44,12 +48,12 @@ public class Sandbox : MonoBehaviour
         //Debug.Log("InputControls.ActionButton() <>" + InputControls.ActionButton());
         if (InputControls.RightTrigger() != 0)
         { 
-            Debug.Log("InputControls.RightTrigger() <>" + InputControls.RightTrigger());
+            //Debug.Log("InputControls.RightTrigger() <>" + InputControls.RightTrigger());
 
         }
         if (InputControls.LeftTrigger() != 0)
         {
-            Debug.Log("InputControls.LeftTrigger() <>" + InputControls.LeftTrigger());
+          //  Debug.Log("InputControls.LeftTrigger() <>" + InputControls.LeftTrigger());
 
         }
     }
