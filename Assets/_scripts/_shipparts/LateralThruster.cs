@@ -114,7 +114,8 @@ public class LateralThruster : ShipSystem
             }
             else 
             {
-             target.transform.rotation = Quaternion.Lerp(target.rotation, Quaternion.LookRotation((rotationTarget.position + (rotationTarget.forward * focalDepth)) - target.position, rotationTarget.up), Time.deltaTime * torquePower);
+
+                 target.transform.rotation = Quaternion.Lerp(target.rotation, Quaternion.LookRotation((rotationTarget.position + (rotationTarget.forward * focalDepth)) - target.position, rotationTarget.up), Time.deltaTime * torquePower);
 
             }
 

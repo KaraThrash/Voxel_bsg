@@ -4,19 +4,27 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour {
+    public static GameManager instance
+    {
+        get => singleton.instance;
+    }
 
-  public Player playerManager;
-  public Menus menuManager;
-  public MapManager mapManager;
-  public NpcManager npcManager;
-  public ItemManager itemManager;
-  public WorldTime timeManager;
-  public ThirdPersonCamera cam;
-  public FtlImageFade imageFade;
-  public GameObject dockMenu;
-  public ScrollingText scrollingText;
-  public Text contextText;
-  public bool inMenu,inBattle,inMap;
+    private static GlobalSingletonGetter<GameManager> singleton =
+    new GlobalSingletonGetter<GameManager>(gameObjectName: "GameManager");
+
+
+    public Player playerManager;
+    public Menus menuManager;
+    public MapManager mapManager;
+    public NpcManager npcManager;
+    public ItemManager itemManager;
+    public WorldTime timeManager;
+    public ThirdPersonCamera cam;
+    public FtlImageFade imageFade;
+    public GameObject dockMenu;
+    public ScrollingText scrollingText;
+    public Text contextText;
+    public bool inMenu,inBattle,inMap;
 
 
     // Use this for initialization

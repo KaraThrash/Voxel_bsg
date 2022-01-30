@@ -15,11 +15,11 @@ public class Raider : Enemy
 
         if (brainTimer > 0) { brainTimer -= Time.deltaTime; }
 
-        ship.rotationTarget.LookAt(AttackTarget());
+        
 
         if (State() == AiState.adjusting)
         {
-            Adjusting();
+            Moving();
         }
         else if (State() == AiState.attacking)
         {
@@ -31,7 +31,11 @@ public class Raider : Enemy
             Recovering();
 
         }
+        else if (State() == AiState.moving)
+        {
+            Moving();
 
+        }
         if (Vector3.Angle(ship.transform.position, AttackTarget().position) < 10 || Vector3.Angle(ship.transform.position, AttackTarget().position) > 80)
         {
 
@@ -42,69 +46,108 @@ public class Raider : Enemy
 
     public override void Attacking()
     {
+        ship.rotationTarget.LookAt(targetPos);
+        ship.secondaryEngine.GetComponent<LateralThruster>().rotationTarget.LookAt(targetPos);
 
-        
+        float angle = Vector3.Angle(ship.transform.forward, (AttackTarget().position - ship.transform.position).normalized);
+         angle = ((90 - angle) / 90);
 
+        ship.primaryEngine.GetComponent<EngineBasic>().Throttle(1 ,1);
+        ship.secondaryEngine.GetComponent<LateralThruster>().Throttle(0,0);
 
-        if (Vector3.Distance(AttackTarget().position, ship.transform.position) < 10)
+        if (Vector3.Distance(targetPos, ship.transform.position) > 1)
         {
-            if (CheckBrain())
-            {
-                ship.secondaryEngine.GetComponent<LateralThruster>().Throttle(1, 1);
-                ship.primaryEngine.GetComponent<EngineBasic>().Throttle(1, 0);
-            }
-
-
-            stateTimer += Time.deltaTime;
-
-            if (stateTimer >= stateTime)
-            {
-                State(AiState.recovering);
-                pendingState = AiState.adjusting;
-            }
-
+           // ship.primaryEngine.GetComponent<EngineBasic>().Throttle(((90 - Vector3.Angle(ship.transform.forward, (AttackTarget().position - ship.transform.position).normalized)) / 90), 0);
         }
-        else if (Vector3.Distance(AttackTarget().position, ship.transform.position) < 30)
+        else 
         {
-
-            if (CheckBrain())
-            {
-                ship.secondaryEngine.GetComponent<LateralThruster>().Throttle(1, 1);
-                ship.primaryEngine.GetComponent<EngineBasic>().Throttle(1.0f, 0.1f);
-            }
-        }
-        else
-        {
-            if (CheckBrain())
-            {
-                ship.primaryEngine.GetComponent<EngineBasic>().Throttle(1 - ((Vector3.Angle(ship.transform.forward, (AttackTarget().position - ship.transform.position).normalized)) / 90), 1.0f);
-            }
-            // ship.rotationTarget.rotation = ship.transform.rotation;
-        }
-
-        if (Vector3.Angle(ship.transform.forward, (AttackTarget().position - transform.position).normalized) > 80)
-        {
-            stateTimer += Time.deltaTime;
-            if (stateTimer >= brainTime)
-            {
-                State(AiState.recovering);
-                pendingState = AiState.adjusting;
-            }
-
+            //decreasing throttle at close range
+            //ship.primaryEngine.GetComponent<EngineBasic>().Throttle(Vector3.Distance(targetPos, ship.transform.position), 0);
         }
 
 
-        stateTime -= Time.deltaTime;
-        if (stateTimer <= 0)
+
+        //if (Vector3.Distance(AttackTarget().position, ship.transform.position) < 10)
+        //{
+        //    if (CheckBrain())
+        //    {
+        //        ship.secondaryEngine.GetComponent<LateralThruster>().Throttle(1, 1);
+        //        ship.primaryEngine.GetComponent<EngineBasic>().Throttle(1, 0);
+        //    }
+
+
+        //    stateTimer += Time.deltaTime;
+
+        //    if (stateTimer >= stateTime)
+        //    {
+        //        State(AiState.recovering);
+        //        pendingState = AiState.adjusting;
+        //    }
+
+        //}
+        //else if (Vector3.Distance(AttackTarget().position, ship.transform.position) < 30)
+        //{
+
+        //    if (CheckBrain())
+        //    {
+        //        ship.secondaryEngine.GetComponent<LateralThruster>().Throttle(1, 1);
+        //        ship.primaryEngine.GetComponent<EngineBasic>().Throttle(1.0f, 0.1f);
+        //    }
+        //}
+        //else
+        //{
+        //    if (CheckBrain())
+        //    {
+        //        ship.primaryEngine.GetComponent<EngineBasic>().Throttle(1 - ((Vector3.Angle(ship.transform.forward, (AttackTarget().position - ship.transform.position).normalized)) / 90), 1.0f);
+        //    }
+        //    // ship.rotationTarget.rotation = ship.transform.rotation;
+        //}
+
+        //if (Vector3.Angle(ship.transform.forward, (AttackTarget().position - ship.transform.position).normalized) > 80)
+        //{
+        //    stateTimer += Time.deltaTime;
+        //    if (stateTimer >= brainTime)
+        //    {
+        //        State(AiState.recovering);
+        //        pendingState = AiState.adjusting;
+        //    }
+
+        //}
+
+
+        stateTimer -= Time.deltaTime;
+        if (stateTimer <= 0 && Vector3.Distance(ship.transform.position,targetPos) < rangeVarience)
         {
-            stateTimer = stateTime;
+
+            
+            stateTimer = StateTime();
 
             DetermineRangeZone(AttackTarget().position);
 
-            if (RangeZone() == RangeBand.close)
-            { 
+            //make decision
+            float facing = Vector3.Angle(transform.forward, (AttackTarget().position - transform.position).normalized);
+            float targetfacing = Vector3.Angle(AttackTarget().forward, (ship.transform.position - AttackTarget().position).normalized);
 
+            if (facing < targetfacing)
+            {
+                targetPos = AttackTarget().position - (AttackTarget().forward * 10);
             }
+            else 
+            {
+                targetPos = AttackTarget().position + (AttackTarget().up * 10);
+            }
+
+
+            //if (RangeZone() == RangeBand.close)
+            //{
+            //    targetPos = AttackTarget().position + (AttackTarget().forward * 10);
+            //    State(AiState.attacking);
+            //}
+            //else
+            //{
+            //    State(AiState.moving);
+            //    targetPos = AttackTarget().position - (AttackTarget().forward * 25);
+            //}
 
 
         }
@@ -114,7 +157,54 @@ public class Raider : Enemy
 
     public override void Recovering() { }
     public override void TakingDamage() { }
-    public override void Moving() { }
+    public override void Moving() 
+    {
+        ship.rotationTarget.LookAt(targetPos);
+        ship.secondaryEngine.GetComponent<LateralThruster>().rotationTarget.LookAt(AttackTarget());
+
+        float angle = Vector3.Angle(ship.transform.forward, (AttackTarget().position - ship.transform.position).normalized);
+        angle = ((90 - angle) / 90);
+
+        ship.primaryEngine.GetComponent<EngineBasic>().Throttle(.2f, 1);
+        ship.secondaryEngine.GetComponent<LateralThruster>().Throttle(0, 0);
+
+
+        stateTimer -= Time.deltaTime;
+        if (stateTimer <= 0)
+        {
+            stateTimer = StateTime();
+
+            DetermineRangeZone(AttackTarget().position);
+
+            //make decision
+            float facing = Vector3.Angle(ship.transform.forward, (AttackTarget().position - ship.transform.position).normalized);
+            float targetfacing = Vector3.Angle(AttackTarget().forward, (ship.transform.position - AttackTarget().position).normalized);
+
+            if (facing < 90)
+            {
+                if (facing < targetfacing)
+                {
+                    
+                }
+                
+            }
+
+
+            if (RangeZone() == RangeBand.close)
+            {
+                targetPos = AttackTarget().position + (AttackTarget().forward * 10);
+                State(AiState.attacking);
+            }
+            else 
+            {
+
+                targetPos = AttackTarget().position - (AttackTarget().forward * 25); 
+            }
+
+
+        }
+    }
+
     public override void Pathfinding() { }
     
     public override void Adjusting() { }
@@ -156,7 +246,7 @@ public class Raider : Enemy
 
         if (_newstate == AiState.attacking)
         {
-            stateTimer = 0;
+          //  stateTimer = 0;
             ship.primaryEngine.GetComponent<EngineBasic>().Throttle(1, 0);
             ship.secondaryEngine.GetComponent<LateralThruster>().Throttle(0, 0);
 
@@ -164,13 +254,13 @@ public class Raider : Enemy
         }
         else if (_newstate == AiState.adjusting)
         {
-            stateTimer = 0;
+           // stateTimer = 0;
             ship.primaryEngine.GetComponent<EngineBasic>().Throttle(0, 1);
             ship.secondaryEngine.GetComponent<LateralThruster>().Throttle(0, 0);
         }
         else if (_newstate == AiState.recovering)
         {
-            stateTimer = stateTime;
+           // stateTimer = StateTime();
             ship.primaryEngine.GetComponent<EngineBasic>().Throttle(1, 0);
             ship.secondaryEngine.GetComponent<LateralThruster>().Throttle(0, 0);
         }

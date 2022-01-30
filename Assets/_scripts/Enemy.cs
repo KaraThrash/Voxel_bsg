@@ -30,13 +30,15 @@ public class Enemy : MonoBehaviour {
     public bool alert;
 
 
-    public float brainTime,stateTime; //brain time for checking if the enemy responds to an external condition [e.g. player being in their line of fire], state time for state specific holds
+    private float brainTime,stateTime; //brain time for checking if the enemy responds to an external condition [e.g. player being in their line of fire], state time for state specific holds
 
     public int substate; // differences within the same AI state: e.g. attcking when the playing is facing this enemy or facing away
 
-    protected Vector3 targetPos; //for strafing/dodging/ fly bys
+    protected Vector3 targetPos; 
+    protected Vector3 targetDirection;
+    protected Quaternion targetRotation;
 
-    protected float stateTimer,brainTimer;
+    public float stateTimer,brainTimer;
 
     protected float stuckCounter, timeSinceLastAction; // check if stuck
 
@@ -84,7 +86,7 @@ public class Enemy : MonoBehaviour {
 
         if (_newstate == AiState.attacking)
         {
-            stateTimer = 0;
+           // stateTimer = 0;
             ship.primaryEngine.GetComponent<EngineBasic>().Throttle(1,0);
             ship.secondaryEngine.GetComponent<LateralThruster>().Throttle(0, 0);
 
@@ -92,13 +94,13 @@ public class Enemy : MonoBehaviour {
         }
         else if (_newstate == AiState.adjusting)
         {
-            stateTimer = 0;
+           // stateTimer = 0;
             ship.primaryEngine.GetComponent<EngineBasic>().Throttle(0,1);
             ship.secondaryEngine.GetComponent<LateralThruster>().Throttle(0, 0);
         }
         else if (_newstate == AiState.recovering)
         {
-            stateTimer = stateTime;
+           // stateTimer = stateTime;
             ship.primaryEngine.GetComponent<EngineBasic>().Throttle(1, 0);
             ship.secondaryEngine.GetComponent<LateralThruster>().Throttle(0, 0);
         }
@@ -150,8 +152,8 @@ public class Enemy : MonoBehaviour {
     void Start()
     {
         if (AttackTarget() == null || ship == null) { return; }
-        State(AiState.adjusting);
-       
+        State(AiState.moving);
+        stateTime = 5;
     }
     void Awake()
     {
@@ -406,6 +408,8 @@ public class Enemy : MonoBehaviour {
 
 
 
+    public float StateTime() { return stateTime; }
+    public float BrainTime() { return brainTime; }
 
     public AiState State() { return state; }
     public Stance Stance() { return stance; }
