@@ -42,8 +42,9 @@ public class Enemy : MonoBehaviour {
 
     protected float stuckCounter, timeSinceLastAction; // check if stuck
 
-    public int closeRange, farRange;
-    public float rangeVarience; //check against varience not against the opposite range e.g.: when close check if further than close+varience to prevent riding the line  
+    public int closeRange, midRange,farRange;
+    public float rangeVarience,angleTolerance; //check against varience not against the opposite range e.g.: when close check if further than close+varience to prevent riding the line  
+    //angle tolerance for the cone around a perfect facing
 
     /// 
     /// 
@@ -81,28 +82,28 @@ public class Enemy : MonoBehaviour {
         else if (State() == AiState.adjusting)
         {
 
-            if (Vector3.Angle(transform.forward, (AttackTarget().position - transform.position).normalized) < 10 || Vector3.Angle(transform.forward, (AttackTarget().position - transform.position).normalized) > 80) { }
+     //       if (Vector3.Angle(transform.forward, (AttackTarget().position - transform.position).normalized) < 10 || Vector3.Angle(transform.forward, (AttackTarget().position - transform.position).normalized) > 80) { }
         }
 
         if (_newstate == AiState.attacking)
         {
            // stateTimer = 0;
-            ship.primaryEngine.GetComponent<EngineBasic>().Throttle(1,0);
-            ship.secondaryEngine.GetComponent<LateralThruster>().Throttle(0, 0);
+         //   ship.primaryEngine.GetComponent<EngineBasic>().Throttle(1,0);
+          //  ship.secondaryEngine.GetComponent<LateralThruster>().Throttle(0, 0);
 
 
         }
         else if (_newstate == AiState.adjusting)
         {
            // stateTimer = 0;
-            ship.primaryEngine.GetComponent<EngineBasic>().Throttle(0,1);
-            ship.secondaryEngine.GetComponent<LateralThruster>().Throttle(0, 0);
+          //  ship.primaryEngine.GetComponent<EngineBasic>().Throttle(0,1);
+          //  ship.secondaryEngine.GetComponent<LateralThruster>().Throttle(0, 0);
         }
         else if (_newstate == AiState.recovering)
         {
            // stateTimer = stateTime;
-            ship.primaryEngine.GetComponent<EngineBasic>().Throttle(1, 0);
-            ship.secondaryEngine.GetComponent<LateralThruster>().Throttle(0, 0);
+           // ship.primaryEngine.GetComponent<EngineBasic>().Throttle(1, 0);
+           // ship.secondaryEngine.GetComponent<LateralThruster>().Throttle(0, 0);
         }
 
 
@@ -152,8 +153,9 @@ public class Enemy : MonoBehaviour {
     void Start()
     {
         if (AttackTarget() == null || ship == null) { return; }
-        State(AiState.moving);
+        State(AiState.attacking);
         stateTime = 5;
+        brainTime = 2;
     }
     void Awake()
     {
@@ -171,7 +173,7 @@ public class Enemy : MonoBehaviour {
     {
         if(brainTimer <= 0)
         {
-            brainTimer = brainTime;
+            brainTimer = BrainTime();
             return true;
         }
         return false;

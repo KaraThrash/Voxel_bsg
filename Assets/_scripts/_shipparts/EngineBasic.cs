@@ -106,7 +106,7 @@ public class EngineBasic : ShipSystem
 
             if (lateralEngine != null)
             {
-                RbTarget().velocity = Vector3.Lerp(RbTarget().velocity, targetVelocity + lateralEngine.Lateral() * lateralPower, Time.deltaTime * accelerationRate);
+                RbTarget().velocity = Vector3.Lerp(RbTarget().velocity, targetVelocity + (lateralEngine.Lateral() * lateralPower), Time.deltaTime * accelerationRate);
             }
             else 
             {
