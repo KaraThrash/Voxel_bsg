@@ -10,16 +10,17 @@ public class Raider : Enemy
     public float lateralHort, lasteralVert;
 
     public float targetengineThrottle, targetengineTorqueThrottle;
-    public float targetlateralHort, targetlasteralVert;
+    public float targetlateralHort, targetlateralVert;
 
     public override void Act()
     {
-        engineThrottle = Mathf.Lerp(engineThrottle, targetengineThrottle, Time.deltaTime * BrainTime());
-        engineTorqueThrottle = Mathf.Lerp(engineTorqueThrottle, targetengineTorqueThrottle, Time.deltaTime * BrainTime());
-        lateralHort = Mathf.Lerp(lateralHort, targetlateralHort, Time.deltaTime * BrainTime());
-        lasteralVert = Mathf.Lerp(lasteralVert, targetlasteralVert, Time.deltaTime * BrainTime());
+        engineThrottle = Mathf.Lerp(engineThrottle, targetengineThrottle, Time.deltaTime * DirectionChangeSpeed());
+        engineTorqueThrottle = Mathf.Lerp(engineTorqueThrottle, targetengineTorqueThrottle, Time.deltaTime * DirectionChangeSpeed());
+        lateralHort = Mathf.Lerp(lateralHort, targetlateralHort, Time.deltaTime * DirectionChangeSpeed());
+        lasteralVert = Mathf.Lerp(lasteralVert, targetlateralVert, Time.deltaTime * DirectionChangeSpeed());
 
 
+        
 
         if (AttackTarget() == null || ship == null) { return; }
 
@@ -56,59 +57,121 @@ public class Raider : Enemy
     }
 
 
+    public override void MakeDecision() 
+    {
+        DetermineRangeZone(ship.transform.position);
+
+        //when moving head on make lateral moves to avoid possible attacks
+        float facing = Vector3.Angle(ship.transform.forward, (AttackTarget().position - ship.transform.position).normalized);
+        float targetfacing = Vector3.Angle(AttackTarget().forward, (ship.transform.position - AttackTarget().position).normalized);
+
+        if (targetfacing < 90 && facing < 90)
+        {
+
+                targetlateralVert = -1 * Mathf.Sign(targetlateralVert);
+                targetlateralHort = -1 * Mathf.Sign(targetlateralVert);
+
+        }
+        else
+        {
+                targetlateralVert = 0;
+                targetlateralHort = 0;
+        }
+
+        
+        AiState newState = State();
+
+        targetPos = AttackTarget().position - (AttackTarget().forward * closeRange);
+        if (Vector3.Distance(targetPos, ship.transform.position) > farRange)
+        {
+            newState = AiState.moving;
+
+        }
+        else if (Vector3.Distance(AttackTarget().position , ship.transform.position) < closeRange )
+        {
+            newState = AiState.adjusting;
+
+        }
+        else 
+        {
+            if (State() == AiState.adjusting && (Vector3.Distance(targetPos, ship.transform.position) < midRange ) )
+            {
+                newState = AiState.adjusting;
+            }
+            else 
+            {
+                newState = AiState.attacking;
+            }
+            
+        }
+
+        //to make the lateral movements not always the same direction
+        if (newState == AiState.adjusting)
+        {
+            targetengineThrottle = 1;
+            targetengineTorqueThrottle = 1;
+            targetlateralVert = 0;
+                targetlateralHort = 0;
+            
+
+        }
+        else if (newState == AiState.attacking)
+        {
+            if (targetfacing < facing)
+            {
+                targetlateralHort = -targetlateralHort;
+            }
+
+
+        }
+        else if (newState  == AiState.recovering)
+        {
+            if (targetfacing < facing)
+            {
+                targetlateralVert = -targetlateralVert;
+                targetlateralHort = -targetlateralHort;
+            }
+        
+        }
+        else if (newState == AiState.moving)
+        {
+
+        }
+
+        State(newState);
+
+    }
+
 
 
 
     public override void Attacking()
     {
+        targetPos = AttackTarget().position - (AttackTarget().forward * closeRange);
 
-        ship.rotationTarget.LookAt(AttackTarget().position - (AttackTarget().forward * 5));
-        ship.secondaryEngine.GetComponent<LateralThruster>().rotationTarget.LookAt(AttackTarget());
+        ship.rotationTarget.LookAt(targetPos);
+        ship.secondaryEngine.GetComponent<LateralThruster>().rotationTarget.LookAt(AttackTarget().position);
 
-        float facing = Vector3.Angle(transform.forward, (AttackTarget().position - transform.position).normalized);
-        float targetfacing = Vector3.Angle(AttackTarget().forward, (ship.transform.position - AttackTarget().position).normalized);
+        float facing = Vector3.Angle(ship.transform.forward, (targetPos - ship.transform.position).normalized);
+        float secondaryFacing = Vector3.Angle(ship.transform.forward, (AttackTarget().position - ship.transform.position).normalized);
 
 
-        if (Vector3.Distance(AttackTarget().position, ship.transform.position) > closeRange)
+        if (Vector3.Distance(ship.transform.position, targetPos) > 5)
         {
-
-            if (facing > 90)
-            {
-
-                targetengineThrottle = 0.2f;
-                targetengineTorqueThrottle = 1;
-               
-
-            }
-            else
-            {
-                if (Vector3.Distance(AttackTarget().position, ship.transform.position) < midRange)
-                {
-                    targetengineThrottle = 0;
-                    targetengineTorqueThrottle = 1;
-                }
-                else 
-                {
-                    targetengineThrottle = 1;
-                    targetengineTorqueThrottle = 1;
-                }
-
-                if (facing < angleTolerance)
-                {
-                    if (gun != null) { gun.Activate(); }
-                }
-                else { if (gun != null) { gun.Deactivate(); } }
-
-            }
+            targetengineThrottle = 1;
+            targetengineTorqueThrottle = 1;
         }
         else 
         {
-
-            targetengineThrottle = -1;
-            engineThrottle = -1;
+            targetengineThrottle = 0;
             targetengineTorqueThrottle = 1;
-
         }
+        if (secondaryFacing < angleTolerance)
+        {
+            if (gun != null) { gun.Activate(); }
+        }
+        else { if (gun != null) { gun.Deactivate(); } }
+       
 
 
 
@@ -117,32 +180,9 @@ public class Raider : Enemy
         if (stateTimer <= 0)
         {
             stateTimer = StateTime();
-
-            DetermineRangeZone(AttackTarget().position);
-
-            //make decision
-
-            if (Vector3.Distance(AttackTarget().position, ship.transform.position) > farRange)
-            {
-                targetPos = AttackTarget().position + (AttackTarget().forward * 1);
-                State(AiState.moving);
-                targetlateralHort = 0 ;
-                targetlasteralVert = 0;
-            }
-            else if(Vector3.Distance(AttackTarget().position, ship.transform.position) < closeRange * 0.5f)
-            {
-                State(AiState.adjusting);
-
-                targetlateralHort = 0;
-                targetlasteralVert = 0;
-            }
-            else
-            {
-                targetlateralHort = 0;
-                targetlasteralVert = 0;
-            }
-
-
+           
+         //   MakeDecision();
+            
         }
     }
 
@@ -152,14 +192,20 @@ public class Raider : Enemy
     public override void TakingDamage() { }
     public override void Moving() 
     {
-        ship.rotationTarget.LookAt(AttackTarget());
-        ship.secondaryEngine.GetComponent<LateralThruster>().rotationTarget.LookAt(AttackTarget());
+        targetPos = AttackTarget().position;
+
+        targetPos += AttackTarget().up * ( 0.5f *  Vector3.Distance(AttackTarget().position , ship.transform.position));
+
+        ship.rotationTarget.LookAt(targetPos);
+        ship.secondaryEngine.GetComponent<LateralThruster>().rotationTarget.LookAt(targetPos);
+
+        float facing = Vector3.Angle(ship.transform.forward, (targetPos - ship.transform.position).normalized);
+        float secondaryFacing = Vector3.Angle(ship.transform.forward, (AttackTarget().position - ship.transform.position).normalized);
 
         float angle = Vector3.Angle(ship.transform.forward, (AttackTarget().position - ship.transform.position).normalized);
 
 
-        float facing = Vector3.Angle(ship.transform.forward, (AttackTarget().position - ship.transform.position).normalized);
-        float targetfacing = Vector3.Angle(AttackTarget().forward, (ship.transform.position - AttackTarget().position).normalized);
+
 
         if (facing < 90)
         {
@@ -176,21 +222,11 @@ public class Raider : Enemy
 
 
         stateTimer -= Time.deltaTime;
-
         if (stateTimer <= 0)
         {
             stateTimer = StateTime();
 
-
-            if (Vector3.Distance(AttackTarget().position,ship.transform.position) < midRange)
-            {
-                targetPos = AttackTarget().position;
-                State(AiState.attacking);
-            }
-            else
-            {
-
-            }
+            MakeDecision();
 
         }
     }
@@ -199,43 +235,22 @@ public class Raider : Enemy
     
     public override void Adjusting()
     {
-        Vector3 away = ship.transform.position + (ship.transform.position - AttackTarget().position).normalized;
+        Vector3 away = ship.transform.position + ((ship.transform.position - AttackTarget().position).normalized * midRange);
         ship.rotationTarget.LookAt(away);
         ship.secondaryEngine.GetComponent<LateralThruster>().rotationTarget.LookAt(away);
 
 
-
-
         stateTimer -= Time.deltaTime;
-
         if (stateTimer <= 0)
         {
             stateTimer = StateTime();
 
-
-            if (Vector3.Distance(AttackTarget().position, ship.transform.position) > midRange)
-            {
-                targetengineThrottle = 0.2f;
-                targetengineTorqueThrottle = 1;
-                State(AiState.attacking);
-            }
-            else if (Vector3.Distance(AttackTarget().position, ship.transform.position) > farRange)
-            {
-                State(AiState.moving);
-                targetlateralHort = 0;
-                targetlasteralVert = 0;
-            }
-            else
-            {
-                targetengineThrottle = 1;
-                targetengineTorqueThrottle = 1;
-            }
-
+            MakeDecision();
 
         }
-
-
     }
+
+
 
     public override void Pathfinding() { }
     public override void Special() { }

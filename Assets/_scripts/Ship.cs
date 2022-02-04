@@ -172,6 +172,35 @@ public class Ship : MonoBehaviour
     }
 
 
+
+
+
+
+    public void OnCollisionEnter(Collision collision)
+    {
+        ProcessCollisionEnter(collision);
+    }
+
+    public void OnTriggerEnter(Collider collision)
+    {
+        ProcessTriggerEnter(collision);
+    }
+
+    public virtual void ProcessCollisionEnter(Collision collision)
+    {
+
+    }
+
+    public virtual void ProcessTriggerEnter(Collider collision)
+    {
+
+    }
+
+
+
+
+
+
     public void RechargeStamina()
     {
         if (stamina < maxStamina)

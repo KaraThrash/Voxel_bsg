@@ -81,6 +81,14 @@ public class EngineBasic : ShipSystem
 
 
         }
+        else if (GetSystemState() == SystemState.damaged)
+        {
+            LockoutTimer(LockoutTimer() - Time.deltaTime);
+            if (LockoutTimer() <= 0)
+            {
+                SetSystemState(SystemState.on);
+            }
+        }
         else
         {
             if (currentAcc > 0)
@@ -95,7 +103,7 @@ public class EngineBasic : ShipSystem
 
             if (throttle != 0)
             {
-                targetVelocity = Vector3.Lerp(targetVelocity, transform.forward * power * currentAcc, Time.deltaTime * accelerationRate);
+                targetVelocity = Vector3.Lerp(targetVelocity, ship.transform.forward * power * currentAcc, Time.deltaTime * accelerationRate);
                 
             }
             else 
@@ -121,6 +129,9 @@ public class EngineBasic : ShipSystem
             ship.transform.rotation = Quaternion.Lerp(ship.transform.rotation, ship.RotationTarget(), Time.deltaTime * torquePower * torqueThrottle);
         }
     }
+
+
+
 
     public void Accelerate(float _throttle)
     {

@@ -16,11 +16,16 @@ public class ShipSystem : MonoBehaviour
 
     public float power;
 
+    private float lockoutTimer;//for taking damage, being frozen or other circumstances that render this system unusable
+
     public bool on;
 
     public KeyCode activateKey,deactivateKey;
     public string activateButton,deactivateButton, axis;
     public string positiveButton,negativeButton;
+
+
+
 
     public void SetActivateKey(KeyCode _key) { activateKey = _key; }
     public void SetActivateButton(string _key) { activateButton = _key; }
@@ -30,6 +35,11 @@ public class ShipSystem : MonoBehaviour
 
     public void SetAxis(string _key) { axis = _key; }
 
+
+    public void LockoutTimer(float _value)
+    { lockoutTimer = _value; }
+    public float LockoutTimer()
+    { return lockoutTimer; }
 
 
     // Start is called before the first frame update

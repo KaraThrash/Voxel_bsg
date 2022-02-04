@@ -31,6 +31,7 @@ public class Enemy : MonoBehaviour {
 
 
     private float brainTime,stateTime; //brain time for checking if the enemy responds to an external condition [e.g. player being in their line of fire], state time for state specific holds
+    protected float directionChangeSpeed; // how quickly this enemy changes the direction they want to go
 
     public int substate; // differences within the same AI state: e.g. attcking when the playing is facing this enemy or facing away
 
@@ -143,6 +144,8 @@ public class Enemy : MonoBehaviour {
     //check if the current state of play is in the enemies advantage, and whether they should defend or attack
     public virtual bool CheckAdvantage() { return false; }
 
+    //check the enviromenty, and current state to determine what to do next
+    public virtual void MakeDecision() {  }
 
 
 
@@ -156,6 +159,7 @@ public class Enemy : MonoBehaviour {
         State(AiState.attacking);
         stateTime = 5;
         brainTime = 2;
+        directionChangeSpeed = 12;
     }
     void Awake()
     {
@@ -412,7 +416,7 @@ public class Enemy : MonoBehaviour {
 
     public float StateTime() { return stateTime; }
     public float BrainTime() { return brainTime; }
-
+    public float DirectionChangeSpeed() { return directionChangeSpeed; }
     public AiState State() { return state; }
     public Stance Stance() { return stance; }
     public void Stance(Stance _stance) { stance = _stance; }
