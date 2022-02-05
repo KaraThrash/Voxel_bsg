@@ -6,7 +6,9 @@ using UnityEngine;
 public class Enemy : MonoBehaviour {
 
     public NpcManager npcManager;
+
     public Ship ship;
+
     public bool canAct;
 
     public AiState state;
@@ -18,7 +20,7 @@ public class Enemy : MonoBehaviour {
 
     public float hp;
 
-
+    private Transform shipTransform;
 
 
     //AI stuff
@@ -83,28 +85,19 @@ public class Enemy : MonoBehaviour {
         else if (State() == AiState.adjusting)
         {
 
-     //       if (Vector3.Angle(transform.forward, (AttackTarget().position - transform.position).normalized) < 10 || Vector3.Angle(transform.forward, (AttackTarget().position - transform.position).normalized) > 80) { }
         }
 
         if (_newstate == AiState.attacking)
         {
-           // stateTimer = 0;
-         //   ship.primaryEngine.GetComponent<EngineBasic>().Throttle(1,0);
-          //  ship.secondaryEngine.GetComponent<LateralThruster>().Throttle(0, 0);
-
 
         }
         else if (_newstate == AiState.adjusting)
         {
-           // stateTimer = 0;
-          //  ship.primaryEngine.GetComponent<EngineBasic>().Throttle(0,1);
-          //  ship.secondaryEngine.GetComponent<LateralThruster>().Throttle(0, 0);
+     
         }
         else if (_newstate == AiState.recovering)
         {
-           // stateTimer = stateTime;
-           // ship.primaryEngine.GetComponent<EngineBasic>().Throttle(1, 0);
-           // ship.secondaryEngine.GetComponent<LateralThruster>().Throttle(0, 0);
+
         }
 
 
@@ -139,6 +132,29 @@ public class Enemy : MonoBehaviour {
     public virtual void Spawned() { }
     public virtual void Inactive() { }
     public virtual void Ragdolling() { }
+
+    public void RotationTargetLookAt(Vector3 _pos)
+    {
+        if (ship != null && ship.rotationTarget != null)
+        {
+            ship.rotationTarget.LookAt(_pos);
+        }
+    }
+
+    public void RotationTargetLookAt(Transform _pos)
+    {
+        if (ship != null && ship.rotationTarget != null)
+        {
+            ship.rotationTarget.LookAt(_pos);
+        }
+    }
+
+
+   
+
+
+
+
 
 
     //check if the current state of play is in the enemies advantage, and whether they should defend or attack
@@ -207,11 +223,10 @@ public class Enemy : MonoBehaviour {
 
         if(brainTimer > 0){brainTimer -= Time.deltaTime;}
 
-        ship.rotationTarget.LookAt(AttackTarget());
+        RotationTargetLookAt(AttackTarget());
 
         if (State() == AiState.adjusting)
         { 
-            ship.rotationTarget.LookAt(AttackTarget());
 
             if (CheckBrain())
             {
@@ -412,6 +427,15 @@ public class Enemy : MonoBehaviour {
     }
 
 
+    public Transform ShipTransform()
+    {
+        if (shipTransform == null)
+        {
+            if (ship != null) { shipTransform = ship.transform; }
+            else { return transform; }
+        }
+        return shipTransform;
+    }
 
 
     public float StateTime() { return stateTime; }
@@ -461,24 +485,30 @@ public class Enemy : MonoBehaviour {
     { return Vector3.Distance(transform.position, target); }
 
 
-    public bool RaycastAtTarget(Transform currenttarget, float distanceToCheck = 1500.0f)
-    {
+   
 
+    public bool RaycastAt(Vector3 _from, Vector3 _to,float _range=100.0f)
+    {
         RaycastHit hit;
 
-        if (Physics.Raycast(transform.position, currenttarget.position - transform.position, out hit, distanceToCheck))
-        {
-
-            if (hit.transform == currenttarget)
-            {
-                return true;
-            }
-        }
+        if (Physics.Raycast(_from, _to - _from, out hit, _range)) { return true; }
+        
         return false;
 
     }
 
+    public bool RaycastAt(Vector3 _from, Transform _to, float _range = 100.0f)
+    {
+        RaycastHit hit;
 
+        if (Physics.Raycast(_from, _to.position - _from, out hit, _range) && hit.transform == _to)
+        {
+            return true; 
+        }
+
+        return false;
+
+    }
 
 
 }

@@ -82,6 +82,7 @@ public class Raider : Enemy
         AiState newState = State();
 
         targetPos = AttackTarget().position - (AttackTarget().forward * closeRange);
+
         if (Vector3.Distance(targetPos, ship.transform.position) > farRange)
         {
             newState = AiState.moving;
