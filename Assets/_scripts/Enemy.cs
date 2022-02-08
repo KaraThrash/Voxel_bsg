@@ -64,6 +64,7 @@ public class Enemy : MonoBehaviour {
 
     public virtual void OnStateChange(AiState _newstate)
     {
+        
         if (State() == _newstate) { return; } //didnt switch to a new state
 
 
