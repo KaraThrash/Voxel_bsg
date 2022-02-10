@@ -19,10 +19,6 @@ public class Player : MonoBehaviour {
 
                 ship.Act();
 
-           //     ship.Rigidbody().velocity = Vector3.Lerp(ship.Rigidbody().velocity, ship.targetVelocity, Time.deltaTime * 1);
-
-              //  ship.transform.rotation = Quaternion.Lerp(ship.transform.rotation, cam.transform.rotation, Time.deltaTime * ship.GetRotationMagnitude());
-
             }
         }
 
@@ -30,11 +26,6 @@ public class Player : MonoBehaviour {
 
     public void Movement_CameraRelative_ThirdPerson()
     {
-        if (ship.PrimaryEngine() != null)
-        {
-            
-            //    ship.Rigidbody().velocity = Vector3.Lerp(ship.Rigidbody().velocity, ship.targetVelocity, Time.deltaTime * 1);
-        }
 
 
     }
@@ -57,7 +48,7 @@ public class Player : MonoBehaviour {
             
             if (Input.GetKeyDown(kcode))
             {
-                ship.Control(kcode, true);
+                //ship.Control(kcode, true);
             }
             if (Input.GetKeyUp(kcode))
             {

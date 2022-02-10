@@ -12,7 +12,7 @@ public class Sandbox : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
+       // IterateObjects();
         //SpawnPrimitiveCuveEnviroment();
         //meth();
     }
@@ -20,14 +20,14 @@ public class Sandbox : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log("transform.forward:  " + Vector3.Angle(transform.forward, (obj.position - transform.position).normalized));
-        Debug.Log("transform.right:  " + Vector3.Angle(transform.right, (obj.position - transform.position).normalized));
-        Debug.Log("transform.up:  " + Vector3.Angle(transform.up, (obj.position - transform.position).normalized));
+       
 
       if(Input.GetKeyDown(KeyCode.T))
       {
-            
-      }
+            Debug.Log("transform.forward:  " + Vector3.Angle(transform.forward, (obj.position - transform.position).normalized));
+            Debug.Log("transform.right:  " + Vector3.Angle(transform.right, (obj.position - transform.position).normalized));
+            Debug.Log("transform.up:  " + Vector3.Angle(transform.up, (obj.position - transform.position).normalized));
+        }
       if(Input.GetKeyDown(KeyCode.Y))
       {
       
@@ -57,6 +57,39 @@ public class Sandbox : MonoBehaviour
 
         }
     }
+
+
+
+    public void IterateObjects()
+    {
+        int count = 0;
+
+        while (count < 20)
+        {
+            int count2 = 0;
+            while (count2 < 20)
+            {
+                GameObject clone = Instantiate(obj0.gameObject, object0.position +  new Vector3(count * 15, 25, count2 * 15), transform.rotation);
+                clone.transform.parent = object0;
+                if (count % 2 == 0)
+                { count2++; }
+                else { count2 += 3; }
+            }
+            count++;
+        }
+
+    
+    }
+
+
+
+
+
+
+
+
+
+
 
     public void UnParent(Transform tempobj )
     {

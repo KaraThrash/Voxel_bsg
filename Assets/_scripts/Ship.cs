@@ -49,9 +49,6 @@ public class Ship : MonoBehaviour
         if (canAct)
         {
             Act();
-
-            //RechargeStamina();
-            
         }
 
 
@@ -60,46 +57,14 @@ public class Ship : MonoBehaviour
 
 
 
-    public bool useAngularVelocity;
     
     public void Act()
     {
-        if (!canAct)
-        {
-            return;
-
-        }
-
 
         RechargeStamina();
 
        // Rigidbody().velocity = Vector3.Lerp(Rigidbody().velocity,targetVelocity,Time.deltaTime * acceleration);
 
-        if (useAngularVelocity)
-        {
-           // Rigidbody().angularVelocity = Vector3.Lerp(Rigidbody().angularVelocity, GetTargetAngularVelocity(), Time.deltaTime * acceleration);
-
-        }
-        else 
-        {
-           // transform.rotation = Quaternion.Lerp(transform.rotation, cam.rotation, Time.deltaTime * GetRotationMagnitude());
-        }
-
-        //cam.transform.rotation
-
-
-        // Rigidbody().angularVelocity = new Vector3(pitch, yaw, roll);
-        //if (InputControls.ActionButtonDown())
-        //{
-        //    Debug.Log("InputControls.RightTrigger() <>" + InputControls.RightTrigger());
-        //    Control(SystemType.engine, 1);
-        //}
-
-        //else if (InputControls.ActionButtonUp())
-        //{
-        //    Control(SystemType.engine, false);
-        //}
-
     }
 
 
@@ -115,43 +80,7 @@ public class Ship : MonoBehaviour
 
 
 
-    public virtual void Control(SystemType _system, bool _on)
-    {
-        foreach (ShipSystem el in systems)
-        {
-            if (_on)
-            {
-                el.Activate();
-            }
-            else 
-            {
-                el.Deactivate();
-            }
-            
 
-            if (el.GetSystemType() == _system)
-            {
-
-            }
-        }
-    }
-    public virtual void Control(SystemType _system, float _value)
-    {
-
-        //TODO: question: should there be a list of buttons that are set and check if the input is on the list?
-        foreach (ShipSystem el in systems)
-        {
-            if (UseStamina(el.StaminaCost()))
-            { 
-                el.Activate();
-            }
-
-            if (el.GetSystemType() == _system)
-            {
-
-            }
-        }
-    }
 
     public virtual void Control(KeyCode _input, bool _on)
     {
@@ -161,11 +90,6 @@ public class Ship : MonoBehaviour
             if (_on)
             {
                 el.Control(_input);
-                //if (el.activateKey == _input)
-                //{ el.Activate(); }
-                //else if (el.deactivateKey == _input)
-                //{ el.Deactivate(); }
-
 
             }
         }
@@ -197,7 +121,9 @@ public class Ship : MonoBehaviour
     }
 
 
-
+    /// <summary>
+    /// Stamina
+    /// </summary>
 
 
 
@@ -236,6 +162,11 @@ public class Ship : MonoBehaviour
         return false;
     }
 
+    /// <summary>
+    /// Stamina
+    /// </summary>
+
+
 
     public void CanAct(bool _on)
     {canAct = _on;}
@@ -264,7 +195,15 @@ public class Ship : MonoBehaviour
     }
 
 
+    public Rigidbody RB()
+    {
+        if (rb == null)
+        {
+            rb = GetComponent<Rigidbody>();
+        }
 
+        return rb;
+    }
 
 
 
@@ -283,14 +222,9 @@ public class Ship : MonoBehaviour
     ///
 
 
-    public Rigidbody Rigidbody()
-    {
-        if (rb == null)
-        {
-            rb = GetComponent<Rigidbody>();
-        }
-        return rb;
-    }
+
+
+
 
 
 }

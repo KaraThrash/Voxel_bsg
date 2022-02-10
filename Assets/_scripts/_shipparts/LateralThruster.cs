@@ -50,37 +50,6 @@ public class LateralThruster : ShipSystem
         if (GetSystemState() == SystemState.on)
         {
 
-            //if (axis.Length > 0)
-            //{
-
-            //    throttle = Input.GetAxis(axis);
-            //}
-            //else if (positiveButton.Length > 0)
-            //{
-            //    if (Input.GetButton(positiveButton))
-            //    {
-
-            //        if (Input.GetButton(negativeButton))
-            //        {
-            //            throttle = 0;
-            //        }
-            //        else
-            //        {
-            //            throttle = 1;
-            //        }
-
-            //    }
-            //    else if (Input.GetButton(negativeButton))
-            //    {
-            //        throttle = -1;
-            //    }
-            //    else { throttle = 0; }
-            //}
-            //else
-            //{
-            //    throttle = 1;
-            //}
-
 
 
         }
