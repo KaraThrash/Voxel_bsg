@@ -231,8 +231,10 @@ public class Enemy : MonoBehaviour {
 
             if (CheckBrain())
             {
-                ship.secondaryEngine.GetComponent<LateralThruster>().Throttle(1, 1);
-                ship.primaryEngine.GetComponent<EngineBasic>().Throttle(0.1f, 1);
+                ship.secondaryEngine.GetComponent<LateralThruster>().Horizontal_Throttle(1);
+                ship.secondaryEngine.GetComponent<LateralThruster>().Vertical_Throttle( 1);
+                ship.primaryEngine.GetComponent<EngineBasic>().Thrust_Throttle(0.1f);
+                ship.primaryEngine.GetComponent<EngineBasic>().Roll_Throttle( 1);
             }
 
             if (Vector3.Angle(transform.forward, ship.rotationTarget.forward) < 10)
@@ -250,8 +252,10 @@ public class Enemy : MonoBehaviour {
             {
                 if(CheckBrain())
                 {
-                    ship.secondaryEngine.GetComponent<LateralThruster>().Throttle(1, 1);
-                    ship.primaryEngine.GetComponent<EngineBasic>().Throttle(1, 0);
+                    ship.secondaryEngine.GetComponent<LateralThruster>().Horizontal_Throttle(1);
+                    ship.secondaryEngine.GetComponent<LateralThruster>().Vertical_Throttle(1);
+                    ship.primaryEngine.GetComponent<EngineBasic>().Thrust_Throttle(1);
+                    ship.primaryEngine.GetComponent<EngineBasic>().Roll_Throttle(0);
                 }
                 
 
@@ -268,15 +272,18 @@ public class Enemy : MonoBehaviour {
 
                 if(CheckBrain())
                 {
-                    ship.secondaryEngine.GetComponent<LateralThruster>().Throttle(1,1);
-                    ship.primaryEngine.GetComponent<EngineBasic>().Throttle(1.0f, 0.1f);
+                    ship.secondaryEngine.GetComponent<LateralThruster>().Horizontal_Throttle(1);
+                    ship.secondaryEngine.GetComponent<LateralThruster>().Vertical_Throttle(1);
+                    ship.primaryEngine.GetComponent<EngineBasic>().Thrust_Throttle(1);
+                    ship.primaryEngine.GetComponent<EngineBasic>().Roll_Throttle(0.1f);
                 }
             }
             else 
             {
                 if(CheckBrain())
                 {
-                    ship.primaryEngine.GetComponent<EngineBasic>().Throttle(1 - ((Vector3.Angle(ship.transform.forward, (AttackTarget().position - ship.transform.position).normalized))/90), 1.0f);
+                    ship.primaryEngine.GetComponent<EngineBasic>().Thrust_Throttle(1 - ((Vector3.Angle(ship.transform.forward, (AttackTarget().position - ship.transform.position).normalized)) / 90));
+                    ship.primaryEngine.GetComponent<EngineBasic>().Roll_Throttle(1);
                 }
                // ship.rotationTarget.rotation = ship.transform.rotation;
             }
@@ -296,8 +303,10 @@ public class Enemy : MonoBehaviour {
         }
         else if (State() == AiState.recovering)
         {
-             ship.primaryEngine.GetComponent<EngineBasic>().Throttle(1.0f, 1);
-            ship.secondaryEngine.GetComponent<LateralThruster>().Throttle(1, 1);
+            ship.secondaryEngine.GetComponent<LateralThruster>().Horizontal_Throttle(1);
+            ship.secondaryEngine.GetComponent<LateralThruster>().Vertical_Throttle(1);
+            ship.primaryEngine.GetComponent<EngineBasic>().Thrust_Throttle(1);
+            ship.primaryEngine.GetComponent<EngineBasic>().Roll_Throttle(1);
 
             stateTimer -= Time.deltaTime;
             if (stateTimer <= 0)

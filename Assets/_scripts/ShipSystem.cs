@@ -144,6 +144,9 @@ public class ShipSystem : MonoBehaviour
         return rbTarget;
     }
 
+    public Ship Ship() { return ship; }
+    public void Ship(Ship _type) { ship = _type; }
+
     public SystemType GetSystemType() { return systemType; }
     public void SetSystemType(SystemType _type) {  systemType = _type; }
 

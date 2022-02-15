@@ -15,7 +15,22 @@ public class Player : MonoBehaviour {
         {
             if (camControlsRotation)
             {
-                cam.PlayerControlled();
+                if (ship.primaryEngine.GetComponent< EngineBasic >().throttle_A != 0 && ship.primaryEngine.GetComponent<EngineBasic>().throttle_A + ship.primaryEngine.GetComponent<EngineBasic>().vertical == 0)
+                {
+                    ship.primaryEngine.GetComponent<EngineBasic>().StartManeuver(Maneuver.spinAround);
+
+                }
+                if (ship.primaryEngine.GetComponent<EngineBasic>().GetSystemState() == SystemState.maneuver)
+                {
+                   // cam.transform.LookAt(ship.primaryEngine.GetComponent<EngineBasic>().maneuverRotation);
+
+                    cam.transform.rotation = Quaternion.Lerp(cam.transform.rotation, Quaternion.LookRotation(ship.primaryEngine.GetComponent<EngineBasic>().maneuverRotation - cam.transform.position, cam.transform.up), Time.deltaTime * 12);
+                }
+                else 
+                {
+                    cam.PlayerControlled();
+                }
+                
 
                 ship.Act();
 

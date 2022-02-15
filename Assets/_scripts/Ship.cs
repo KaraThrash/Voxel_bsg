@@ -222,8 +222,10 @@ public class Ship : MonoBehaviour
     ///
 
 
-
-
+    //TODO: use these to set relative directions based on preference: e.g. ship forward or camera forward etc
+    public Vector3 Forward() { return transform.forward; }
+    public Vector3 Right() { return transform.right; }
+    public Vector3 Up() { return transform.up; }
 
 
 

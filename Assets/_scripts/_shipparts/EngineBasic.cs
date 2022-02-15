@@ -2,78 +2,36 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EngineBasic : ShipSystem
+public class EngineBasic : EngineBase
 {
     public LateralThruster lateralEngine;
 
-    public float lateralPower;
-    public float torquePower;
-    [Min(0.01f)]
-    public float accelerationRate, brakePower,decelRate; //brake power for manual slow as determined by negative throttle, decelRate is the engines ambient force to return to rest
+    public Vector3 maneuverRotation;
+    public float maneverRotCount;
 
-    public float currentAcc, throttle,torqueThrottle = 1;
-
-    public Vector3 targetVelocity;
-
-    public void Throttle(float _value, float _torqueValue)
+    public float maneverCooldown;
+    public override void StartManeuver(Maneuver _maneuver)
     {
-        throttle = _value;
-        torqueThrottle = _torqueValue;
+        if (maneverCooldown > 0) { return; }
+        if (_maneuver == Maneuver.spinAround)
+        {
+            maneverRotCount = 0;
+            SetSystemState(SystemState.maneuver);
+            lateralEngine.SetSystemState(SystemState.maneuver);
+            //maneuverRotation = transform.right;
+            maneuverRotation = transform.position - (transform.forward * 100);
+        }
     }
 
-    public override void PlayerInput()
-    {
-        if (axis.Length > 0)
-        {
-            if ((Input.GetAxis(axis) != 0) && ship.UseStamina(staminaCost))
-            {
-                throttle = Input.GetAxis(axis);
-
-            }
-            else { throttle = 0; }
-           
-        }
-        else if (positiveButton.Length > 0 && ship.CheckStamina(staminaCost))
-        {
-            if (Input.GetButton(positiveButton) )
-            {
-
-                if (Input.GetButton(negativeButton))
-                {
-                    throttle = 0;
-                }
-                else
-                {
-                    throttle = 1;
-                }
-
-            }
-            else if (Input.GetButton(negativeButton))
-            {
-                throttle = -1;
-            }
-            else { throttle = 0; }
-        }
-        else
-        {
-            throttle = 0;
-        }
-
-        //if lacking stamina, cant throttle
-        if (throttle != 0 && ship.UseStamina(staminaCost) == false)
-        {
-            throttle = 0; 
-        }
-
-    }
 
 
     public override void Act()
     {
         if (GetSystemState() == SystemState.on)
         {
-            Accelerate(throttle);
-
+           
+            Accelerate(throttle_A);
+            if (maneverCooldown > 0) { maneverCooldown -= Time.deltaTime; }
 
         }
         else if (GetSystemState() == SystemState.locked)
@@ -86,7 +44,9 @@ public class EngineBasic : ShipSystem
             LockoutTimer(LockoutTimer() - Time.deltaTime);
             if (LockoutTimer() <= 0)
             {
+              
                 SetSystemState(SystemState.on);
+
             }
         }
         else
@@ -98,36 +58,62 @@ public class EngineBasic : ShipSystem
 
         }
 
-        if (ship && ship.CanAct() && power != 0)
+        if (GetSystemState() == SystemState.maneuver)
         {
+            maneverCooldown = 1;
+            Debug.Log(maneuverRotation);
+            float rot = Time.deltaTime * (180 );
+            maneverRotCount += rot;
 
-            if (throttle != 0)
+            
+            //Ship().transform.Rotate(maneuverRotation * rot);
+            Ship().transform.rotation = Quaternion.Lerp(Ship().transform.rotation, Quaternion.LookRotation(maneuverRotation - Ship().transform.position, Ship().transform.up), Time.deltaTime * torquePower);
+
+            RbTarget().velocity = Vector3.Lerp(RbTarget().velocity, Ship().Forward() * power * 0.15f, Time.deltaTime );
+
+            if (maneverRotCount >= 180 )
             {
-                targetVelocity = Vector3.Lerp(targetVelocity, ship.transform.forward * power * currentAcc, Time.deltaTime * accelerationRate);
                 
-            }
-            else 
-            {
-                targetVelocity = Vector3.Lerp(targetVelocity, Vector3.zero, Time.deltaTime * decelRate);
+                SetSystemState(SystemState.on);
+                lateralEngine.SetSystemState(SystemState.on);
             }
 
-
-            if (lateralEngine != null)
-            {
-                RbTarget().velocity = Vector3.Lerp(RbTarget().velocity, targetVelocity + (lateralEngine.Lateral() * lateralPower), Time.deltaTime * accelerationRate);
-            }
-            else 
-            {
-                RbTarget().velocity = Vector3.Lerp(RbTarget().velocity, targetVelocity, Time.deltaTime * accelerationRate);
-
-            }
 
         }
-
-        if (ship && ship.CanAct() && torquePower != 0)
+        else 
         {
-            ship.transform.rotation = Quaternion.Lerp(ship.transform.rotation, ship.RotationTarget(), Time.deltaTime * torquePower * torqueThrottle);
+            if (Ship() && Ship().CanAct() && power != 0)
+            {
+
+                if (throttle_A != 0)
+                {
+                    targetVelocity = Vector3.Lerp(targetVelocity, Ship().Forward() * power * currentAcc, Time.deltaTime * accelerationRate);
+
+                }
+                else
+                {
+                    targetVelocity = Vector3.Lerp(targetVelocity, Vector3.zero, Time.deltaTime * decelRate);
+                }
+
+
+                if (lateralEngine != null)
+                {
+                    RbTarget().velocity = Vector3.Lerp(RbTarget().velocity, targetVelocity + (lateralEngine.Lateral() * lateralPower), Time.deltaTime * accelerationRate);
+                }
+                else
+                {
+                    RbTarget().velocity = Vector3.Lerp(RbTarget().velocity, targetVelocity, Time.deltaTime * accelerationRate);
+
+                }
+
+            }
+
+            if (ship && Ship().CanAct() && torquePower != 0)
+            {
+                Ship().transform.rotation = Quaternion.Lerp(Ship().transform.rotation, Ship().RotationTarget(), Time.deltaTime * torquePower * throttle_B);
+            }
         }
+        
     }
 
 
@@ -140,7 +126,7 @@ public class EngineBasic : ShipSystem
             currentAcc = Mathf.Lerp(currentAcc, 0, brakePower * Time.deltaTime);
 
         }
-        else if (throttle > 0)
+        else if (throttle_A > 0)
         {
             currentAcc = Mathf.Lerp(currentAcc, Mathf.Abs(_throttle), accelerationRate * Time.deltaTime);
 

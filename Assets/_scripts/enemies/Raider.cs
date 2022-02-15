@@ -26,8 +26,10 @@ public class Raider : Enemy
 
         if (brainTimer > 0) { brainTimer -= Time.deltaTime; }
 
-        ship.primaryEngine.GetComponent<EngineBasic>().Throttle(engineThrottle, engineTorqueThrottle);
-        ship.secondaryEngine.GetComponent<LateralThruster>().Throttle(lateralHort, lasteralVert);
+        ship.primaryEngine.GetComponent<EngineBasic>().Thrust_Throttle(engineThrottle);
+        ship.primaryEngine.GetComponent<EngineBasic>().Roll_Throttle(engineTorqueThrottle);
+        ship.secondaryEngine.GetComponent<LateralThruster>().Horizontal_Throttle(lateralHort);
+        ship.secondaryEngine.GetComponent<LateralThruster>().Vertical_Throttle( lasteralVert);
 
         if (State() == AiState.adjusting)
         {

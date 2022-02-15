@@ -26,8 +26,11 @@ public class BasicEnemy : Enemy
 
         if (brainTimer > 0) { brainTimer -= Time.deltaTime; }
 
-        ship.primaryEngine.GetComponent<EngineBasic>().Throttle(engineThrottle, engineTorqueThrottle);
-        ship.secondaryEngine.GetComponent<LateralThruster>().Throttle(lateralHort, lasteralVert);
+
+        ship.secondaryEngine.GetComponent<LateralThruster>().Horizontal_Throttle(engineThrottle);
+        ship.secondaryEngine.GetComponent<LateralThruster>().Vertical_Throttle(engineTorqueThrottle);
+        ship.primaryEngine.GetComponent<EngineBasic>().Thrust_Throttle(lateralHort);
+        ship.primaryEngine.GetComponent<EngineBasic>().Roll_Throttle(targetlateralVert);
 
         if (State() == AiState.adjusting)
         {

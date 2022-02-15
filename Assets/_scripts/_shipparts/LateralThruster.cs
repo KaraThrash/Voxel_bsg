@@ -2,51 +2,25 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LateralThruster : ShipSystem
+public class LateralThruster : EngineBase
 {
     public Transform target,rotationTarget;
     public string hortAxis;
-    public float torquePower;
-    [Min(0.01f)]
-    public float accelerationRate, decelRate;
 
-    public float currentAcc, throttle,horizontal,vertical;
 
     public Vector3 boundary, targetPos; //lateral movement in localspace
 
     public int focalDepth; // how far in front the local ship should look towards
 
 
-    public void Throttle(float _hort,float _vert)
-    {
-        horizontal = _hort;
-        vertical = _vert;
-    }
-
-    public override void PlayerInput()
-    {
-
-        if (axis.Length == 0 || hortAxis.Length == 0)
-        {
-            return ;
-        }
-
-        if ((Input.GetAxis(axis) != 0 || Input.GetAxis(hortAxis) != 0) && ship.UseStamina(staminaCost))
-        {
-            vertical = Input.GetAxis(axis);
-
-            horizontal = Input.GetAxis(hortAxis);
-
-        }
-        else 
-        {
-            vertical = 0;
-            horizontal = 0;
-        }
-    }
+  
 
     public override void Act()
     {
+
+        if (GetSystemState() == SystemState.maneuver)
+        { return; }
+
         if (GetSystemState() == SystemState.on)
         {
 
@@ -66,7 +40,7 @@ public class LateralThruster : ShipSystem
 
         if (ship && ship.CanAct() && power != 0)
         {
-             targetPos = new Vector3(boundary.x * horizontal, boundary.y * vertical,0);
+             targetPos = new Vector3(boundary.x * horizontal, boundary.y * vertical, 0);
              target.localPosition = Vector3.Lerp(target.localPosition, targetPos, Time.deltaTime * power);
         }
 
