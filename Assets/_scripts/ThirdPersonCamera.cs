@@ -6,6 +6,7 @@ public class ThirdPersonCamera : MonoBehaviour
 {
     public bool playerControlled;
 
+    public Transform internalSphere;
     public GameObject realCamera,myfwdobj,reticle;
     public GameObject player,target;
     public Quaternion newrot;
@@ -22,16 +23,21 @@ public class ThirdPersonCamera : MonoBehaviour
     public float MaximumX = 90F;
     public bool smooth;
     public float smoothTime = 5f;
+    public float angleLimit = 15f; // when reangling the camera from stand still how in line does it need to be before it goes fulling back to player control
     public bool lockCursor = true;
     public float rollz;
 
     private Quaternion m_CharacterTargetRot;
     private Quaternion m_CameraTargetRot;
+    private Quaternion idleRot;
     private bool m_cursorIsLocked = true;
 
     public bool useController;
     public float xRot;
     public float yRot;
+
+    private Vector3 targetPosition;
+
     public void Start()
     {
      //   InputControls.cameraHorizontal = "4th Axis"; InputControls.cameraVertical = "5th Axis";
@@ -110,47 +116,80 @@ public class ThirdPersonCamera : MonoBehaviour
         {
             rollz = 1;
         }
-        m_CharacterTargetRot *= Quaternion.Euler(xRot, yRot, -rollz * ZSensitivity);
+        //m_CharacterTargetRot *= Quaternion.Euler(xRot, yRot, -rollz * ZSensitivity);
 
-        if (xRot == 0 && yRot == 0 && rollz == 0)
-        { }
-        else
+        //if (xRot == 0 && yRot == 0 && rollz == 0)
+        //{ }
+        //else
+        //{
+        //    idleTimer = 0;
+        //    currentAcc = 0;
+        //}
+
+        if (InputControls.CheckAxis(Axises.Thrust) == 1)
         {
-            idleTimer = 0;
-            currentAcc = 0;
+            targetPosition = player.transform.position;
+            idleTimer = -1;
+            idleRot = internalSphere.rotation;
+           // currentAcc = 0;
+        }
+        else 
+        {
+            idleTimer += Time.deltaTime;
         }
 
-        idleTimer += Time.deltaTime;
 
-        if (idleTimer > timeToResetRotation)
-        {
-            currentAcc += (Time.deltaTime * idleCameraAcceleration);
-            if (currentAcc > 1) { currentAcc = 1; }
-        }
+
+       
+
+
+        //if (idleTimer > timeToResetRotation)
+        //{
+        //    currentAcc += (Time.deltaTime * idleCameraAcceleration);
+        //    if (currentAcc > 1) { currentAcc = 1; }
+        //}
 
         if (clampVerticalRotation) { m_CameraTargetRot = ClampRotationAroundXAxis(m_CameraTargetRot); }
 
 
+        
+
+
         if (smooth)
         {
-           
-                if (idleTimer > timeToResetRotation)
-                {
 
+            if (idleTimer > 0)
+            {
+
+
+                internalSphere.Rotate(new Vector3(xRot, yRot, -rollz * ZSensitivity) * Time.deltaTime * smoothTime);
+            }
+            else
+
+            {
+                if (Vector3.Angle(internalSphere.forward , transform.forward) < angleLimit)
+                {
+                    transform.Rotate(new Vector3(xRot, yRot, -rollz * ZSensitivity) * Time.deltaTime * smoothTime);
                 }
                 else
                 {
-                    transform.Rotate(new Vector3(xRot, yRot, -rollz * ZSensitivity) * Time.deltaTime);
-
+                    transform.rotation = Quaternion.Lerp(transform.rotation, idleRot, Time.deltaTime * flyspeed * smoothTime);
                 }
-            
+
+                internalSphere.localRotation = Quaternion.Lerp(internalSphere.localRotation, Quaternion.identity, Time.deltaTime * flyspeed * smoothTime);
+
+
+
+            }
+
         }
         else
         {
-            
-                transform.rotation = m_CharacterTargetRot;
+          
+            internalSphere.localRotation = Quaternion.identity;
+            transform.rotation = m_CharacterTargetRot;
 
-            
+
 
         }
 

@@ -11,7 +11,7 @@ public class ShipSystem : MonoBehaviour
     public Ship ship;
 
     public Rigidbody rbTarget;
-
+    public Buttons listenForButton;
     public float staminaCost;
 
     public float power;
@@ -142,6 +142,21 @@ public class ShipSystem : MonoBehaviour
         }
 
         return rbTarget;
+    }
+
+
+    public bool PositiveButtonDown()
+    {
+
+        return InputControls.CheckButtonPressed(listenForButton);
+
+    }
+
+    public bool PositiveButton()
+    {
+
+        return InputControls.CheckButton(listenForButton);
+
     }
 
     public Ship Ship() { return ship; }

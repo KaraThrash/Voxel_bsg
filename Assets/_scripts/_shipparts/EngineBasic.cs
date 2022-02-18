@@ -96,7 +96,7 @@ public class EngineBasic : EngineBase
                 }
 
 
-                if (lateralEngine != null)
+                if (lateralEngine != null && PositiveButton())
                 {
                     RbTarget().velocity = Vector3.Lerp(RbTarget().velocity, targetVelocity + (lateralEngine.Lateral() * lateralPower), Time.deltaTime * accelerationRate);
                 }

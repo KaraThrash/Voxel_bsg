@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum Axises { Horizontal, Vertical }
-public enum Buttons { A,B,X,Y,LB,RB }
+public enum Axises { Horizontal, Vertical,Thrust }
+public enum Buttons { none,A,B,X,Y,LB,RB,Leftstick,Rightstick }
 
 
 public static class InputControls 
@@ -11,9 +11,12 @@ public static class InputControls
     public static bool gamePad;
     //controller buttons
     public static string hortAxis = "ControllerHorizontal", vertAxis = "ControllerVertical", interactButton = "A", pickupButton = "Y", actionButton = "B", nextButton = "RB", previousButton = "LB";
+    public static string aButton = "A", yButton = "Y", bButton = "B", xButton="X",rbButton = "RB", lbButton = "LB",leftstickButton="Leftstick", rightstickButton = "Rightstick";
 
     public static string leftTrigger = "LeftTrigger", rightTrigger = "RightTrigger";
     public static string primaryEngineAxis = "RightTrigger", rollAxis = "RollAxis";
+
+    public static string thrustAxis = "3rd Axis";
 
 
     public static string menuButton = "Start";
@@ -28,9 +31,42 @@ public static class InputControls
     private static float deadtime = 0.5f, deadClock; //holding an axis while using as a button
 
 
+    public static bool CheckButtonPressed(Buttons _button)
+    {
+        if (_button == Buttons.A) { return Input.GetButtonDown(aButton); }
+        else if (_button == Buttons.B) { return Input.GetButtonDown(bButton); }
+        else if (_button == Buttons.Y) { return Input.GetButtonDown(yButton); }
+        else if (_button == Buttons.X) { return Input.GetButtonDown(xButton); }
+        else if (_button == Buttons.LB) { return Input.GetButtonDown(lbButton); }
+        else if (_button == Buttons.RB) { return Input.GetButtonDown(rbButton); }
+        else if (_button == Buttons.Leftstick) { return Input.GetButtonDown(leftstickButton); }
+        else if (_button == Buttons.Rightstick) { return Input.GetButtonDown(rightstickButton); }
+
+        return false;
+    }
+
+    public static bool CheckButton(Buttons _button)
+    {
+        if (_button == Buttons.A) { return Input.GetButton(aButton); }
+        else if (_button == Buttons.B) { return Input.GetButton(bButton); }
+        else if (_button == Buttons.Y) { return Input.GetButton(yButton); }
+        else if (_button == Buttons.X) { return Input.GetButton(xButton); }
+        else if (_button == Buttons.LB) { return Input.GetButton(lbButton); }
+        else if (_button == Buttons.RB) { return Input.GetButton(rbButton); }
+        else if (_button == Buttons.Leftstick) { return Input.GetButton(leftstickButton); }
+        else if (_button == Buttons.Rightstick) { return Input.GetButton(rightstickButton); }
+
+        return false;
+    }
 
 
+    public static float CheckAxis(Axises _axis)
+    {
+        if (_axis == Axises.Thrust) { return Input.GetAxis(thrustAxis); }
+        else { return 0; }
+       
 
+    }
 
 
     static void Start()

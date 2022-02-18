@@ -12,7 +12,12 @@ public class LateralThruster : EngineBase
 
     public int focalDepth; // how far in front the local ship should look towards
 
-
+    public Transform ActOn()
+    {
+        if (target == null) { return transform; }
+        return target;
+    
+    }
   
 
     public override void Act()
@@ -41,22 +46,32 @@ public class LateralThruster : EngineBase
         if (ship && ship.CanAct() && power != 0)
         {
              targetPos = new Vector3(boundary.x * horizontal, boundary.y * vertical, 0);
-             target.localPosition = Vector3.Lerp(target.localPosition, targetPos, Time.deltaTime * power);
+
+            ActOn().localPosition = Vector3.Lerp(ActOn().localPosition, targetPos, Time.deltaTime * power);
+            //if (Lateral() == Vector3.zero)
+            //{
+                
+
+            //}
+            //else 
+            //{
+            //    ActOn().localPosition = Vector3.Lerp(ActOn().localPosition, Vector3.zero, Time.deltaTime * power);
+            //}
         }
 
         if (ship && ship.CanAct() && torquePower != 0)
         {
 
-            // target.transform.rotation = Quaternion.Lerp(target.rotation, Quaternion.LookRotation((rotationTarget.position + (rotationTarget.forward * focalDepth)) - rotationTarget.position, rotationTarget.up), Time.deltaTime * torquePower);
+            // ActOn().transform.rotation = Quaternion.Lerp(ActOn().rotation, Quaternion.LookRotation((rotationTarget.position + (rotationTarget.forward * focalDepth)) - rotationTarget.position, rotationTarget.up), Time.deltaTime * torquePower);
             if (focalDepth == 0)
             {
-                target.transform.rotation = Quaternion.Lerp(target.rotation, rotationTarget.rotation, Time.deltaTime * torquePower);
+                ActOn().transform.rotation = Quaternion.Lerp(ActOn().rotation, rotationTarget.rotation, Time.deltaTime * torquePower);
 
             }
             else 
             {
 
-                 target.transform.rotation = Quaternion.Lerp(target.rotation, Quaternion.LookRotation((rotationTarget.position + (rotationTarget.forward * focalDepth)) - target.position, rotationTarget.up), Time.deltaTime * torquePower);
+                 ActOn().transform.rotation = Quaternion.Lerp(ActOn().rotation, Quaternion.LookRotation((rotationTarget.position + (rotationTarget.forward * focalDepth)) - ActOn().position, rotationTarget.up), Time.deltaTime * torquePower);
 
             }
 
@@ -65,27 +80,34 @@ public class LateralThruster : EngineBase
 
     public Vector3 Lateral()
     {
-        if (Mathf.Abs(targetPos.x) - boundary.y < 0.1f * boundary.x)
-        {
-            if (Mathf.Abs(targetPos.y) - boundary.y < 0.1f * boundary.y)
-            {
-                return (target.right * targetPos.x) + (target.up * targetPos.y);
-            }
-            else
-            {
-                return (target.right * targetPos.x);
-            }
-        }
-        else
-        {
-            if (Mathf.Abs(targetPos.y) - boundary.y < 0.1f * boundary.y)
-            {
-                return (target.up * targetPos.y);
-            }
-        }
-        return Vector3.zero;
+        return new Vector3(ActOn().localPosition.x, ActOn().localPosition.y,0);
+
     }
 
+
+    //public Vector3 oldLateral()
+    //{
+
+    //    if (boundary.x - Mathf.Abs(ActOn().localPosition.x) < 0.1f * boundary.x)
+    //    {
+    //        if (boundary.y - Mathf.Abs(ActOn().localPosition.y) < 0.1f * boundary.y)
+    //        {
+    //            return (ActOn().right * ActOn().localPosition.x) + (ActOn().up * ActOn().localPosition.y);
+    //        }
+    //        else
+    //        {
+    //            return (ActOn().right * ActOn().localPosition.x);
+    //        }
+    //    }
+    //    else
+    //    {
+    //        if (boundary.y - Mathf.Abs(ActOn().localPosition.y) < 0.1f * boundary.y)
+    //        {
+    //            return (ActOn().up * ActOn().localPosition.y);
+    //        }
+    //    }
+    //    return Vector3.zero;
+    //}
 
 
 
