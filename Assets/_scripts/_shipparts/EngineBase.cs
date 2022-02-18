@@ -18,6 +18,7 @@ public class EngineBase : ShipSystem
     public float currentAcc;
 
     public Vector3 targetVelocity;
+    public Quaternion targetRotation;
 
     public void Thrust_Throttle(float _value)
     {
@@ -123,6 +124,32 @@ public class EngineBase : ShipSystem
             else { vertical = 0; }
 
         }
+    }
+
+
+
+
+
+    public virtual Vector3 GetTargetVelocity()
+    {
+        Debug.Log(targetVelocity);
+        return targetVelocity;
+    }
+
+    public float LinearAcceleration()
+    {
+        return Time.deltaTime * accelerationRate;
+    }
+
+    public float RotationAcceleration()
+    {
+        return Time.deltaTime * torquePower ;
+    }
+
+    public virtual Quaternion GetTargetRotation()
+    {
+
+        return transform.rotation;
     }
 
     public virtual void StartManeuver(Maneuver _maneuver)

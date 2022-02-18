@@ -10,6 +10,9 @@ public class EngineBasic : EngineBase
     public float maneverRotCount;
 
     public float maneverCooldown;
+
+
+
     public override void StartManeuver(Maneuver _maneuver)
     {
         if (maneverCooldown > 0) { return; }
@@ -22,7 +25,11 @@ public class EngineBasic : EngineBase
             maneuverRotation = transform.position - (transform.forward * 100);
         }
     }
+    public override Quaternion GetTargetRotation()
+    {
 
+        return targetRotation;
+    }
 
 
     public override void Act()
@@ -60,23 +67,23 @@ public class EngineBasic : EngineBase
 
         if (GetSystemState() == SystemState.maneuver)
         {
-            maneverCooldown = 1;
-            Debug.Log(maneuverRotation);
-            float rot = Time.deltaTime * (180 );
-            maneverRotCount += rot;
+            //maneverCooldown = 1;
+            //Debug.Log(maneuverRotation);
+            //float rot = Time.deltaTime * (180 );
+            //maneverRotCount += rot;
 
             
-            //Ship().transform.Rotate(maneuverRotation * rot);
-            Ship().transform.rotation = Quaternion.Lerp(Ship().transform.rotation, Quaternion.LookRotation(maneuverRotation - Ship().transform.position, Ship().transform.up), Time.deltaTime * torquePower);
+            ////Ship().transform.Rotate(maneuverRotation * rot);
+            //Ship().transform.rotation = Quaternion.Lerp(Ship().transform.rotation, Quaternion.LookRotation(maneuverRotation - Ship().transform.position, Ship().transform.up), Time.deltaTime * torquePower);
 
-            RbTarget().velocity = Vector3.Lerp(RbTarget().velocity, Ship().Forward() * power * 0.15f, Time.deltaTime );
+            //RbTarget().velocity = Vector3.Lerp(RbTarget().velocity, Ship().Forward() * power * 0.15f, Time.deltaTime );
 
-            if (maneverRotCount >= 180 )
-            {
+            //if (maneverRotCount >= 180 )
+            //{
                 
-                SetSystemState(SystemState.on);
-                lateralEngine.SetSystemState(SystemState.on);
-            }
+            //    SetSystemState(SystemState.on);
+            //    lateralEngine.SetSystemState(SystemState.on);
+            //}
 
 
         }
@@ -85,9 +92,17 @@ public class EngineBasic : EngineBase
             if (Ship() && Ship().CanAct() && power != 0)
             {
 
+
+                Vector3 lateral = Vector3.zero;
+
+                if (lateralEngine != null && PositiveButton())
+                {
+                    lateral = lateralEngine.Lateral() * lateralPower;
+                }
+
                 if (throttle_A != 0)
                 {
-                    targetVelocity = Vector3.Lerp(targetVelocity, Ship().Forward() * power * currentAcc, Time.deltaTime * accelerationRate);
+                    targetVelocity = Vector3.Lerp(targetVelocity, (Ship().Forward() * (power * currentAcc)) + lateral, Time.deltaTime );
 
                 }
                 else
@@ -96,25 +111,26 @@ public class EngineBasic : EngineBase
                 }
 
 
-                if (lateralEngine != null && PositiveButton())
-                {
-                    RbTarget().velocity = Vector3.Lerp(RbTarget().velocity, targetVelocity + (lateralEngine.Lateral() * lateralPower), Time.deltaTime * accelerationRate);
-                }
-                else
-                {
-                    RbTarget().velocity = Vector3.Lerp(RbTarget().velocity, targetVelocity, Time.deltaTime * accelerationRate);
-
-                }
+                
+         
 
             }
 
             if (ship && Ship().CanAct() && torquePower != 0)
             {
-                Ship().transform.rotation = Quaternion.Lerp(Ship().transform.rotation, Ship().RotationTarget(), Time.deltaTime * torquePower * throttle_B);
+               // Ship().transform.rotation
+                    targetRotation = Quaternion.Lerp(targetRotation, Ship().RotationTarget(), Time.deltaTime * torquePower );
             }
         }
         
     }
+
+
+
+ 
+
+
+
 
 
 

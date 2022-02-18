@@ -126,7 +126,7 @@ public class ThirdPersonCamera : MonoBehaviour
         //    currentAcc = 0;
         //}
 
-        if (InputControls.CheckAxis(Axises.Thrust) == 1)
+        if (InputControls.CheckAxis(Axises.Thrust) == 1 || player.GetComponent<Rigidbody>().velocity.magnitude > 1)
         {
             targetPosition = player.transform.position;
             idleTimer = -1;

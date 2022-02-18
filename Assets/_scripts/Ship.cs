@@ -17,8 +17,8 @@ public class Ship : MonoBehaviour
 
     public float acceleration;
 
-    public ShipSystem primaryEngine;// primary engine for moving forward
-    public ShipSystem secondaryEngine;//secondary for turns and adjustments [can be the same engine]
+    public EngineBase primaryEngine;// primary engine for moving forward
+    public EngineBase secondaryEngine;//secondary for turns and adjustments [can be the same engine]
 
     public Vector3 velocityTarget;
 
@@ -62,11 +62,25 @@ public class Ship : MonoBehaviour
     {
 
         RechargeStamina();
-
+        Movement();
        // Rigidbody().velocity = Vector3.Lerp(Rigidbody().velocity,targetVelocity,Time.deltaTime * acceleration);
 
     }
 
+
+    public void Movement()
+    {
+        //get engines target velocity
+        //check the enviroment and the hull's modifiers to the engine's velocity
+
+        Vector3 newVelocity = primaryEngine.GetTargetVelocity();
+        float accel = primaryEngine.LinearAcceleration();
+
+        //hull/enviroment modifications
+        RB().velocity = Vector3.Lerp(RB().velocity, newVelocity,accel);
+
+        transform.rotation = Quaternion.Lerp(transform.rotation, primaryEngine.GetTargetRotation(), primaryEngine.RotationAcceleration());
+    }
 
 
 
