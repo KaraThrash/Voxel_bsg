@@ -7,7 +7,7 @@ public class BasicEnemy : Enemy
     public ShipSystem gun;
 
     public float engineThrottle, engineTorqueThrottle;
-    public float lateralHort, lasteralVert;
+    public float lateralHort, lateralVert;
 
     public float targetengineThrottle, targetengineTorqueThrottle;
     public float targetlateralHort, targetlateralVert;
@@ -17,7 +17,7 @@ public class BasicEnemy : Enemy
         engineThrottle = Mathf.Lerp(engineThrottle, targetengineThrottle, Time.deltaTime * DirectionChangeSpeed());
         engineTorqueThrottle = Mathf.Lerp(engineTorqueThrottle, targetengineTorqueThrottle, Time.deltaTime * DirectionChangeSpeed());
         lateralHort = Mathf.Lerp(lateralHort, targetlateralHort, Time.deltaTime * DirectionChangeSpeed());
-        lasteralVert = Mathf.Lerp(lasteralVert, targetlateralVert, Time.deltaTime * DirectionChangeSpeed());
+        lateralVert = Mathf.Lerp(lateralVert, targetlateralVert, Time.deltaTime * DirectionChangeSpeed());
 
 
 
@@ -27,10 +27,12 @@ public class BasicEnemy : Enemy
         if (brainTimer > 0) { brainTimer -= Time.deltaTime; }
 
 
-        ship.secondaryEngine.GetComponent<LateralThruster>().Horizontal_Throttle(engineThrottle);
-        ship.secondaryEngine.GetComponent<LateralThruster>().Vertical_Throttle(engineTorqueThrottle);
-        ship.primaryEngine.GetComponent<EngineBasic>().Thrust_Throttle(lateralHort);
-        ship.primaryEngine.GetComponent<EngineBasic>().Roll_Throttle(targetlateralVert);
+        ship.secondaryEngine.GetComponent<LateralThruster>().Horizontal_Throttle(lateralHort);
+        ship.secondaryEngine.GetComponent<LateralThruster>().Vertical_Throttle(lateralVert);
+        ship.primaryEngine.GetComponent<EngineBasic>().Thrust_Throttle(engineThrottle);
+        ship.primaryEngine.GetComponent<EngineBasic>().Roll_Throttle(engineTorqueThrottle);
+
+        ship.Movement();
 
         if (State() == AiState.adjusting)
         {
@@ -167,13 +169,15 @@ public class BasicEnemy : Enemy
 
         RaycastHit hit;
 
-        if (Physics.SphereCast(ShipTransform().position, 2.0f,ShipTransform().forward, out hit, closeRange))
+        if (Physics.SphereCast(ShipTransform().position, 2.0f,ShipTransform().forward, out hit, ship.RB().velocity.magnitude))
         {
             ship.rotationTarget.LookAt(ShipTransform().position + ShipTransform().right);
             ship.secondaryEngine.GetComponent<LateralThruster>().rotationTarget.LookAt(ShipTransform().position + ShipTransform().right);
             targetengineThrottle = 0.2f;
+
+
         }
-        else if (Physics.SphereCast(ShipTransform().position, 4.0f, ShipTransform().forward, out hit, closeRange))
+        else if (Physics.SphereCast(ShipTransform().position, 4.0f, ShipTransform().forward, out hit, ship.RB().velocity.magnitude))
         {
             ship.rotationTarget.LookAt(ShipTransform().position + ShipTransform().forward);
             ship.secondaryEngine.GetComponent<LateralThruster>().rotationTarget.LookAt(ShipTransform().position + ShipTransform().forward);

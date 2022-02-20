@@ -20,12 +20,15 @@ public class Ship : MonoBehaviour
     public EngineBase primaryEngine;// primary engine for moving forward
     public EngineBase secondaryEngine;//secondary for turns and adjustments [can be the same engine]
 
+    public ChasisBase chasis;
+
     public Vector3 velocityTarget;
 
 
     // Start is called before the first frame update
     void Start()
     {
+        Debug.Log("BulletParent_" + this.GetType().ToString());
         AddSystems();
     }
 
@@ -74,12 +77,27 @@ public class Ship : MonoBehaviour
         //check the enviroment and the hull's modifiers to the engine's velocity
 
         Vector3 newVelocity = primaryEngine.GetTargetVelocity();
+        Vector3 externalForceVelocity = Chasis().ExternalForce();
         float accel = primaryEngine.LinearAcceleration();
-
+     //   newVelocity = Vector3.Lerp(RB().velocity, newVelocity , accel);
         //hull/enviroment modifications
-        RB().velocity = Vector3.Lerp(RB().velocity, newVelocity,accel);
+        if ( Chasis().ExternalForce() == Vector3.zero)
+        {
+             RB().velocity = Vector3.Lerp(RB().velocity, newVelocity , accel);
+            //RB().velocity = newVelocity + externalForceVelocity;
+        }
+        else if (Chasis().BelowMinimumMagnitude())
+        {
+            RB().velocity = Vector3.Lerp(externalForceVelocity, newVelocity, accel);
+            //RB().velocity = newVelocity + externalForceVelocity;
+        }
+        else 
+        {
+            RB().velocity = Chasis().ExternalForce();
+        }
+        
 
-        transform.rotation = Quaternion.Lerp(transform.rotation, primaryEngine.GetTargetRotation(), primaryEngine.RotationAcceleration());
+        transform.rotation = Quaternion.Slerp(transform.rotation, primaryEngine.GetTargetRotation(), primaryEngine.RotationAcceleration());
     }
 
 
@@ -127,12 +145,39 @@ public class Ship : MonoBehaviour
     public virtual void ProcessCollisionEnter(Collision collision)
     {
 
+        if (Chasis() != null && collision.transform.CompareTag("Enviroment"))
+        {
+            CollideWithEnviroment(collision);
+        }
+
     }
 
     public virtual void ProcessTriggerEnter(Collider collision)
     {
 
     }
+
+
+
+
+    public void CollideWithEnviroment(Collision collision)
+    {
+       // Chasis().ExternalForce(collision.impulse.magnitude * (transform.position - collision.contacts[0].point));
+        Chasis().ExternalForce(collision.impulse.magnitude * Vector3.Reflect( collision.contacts[0].point - transform.position, collision.impulse).normalized);
+      //  PrimaryEngine().CollideWithEnviroment(collision);
+        //TODO: engine after impact
+
+
+    }
+
+
+
+
+
+
+
+
+
 
 
     /// <summary>
@@ -201,6 +246,11 @@ public class Ship : MonoBehaviour
         return secondaryEngine;
     }
 
+    public ChasisBase Chasis()
+    {
+
+        return chasis;
+    }
 
     public Quaternion RotationTarget()
     {

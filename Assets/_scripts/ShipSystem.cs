@@ -16,7 +16,7 @@ public class ShipSystem : MonoBehaviour
 
     public float power;
 
-    private float lockoutTimer;//for taking damage, being frozen or other circumstances that render this system unusable
+    protected float lockoutTimer;//for taking damage, being frozen or other circumstances that render this system unusable
 
     public bool on;
 
@@ -127,7 +127,10 @@ public class ShipSystem : MonoBehaviour
 
     }
 
+    public virtual void CollideWithEnviroment(Collision collision)
+    {
 
+    }
 
 
     public void RbTarget(Rigidbody _rb) { rbTarget = _rb; }

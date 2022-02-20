@@ -20,13 +20,17 @@ public class Bullet : MonoBehaviour {
     private Vector3 direction,secondaryDirection, relativeVelocity;
     private Rigidbody rb;
 
+    private Transform bulletParent;
+    private string bulletParentName = "";
+
+
     // Use this for initialization
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         if (lance == false && missile == false)
         {
-            transform.parent = GameObject.Find("BulletParent").transform;
+            transform.parent = BulletParent();
            //rb.AddForce(transform.forward * (speed), ForceMode.Impulse);
         }
          if (spray == true)
@@ -209,43 +213,108 @@ public class Bullet : MonoBehaviour {
 
     }
 
-    public void OnCollisionEnter(Collision col)
+
+
+    public void OnCollisionEnter(Collision collision)
     {
+        ProcessCollisionEnter(collision);
+    }
+
+    public void OnTriggerEnter(Collider collision)
+    {
+        ProcessTriggerEnter(collision);
+    }
+
+    public virtual void ProcessCollisionEnter(Collision collision)
+    {
+
+        if (collision.gameObject.GetComponent<Ship>() != null)
+        {
+            CollideWithShip(collision);
+        }
+        else if (collision.transform.CompareTag("Enviroment"))
+        {
+            CollideWithEnviroment(collision);
+        }
+
+    }
+
+    public virtual void ProcessTriggerEnter(Collider collision)
+    {
+      
+
+    }
+
+
+    public void CollideWithShip(Collision collision)
+    {
+        Ship shipHit = collision.gameObject.GetComponent<Ship>();
+
         GetComponent<Collider>().enabled = false;
         if (explosion != null)
         {
             Instantiate(explosion, transform.position, transform.rotation);
         }
-
-        if(col.gameObject.GetComponent<Enemy>() != null)
-        {HandleEnemyImpact(col.gameObject);}
-          lifeTime = 0.1f;
+        Die();
 
     }
-    public void OnTriggerEnter(Collider col)
+
+    public void CollideWithEnviroment(Collision collision)
     {
-        //GetComponent<Collider>().enabled = false;
-        if (explosion != null && boomerang == false)
+
+
+        GetComponent<Collider>().enabled = false;
+        if (explosion != null)
         {
             Instantiate(explosion, transform.position, transform.rotation);
         }
-        //lifeTime = 0.5f;
+        Die();
 
-        if(col.gameObject.GetComponent<Enemy>() != null)
-        {HandleEnemyImpact(col.gameObject);}
     }
+
+
+
+
+
+
+
+
+
+
 
     public void HandleEnemyImpact(GameObject col)
     {
       // col.GetComponent<Enemy>().HitByBullet(this.gameObject);
     }
 
+
+    public Transform BulletParent()
+    {
+        if (bulletParent == null)
+        {
+            if (bulletParentName.Length < 1) 
+            {
+                bulletParentName = "BulletParent_" + this.GetType().ToString();
+            }
+
+            
+            if (GameObject.Find(bulletParentName) == null)
+            {
+                bulletParent = new GameObject(bulletParentName).transform;
+            }
+            else { bulletParent = GameObject.Find(bulletParentName).transform; }
+        }
+
+        return bulletParent;
+    }
+
     public void Die()
     {
 
 
-
-        Destroy(this.gameObject);
+        transform.parent = BulletParent();
+        gameObject.SetActive(false);
+        //Destroy(this.gameObject);
 
     }
 }

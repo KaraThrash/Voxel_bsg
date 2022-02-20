@@ -43,8 +43,19 @@ public class EngineBasic : EngineBase
         }
         else if (GetSystemState() == SystemState.locked)
         {
+            if (LockoutTimer() > 0)
+            {
+                Accelerate(0);
+                targetVelocity = Vector3.Lerp(targetVelocity, Vector3.zero, Time.deltaTime * accelerationRate);
+                LockoutTimer(LockoutTimer() - Time.deltaTime);
 
+                if (LockoutTimer() <= 0)
+                {
+                    SetSystemState(SystemState.on);
 
+                }
+            }
+            return;
         }
         else if (GetSystemState() == SystemState.damaged)
         {
@@ -107,7 +118,7 @@ public class EngineBasic : EngineBase
                 }
                 else
                 {
-                    targetVelocity = Vector3.Lerp(targetVelocity, Vector3.zero, Time.deltaTime * decelRate);
+                    targetVelocity = Vector3.Lerp(targetVelocity, Vector3.zero + lateral, Time.deltaTime * decelRate);
                 }
 
 
@@ -119,7 +130,7 @@ public class EngineBasic : EngineBase
             if (ship && Ship().CanAct() && torquePower != 0)
             {
                // Ship().transform.rotation
-                    targetRotation = Quaternion.Lerp(targetRotation, Ship().RotationTarget(), Time.deltaTime * torquePower );
+                    targetRotation = Quaternion.Slerp(targetRotation, Ship().RotationTarget(), Time.deltaTime * torquePower );
             }
         }
         
@@ -174,6 +185,19 @@ public class EngineBasic : EngineBase
             }
         }
 
+    }
+
+
+
+    public override void ProcessCollisionEnter(Collision collision)
+    {
+
+    }
+
+    public override void CollideWithEnviroment(Collision collision)
+    {
+        lockoutTimer = GameConstants.systemStun;
+        SetSystemState(SystemState.locked);
     }
 
     public override void Activate()

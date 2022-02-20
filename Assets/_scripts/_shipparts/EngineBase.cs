@@ -128,11 +128,10 @@ public class EngineBase : ShipSystem
 
 
 
-
+   
 
     public virtual Vector3 GetTargetVelocity()
     {
-        Debug.Log(targetVelocity);
         return targetVelocity;
     }
 
