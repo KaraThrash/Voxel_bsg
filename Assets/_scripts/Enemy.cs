@@ -175,7 +175,7 @@ public class Enemy : MonoBehaviour {
         if (AttackTarget() == null || ship == null) { return; }
         State(AiState.attacking);
         stateTime = 5;
-        brainTime = 2;
+        brainTime = 12;
         directionChangeSpeed = 12;
     }
     void Awake()

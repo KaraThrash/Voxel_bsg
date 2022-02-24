@@ -80,7 +80,8 @@ public class LateralThruster : EngineBase
 
     public Vector3 Lateral()
     {
-        return new Vector3(ActOn().localPosition.x, ActOn().localPosition.y,0);
+        return ((ActOn().parent.right * ActOn().localPosition.x) + (ActOn().parent.up * ActOn().localPosition.y)).normalized;
+        //return new Vector3(ActOn().localPosition.x, ActOn().localPosition.y,0);
 
     }
 

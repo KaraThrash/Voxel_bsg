@@ -27,8 +27,8 @@ public class BasicEnemy : Enemy
         if (brainTimer > 0) { brainTimer -= Time.deltaTime; }
 
 
-        ship.secondaryEngine.GetComponent<LateralThruster>().Horizontal_Throttle(lateralHort);
-        ship.secondaryEngine.GetComponent<LateralThruster>().Vertical_Throttle(lateralVert);
+       // ship.secondaryEngine.GetComponent<LateralThruster>().Horizontal_Throttle(lateralHort);
+        //ship.secondaryEngine.GetComponent<LateralThruster>().Vertical_Throttle(lateralVert);
         ship.primaryEngine.GetComponent<EngineBasic>().Thrust_Throttle(engineThrottle);
         ship.primaryEngine.GetComponent<EngineBasic>().Roll_Throttle(engineTorqueThrottle);
 
@@ -60,6 +60,114 @@ public class BasicEnemy : Enemy
 
 
     }
+
+
+    public void AttemptToMoveForwardOld(bool _on)
+    {
+        if (_on)
+        {
+            RaycastHit hit;
+            Vector3 _targetpos = Vector3.zero;
+
+            if (Physics.SphereCast(ShipTransform().position, 2.0f, ShipTransform().forward, out hit, 2 + ship.RB().velocity.magnitude))
+            {
+                targetengineThrottle -= Time.deltaTime;
+                targetengineTorqueThrottle += Time.deltaTime;
+
+
+
+                if (Vector3.Distance(ShipTransform().position + ShipTransform().right, AttackTarget().position) < Vector3.Distance(ShipTransform().position - ShipTransform().right, AttackTarget().position))
+                {
+                    _targetpos = ShipTransform().position + ShipTransform().right;
+                }
+                else
+                {
+                    _targetpos = (ShipTransform().position - ShipTransform().right);
+                }
+
+            }
+            else
+            {
+
+                targetengineThrottle = 1;
+                targetengineTorqueThrottle = 1;
+
+                if (Vector3.Distance(ShipTransform().position + ShipTransform().right, AttackTarget().position) < Vector3.Distance(ShipTransform().position + ShipTransform().forward, AttackTarget().position))
+                {
+                    _targetpos = (ShipTransform().position + ShipTransform().right);
+                }
+                else if (Vector3.Distance(ShipTransform().position - ShipTransform().right, AttackTarget().position) < Vector3.Distance(ShipTransform().position + ShipTransform().forward, AttackTarget().position))
+                {
+                    _targetpos = (ShipTransform().position - ShipTransform().right);
+                }
+                else if (Vector3.Distance(ShipTransform().position - ShipTransform().up, AttackTarget().position) < Vector3.Distance(ShipTransform().position + ShipTransform().forward, AttackTarget().position))
+                {
+                    _targetpos = (ShipTransform().position - ShipTransform().up);
+                }
+                else if (Vector3.Distance(ShipTransform().position + ShipTransform().up, AttackTarget().position) < Vector3.Distance(ShipTransform().position + ShipTransform().forward, AttackTarget().position))
+                {
+                    _targetpos = (ShipTransform().position + ShipTransform().up);
+                }
+                else { _targetpos = (AttackTarget().position); }
+
+
+
+
+            }
+
+            Vector3 relativePos = _targetpos - ShipTransform().position;
+
+            // the second argument, upwards, defaults to Vector3.up
+            Quaternion rotation = Quaternion.LookRotation(relativePos, Vector3.up);
+            ship.rotationTarget.rotation = rotation;
+            ship.rotationTarget.rotation = Quaternion.Slerp(ship.rotationTarget.rotation, rotation, Time.deltaTime * BrainTime());
+        }
+
+    }
+    public void AttemptToMoveForward(bool _on)
+    {
+        if (_on)
+        {
+            RaycastHit hit;
+            Vector3 _targetpos = Vector3.zero;
+
+            if (Physics.SphereCast(ship.rotationTarget.position, 2.0f, ShipTransform().forward, out hit, 2 + ship.RB().velocity.magnitude))
+            {
+
+                targetengineTorqueThrottle = 0.5f;
+
+                ship.rotationTarget.rotation = Quaternion.Slerp(ship.rotationTarget.rotation, Quaternion.LookRotation(ShipTransform().position - AttackTarget().position  , Vector3.up), Time.deltaTime * 1);
+
+
+            }
+            else 
+            {
+
+            
+                targetengineTorqueThrottle = 1;
+
+                ship.rotationTarget.rotation = Quaternion.Slerp(ship.rotationTarget.rotation, Quaternion.LookRotation(AttackTarget().position - ShipTransform().position, Vector3.up), Time.deltaTime * BrainTime());
+
+
+
+
+
+            }
+
+            if (Vector3.Angle(ship.rotationTarget.forward, ship.transform.forward) < 10)
+            {
+                targetengineThrottle = 1;
+                targetengineTorqueThrottle = 0;
+            }
+            else 
+            {
+                targetengineTorqueThrottle = 0;
+                targetengineThrottle = 0;
+            }
+        }
+
+    }
+
 
 
     public override void MakeDecision()
@@ -166,29 +274,30 @@ public class BasicEnemy : Enemy
     public override void Moving()
     {
 
+        AttemptToMoveForward(true);
 
         RaycastHit hit;
 
-        if (Physics.SphereCast(ShipTransform().position, 2.0f,ShipTransform().forward, out hit, ship.RB().velocity.magnitude))
-        {
-            ship.rotationTarget.LookAt(ShipTransform().position + ShipTransform().right);
-            ship.secondaryEngine.GetComponent<LateralThruster>().rotationTarget.LookAt(ShipTransform().position + ShipTransform().right);
-            targetengineThrottle = 0.2f;
+        //if (Physics.SphereCast(ShipTransform().position, 2.0f,ShipTransform().forward, out hit, ship.RB().velocity.magnitude))
+        //{
+        //    ship.rotationTarget.LookAt(ShipTransform().position + ShipTransform().right);
+        //    ship.secondaryEngine.GetComponent<LateralThruster>().rotationTarget.LookAt(ShipTransform().position + ShipTransform().right);
+        //    targetengineThrottle = 0.2f;
 
 
-        }
-        else if (Physics.SphereCast(ShipTransform().position, 4.0f, ShipTransform().forward, out hit, ship.RB().velocity.magnitude))
-        {
-            ship.rotationTarget.LookAt(ShipTransform().position + ShipTransform().forward);
-            ship.secondaryEngine.GetComponent<LateralThruster>().rotationTarget.LookAt(ShipTransform().position + ShipTransform().forward);
-            targetengineThrottle = 1;
-        }
-        else 
-        {
-            ship.rotationTarget.LookAt(AttackTarget().position);
-            ship.secondaryEngine.GetComponent<LateralThruster>().rotationTarget.LookAt(AttackTarget().position);
-            targetengineThrottle = 1;
-        }
+        //}
+        //else if (Physics.SphereCast(ShipTransform().position, 4.0f, ShipTransform().forward, out hit, ship.RB().velocity.magnitude))
+        //{
+        //    ship.rotationTarget.LookAt(ShipTransform().position + ShipTransform().forward);
+        //    ship.secondaryEngine.GetComponent<LateralThruster>().rotationTarget.LookAt(ShipTransform().position + ShipTransform().forward);
+        //    targetengineThrottle = 1;
+        //}
+        //else 
+        //{
+        //    ship.rotationTarget.LookAt(AttackTarget().position);
+        //    ship.secondaryEngine.GetComponent<LateralThruster>().rotationTarget.LookAt(AttackTarget().position);
+        //    targetengineThrottle = 1;
+        //}
 
 
 
