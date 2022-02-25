@@ -65,8 +65,10 @@ public class Ship : MonoBehaviour
     {
 
         RechargeStamina();
+
         Movement();
-       // Rigidbody().velocity = Vector3.Lerp(Rigidbody().velocity,targetVelocity,Time.deltaTime * acceleration);
+      
+        // Rigidbody().velocity = Vector3.Lerp(Rigidbody().velocity,targetVelocity,Time.deltaTime * acceleration);
 
     }
 
@@ -76,10 +78,27 @@ public class Ship : MonoBehaviour
         //get engines target velocity
         //check the enviroment and the hull's modifiers to the engine's velocity
 
-        Vector3 newVelocity = primaryEngine.GetTargetVelocity();
-        Vector3 externalForceVelocity = Chasis().ExternalForce();
-        float accel = primaryEngine.LinearAcceleration();
+        float accel = 0;
+        Vector3 newVelocity = Vector3.zero;
+
+        if (PrimaryEngine())
+        {
+            newVelocity = PrimaryEngine().GetTargetVelocity();
+            accel = primaryEngine.LinearAcceleration();
+
+        }
+
+        Vector3 externalForceVelocity = Vector3.zero; 
+        if (Chasis())
+        {
+            newVelocity = Chasis().ExternalForce();
+
+        }
+
+        
+
      //   newVelocity = Vector3.Lerp(RB().velocity, newVelocity , accel);
+
         //hull/enviroment modifications
         if ( Chasis().ExternalForce() == Vector3.zero)
         {
@@ -235,12 +254,12 @@ public class Ship : MonoBehaviour
 
 
 
-    public ShipSystem PrimaryEngine()
+    public EngineBase PrimaryEngine()
     {
 
         return primaryEngine;
     }
-    public ShipSystem SecondaryEngine()
+    public EngineBase SecondaryEngine()
     {
 
         return secondaryEngine;
@@ -256,6 +275,22 @@ public class Ship : MonoBehaviour
     {
 
         return rotationTarget.rotation;
+    }
+
+
+
+    public void SetVelocity(Vector3 _velocity)
+    {
+        if (RB() == null) { return; }
+
+        RB().velocity = _velocity;
+    }
+
+    public Vector3 GetVelocity()
+    {
+        if (RB() == null) { return Vector3.zero; }
+
+       return RB().velocity;
     }
 
 
