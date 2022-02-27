@@ -6,7 +6,7 @@ using UnityEngine;
 public class Enemy : MonoBehaviour {
 
     public NpcManager npcManager;
-
+    public Rigidbody rb;
     public Ship ship;
 
     public bool canAct;
@@ -445,6 +445,17 @@ public class Enemy : MonoBehaviour {
             else { return transform; }
         }
         return shipTransform;
+    }
+
+
+    public Rigidbody RB()
+    {
+        if (rb == null)
+        {
+            rb = GetComponent<Rigidbody>();
+        }
+
+        return rb;
     }
 
 

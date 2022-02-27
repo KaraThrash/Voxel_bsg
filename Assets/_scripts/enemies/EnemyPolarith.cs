@@ -1,28 +1,48 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using Polarith.AI.Package;
 public class EnemyPolarith : Enemy
 {
+   public ShipPhysics movementControls;
     public ShipSystem gun;
+
     public Transform focusObject, rotationTarget;
 
-    public float torquePower,engineThrottle, engineTorqueThrottle;
-    public float lateralHort, lasteralVert;
+    public float torquePower,engineThrottle;
+    public float accelerate,decelerate;
+
 
     public float targetengineThrottle, targetengineTorqueThrottle;
-    public float targetlateralHort, targetlateralVert;
+
 
     public override void Act()
     {
-        engineThrottle = Mathf.Lerp(engineThrottle, targetengineThrottle, Time.deltaTime * DirectionChangeSpeed());
-        engineTorqueThrottle = Mathf.Lerp(engineTorqueThrottle, targetengineTorqueThrottle, Time.deltaTime * DirectionChangeSpeed());
-        lateralHort = Mathf.Lerp(lateralHort, targetlateralHort, Time.deltaTime * DirectionChangeSpeed());
-        lasteralVert = Mathf.Lerp(lasteralVert, targetlateralVert, Time.deltaTime * DirectionChangeSpeed());
+
+        if (Vector3.Angle(transform.forward, (focusObject.position - transform.position).normalized) > 5)
+        {
+
+            movementControls.Torque = Mathf.Lerp(movementControls.Torque, torquePower, Time.deltaTime * accelerate);
+            
+        }
+        else 
+        {
+            movementControls.Torque = Mathf.Lerp(movementControls.Torque, 0, Time.deltaTime * decelerate);
+            RB().angularVelocity = Vector3.Lerp(RB().angularVelocity,Vector3.zero,Time.deltaTime * decelerate);
+        }
 
 
+        if (Vector3.Distance(transform.position, focusObject.position) > 5)
+        {
 
-
+            movementControls.Speed = Mathf.Lerp(movementControls.Speed, engineThrottle, Time.deltaTime * accelerate);
+        }
+        else
+        {
+            movementControls.Speed = Mathf.Lerp(movementControls.Speed, 0, Time.deltaTime * decelerate);
+            RB().velocity = Vector3.Lerp(RB().velocity, Vector3.zero, Time.deltaTime * decelerate);
+        }
+        return;
         if (AttackTarget() == null ) { return; }
 
         if (brainTimer > 0) { brainTimer -= Time.deltaTime; }
