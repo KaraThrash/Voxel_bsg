@@ -16,6 +16,12 @@ public class ShipSystem : MonoBehaviour
 
     public float power;
 
+    [Min(0.01f)]
+    public float  STAT_cooldownTime;
+    public float  STAT_power;
+    public float  cdTracker;
+
+
     protected float lockoutTimer;//for taking damage, being frozen or other circumstances that render this system unusable
 
     public bool on;
@@ -25,7 +31,13 @@ public class ShipSystem : MonoBehaviour
     public string positiveButton,negativeButton;
 
 
+    public void STAT_CooldownTime(float _val) { STAT_cooldownTime = _val; }
+    public float STAT_CooldownTime( ) { return STAT_cooldownTime;}
 
+    public bool OnCooldown() { return cdTracker > 0 || cdTracker == -1 ; }
+
+    public void STAT_Power(float _val) { STAT_power = _val; }
+    public float STAT_Power() { return STAT_power; }
 
     public void SetActivateKey(KeyCode _key) { activateKey = _key; }
     public void SetActivateButton(string _key) { activateButton = _key; }
@@ -60,6 +72,8 @@ public class ShipSystem : MonoBehaviour
     {
         Act();
 
+        TrackCooldown();
+
         if (listenForPlayerInput)
         {
             PlayerInput();
@@ -68,7 +82,13 @@ public class ShipSystem : MonoBehaviour
 
     }
 
-
+    public virtual void TrackCooldown()
+    {
+        if (cdTracker > 0)
+        {
+            cdTracker -= Time.deltaTime;
+        }
+    }
 
     public virtual void Act()
     {
@@ -152,6 +172,13 @@ public class ShipSystem : MonoBehaviour
     {
 
         return InputControls.CheckButtonPressed(listenForButton);
+
+    }
+
+    public bool PositiveButtonUp()
+    {
+
+        return InputControls.CheckButtonReleased(listenForButton);
 
     }
 

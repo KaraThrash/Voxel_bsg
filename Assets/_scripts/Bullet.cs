@@ -19,6 +19,7 @@ public class Bullet : MonoBehaviour {
 
     private Vector3 direction,secondaryDirection, relativeVelocity;
     private Rigidbody rb;
+    private Collider collider;
 
     private Transform bulletParent;
     private string bulletParentName = "";
@@ -31,7 +32,7 @@ public class Bullet : MonoBehaviour {
         if (lance == false && missile == false)
         {
             transform.parent = BulletParent();
-           //rb.AddForce(transform.forward * (speed), ForceMode.Impulse);
+           //RB().AddForce(transform.forward * (speed), ForceMode.Impulse);
         }
          if (spray == true)
         {
@@ -50,11 +51,11 @@ public class Bullet : MonoBehaviour {
     }
     void Awake()
     {
-        rb = GetComponent<Rigidbody>();
+       // rb = GetComponent<Rigidbody>();
         if (lance == false && missile == false)
         {
-            transform.parent = GameObject.Find("BulletParent").transform;
-            rb.velocity = (transform.forward * speed);
+          //  transform.parent = BulletParent();
+           // RB().velocity = (transform.forward * speed);
         }
 
 
@@ -63,6 +64,24 @@ public class Bullet : MonoBehaviour {
 
     }
 
+
+
+
+    public void Launch(float _power = 1)
+    {
+        lifeTime = lifetimeMax;
+        transform.parent = null;
+        transform.parent = BulletParent();
+        RB().velocity = (transform.forward * _power);
+        SetCollider(true);
+        if (boomerang == true)
+        {
+            direction = (target.transform.forward + target.transform.right).normalized;
+            secondaryDirection = -target.transform.right;
+        }
+
+
+    }
 
     public void Launched(GameObject newtarget=null)
     {
@@ -91,13 +110,13 @@ public class Bullet : MonoBehaviour {
         else if (spiral == true)
         {
             Spiral();
-            rb.velocity = (transform.forward * speed) + relativeVelocity;
+            RB().velocity = (transform.forward * speed) + relativeVelocity;
         }
         else 
         {
-            rb.velocity = (transform.forward * speed) + relativeVelocity;
+            RB().velocity = (transform.forward * speed) + relativeVelocity;
         }
-        if (lifeTime <= 0 || (target != null && transform.position == target.transform.position)) { Die(); }
+        if ((lifeTime <= 0 && lifeTime != -1)|| (target != null && transform.position == target.transform.position)) { Die(); }
     }
 
     public void Spray()
@@ -167,15 +186,15 @@ public class Bullet : MonoBehaviour {
         //boomerang has it target set to the player that fired it.
         if(boomerang == true)
         {
-            //rb.velocity = transform.forward * speed  *  Time.deltaTime;
+            //RB().velocity = transform.forward * speed  *  Time.deltaTime;
             //first phase of it's life move away from from the firing object, second phase to what was the alternate side from the firing position
             //last phase return to the firing object
             if (lifeTime > (lifetimeMax * 0.75f))
             {
-                rb.velocity = direction * speed ;
+                RB().velocity = direction * speed ;
                 if (target != null)
                 {
-                    // rb.AddForce(transform.forward * speed  *  Time.deltaTime);
+                    // RB().AddForce(transform.forward * speed  *  Time.deltaTime);
 
                     //transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(target.transform.position - transform.position ), rotSpeed * Time.deltaTime);
                     transform.rotation = Quaternion.Slerp(transform.rotation, target.transform.rotation, rotSpeed * Time.deltaTime);
@@ -183,10 +202,10 @@ public class Bullet : MonoBehaviour {
             }
             else if (lifeTime > (lifetimeMax * 0.45f))
             {
-                rb.velocity = Vector3.Slerp(rb.velocity, secondaryDirection * speed, speed * Time.deltaTime);
+                RB().velocity = Vector3.Slerp(RB().velocity, secondaryDirection * speed, speed * Time.deltaTime);
                 if (target != null)
                 {
-                    // rb.AddForce(transform.forward * speed  *  Time.deltaTime);
+                    // RB().AddForce(transform.forward * speed  *  Time.deltaTime);
 
                     //transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(target.transform.position - transform.position ), rotSpeed * Time.deltaTime);
                     transform.rotation = Quaternion.Slerp(transform.rotation, target.transform.rotation, rotSpeed * Time.deltaTime);
@@ -194,17 +213,17 @@ public class Bullet : MonoBehaviour {
             }
             else 
             {
-                rb.velocity = Vector3.Slerp(rb.velocity, (target.transform.position - transform.position).normalized * speed, speed * Time.deltaTime);
+                RB().velocity = Vector3.Slerp(RB().velocity, (target.transform.position - transform.position).normalized * speed, speed * Time.deltaTime);
                 if (Vector3.Distance(transform.position, target.transform.position) < 1) { lifeTime = 0; }
             }
               childObject.transform.Rotate(0,rotSpeed * 10 * Time.deltaTime,0);
         }
         else
         {
-          rb.velocity = transform.forward * speed  *  Time.deltaTime;
+          RB().velocity = transform.forward * speed  *  Time.deltaTime;
           if(target != null)
           {
-            // rb.AddForce(transform.forward * speed  *  Time.deltaTime);
+            // RB().AddForce(transform.forward * speed  *  Time.deltaTime);
 
             transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(target.transform.position - transform.position ), rotSpeed * Time.deltaTime);
            }
@@ -294,15 +313,17 @@ public class Bullet : MonoBehaviour {
         {
             if (bulletParentName.Length < 1) 
             {
-                bulletParentName = "BulletParent_" + this.GetType().ToString();
+                bulletParentName = "BulletParent_";// + this.GetType().ToString();
             }
 
-            
-            if (GameObject.Find(bulletParentName) == null)
+            GameObject findParent = GameObject.Find(bulletParentName);
+
+
+            if (findParent == null)
             {
                 bulletParent = new GameObject(bulletParentName).transform;
             }
-            else { bulletParent = GameObject.Find(bulletParentName).transform; }
+            else { bulletParent = findParent.transform; }
         }
 
         return bulletParent;
@@ -310,11 +331,45 @@ public class Bullet : MonoBehaviour {
 
     public void Die()
     {
-
-
-        transform.parent = BulletParent();
+        SetCollider(false);
+        lifeTime = -1;
+       // transform.parent = BulletParent();
         gameObject.SetActive(false);
         //Destroy(this.gameObject);
 
     }
+
+    public Rigidbody RB()
+    {
+        if (rb == null)
+        {
+            rb = GetComponent<Rigidbody>();
+        }
+
+        return rb;
+    }
+
+    public void SetCollider(bool _on)
+    {
+        if (GetCollider() != null)
+        {
+            GetCollider().enabled = _on;
+        }
+
+    }
+
+    public Collider GetCollider()
+    {
+        if (collider == null)
+        {
+            collider = GetComponent<Collider>();
+        }
+        if (collider == null)
+        {
+            gameObject.AddComponent<SphereCollider>();
+        }
+
+        return collider;
+    }
+
 }

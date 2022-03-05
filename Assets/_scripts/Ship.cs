@@ -20,6 +20,8 @@ public class Ship : MonoBehaviour
     public EngineBase primaryEngine;// primary engine for moving forward
     public EngineBase secondaryEngine;//secondary for turns and adjustments [can be the same engine]
 
+    public WeaponBase primaryWeapon;
+
     public ChasisBase chasis;
 
     public Vector3 velocityTarget;
@@ -28,7 +30,7 @@ public class Ship : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Debug.Log("BulletParent_" + this.GetType().ToString());
+        
         AddSystems();
     }
 
@@ -67,9 +69,20 @@ public class Ship : MonoBehaviour
         RechargeStamina();
 
         Movement();
+
+        Weapons();
       
         // Rigidbody().velocity = Vector3.Lerp(Rigidbody().velocity,targetVelocity,Time.deltaTime * acceleration);
 
+    }
+
+    public void Weapons()
+    {
+        if (PrimaryWeapon())
+        { 
+            
+        }
+        
     }
 
 
@@ -91,11 +104,11 @@ public class Ship : MonoBehaviour
         Vector3 externalForceVelocity = Vector3.zero; 
         if (Chasis())
         {
-            newVelocity = Chasis().ExternalForce();
+            externalForceVelocity = Chasis().ExternalForce();
 
         }
 
-        
+
 
      //   newVelocity = Vector3.Lerp(RB().velocity, newVelocity , accel);
 
@@ -252,7 +265,11 @@ public class Ship : MonoBehaviour
     public bool CanAct()
     { return canAct; }
 
+    public WeaponBase PrimaryWeapon()
+    {
 
+        return primaryWeapon;
+    }
 
     public EngineBase PrimaryEngine()
     {

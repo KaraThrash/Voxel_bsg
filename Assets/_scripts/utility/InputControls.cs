@@ -45,6 +45,21 @@ public static class InputControls
         return false;
     }
 
+    public static bool CheckButtonReleased(Buttons _button)
+    {
+        if (_button == Buttons.A) { return Input.GetButtonUp(aButton); }
+        else if (_button == Buttons.B) { return Input.GetButtonUp(bButton); }
+        else if (_button == Buttons.Y) { return Input.GetButtonUp(yButton); }
+        else if (_button == Buttons.X) { return Input.GetButtonUp(xButton); }
+        else if (_button == Buttons.LB) { return Input.GetButtonUp(lbButton); }
+        else if (_button == Buttons.RB) { return Input.GetButtonUp(rbButton); }
+        else if (_button == Buttons.Leftstick) { return Input.GetButtonUp(leftstickButton); }
+        else if (_button == Buttons.Rightstick) { return Input.GetButtonUp(rightstickButton); }
+
+        return false;
+    }
+
+
     public static bool CheckButton(Buttons _button)
     {
         if (_button == Buttons.A) { return Input.GetButton(aButton); }

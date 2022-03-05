@@ -17,11 +17,18 @@ public class ChasisBase : ShipSystem
 
     public Vector3 externalForce;
 
-    public Vector3 ExternalForce() { return externalForce; }
+    public Vector3 ExternalForce() 
+    {
+        if (externalForce.magnitude < Time.deltaTime || timer <= Time.deltaTime)
+        { return Vector3.zero; }
+
+        return externalForce;
+    }
     public void ExternalForce(Vector3 _force) 
     {
         timer = ExternalForceTimeCap();
         externalForce += (externalForceResist * _force);
+
         if (externalForce.magnitude > externalForceMagnitudeCap)
         { externalForce = externalForce.normalized * externalForceMagnitudeCap; }
     }

@@ -38,6 +38,7 @@ public class EngineBasic : EngineBase
         {
            
             Accelerate(throttle_A);
+
             if (maneverCooldown > 0) { maneverCooldown -= Time.deltaTime; }
 
         }
@@ -100,7 +101,7 @@ public class EngineBasic : EngineBase
         }
         else 
         {
-            if (Ship() && Ship().CanAct() && power != 0)
+            if (Ship() && Ship().CanAct() && STAT_Power() != 0)
             {
 
 
@@ -113,7 +114,7 @@ public class EngineBasic : EngineBase
 
                 if (throttle_A != 0)
                 {
-                    targetVelocity = Vector3.Lerp(targetVelocity, (Ship().Forward() * (power * currentAcc)) + lateral, Time.deltaTime );
+                    targetVelocity = Vector3.Lerp(targetVelocity, (Ship().Forward() * (STAT_Power() * currentAcc)) + lateral, Time.deltaTime );
 
                 }
                 else

@@ -20,18 +20,20 @@ public class Gun : ShipSystem
  
 
     [Min(0.01f)]
-    public float burstTime,cooldownTime;
-    public float burstTracker,cooldownTracker;
+    public float burstTime;
+    public float burstTracker;
+
+
+    public override void PlayerInput()
+    {
+        
+    }
 
     public override void Act()
     {
 
 
-        if (cooldownTracker > 0)
-        {
-            cooldownTracker -= Time.deltaTime;
-        }
-
+      
 
         if (GetGunType() == GunType.auto)
         {
@@ -65,32 +67,32 @@ public class Gun : ShipSystem
         {
             burstTracker -= Time.deltaTime;
 
-            if (cooldownTracker <= 0)
+            if (!OnCooldown())
             {
                 FireBullet();
-                cooldownTracker = cooldownTime;
+                cdTracker = STAT_CooldownTime();
             }
 
 
             if (burstTracker <= 0)
             {
-                cooldownTracker = burstTime;
+                cdTracker = burstTime;
 
             }
         }
 
-        if (on && burstTracker <= 0 && cooldownTracker <= 0) { burstTracker = burstTime; }
+        if (on && burstTracker <= 0 && !OnCooldown()) { burstTracker = burstTime; }
     }
 
 
     public void Auto() 
     {
-        cooldownTracker -= Time.deltaTime;
+      
 
-        if (cooldownTracker <= 0)
+        if (!OnCooldown())
         {
             FireBullet();
-            cooldownTracker = cooldownTime;
+            cdTracker = STAT_CooldownTime();
         }
     }
 
@@ -101,9 +103,19 @@ public class Gun : ShipSystem
         if (burstTracker >= burstTime)
         {
             FireBullet();
-            cooldownTracker = cooldownTime;
+            cdTracker = STAT_CooldownTime();
             burstTracker = 0;
             on = false;
+        }
+    }
+
+    public void SemiAuto()
+    {
+
+        if (!on)
+        {
+            FireBullet();
+
         }
     }
 
@@ -111,7 +123,6 @@ public class Gun : ShipSystem
     public override void Activate()
     {
         
-        on = true;
 
         if (GetGunType() == GunType.burst) 
         {
@@ -136,9 +147,16 @@ public class Gun : ShipSystem
 
 
         }
+        else if (GetGunType() == GunType.semiauto)
+        {
+            SemiAuto();
 
 
-        
+        }
+
+        on = true;
+
+
     }
 
     public override void Deactivate()
