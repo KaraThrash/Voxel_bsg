@@ -12,7 +12,7 @@ public class Ship : MonoBehaviour
     public bool canAct;
 
     public List<ShipSystem> systems;
-
+    private int currentHealth;
     public float stamina, maxStamina, staminaRechargeRate;
 
     public float acceleration;
@@ -30,7 +30,7 @@ public class Ship : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+
         AddSystems();
     }
 
@@ -62,7 +62,7 @@ public class Ship : MonoBehaviour
 
 
 
-    
+
     public void Act()
     {
 
@@ -71,18 +71,45 @@ public class Ship : MonoBehaviour
         Movement();
 
         Weapons();
-      
+
         // Rigidbody().velocity = Vector3.Lerp(Rigidbody().velocity,targetVelocity,Time.deltaTime * acceleration);
 
     }
 
+    public void EnemyAct()
+    {
+        //the ideal case is enemies are identical to the player in function(a ship is a ship)
+        //In the interest of not over engineering dont figure out to represent the enemies needs as if they had a controller
+
+ 
+
+        if (Chasis() && Chasis().ExternalForce() != Vector3.zero)
+        {
+            // SetVelocity(Chasis().ExternalForce());
+            
+
+        }
+        else
+        {
+            if (PrimaryWeapon())
+            {
+                PrimaryWeapon().Act();
+            }
+        }
+
+
+
+
+    }
+
+
     public void Weapons()
     {
         if (PrimaryWeapon())
-        { 
-            
+        {
+
         }
-        
+
     }
 
 
@@ -97,11 +124,12 @@ public class Ship : MonoBehaviour
         if (PrimaryEngine())
         {
             newVelocity = PrimaryEngine().GetTargetVelocity();
+            newVelocity += SecondaryEngine().Lateral() * PrimaryEngine().lateralPower;
             accel = primaryEngine.LinearAcceleration();
 
         }
 
-        Vector3 externalForceVelocity = Vector3.zero; 
+        Vector3 externalForceVelocity = Vector3.zero;
         if (Chasis())
         {
             externalForceVelocity = Chasis().ExternalForce();
@@ -110,12 +138,12 @@ public class Ship : MonoBehaviour
 
 
 
-     //   newVelocity = Vector3.Lerp(RB().velocity, newVelocity , accel);
+        //   newVelocity = Vector3.Lerp(RB().velocity, newVelocity , accel);
 
         //hull/enviroment modifications
-        if ( Chasis().ExternalForce() == Vector3.zero)
+        if (Chasis().ExternalForce() == Vector3.zero)
         {
-             RB().velocity = Vector3.Lerp(RB().velocity, newVelocity , accel);
+            RB().velocity = Vector3.Lerp(RB().velocity, newVelocity, accel);
             //RB().velocity = newVelocity + externalForceVelocity;
         }
         else if (Chasis().BelowMinimumMagnitude())
@@ -123,11 +151,11 @@ public class Ship : MonoBehaviour
             RB().velocity = Vector3.Lerp(externalForceVelocity, newVelocity, accel);
             //RB().velocity = newVelocity + externalForceVelocity;
         }
-        else 
+        else
         {
             RB().velocity = Chasis().ExternalForce();
         }
-        
+
 
         transform.rotation = Quaternion.Slerp(transform.rotation, primaryEngine.GetTargetRotation(), primaryEngine.RotationAcceleration());
     }
@@ -150,7 +178,7 @@ public class Ship : MonoBehaviour
     {
         foreach (ShipSystem el in systems)
         {
-           
+
             if (_on)
             {
                 el.Control(_input);
@@ -194,9 +222,12 @@ public class Ship : MonoBehaviour
 
     public void CollideWithEnviroment(Collision collision)
     {
-       // Chasis().ExternalForce(collision.impulse.magnitude * (transform.position - collision.contacts[0].point));
-        Chasis().ExternalForce(collision.impulse.magnitude * Vector3.Reflect( collision.contacts[0].point - transform.position, collision.impulse).normalized);
-      //  PrimaryEngine().CollideWithEnviroment(collision);
+        // Chasis().ExternalForce(collision.impulse.magnitude * (transform.position - collision.contacts[0].point));
+       // Chasis().ExternalForce(collision.impulse.magnitude * Vector3.Reflect(collision.contacts[0].point - transform.position, collision.impulse).normalized);
+        Chasis().ExternalForce( Vector3.Reflect(collision.contacts[0].point - transform.position, collision.impulse).normalized, collision.impulse.magnitude);
+
+
+        //  PrimaryEngine().CollideWithEnviroment(collision);
         //TODO: engine after impact
 
 
@@ -205,7 +236,18 @@ public class Ship : MonoBehaviour
 
 
 
+    public void TakeDamage(int _dmg)
+    {
+        Hitpoints(-_dmg);
+    }
 
+    public void Hitpoints(int _change)
+    {
+        currentHealth += _change;
+    }
+
+    public int Hitpoints()
+    { return currentHealth; }
 
 
 
@@ -233,8 +275,8 @@ public class Ship : MonoBehaviour
     public bool UseStamina(float _cost)
     {
         // round stamina check so that a cost of 0.2relativeRot.will use 0.1 stamina leaving -0.1
-        if (_cost <= Mathf.Ceil(stamina) ) 
-        { 
+        if (_cost <= Mathf.Ceil(stamina))
+        {
             stamina -= _cost;
             return true;
         }
@@ -260,7 +302,7 @@ public class Ship : MonoBehaviour
 
 
     public void CanAct(bool _on)
-    {canAct = _on;}
+    { canAct = _on; }
 
     public bool CanAct()
     { return canAct; }
@@ -307,7 +349,7 @@ public class Ship : MonoBehaviour
     {
         if (RB() == null) { return Vector3.zero; }
 
-       return RB().velocity;
+        return RB().velocity;
     }
 
 

@@ -158,7 +158,7 @@ public class ThirdPersonCamera : MonoBehaviour
         if (smooth)
         {
 
-            if (idleTimer > 0)
+            if (idleTimer == -2)
             {
 
 

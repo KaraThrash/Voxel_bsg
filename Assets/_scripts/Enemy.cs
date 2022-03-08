@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
 
-public class Enemy : MonoBehaviour {
+public class Enemy : MonoBehaviour
+{
 
     public NpcManager npcManager;
     public Rigidbody rb;
@@ -16,7 +17,7 @@ public class Enemy : MonoBehaviour {
     public Stance stance;
     public RangeBand rangeBand;
 
-    public Transform mapArea,attackTarget,patrolparent,patroltarget;
+    public Transform mapArea, attackTarget, patrolparent, patroltarget;
 
     public float hp;
 
@@ -32,22 +33,34 @@ public class Enemy : MonoBehaviour {
     public bool alert;
 
 
-    private float brainTime,stateTime; //brain time for checking if the enemy responds to an external condition [e.g. player being in their line of fire], state time for state specific holds
+    private float brainTime, stateTime; //brain time for checking if the enemy responds to an external condition [e.g. player being in their line of fire], state time for state specific holds
     protected float directionChangeSpeed; // how quickly this enemy changes the direction they want to go
 
     public int substate; // differences within the same AI state: e.g. attcking when the playing is facing this enemy or facing away
 
-    protected Vector3 targetPos; 
+    protected Vector3 targetPos;
     protected Vector3 targetDirection;
     protected Quaternion targetRotation;
 
-    public float stateTimer,brainTimer;
+    public float stateTimer, brainTimer;
 
     protected float stuckCounter, timeSinceLastAction; // check if stuck
 
-    public int closeRange, midRange,farRange;
-    public float rangeVarience,angleTolerance; //check against varience not against the opposite range e.g.: when close check if further than close+varience to prevent riding the line  
-    //angle tolerance for the cone around a perfect facing
+    public int closeRange, midRange, farRange;
+    public float rangeVarience, angleTolerance; //check against varience not against the opposite range e.g.: when close check if further than close+varience to prevent riding the line  
+                                                //angle tolerance for the cone around a perfect facing
+    private float angle;
+
+    public float Angle
+    {
+        get { return angle; }
+        set { angle = value; }
+    }
+
+
+
+
+
 
     /// 
     /// 
@@ -55,7 +68,7 @@ public class Enemy : MonoBehaviour {
     //AI stuff
 
 
-    public void State(AiState _state) 
+    public void State(AiState _state)
     {
         OnStateChange(_state);
 
@@ -64,7 +77,7 @@ public class Enemy : MonoBehaviour {
 
     public virtual void OnStateChange(AiState _newstate)
     {
-        
+
         if (State() == _newstate) { return; } //didnt switch to a new state
 
 
@@ -94,7 +107,7 @@ public class Enemy : MonoBehaviour {
         }
         else if (_newstate == AiState.adjusting)
         {
-     
+
         }
         else if (_newstate == AiState.recovering)
         {
@@ -136,22 +149,22 @@ public class Enemy : MonoBehaviour {
 
     public void RotationTargetLookAt(Vector3 _pos)
     {
-        if (ship != null && ship.rotationTarget != null)
+        if (GetShip() != null && GetShip().rotationTarget != null)
         {
-            ship.rotationTarget.LookAt(_pos);
+            GetShip().rotationTarget.LookAt(_pos);
         }
     }
 
     public void RotationTargetLookAt(Transform _pos)
     {
-        if (ship != null && ship.rotationTarget != null)
+        if (GetShip() != null && GetShip().rotationTarget != null)
         {
-            ship.rotationTarget.LookAt(_pos);
+            GetShip().rotationTarget.LookAt(_pos);
         }
     }
 
 
-   
+
 
 
 
@@ -162,7 +175,7 @@ public class Enemy : MonoBehaviour {
     public virtual bool CheckAdvantage() { return false; }
 
     //check the enviromenty, and current state to determine what to do next
-    public virtual void MakeDecision() {  }
+    public virtual void MakeDecision() { }
 
 
 
@@ -172,7 +185,7 @@ public class Enemy : MonoBehaviour {
 
     void Start()
     {
-        if (AttackTarget() == null || ship == null) { return; }
+        if (AttackTarget() == null || GetShip() == null) { return; }
         State(AiState.attacking);
         stateTime = 5;
         brainTime = 12;
@@ -187,12 +200,12 @@ public class Enemy : MonoBehaviour {
 
     public void SetAlert(bool isAlert)
     {
-      alert = isAlert;
+        alert = isAlert;
     }
 
     public bool CheckBrain()
     {
-        if(brainTimer <= 0)
+        if (brainTimer <= 0)
         {
             brainTimer = BrainTime();
             return true;
@@ -201,9 +214,9 @@ public class Enemy : MonoBehaviour {
     }
 
 
-    public void Conscript( )
+    public void Conscript()
     {
-      //conscriptable units can join a group and function with group logic
+        //conscriptable units can join a group and function with group logic
 
     }
 
@@ -211,33 +224,33 @@ public class Enemy : MonoBehaviour {
     void Update()
     {
         if (canAct) { Act(); }
-       
+
 
     }
 
 
     public virtual void Act()
     {
-        Debug.Log(Vector3.Angle(transform.position + transform.forward, ship.rotationTarget.position + ship.rotationTarget.forward));
+        Debug.Log(Vector3.Angle(transform.position + transform.forward, GetShip().rotationTarget.position + GetShip().rotationTarget.forward));
 
-        if (AttackTarget() == null || ship == null) { return; }
+        if (AttackTarget() == null || GetShip() == null) { return; }
 
-        if(brainTimer > 0){brainTimer -= Time.deltaTime;}
+        if (brainTimer > 0) { brainTimer -= Time.deltaTime; }
 
         RotationTargetLookAt(AttackTarget());
 
         if (State() == AiState.adjusting)
-        { 
+        {
 
             if (CheckBrain())
             {
-                ship.secondaryEngine.GetComponent<LateralThruster>().Horizontal_Throttle(1);
-                ship.secondaryEngine.GetComponent<LateralThruster>().Vertical_Throttle( 1);
-                ship.primaryEngine.GetComponent<EngineBasic>().Thrust_Throttle(0.1f);
-                ship.primaryEngine.GetComponent<EngineBasic>().Roll_Throttle( 1);
+                GetShip().secondaryEngine.GetComponent<LateralThruster>().Horizontal_Throttle(1);
+                GetShip().secondaryEngine.GetComponent<LateralThruster>().Vertical_Throttle(1);
+                GetShip().primaryEngine.GetComponent<EngineBasic>().Thrust_Throttle(0.1f);
+                GetShip().primaryEngine.GetComponent<EngineBasic>().Roll_Throttle(1);
             }
 
-            if (Vector3.Angle(transform.forward, ship.rotationTarget.forward) < 10)
+            if (Vector3.Angle(transform.forward, GetShip().rotationTarget.forward) < 10)
             {
                 State(AiState.attacking);
             }
@@ -248,16 +261,16 @@ public class Enemy : MonoBehaviour {
         {
 
 
-            if (Vector3.Distance(AttackTarget().position, ship.transform.position) < 10)
+            if (Vector3.Distance(AttackTarget().position, GetShip().transform.position) < 10)
             {
-                if(CheckBrain())
+                if (CheckBrain())
                 {
-                    ship.secondaryEngine.GetComponent<LateralThruster>().Horizontal_Throttle(1);
-                    ship.secondaryEngine.GetComponent<LateralThruster>().Vertical_Throttle(1);
-                    ship.primaryEngine.GetComponent<EngineBasic>().Thrust_Throttle(1);
-                    ship.primaryEngine.GetComponent<EngineBasic>().Roll_Throttle(0);
+                    GetShip().secondaryEngine.GetComponent<LateralThruster>().Horizontal_Throttle(1);
+                    GetShip().secondaryEngine.GetComponent<LateralThruster>().Vertical_Throttle(1);
+                    GetShip().primaryEngine.GetComponent<EngineBasic>().Thrust_Throttle(1);
+                    GetShip().primaryEngine.GetComponent<EngineBasic>().Roll_Throttle(0);
                 }
-                
+
 
                 stateTimer += Time.deltaTime;
                 if (stateTimer >= stateTime)
@@ -265,30 +278,30 @@ public class Enemy : MonoBehaviour {
                     State(AiState.recovering);
                     pendingState = AiState.adjusting;
                 }
-               
+
             }
             else if (Vector3.Distance(AttackTarget().position, ship.transform.position) < 30)
             {
 
-                if(CheckBrain())
+                if (CheckBrain())
                 {
-                    ship.secondaryEngine.GetComponent<LateralThruster>().Horizontal_Throttle(1);
-                    ship.secondaryEngine.GetComponent<LateralThruster>().Vertical_Throttle(1);
-                    ship.primaryEngine.GetComponent<EngineBasic>().Thrust_Throttle(1);
-                    ship.primaryEngine.GetComponent<EngineBasic>().Roll_Throttle(0.1f);
+                    GetShip().secondaryEngine.GetComponent<LateralThruster>().Horizontal_Throttle(1);
+                    GetShip().secondaryEngine.GetComponent<LateralThruster>().Vertical_Throttle(1);
+                    GetShip().primaryEngine.GetComponent<EngineBasic>().Thrust_Throttle(1);
+                    GetShip().primaryEngine.GetComponent<EngineBasic>().Roll_Throttle(0.1f);
                 }
             }
-            else 
+            else
             {
-                if(CheckBrain())
+                if (CheckBrain())
                 {
-                    ship.primaryEngine.GetComponent<EngineBasic>().Thrust_Throttle(1 - ((Vector3.Angle(ship.transform.forward, (AttackTarget().position - ship.transform.position).normalized)) / 90));
-                    ship.primaryEngine.GetComponent<EngineBasic>().Roll_Throttle(1);
+                    GetShip().primaryEngine.GetComponent<EngineBasic>().Thrust_Throttle(1 - ((Vector3.Angle(GetShip().transform.forward, (AttackTarget().position - GetShip().transform.position).normalized)) / 90));
+                    GetShip().primaryEngine.GetComponent<EngineBasic>().Roll_Throttle(1);
                 }
-               // ship.rotationTarget.rotation = ship.transform.rotation;
+                // ship.rotationTarget.rotation = ship.transform.rotation;
             }
 
-            if (Vector3.Angle(ship.transform.forward, (AttackTarget().position - transform.position).normalized) > 80)
+            if (Vector3.Angle(GetShip().transform.forward, (AttackTarget().position - transform.position).normalized) > 80)
             {
                 stateTimer += Time.deltaTime;
                 if (stateTimer >= brainTime)
@@ -296,17 +309,17 @@ public class Enemy : MonoBehaviour {
                     State(AiState.recovering);
                     pendingState = AiState.adjusting;
                 }
-               
+
             }
 
 
         }
         else if (State() == AiState.recovering)
         {
-            ship.secondaryEngine.GetComponent<LateralThruster>().Horizontal_Throttle(1);
-            ship.secondaryEngine.GetComponent<LateralThruster>().Vertical_Throttle(1);
-            ship.primaryEngine.GetComponent<EngineBasic>().Thrust_Throttle(1);
-            ship.primaryEngine.GetComponent<EngineBasic>().Roll_Throttle(1);
+            GetShip().secondaryEngine.GetComponent<LateralThruster>().Horizontal_Throttle(1);
+            GetShip().secondaryEngine.GetComponent<LateralThruster>().Vertical_Throttle(1);
+            GetShip().primaryEngine.GetComponent<EngineBasic>().Thrust_Throttle(1);
+            GetShip().primaryEngine.GetComponent<EngineBasic>().Roll_Throttle(1);
 
             stateTimer -= Time.deltaTime;
             if (stateTimer <= 0)
@@ -317,9 +330,9 @@ public class Enemy : MonoBehaviour {
 
         }
 
-        if (Vector3.Angle(ship.transform.position, AttackTarget().position) < 10 || Vector3.Angle(ship.transform.position, AttackTarget().position) > 80)
-        { 
-        
+        if (Vector3.Angle(GetShip().transform.position, AttackTarget().position) < 10 || Vector3.Angle(GetShip().transform.position, AttackTarget().position) > 80)
+        {
+
         }
 
 
@@ -331,8 +344,8 @@ public class Enemy : MonoBehaviour {
     {
 
 
-       //  CheckForward();
-  
+        //  CheckForward();
+
     }
 
 
@@ -344,19 +357,19 @@ public class Enemy : MonoBehaviour {
     }
 
 
-    public void CheckToNoticePlayer(float distanceToCheck=100.0f)
+    public void CheckToNoticePlayer(float distanceToCheck = 100.0f)
     {
-      //compare distance from in front to behind the enemy to determine if the player is in a forward cone of vision
-      //or if the player is extremely close
+        //compare distance from in front to behind the enemy to determine if the player is in a forward cone of vision
+        //or if the player is extremely close
 
-          RaycastHit hit;
+        RaycastHit hit;
 
 
 
-          if (Physics.Raycast(transform.position, (transform.position - transform.position), out hit, distanceToCheck) )
-          {
-                  
-          }
+        if (Physics.Raycast(transform.position, (transform.position - transform.position), out hit, distanceToCheck))
+        {
+
+        }
 
 
 
@@ -365,27 +378,27 @@ public class Enemy : MonoBehaviour {
 
     public void FindSquadMembers()
     {
- 
+
     }
 
     public void OnCollisionEnter(Collision col)
     {
-       
+
 
     }
     public void OnTriggerStay(Collider other)
     {
-       
+
     }
 
 
     public void OnTriggerEnter(Collider other)
     {
-       
+
     }
     public void FireGuns()
     {
-       
+
     }
 
 
@@ -417,11 +430,11 @@ public class Enemy : MonoBehaviour {
 
 
 
-              
+
 
 
         }
-        
+
     }
 
 
@@ -431,7 +444,7 @@ public class Enemy : MonoBehaviour {
 
         if (npcManager != null)
         {
-           // npcManager.NPCkilled(GetComponent<Enemy>());
+            // npcManager.NPCkilled(GetComponent<Enemy>());
         }
 
     }
@@ -458,6 +471,13 @@ public class Enemy : MonoBehaviour {
         return rb;
     }
 
+    public Ship GetShip()
+    {
+        return ship; 
+  
+    }
+
+
 
     public float StateTime() { return stateTime; }
     public float BrainTime() { return brainTime; }
@@ -469,11 +489,11 @@ public class Enemy : MonoBehaviour {
     public RangeBand RangeZone() { return rangeBand; }
     public void RangeZone(RangeBand _rangeBand) { rangeBand = _rangeBand; }
 
-    public void DetermineRangeZone(Vector3 _pos) 
+    public void DetermineRangeZone(Vector3 _pos)
     {
         float currentRange = 0;
         if (RangeZone() == RangeBand.close)
-        {currentRange = closeRange;}
+        { currentRange = closeRange; }
         else if (RangeZone() == RangeBand.ideal)
         { currentRange = closeRange; }
         else if (RangeZone() == RangeBand.far)
@@ -481,7 +501,7 @@ public class Enemy : MonoBehaviour {
 
         float dist = Vector3.Distance(_pos, transform.position);
         //to prevent riding the line of range bands dont change if within the assigned varience
-        if (Mathf.Abs(dist  - currentRange) <= rangeVarience)
+        if (Mathf.Abs(dist - currentRange) <= rangeVarience)
         { return; }
 
         if (dist <= closeRange)
@@ -506,14 +526,14 @@ public class Enemy : MonoBehaviour {
     { return Vector3.Distance(transform.position, target); }
 
 
-   
 
-    public bool RaycastAt(Vector3 _from, Vector3 _to,float _range=100.0f)
+
+    public bool RaycastAt(Vector3 _from, Vector3 _to, float _range = 100.0f)
     {
         RaycastHit hit;
 
         if (Physics.Raycast(_from, _to - _from, out hit, _range)) { return true; }
-        
+
         return false;
 
     }
@@ -524,7 +544,7 @@ public class Enemy : MonoBehaviour {
 
         if (Physics.Raycast(_from, _to.position - _from, out hit, _range) && hit.transform == _to)
         {
-            return true; 
+            return true;
         }
 
         return false;

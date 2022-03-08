@@ -19,34 +19,40 @@ public class EnemyPolarith : Enemy
     public override void Act()
     {
 
-        if (Vector3.Angle(transform.forward, (focusObject.position - transform.position).normalized) > 5)
-        {
+        //if (Vector3.Angle(transform.forward, (focusObject.position - transform.position).normalized) > 5)
+        //{
 
-            movementControls.Torque = Mathf.Lerp(movementControls.Torque, torquePower, Time.deltaTime * accelerate);
+        //    movementControls.Torque = Mathf.Lerp(movementControls.Torque, torquePower, Time.deltaTime * accelerate);
             
-        }
-        else 
-        {
-            movementControls.Torque = Mathf.Lerp(movementControls.Torque, 0, Time.deltaTime * decelerate);
-            RB().angularVelocity = Vector3.Lerp(RB().angularVelocity,Vector3.zero,Time.deltaTime * decelerate);
-        }
+        //}
+        //else 
+        //{
+        //    movementControls.Torque = Mathf.Lerp(movementControls.Torque, 0, Time.deltaTime * decelerate);
+        //    RB().angularVelocity = Vector3.Lerp(RB().angularVelocity,Vector3.zero,Time.deltaTime * decelerate);
+        //}
 
 
-        if (Vector3.Distance(transform.position, focusObject.position) > 5)
-        {
+        //if (Vector3.Distance(transform.position, focusObject.position) > 5)
+        //{
 
-            movementControls.Speed = Mathf.Lerp(movementControls.Speed, engineThrottle, Time.deltaTime * accelerate);
-        }
-        else
-        {
-            movementControls.Speed = Mathf.Lerp(movementControls.Speed, 0, Time.deltaTime * decelerate);
-            RB().velocity = Vector3.Lerp(RB().velocity, Vector3.zero, Time.deltaTime * decelerate);
-        }
-        return;
+        //    movementControls.Speed = Mathf.Lerp(movementControls.Speed, engineThrottle, Time.deltaTime * accelerate);
+        //}
+        //else
+        //{
+        //    movementControls.Speed = Mathf.Lerp(movementControls.Speed, 0, Time.deltaTime * decelerate);
+        //    RB().velocity = Vector3.Lerp(RB().velocity, Vector3.zero, Time.deltaTime * decelerate);
+        //}
+       // return;
         if (AttackTarget() == null ) { return; }
 
         if (brainTimer > 0) { brainTimer -= Time.deltaTime; }
 
+        if (GetShip().Chasis() && GetShip().Chasis().ExternalForce() != Vector3.zero)
+        {
+            movementControls.Torque = 0;
+            movementControls.Speed = 0;
+            return;
+        }
 
         if (State() == AiState.adjusting)
         {
@@ -114,27 +120,68 @@ public class EnemyPolarith : Enemy
 
         float secondaryFacing = Vector3.Angle(ShipTransform().forward, (AttackTarget().position - ShipTransform().position).normalized);
 
+
+        
+        
+
         FocusObject().position = AttackTarget().position;
 
-        rotationTarget.rotation = Quaternion.Lerp(rotationTarget.rotation, Quaternion.LookRotation((AttackTarget().position - rotationTarget.position), rotationTarget.up), Time.deltaTime * torquePower);
+        // rotationTarget.rotation = Quaternion.Lerp(rotationTarget.rotation, Quaternion.LookRotation((AttackTarget().position - rotationTarget.position), rotationTarget.up), Time.deltaTime * torquePower);
 
         if (Vector3.Distance(ShipTransform().position, AttackTarget().position) < closeRange)
         {
+            movementControls.Speed = Mathf.Lerp(movementControls.Speed, 0, Time.deltaTime * decelerate);
+
             if (secondaryFacing < angleTolerance)
             {
                 if (gun != null) { gun.Activate(); }
             }
             else { if (gun != null) { gun.Deactivate(); } }
         }
-        
+        else 
+        {
+            movementControls.Speed = Mathf.Lerp(movementControls.Speed, engineThrottle, Time.deltaTime * accelerate);
+        }
 
+        if (Vector3.Angle(GetShip().transform.forward, (AttackTarget().position - transform.position).normalized) < angleTolerance * 0.05f)
+        {
+            GetShip().PrimaryEngine().SetSystemState(SystemState.off);
+        }
+        else if (Vector3.Angle(GetShip().transform.forward, (AttackTarget().position - transform.position).normalized) > angleTolerance)
+        {
+            GetShip().PrimaryEngine().SetSystemState(SystemState.on);
+            if (torquePower - movementControls.Torque < Time.deltaTime)
+            { movementControls.Torque = torquePower; }
+            else
+            {
+                movementControls.Torque = Mathf.Lerp(movementControls.Torque, torquePower, Time.deltaTime * accelerate);
+
+            }
+        }
+        else if (Vector3.Angle(GetShip().transform.forward, (AttackTarget().position - transform.position).normalized) > angleTolerance)
+        {
+            GetShip().PrimaryEngine().SetSystemState(SystemState.on);
+            if (torquePower - movementControls.Torque < Time.deltaTime)
+            { movementControls.Torque = torquePower; }
+            else
+            {
+                movementControls.Torque = Mathf.Lerp(movementControls.Torque, torquePower, Time.deltaTime * accelerate);
+
+            }
+        }
+
+
+        Debug.Log(Vector3.Angle(GetShip().transform.forward, (AttackTarget().position - transform.position).normalized));
+
+            GetShip().EnemyAct();
+       // GetShip().PrimaryEngine().Act();
 
         stateTimer -= Time.deltaTime;
         if (stateTimer <= 0)
         {
             stateTimer = StateTime();
 
-            MakeDecision();
+           // MakeDecision();
 
         }
     }
@@ -145,10 +192,12 @@ public class EnemyPolarith : Enemy
     public override void TakingDamage() { }
     public override void Moving()
     {
+        movementControls.Torque = Mathf.Lerp(movementControls.Torque, torquePower, Time.deltaTime * accelerate);
+        movementControls.Speed = Mathf.Lerp(movementControls.Speed, engineThrottle, Time.deltaTime * accelerate);
 
+        GetShip().EnemyAct();
 
-
-        rotationTarget.rotation = Quaternion.Lerp(rotationTarget.rotation, ShipTransform().rotation, Time.deltaTime * torquePower);
+      // rotationTarget.rotation = Quaternion.Lerp(rotationTarget.rotation, ShipTransform().rotation, Time.deltaTime * torquePower);
 
 
         stateTimer -= Time.deltaTime;
@@ -164,7 +213,10 @@ public class EnemyPolarith : Enemy
 
 
     public override void Adjusting()
-    { 
+    {
+
+        movementControls.Torque = Mathf.Lerp(movementControls.Torque, 0, Time.deltaTime * accelerate);
+        movementControls.Speed = Mathf.Lerp(movementControls.Speed, 0, Time.deltaTime * accelerate);
 
         stateTimer -= Time.deltaTime;
         if (stateTimer <= 0)

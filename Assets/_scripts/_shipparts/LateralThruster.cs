@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class LateralThruster : EngineBase
 {
-    public Transform target,rotationTarget;
+    public Transform rotationTarget;
     public string hortAxis;
 
 
@@ -12,13 +12,17 @@ public class LateralThruster : EngineBase
 
     public int focalDepth; // how far in front the local ship should look towards
 
-    public Transform ActOn()
+
+    public override Vector3 Lateral()
     {
-        if (target == null) { return transform; }
-        return target;
-    
+        Vector3 up = Vector3.zero;
+        Vector3 right = Vector3.zero;
+        if (Mathf.Abs(ActOn().localPosition.x) >= boundary.x * 0.7f) { right = ActOn().parent.right * ActOn().localPosition.x; }
+        if (Mathf.Abs(ActOn().localPosition.y) >= boundary.y * 0.7f) { up = ActOn().parent.up * ActOn().localPosition.y; }
+        return (up + right).normalized ;
+        //return new Vector3(ActOn().localPosition.x, ActOn().localPosition.y,0);
+
     }
-  
 
     public override void Act()
     {
@@ -46,11 +50,18 @@ public class LateralThruster : EngineBase
         if (ship && ship.CanAct() && power != 0)
         {
              targetPos = new Vector3(boundary.x * horizontal, boundary.y * vertical, 0);
+            if (Vector3.Distance(targetPos, ActOn().localEulerAngles) < 0.1f)
+            {
+                ActOn().localPosition = targetPos;
+            }
+            else 
+            {
+                ActOn().localPosition = Vector3.Lerp(ActOn().localPosition, targetPos, Time.deltaTime * power);
 
-            ActOn().localPosition = Vector3.Lerp(ActOn().localPosition, targetPos, Time.deltaTime * power);
+            }
             //if (Lateral() == Vector3.zero)
             //{
-                
+
 
             //}
             //else 
@@ -65,25 +76,19 @@ public class LateralThruster : EngineBase
             // ActOn().transform.rotation = Quaternion.Lerp(ActOn().rotation, Quaternion.LookRotation((rotationTarget.position + (rotationTarget.forward * focalDepth)) - rotationTarget.position, rotationTarget.up), Time.deltaTime * torquePower);
             if (focalDepth == 0)
             {
-                ActOn().transform.rotation = Quaternion.Lerp(ActOn().rotation, rotationTarget.rotation, Time.deltaTime * torquePower);
+                ActOn().transform.rotation = Quaternion.Slerp(ActOn().rotation, rotationTarget.rotation, Time.deltaTime * torquePower);
 
             }
             else 
             {
 
-                 ActOn().transform.rotation = Quaternion.Lerp(ActOn().rotation, Quaternion.LookRotation((rotationTarget.position + (rotationTarget.forward * focalDepth)) - ActOn().position, rotationTarget.up), Time.deltaTime * torquePower);
+                 ActOn().transform.rotation = Quaternion.Slerp(ActOn().rotation, Quaternion.LookRotation((rotationTarget.position + (rotationTarget.forward * focalDepth)) - ActOn().position, rotationTarget.up), Time.deltaTime * torquePower);
 
             }
 
         }
     }
-
-    public Vector3 Lateral()
-    {
-        return ((ActOn().parent.right * ActOn().localPosition.x) + (ActOn().parent.up * ActOn().localPosition.y)).normalized;
-        //return new Vector3(ActOn().localPosition.x, ActOn().localPosition.y,0);
-
-    }
+ 
 
 
     //public Vector3 oldLateral()

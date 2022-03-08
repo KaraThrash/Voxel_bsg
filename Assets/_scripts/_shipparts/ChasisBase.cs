@@ -33,6 +33,20 @@ public class ChasisBase : ShipSystem
         { externalForce = externalForce.normalized * externalForceMagnitudeCap; }
     }
 
+    public void ExternalForce(Vector3 _dir,float _impulse)
+    {
+        if (_impulse >= minMagnitude)
+        {
+            timer = ExternalForceTimeCap();
+            externalForce += (externalForceResist * (_dir * _impulse));
+
+            if (externalForce.magnitude > externalForceMagnitudeCap)
+            { externalForce = externalForce.normalized * externalForceMagnitudeCap; }
+        }
+        
+    }
+
+
     public void ReduceExternalForce()
     {
         timer -= Time.deltaTime;

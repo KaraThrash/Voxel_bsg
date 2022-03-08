@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public enum Axises { Horizontal, Vertical,Thrust }
-public enum Buttons { none,A,B,X,Y,LB,RB,Leftstick,Rightstick }
+public enum Buttons { none,A,B,X,Y,LB,RB,Leftstick,Rightstick,leftTrigger,rightTrigger }
 
 
 public static class InputControls 
@@ -29,10 +29,27 @@ public static class InputControls
     public static KeyCode menuKey = KeyCode.Return;
 
     private static float deadtime = 0.5f, deadClock; //holding an axis while using as a button
+    private static bool rightTriggerPressed, leftTriggerPressed;
 
+
+    public static void ResetAxisAsButton()
+    {
+        if (leftTriggerPressed == true && Input.GetAxis(leftTrigger) == 0)
+        {
+            leftTriggerPressed = false;
+        }
+
+        if (rightTriggerPressed == true && Input.GetAxis(rightTrigger) == 0)
+        {
+            rightTriggerPressed = false;
+        }
+
+    }
 
     public static bool CheckButtonPressed(Buttons _button)
     {
+        ResetAxisAsButton();
+
         if (_button == Buttons.A) { return Input.GetButtonDown(aButton); }
         else if (_button == Buttons.B) { return Input.GetButtonDown(bButton); }
         else if (_button == Buttons.Y) { return Input.GetButtonDown(yButton); }
@@ -41,6 +58,14 @@ public static class InputControls
         else if (_button == Buttons.RB) { return Input.GetButtonDown(rbButton); }
         else if (_button == Buttons.Leftstick) { return Input.GetButtonDown(leftstickButton); }
         else if (_button == Buttons.Rightstick) { return Input.GetButtonDown(rightstickButton); }
+        else if (_button == Buttons.leftTrigger && leftTriggerPressed == false)
+        {
+            if (Input.GetAxis(leftTrigger) == 1)
+            {
+                leftTriggerPressed = true;
+                return Input.GetButtonUp(rightstickButton);
+            }
+        }
 
         return false;
     }
@@ -55,6 +80,7 @@ public static class InputControls
         else if (_button == Buttons.RB) { return Input.GetButtonUp(rbButton); }
         else if (_button == Buttons.Leftstick) { return Input.GetButtonUp(leftstickButton); }
         else if (_button == Buttons.Rightstick) { return Input.GetButtonUp(rightstickButton); }
+        else if (_button == Buttons.leftTrigger) { return Input.GetButtonUp(rightstickButton); }
 
         return false;
     }
@@ -70,6 +96,12 @@ public static class InputControls
         else if (_button == Buttons.RB) { return Input.GetButton(rbButton); }
         else if (_button == Buttons.Leftstick) { return Input.GetButton(leftstickButton); }
         else if (_button == Buttons.Rightstick) { return Input.GetButton(rightstickButton); }
+        else if (_button == Buttons.leftTrigger )
+        {
+            
+                return Input.GetAxis(leftTrigger) == 1;
+            
+        }
 
         return false;
     }

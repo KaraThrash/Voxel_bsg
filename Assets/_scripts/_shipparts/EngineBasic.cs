@@ -127,11 +127,11 @@ public class EngineBasic : EngineBase
          
 
             }
-
+            targetRotation = Quaternion.Slerp(targetRotation, Ship().RotationTarget(), Time.deltaTime * STAT_Power());
             if (ship && Ship().CanAct() && torquePower != 0)
             {
                // Ship().transform.rotation
-                    targetRotation = Quaternion.Slerp(targetRotation, Ship().RotationTarget(), Time.deltaTime * torquePower );
+                   
             }
         }
         

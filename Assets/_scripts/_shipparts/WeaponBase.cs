@@ -42,7 +42,7 @@ public class WeaponBase : ShipSystem
 
         if (GetGunType() == GunType.auto)
         {
-            if (on)
+            if (PositiveButton())
             {
                 Auto();
             }
@@ -116,10 +116,10 @@ public class WeaponBase : ShipSystem
 
     public void SemiAuto()
     {
+        FireBullet();
 
         if (!on)
         {
-            FireBullet();
 
         }
     }
@@ -154,8 +154,8 @@ public class WeaponBase : ShipSystem
         }
         else if (GetGunType() == GunType.semiauto)
         {
-            SemiAuto();
-
+            // SemiAuto();
+            FireBullet();
 
         }
 

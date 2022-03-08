@@ -17,6 +17,7 @@ public class EngineBase : ShipSystem
     public float horizontal, vertical;
     public float currentAcc;
 
+    public Transform target;
     public Vector3 targetVelocity;
     public Quaternion targetRotation;
 
@@ -154,6 +155,20 @@ public class EngineBase : ShipSystem
     public virtual void StartManeuver(Maneuver _maneuver)
     {
     
+    }
+
+
+    public Transform ActOn()
+    {
+        if (target == null) { return transform; }
+        return target;
+
+    }
+    public virtual Vector3 Lateral()
+    {
+        return ((ActOn().parent.right * ActOn().localPosition.x) + (ActOn().parent.up * ActOn().localPosition.y)).normalized * lateralPower;
+        //return new Vector3(ActOn().localPosition.x, ActOn().localPosition.y,0);
+
     }
 
 }

@@ -67,17 +67,25 @@ public class ShipSystem : MonoBehaviour
         deactivateButton = activateButton;
     }
 
-    // Update is called once per frame
     void Update()
+    {
+       
+        if (listenForPlayerInput)
+        {
+            PlayerInput();
+        }
+
+
+    }
+
+    // Update is called once per frame
+    void FixedUpdate()
     {
         Act();
 
         TrackCooldown();
 
-        if (listenForPlayerInput)
-        {
-            PlayerInput();
-        }
+   
 
 
     }
