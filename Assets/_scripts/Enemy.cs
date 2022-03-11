@@ -123,12 +123,14 @@ public class Enemy : MonoBehaviour
 
     //public enum AiState
     //{
-    //    recovering, takingDamage,
-    //    pathfinding, moving, attacking,
-    //    adjusting, special, dying,
-    //    idle, spawned,
-    //    inactive,
-    //    ragdolling
+    //recovering, takingDamage, 
+    //pathfinding, moving, 
+    //attackWindUp,attacking, postAttack,
+    //adjusting, special, dying, 
+    //dodging,fleeing,
+    //idle, spawned,
+    //inactive,
+    //ragdolling
     //}
 
 
@@ -136,7 +138,9 @@ public class Enemy : MonoBehaviour
     public virtual void TakingDamage() { }
     public virtual void Moving() { }
     public virtual void Pathfinding() { }
+    public virtual void AttackWindUp() { }
     public virtual void Attacking() { }
+    public virtual void PostAttack() { }
     public virtual void Adjusting() { }
     public virtual void Special() { }
     public virtual void Dying() { }

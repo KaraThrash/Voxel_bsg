@@ -93,7 +93,7 @@ public class Ship : MonoBehaviour
         {
             if (PrimaryWeapon())
             {
-                PrimaryWeapon().Act();
+                
             }
         }
 
@@ -107,7 +107,7 @@ public class Ship : MonoBehaviour
     {
         if (PrimaryWeapon())
         {
-
+            PrimaryWeapon().Act();
         }
 
     }
@@ -209,6 +209,10 @@ public class Ship : MonoBehaviour
         {
             CollideWithEnviroment(collision);
         }
+        else if (Chasis() != null && collision.transform.GetComponent<Ship>())
+        {
+            CollideWithShip(collision);
+        }
 
     }
 
@@ -233,7 +237,14 @@ public class Ship : MonoBehaviour
 
     }
 
+    public void CollideWithShip(Collision collision)
+    {
 
+        Chasis().ExternalForce(Vector3.Reflect(collision.contacts[0].point - transform.position, collision.impulse).normalized, collision.impulse.magnitude);
+
+
+
+    }
 
 
     public void TakeDamage(int _dmg)

@@ -16,7 +16,8 @@ public enum GunType { auto,burst, semiauto, shotgun, spread, laser }
 
 public enum AiState { 
     recovering, takingDamage, 
-    pathfinding, moving, attacking, 
+    pathfinding, moving, 
+    attackWindUp,attacking, postAttack,
     adjusting, special, dying, 
     dodging,fleeing,
     idle, spawned,

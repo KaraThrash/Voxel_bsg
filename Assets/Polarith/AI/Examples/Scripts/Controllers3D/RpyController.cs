@@ -146,7 +146,7 @@ namespace Polarith.AI.Package
             if (UsePidController)
                 ApplyPIDControl();
 
-            LimitControls();
+           // LimitControls();
         }
 
         //--------------------------------------------------------------------------------------------------------------

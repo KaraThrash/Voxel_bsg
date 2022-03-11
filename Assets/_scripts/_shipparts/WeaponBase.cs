@@ -68,25 +68,23 @@ public class WeaponBase : ShipSystem
 
     public void Burst()
     {
-        if (burstTracker > 0)
+        if (OnCooldown())
         {
             burstTracker -= Time.deltaTime;
 
-            if (!OnCooldown())
+            if (burstTracker <= 0 && bulletCount < BurstBulletCount())
             {
                 FireBullet();
-                cdTracker = STAT_CooldownTime();
-            }
-
-
-            if (burstTracker <= 0)
-            {
-                cdTracker = burstTime;
-
+                burstTracker = burstTime;
+                bulletCount++;
             }
         }
 
-        if (on && burstTracker <= 0 && !OnCooldown()) { burstTracker = burstTime; }
+        else
+        { 
+            cdTracker = STAT_CooldownTime();
+            bulletCount = 0;
+        }
     }
 
 
@@ -221,6 +219,10 @@ public class WeaponBase : ShipSystem
         return bulletParent;
     }
 
+    private int bulletCount;
+    public int bulletsPerBurst = 3;
+    public int BurstBulletCount() { return bulletsPerBurst; }
+    public void BurstBulletCount(int _type) { bulletsPerBurst = _type; }
 
     public GunType GetGunType() { return gunType; }
     public void SetGunType(GunType _type) { gunType = _type; }
