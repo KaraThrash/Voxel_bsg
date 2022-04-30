@@ -7,6 +7,12 @@ public class Ship : MonoBehaviour
 {
     public Rigidbody rb;
 
+    //the engines push the ship 'forward' and combined with the lateral control this transform should be used
+    // to apply the force of the engine to the correct forwar: If moving laterally while flying the 'forward' should
+    // be slightly off center from camera logically
+    public Transform mainTransform;
+
+
     public Transform rotationTarget;
 
     public bool canAct;
@@ -123,50 +129,30 @@ public class Ship : MonoBehaviour
 
         if (PrimaryEngine())
         {
+            //Get the engine's intended output
             newVelocity = PrimaryEngine().GetTargetVelocity();
             newVelocity += SecondaryEngine().Lateral() * PrimaryEngine().lateralPower;
             accel = primaryEngine.LinearAcceleration();
 
         }
 
-        Vector3 externalForceVelocity = Vector3.zero;
+
+        //NOTE: forces like recoild from a railgun or ground collisions are included here
         if (Chasis())
         {
-            externalForceVelocity = Chasis().ExternalForce();
+            newVelocity = Chasis().ApplyExternalForces(newVelocity);
 
         }
 
 
+        RB().velocity = newVelocity;
 
-        //   newVelocity = Vector3.Lerp(RB().velocity, newVelocity , accel);
-
-        //hull/enviroment modifications
-        if (Chasis().ExternalForce() == Vector3.zero)
+        if (PrimaryEngine())
         {
-            RB().velocity = Vector3.Lerp(RB().velocity, newVelocity, accel);
-            //RB().velocity = newVelocity + externalForceVelocity;
-        }
-        else if (Chasis().BelowMinimumMagnitude())
-        {
-            RB().velocity = Vector3.Lerp(externalForceVelocity, newVelocity, accel);
-            //RB().velocity = newVelocity + externalForceVelocity;
-        }
-        else
-        {
-            RB().velocity = Chasis().ExternalForce();
-        }
+            transform.rotation = Quaternion.Slerp(transform.rotation, primaryEngine.GetTargetRotation(), primaryEngine.RotationAcceleration());
 
-
-        transform.rotation = Quaternion.Slerp(transform.rotation, primaryEngine.GetTargetRotation(), primaryEngine.RotationAcceleration());
+        }
     }
-
-
-
-
-
-
-
-
 
 
 
@@ -228,10 +214,10 @@ public class Ship : MonoBehaviour
     {
         // Chasis().ExternalForce(collision.impulse.magnitude * (transform.position - collision.contacts[0].point));
        // Chasis().ExternalForce(collision.impulse.magnitude * Vector3.Reflect(collision.contacts[0].point - transform.position, collision.impulse).normalized);
-        Chasis().ExternalForce( Vector3.Reflect(collision.contacts[0].point - transform.position, collision.impulse).normalized, collision.impulse.magnitude);
 
 
-        //  PrimaryEngine().CollideWithEnviroment(collision);
+        Chasis().CollideWithEnviroment(collision);
+        PrimaryEngine().CollideWithEnviroment(collision);
         //TODO: engine after impact
 
 
@@ -392,10 +378,18 @@ public class Ship : MonoBehaviour
 
 
     //TODO: use these to set relative directions based on preference: e.g. ship forward or camera forward etc
-    public Vector3 Forward() { return transform.forward; }
-    public Vector3 Right() { return transform.right; }
-    public Vector3 Up() { return transform.up; }
+    public Vector3 Forward() { return MainTransform().forward; }
+    public Vector3 Right() { return MainTransform().right; }
+    public Vector3 Up() { return MainTransform().up; }
 
+    
 
+    public Transform MainTransform()
+    {
+        if (mainTransform == null)
+        { return transform; }
+
+        return mainTransform;
+    }
 
 }

@@ -82,7 +82,7 @@ public class WeaponBase : ShipSystem
 
         else
         { 
-            cdTracker = STAT_CooldownTime();
+            timerCooldown = STAT_CooldownTime();
             bulletCount = 0;
         }
     }
@@ -95,7 +95,7 @@ public class WeaponBase : ShipSystem
         if (!OnCooldown())
         {
             FireBullet();
-            cdTracker = STAT_CooldownTime();
+            timerCooldown = STAT_CooldownTime();
         }
     }
 
@@ -106,7 +106,7 @@ public class WeaponBase : ShipSystem
         if (burstTracker >= burstTime)
         {
             FireBullet();
-            cdTracker = STAT_CooldownTime();
+            timerCooldown = STAT_CooldownTime();
             burstTracker = 0;
             on = false;
         }
@@ -180,7 +180,7 @@ public class WeaponBase : ShipSystem
             {
                 GameObject clone = Instantiate(bullet, transform.position, transform.rotation);
                 clone.SetActive(true);
-                clone.GetComponent<Bullet>().Launch(power);
+                clone.GetComponent<Bullet>().Launch(STAT_Power());
             }
         }
         else 
@@ -189,7 +189,7 @@ public class WeaponBase : ShipSystem
             newBullet.position = transform.position;
             newBullet.rotation = transform.rotation;
             newBullet.gameObject.SetActive(true);
-            newBullet.GetComponent<Bullet>().Launch(power);
+            newBullet.GetComponent<Bullet>().Launch(STAT_Power());
 
         }
 

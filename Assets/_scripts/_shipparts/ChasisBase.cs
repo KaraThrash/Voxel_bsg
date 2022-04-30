@@ -26,8 +26,9 @@ public class ChasisBase : ShipSystem
     }
     public void ExternalForce(Vector3 _force) 
     {
+        //the strength to resist external forces is applied when determining the ship's movement
         timer = ExternalForceTimeCap();
-        externalForce += (externalForceResist * _force);
+        externalForce += _force;
 
         if (externalForce.magnitude > externalForceMagnitudeCap)
         { externalForce = externalForce.normalized * externalForceMagnitudeCap; }
@@ -38,7 +39,7 @@ public class ChasisBase : ShipSystem
         if (_impulse >= minMagnitude)
         {
             timer = ExternalForceTimeCap();
-            externalForce += (externalForceResist * (_dir * _impulse));
+            externalForce += (_dir * _impulse);
 
             if (externalForce.magnitude > externalForceMagnitudeCap)
             { externalForce = externalForce.normalized * externalForceMagnitudeCap; }
@@ -56,6 +57,34 @@ public class ChasisBase : ShipSystem
         }
         externalForce = Vector3.Lerp(ExternalForce(), Vector3.zero, Time.deltaTime * externalForceDecay);
     }
+
+
+
+    public Vector3 ApplyExternalForces(Vector3 _force)
+    {
+        //The [ship this chasis is attached to] passes its intended velocity [_force]
+        //This chasis applies any external forces: e.g. recoil from a weapon firing, collisions
+
+        //using 'Lerp' with no delta time component allows us to apply how much the chasis resists these forces
+        // a value of '1' means there is no resistance
+
+        Vector3 modifiedForce = _force;
+        externalForce = Vector3.Lerp(modifiedForce, _force + ExternalForce(), 1 - STAT_PowerSecondary());
+
+        return Vector3.Lerp(modifiedForce, _force + ExternalForce(), 1);
+    }
+
+
+
+
+
+
+    public override void CollideWithEnviroment( Collision collision)
+    {
+        ExternalForce(Vector3.Reflect(collision.contacts[0].point - (transform.position), collision.contacts[0].normal).normalized, Ship().GetVelocity().magnitude * 1.2f);
+    }
+
+
 
 
     public override void Act()

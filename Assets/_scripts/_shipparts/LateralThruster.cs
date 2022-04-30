@@ -47,7 +47,7 @@ public class LateralThruster : EngineBase
 
         }
 
-        if (ship && ship.CanAct() && power != 0)
+        if (ship && ship.CanAct() && STAT_Power() != 0)
         {
              targetPos = new Vector3(boundary.x * horizontal, boundary.y * vertical, 0);
             if (Vector3.Distance(targetPos, ActOn().localEulerAngles) < 0.1f)
@@ -56,7 +56,7 @@ public class LateralThruster : EngineBase
             }
             else 
             {
-                ActOn().localPosition = Vector3.Lerp(ActOn().localPosition, targetPos, Time.deltaTime * power);
+                ActOn().localPosition = Vector3.Lerp(ActOn().localPosition, targetPos, Time.deltaTime * STAT_Power());
 
             }
             //if (Lateral() == Vector3.zero)
@@ -66,7 +66,7 @@ public class LateralThruster : EngineBase
             //}
             //else 
             //{
-            //    ActOn().localPosition = Vector3.Lerp(ActOn().localPosition, Vector3.zero, Time.deltaTime * power);
+            //    ActOn().localPosition = Vector3.Lerp(ActOn().localPosition, Vector3.zero, Time.deltaTime * STAT_Power());
             //}
         }
 

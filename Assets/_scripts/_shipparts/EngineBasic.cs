@@ -16,6 +16,7 @@ public class EngineBasic : EngineBase
     public override void StartManeuver(Maneuver _maneuver)
     {
         if (maneverCooldown > 0) { return; }
+
         if (_maneuver == Maneuver.spinAround)
         {
             maneverRotCount = 0;
@@ -46,8 +47,11 @@ public class EngineBasic : EngineBase
         {
             if (LockoutTimer() > 0)
             {
-                Accelerate(0);
+                //Accelerate(0);
+
+                Accelerate(-1);
                 targetVelocity = Vector3.Lerp(targetVelocity, Vector3.zero, Time.deltaTime * accelerationRate);
+
                 LockoutTimer(LockoutTimer() - Time.deltaTime);
 
                 if (LockoutTimer() <= 0)
@@ -61,6 +65,9 @@ public class EngineBasic : EngineBase
         else if (GetSystemState() == SystemState.damaged)
         {
             LockoutTimer(LockoutTimer() - Time.deltaTime);
+
+           
+
             if (LockoutTimer() <= 0)
             {
               
