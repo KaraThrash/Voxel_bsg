@@ -10,6 +10,7 @@ public class UiShipDisplay : MonoBehaviour
     public Text hp;
     public Text stamina;
     public Text weaponCooldown;
+    public Text extraText;
 
 
 
@@ -19,6 +20,23 @@ public class UiShipDisplay : MonoBehaviour
         {
             SetHP(ship.Hitpoints());
             SetStamina(ship.stamina);
+
+            if (extraText != null)
+            {
+                string extra = "";
+
+                if (ship.PrimaryEngine())
+                {
+                    extra = "Engine: " + ship.PrimaryEngine().GetTargetVelocity().ToString();
+                }
+
+                if (ship.Chasis())
+                {
+                    extra += "\nExt-Force: " + ship.Chasis().ExternalForce().ToString();
+                }
+                extraText.text = extra;
+            }
+
         }
 
 

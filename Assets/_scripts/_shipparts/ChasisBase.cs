@@ -32,6 +32,9 @@ public class ChasisBase : ShipSystem
 
         if (externalForce.magnitude > externalForceMagnitudeCap)
         { externalForce = externalForce.normalized * externalForceMagnitudeCap; }
+
+        //TODO: envirment modifiers: gravity/friction
+
     }
 
     public void ExternalForce(Vector3 _dir,float _impulse)
@@ -97,7 +100,8 @@ public class ChasisBase : ShipSystem
     }
 
 
-
+    public bool BelowMinimumMagnitude(Vector3 _force)
+    { return _force.magnitude < minMagnitude; }
     public bool BelowMinimumMagnitude()
     { return ExternalForce().magnitude < minMagnitude; }
 

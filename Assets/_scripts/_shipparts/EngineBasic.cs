@@ -27,6 +27,8 @@ public class EngineBasic : EngineBase
             maneuverRotation = transform.position - (transform.forward * 100);
         }
     }
+
+
     public override Quaternion GetTargetRotation()
     {
 
@@ -117,7 +119,7 @@ public class EngineBasic : EngineBase
 
                 if (lateralEngine != null && PositiveButton())
                 {
-                    lateralVelocity = lateralEngine.Lateral() * lateralPower;
+                    lateralVelocity = lateralEngine.Lateral() * STAT_PowerSecondary();
                 }
 
                 verticalVelocity = Vector3.zero;

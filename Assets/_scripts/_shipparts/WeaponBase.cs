@@ -203,7 +203,7 @@ public class WeaponBase : ShipSystem
         {
             if (bulletParentName.Length < 1)
             {
-                bulletParentName = "BulletParent_";
+                bulletParentName = "PARENT_Bullet";
             }
 
             GameObject findParent = GameObject.Find(bulletParentName);

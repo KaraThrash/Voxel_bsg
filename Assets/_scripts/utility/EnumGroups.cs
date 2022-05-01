@@ -13,6 +13,9 @@ public enum PlayerTypes { left, right, observer, test, neutral, enemy }
 public enum GameState { playing, inOverTime, rest, upgradeScreen, lobby, playersdead, bonusRound, tutorial, inactive,attractMode }
 public enum GunType { auto,burst, semiauto, shotgun, spread, laser }
 
+public enum BulletType { basic, missile, lance, boomerang, spiral }
+
+
 
 public enum AiState { 
     recovering, takingDamage, 

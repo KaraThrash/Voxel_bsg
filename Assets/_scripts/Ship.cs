@@ -18,7 +18,7 @@ public class Ship : MonoBehaviour
     public bool canAct;
 
     public List<ShipSystem> systems;
-    private int currentHealth;
+    public int currentHealth;
     public float stamina, maxStamina, staminaRechargeRate;
 
     public float acceleration;
@@ -131,7 +131,7 @@ public class Ship : MonoBehaviour
             newVelocity = Chasis().ApplyExternalForces(newVelocity);
 
         }
-
+        
 
         RB().velocity = newVelocity;
 
@@ -203,7 +203,7 @@ public class Ship : MonoBehaviour
         // Chasis().ExternalForce(collision.impulse.magnitude * (transform.position - collision.contacts[0].point));
         // Chasis().ExternalForce(collision.impulse.magnitude * Vector3.Reflect(collision.contacts[0].point - transform.position, collision.impulse).normalized);
 
-        if (collision.impulse.magnitude > 5)
+        if (Chasis() && Chasis().BelowMinimumMagnitude(collision.impulse))
         {
             Chasis().CollideWithEnviroment(collision);
             PrimaryEngine().CollideWithEnviroment(collision);
@@ -216,8 +216,11 @@ public class Ship : MonoBehaviour
 
     public void CollideWithShip(Collision collision)
     {
-
-        Chasis().ExternalForce(Vector3.Reflect(collision.contacts[0].point - transform.position, collision.impulse).normalized, collision.impulse.magnitude);
+        if (Chasis() && Chasis().BelowMinimumMagnitude(collision.impulse))
+        {
+            Chasis().ExternalForce(Vector3.Reflect(collision.contacts[0].point - transform.position, collision.impulse).normalized, collision.impulse.magnitude);
+        }
+       
 
 
 
@@ -226,19 +229,30 @@ public class Ship : MonoBehaviour
 
     public void TakeDamage(int _dmg)
     {
+        //apply dmg reduc, external forces, other talents etc
+
         Hitpoints(-_dmg);
     }
 
     public void Hitpoints(int _change)
     {
-        currentHealth += _change;
+        if (currentHealth != -1)
+        {
+            currentHealth += _change;
+            if (currentHealth <= 0) { Die(); }
+        }
+        
     }
 
     public int Hitpoints()
     { return currentHealth; }
 
 
+    public void Die()
+    {
 
+        Destroy(gameObject);
+    }
 
 
 

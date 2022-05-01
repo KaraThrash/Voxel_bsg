@@ -5,6 +5,7 @@ using UnityEngine;
 public class ShipSystem : MonoBehaviour
 {
     public bool listenForPlayerInput;
+
     public SystemType systemType;
     public SystemState systemState;
 
