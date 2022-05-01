@@ -20,17 +20,17 @@ public class Sandbox : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-       
+     
 
-      if(Input.GetKeyDown(KeyCode.T))
+      if (Input.GetKeyDown(KeyCode.T))
       {
             Debug.Log("transform.forward:  " + Vector3.Angle(transform.forward, (obj.position - transform.position).normalized));
             Debug.Log("transform.right:  " + Vector3.Angle(transform.right, (obj.position - transform.position).normalized));
             Debug.Log("transform.up:  " + Vector3.Angle(transform.up, (obj.position - transform.position).normalized));
         }
-      if(Input.GetKeyDown(KeyCode.Y))
+      if(Input.GetButtonDown("Leftstick"))
       {
-      
+            Debug.Log("Leftstick ");
       }
       if(Input.GetKeyDown(KeyCode.U))
       {

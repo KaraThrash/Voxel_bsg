@@ -126,6 +126,38 @@ lateral movement: click in left stick to move lateral outside of the local posit
 
 
 
+Ship act order:
+ //Engine -> chasis -> weapons -> other
+ // figure out the intended force of the engine
+ // apply the resistance from the chasis and the external forces
+ //move the ship based on the return value from the chasis
+ //perform the gun's action if any
+ //apply any external forces from the gun if needed: e.g. recoil from a rail gun or system overheat
+
+
+Engine's forward target:
+//the engines push the ship 'forward' and combined with the lateral control this transform should be used
+// to apply the force of the engine to the correct forwar: If moving laterally while flying the 'forward' should
+// be slightly off center from camera logically
+// public Transform mainTransform;
+
+Chasis:
+//The [ship this chasis is attached to] passes its intended velocity [_force]
+//This chasis applies any external forces: e.g. recoil from a weapon firing, collisions
+
+//using 'Lerp' with no delta time component allows us to apply how much the chasis resists these forces
+// a value of '1' means there is no resistance
+
+
+
+
+
+
+
+
+
+
+
 glossary:
 
 Enemy: The ships trying to kill the player and destroy the fleet. Bosses are considered enemies.

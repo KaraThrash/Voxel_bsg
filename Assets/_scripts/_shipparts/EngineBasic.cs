@@ -6,6 +6,7 @@ public class EngineBasic : EngineBase
 {
     public LateralThruster lateralEngine;
 
+    
     public Vector3 maneuverRotation;
     public float maneverRotCount;
 
@@ -50,7 +51,7 @@ public class EngineBasic : EngineBase
                 //Accelerate(0);
 
                 Accelerate(-1);
-                targetVelocity = Vector3.Lerp(targetVelocity, Vector3.zero, Time.deltaTime * accelerationRate);
+                forwardVelocity = Vector3.Lerp(forwardVelocity, Vector3.zero, Time.deltaTime * accelerationRate);
 
                 LockoutTimer(LockoutTimer() - Time.deltaTime);
 
@@ -112,28 +113,42 @@ public class EngineBasic : EngineBase
             {
 
 
-                Vector3 lateral = Vector3.zero;
+                lateralVelocity = Vector3.zero;
 
                 if (lateralEngine != null && PositiveButton())
                 {
-                    lateral = lateralEngine.Lateral() * lateralPower;
+                    lateralVelocity = lateralEngine.Lateral() * lateralPower;
                 }
+
+                verticalVelocity = Vector3.zero;
+                if (PositiveButton())
+                {
+                    verticalVelocity = Ship().Up() * STAT_PowerSecondary();
+                }
+
+                else if (NegativeButton())
+                {
+                    verticalVelocity = -Ship().Up() * STAT_PowerSecondary();
+                }
+
 
                 if (throttle_A != 0)
                 {
-                    targetVelocity = Vector3.Lerp(targetVelocity, (Ship().Forward() * (STAT_Power() * currentAcc)) + lateral, Time.deltaTime );
+                    forwardVelocity = Vector3.Lerp(forwardVelocity, (Ship().Forward() * (STAT_Power() * currentAcc)) , Time.deltaTime );
 
                 }
                 else
                 {
-                    targetVelocity = Vector3.Lerp(targetVelocity, Vector3.zero + lateral, Time.deltaTime * decelRate);
+                    //Vector3.zero +
+                    forwardVelocity = Vector3.Lerp(forwardVelocity, Vector3.zero , Time.deltaTime * decelRate);
                 }
 
+               
 
-                
-         
 
             }
+
+
             targetRotation = Quaternion.Slerp(targetRotation, Ship().RotationTarget(), Time.deltaTime * STAT_Power());
             if (ship && Ship().CanAct() && torquePower != 0)
             {

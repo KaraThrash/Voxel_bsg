@@ -79,7 +79,7 @@ public class ChasisBase : ShipSystem
 
 
 
-    public override void CollideWithEnviroment( Collision collision)
+    public override void CollideWithEnviroment(Collision collision)
     {
         ExternalForce(Vector3.Reflect(collision.contacts[0].point - (transform.position), collision.contacts[0].normal).normalized, Ship().GetVelocity().magnitude * 1.2f);
     }

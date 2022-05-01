@@ -154,7 +154,7 @@ public class EnemyPolarith : Enemy
 
 
 
-        Debug.Log(Vector3.Angle(GetShip().transform.forward, (AttackTarget().position - transform.position).normalized));
+        //Debug.Log(Vector3.Angle(GetShip().transform.forward, (AttackTarget().position - transform.position).normalized));
 
          //   GetShip().EnemyAct();
        // GetShip().PrimaryEngine().Act();

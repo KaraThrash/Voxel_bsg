@@ -32,27 +32,15 @@ public class Ship : MonoBehaviour
 
     public Vector3 velocityTarget;
 
+    public UiShipDisplay uiDisplay;
 
     // Start is called before the first frame update
     void Start()
     {
-
         AddSystems();
     }
 
-    public void AddSystems()
-    {
-        if (systems == null)
-        { systems = new List<ShipSystem>(); }
-
-        foreach (Transform el in transform)
-        {
-            if (el.GetComponent<ShipSystem>())
-            {
-                systems.Add(el.GetComponent<ShipSystem>());
-            }
-        }
-    }
+    
 
     // Update is called once per frame
     void Update()
@@ -68,6 +56,7 @@ public class Ship : MonoBehaviour
 
 
 
+    //Engine -> chasis -> weapons -> other
 
     public void Act()
     {
@@ -78,7 +67,6 @@ public class Ship : MonoBehaviour
 
         Weapons();
 
-        // Rigidbody().velocity = Vector3.Lerp(Rigidbody().velocity,targetVelocity,Time.deltaTime * acceleration);
 
     }
 
@@ -122,7 +110,7 @@ public class Ship : MonoBehaviour
     public void Movement()
     {
         //get engines target velocity
-        //check the enviroment and the hull's modifiers to the engine's velocity
+        //
 
         float accel = 0;
         Vector3 newVelocity = Vector3.zero;
@@ -213,11 +201,14 @@ public class Ship : MonoBehaviour
     public void CollideWithEnviroment(Collision collision)
     {
         // Chasis().ExternalForce(collision.impulse.magnitude * (transform.position - collision.contacts[0].point));
-       // Chasis().ExternalForce(collision.impulse.magnitude * Vector3.Reflect(collision.contacts[0].point - transform.position, collision.impulse).normalized);
+        // Chasis().ExternalForce(collision.impulse.magnitude * Vector3.Reflect(collision.contacts[0].point - transform.position, collision.impulse).normalized);
 
-
-        Chasis().CollideWithEnviroment(collision);
-        PrimaryEngine().CollideWithEnviroment(collision);
+        if (collision.impulse.magnitude > 5)
+        {
+            Chasis().CollideWithEnviroment(collision);
+            PrimaryEngine().CollideWithEnviroment(collision);
+        }
+        
         //TODO: engine after impact
 
 
@@ -382,7 +373,18 @@ public class Ship : MonoBehaviour
     public Vector3 Right() { return MainTransform().right; }
     public Vector3 Up() { return MainTransform().up; }
 
-    
+
+
+    public void UpdateUi()
+    {
+        if (uiDisplay != null)
+        { 
+            uiDisplay.SetHP(Hitpoints().ToString());
+            uiDisplay.SetStamina(stamina);
+            uiDisplay.SetWeapons(PrimaryWeapon().timerCooldown.ToString());
+        }
+    }
+
 
     public Transform MainTransform()
     {
@@ -391,5 +393,20 @@ public class Ship : MonoBehaviour
 
         return mainTransform;
     }
+
+    public void AddSystems()
+    {
+        if (systems == null)
+        { systems = new List<ShipSystem>(); }
+
+        foreach (Transform el in transform)
+        {
+            if (el.GetComponent<ShipSystem>())
+            {
+                systems.Add(el.GetComponent<ShipSystem>());
+            }
+        }
+    }
+
 
 }

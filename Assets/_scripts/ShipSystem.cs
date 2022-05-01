@@ -27,7 +27,7 @@ public class ShipSystem : MonoBehaviour
 
     public KeyCode activateKey,deactivateKey;
     public string activateButton,deactivateButton, axis;
-    public string positiveButton,negativeButton;
+    public Buttons positiveButton,negativeButton;
 
 
     public void STAT_CooldownTime(float _val) { STAT_cooldownTime = _val; }
@@ -195,9 +195,18 @@ public class ShipSystem : MonoBehaviour
     public bool PositiveButton()
     {
 
-        return InputControls.CheckButton(listenForButton);
+        return InputControls.CheckButton(positiveButton);
 
     }
+
+    public bool NegativeButton()
+    {
+
+        return InputControls.CheckButton(negativeButton);
+
+    }
+
+
 
     public Ship Ship() { return ship; }
     public void Ship(Ship _type) { ship = _type; }

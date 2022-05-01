@@ -18,7 +18,10 @@ public class EngineBase : ShipSystem
     public float currentAcc;
 
     public Transform target;
-    public Vector3 targetVelocity;
+    public Vector3 forwardVelocity;
+    public Vector3 lateralVelocity;
+    public Vector3 verticalVelocity;
+
     public Quaternion targetRotation;
 
     public void Thrust_Throttle(float _value)
@@ -61,12 +64,12 @@ public class EngineBase : ShipSystem
             else { throttle_A = 0; }
 
         }
-        else if (positiveButton.Length > 0 && ship.CheckStamina(staminaCost))
+        else if (positiveButton != Buttons.none && ship.CheckStamina(staminaCost))
         {
-            if (Input.GetButton(positiveButton))
+            if (PositiveButton())
             {
 
-                if (Input.GetButton(negativeButton))
+                if (NegativeButton())
                 {
                     throttle_A = 0;
                 }
@@ -76,7 +79,7 @@ public class EngineBase : ShipSystem
                 }
 
             }
-            else if (Input.GetButton(negativeButton))
+            else if (NegativeButton())
             {
                 throttle_A = -1;
             }
@@ -133,7 +136,7 @@ public class EngineBase : ShipSystem
 
     public virtual Vector3 GetTargetVelocity()
     {
-        return targetVelocity;
+        return forwardVelocity + lateralVelocity + verticalVelocity;
     }
 
     public float LinearAcceleration()
