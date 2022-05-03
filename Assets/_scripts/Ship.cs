@@ -3,6 +3,79 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+public enum ShipInputParameters { thrust,lateral,vertical,roll,turn,weapons,all}
+
+
+
+public class ShipInput 
+{
+    //modifier for a specific element of the controls for locking out during special actions
+    // or for damaged/destryoed systems
+
+    float thrust = 1;
+    float lateral = 1;
+    float vertical = 1;
+
+    float roll = 1;
+    float turn = 1;
+
+    float weapons = 1;
+
+    public void SetParameter(ShipInputParameters _parameter, float _value)
+    {
+        if (_parameter == ShipInputParameters.thrust)
+        { thrust = _value; }
+        else if (_parameter == ShipInputParameters.lateral)
+        { lateral = _value; }
+        else if (_parameter == ShipInputParameters.vertical)
+        { vertical = _value; }
+
+        else if (_parameter == ShipInputParameters.roll)
+        { roll = _value; }
+        else if (_parameter == ShipInputParameters.turn)
+        { turn = _value; }
+
+        else if (_parameter == ShipInputParameters.weapons)
+        { weapons = _value; }
+        else
+        {
+             thrust = 1;
+             lateral = 1;
+             vertical = 1;
+
+             roll = 1;
+             turn = 1;
+
+             weapons = 1;
+        }
+    }
+
+
+    public float GetParameter(ShipInputParameters _parameter)
+    {
+        if (_parameter == ShipInputParameters.thrust)
+        { return thrust; }
+        else if (_parameter == ShipInputParameters.lateral)
+        { return lateral; }
+        else if (_parameter == ShipInputParameters.vertical)
+        { return vertical; }
+
+        else if (_parameter == ShipInputParameters.roll)
+        { return roll; }
+        else if (_parameter == ShipInputParameters.turn)
+        { return turn; }
+
+        else if (_parameter == ShipInputParameters.weapons)
+        { return weapons; }
+        else { return 1; }
+
+        
+    }
+
+}
+
+
+
 public class Ship : MonoBehaviour
 {
     public Rigidbody rb;
@@ -33,6 +106,16 @@ public class Ship : MonoBehaviour
     public Vector3 velocityTarget;
 
     public UiShipDisplay uiDisplay;
+
+    private ShipInput shipInput;
+
+    public ShipInput ShipInput() 
+    {
+        if (shipInput == null)
+        { shipInput = new ShipInput(); }
+
+        return shipInput;
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -239,7 +322,13 @@ public class Ship : MonoBehaviour
         if (currentHealth != -1)
         {
             currentHealth += _change;
-            if (currentHealth <= 0) { Die(); }
+
+            if (currentHealth <= 0)
+            { 
+                //NOTE: die when it needs to 'make decision' to create the dying animation
+                
+                //Die();
+            }
         }
         
     }

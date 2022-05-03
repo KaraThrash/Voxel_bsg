@@ -120,29 +120,34 @@ public class EngineBasic : EngineBase
                 if (lateralEngine != null && PositiveButton())
                 {
                     lateralVelocity = lateralEngine.Lateral() * STAT_PowerSecondary();
+                    lateralVelocity *= Ship().ShipInput().GetParameter(ShipInputParameters.lateral);
                 }
 
                 verticalVelocity = Vector3.zero;
+
                 if (PositiveButton())
                 {
-                    verticalVelocity = Ship().Up() * STAT_PowerSecondary();
+                    verticalVelocity = Ship().Up() * STAT_PowerSecondary() ;
+                    verticalVelocity *= Ship().ShipInput().GetParameter(ShipInputParameters.vertical);
                 }
 
                 else if (NegativeButton())
                 {
                     verticalVelocity = -Ship().Up() * STAT_PowerSecondary();
+                    verticalVelocity *= Ship().ShipInput().GetParameter(ShipInputParameters.vertical);
                 }
 
 
                 if (throttle_A != 0)
                 {
                     forwardVelocity = Vector3.Lerp(forwardVelocity, (Ship().Forward() * (STAT_Power() * currentAcc)) , Time.deltaTime );
-
+                    forwardVelocity *= Ship().ShipInput().GetParameter(ShipInputParameters.thrust);
                 }
                 else
                 {
                     //Vector3.zero +
                     forwardVelocity = Vector3.Lerp(forwardVelocity, Vector3.zero , Time.deltaTime * decelRate);
+                    forwardVelocity *= Ship().ShipInput().GetParameter(ShipInputParameters.thrust);
                 }
 
                
@@ -151,7 +156,8 @@ public class EngineBasic : EngineBase
             }
 
 
-            targetRotation = Quaternion.Slerp(targetRotation, Ship().RotationTarget(), Time.deltaTime * STAT_Power());
+            targetRotation = Quaternion.Slerp(targetRotation, Ship().RotationTarget(), Time.deltaTime * STAT_Power() * Ship().ShipInput().GetParameter(ShipInputParameters.turn));
+
             if (ship && Ship().CanAct() && torquePower != 0)
             {
                // Ship().transform.rotation

@@ -24,6 +24,7 @@ public class Bullet : MonoBehaviour
 
     private Vector3 direction, secondaryDirection, relativeVelocity;
     private Rigidbody rb;
+
     private Collider collider;
 
     private Transform bulletParent;
@@ -60,13 +61,6 @@ public class Bullet : MonoBehaviour
 
         RB().velocity = (transform.forward * _power);
         SetCollider(true);
-
-        if (boomerang == true)
-        {
-            direction = (target.transform.forward + target.transform.right).normalized;
-            secondaryDirection = -target.transform.right;
-        }
-
 
     }
 

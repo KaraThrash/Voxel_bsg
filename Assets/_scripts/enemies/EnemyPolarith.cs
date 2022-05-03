@@ -90,29 +90,51 @@ public class EnemyPolarith : Enemy
         {
             if (Vector3.Distance(ShipTransform().position, AttackTarget().position) > midRange)
             {
-                newState = AiState.moving;
-
-
+                newState = AiState.recovering;
+                movementControls.Speed = engineThrottle;
+                movementControls.Torque = 0;
+                stateTimer = 5;
             }
-            else if(Vector3.Distance(ShipTransform().position, FocusObject().position) < closeRange)
+            else if (Vector3.Distance(ShipTransform().position, FocusObject().position) > closeRange)
             {
                 newState = AiState.attackWindUp;
                 focusObject.position = AttackTarget().position + ((AttackTarget().position - transform.position).normalized * midRange) + (transform.up * 5);
 
             }
+            else 
+            {
+                newState = AiState.recovering;
+                movementControls.Speed = engineThrottle;
+                movementControls.Torque = 0;
+                stateTimer = 5;
+            }
 
         }
         else if (State() == AiState.moving)
         {
-            if (Vector3.Distance(ShipTransform().position, AttackTarget().position) < midRange )
+            if (Vector3.Distance(ShipTransform().position, AttackTarget().position) < midRange)
             {
                 newState = AiState.attackWindUp;
                 focusObject.position = AttackTarget().position + ((AttackTarget().position - transform.position).normalized * midRange) + (transform.right * 5);
 
             }
+            else 
+            {
+                newState = AiState.recovering;
+                movementControls.Speed = 0;
+                movementControls.Torque = torquePower;
+                stateTimer = 5;
+            }
+        }
+        else if (State() == AiState.recovering)
+        {
+           
+                newState = AiState.moving;
+            stateTimer = 5;
+            
         }
 
-       
+
 
 
         State(newState);
@@ -191,20 +213,30 @@ public class EnemyPolarith : Enemy
 
 
 
-        Debug.Log(Vector3.Angle(GetShip().transform.forward, (AttackTarget().position - transform.position).normalized));
+      //  Debug.Log(Vector3.Angle(GetShip().transform.forward, (AttackTarget().position - transform.position).normalized));
 
         //   GetShip().EnemyAct();
         // GetShip().PrimaryEngine().Act();
 
         if (Vector3.Distance(ShipTransform().position, AttackTarget().position) <= closeRange)
         {
-            State(AiState.moving);
+            State(AiState.recovering);
         }
     }
 
 
 
-    public override void Recovering() { }
+    public override void Recovering()
+    {
+        stateTimer -= Time.deltaTime;
+        if (stateTimer <= 0)
+        {
+            stateTimer = StateTime();
+
+            MakeDecision();
+
+        }
+    }
     public override void TakingDamage() { }
     public override void Moving()
     {

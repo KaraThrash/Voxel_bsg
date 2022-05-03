@@ -243,6 +243,14 @@ public class Enemy : MonoBehaviour
 
         RotationTargetLookAt(AttackTarget());
 
+        if (ship.Hitpoints() <= 0 || State() == AiState.dying)
+        {
+            Dying();
+
+            return;
+        }
+
+
         if (State() == AiState.adjusting)
         {
 

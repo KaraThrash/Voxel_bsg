@@ -1,38 +1,53 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Polarith.AI.Package;
 
 public class BasicEnemy : Enemy
 {
+    public ShipPhysics movementControls;
     public ShipSystem gun;
 
-    public float engineThrottle, engineTorqueThrottle;
-    public float lateralHort, lateralVert;
+    public Transform focusObject, rotationTarget;
+
+    public float torquePower, engineThrottle;
+    public float accelerate, decelerate;
+
 
     public float targetengineThrottle, targetengineTorqueThrottle;
-    public float targetlateralHort, targetlateralVert;
+
 
     public override void Act()
     {
-        engineThrottle = Mathf.Lerp(engineThrottle, targetengineThrottle, Time.deltaTime * DirectionChangeSpeed());
-        engineTorqueThrottle = Mathf.Lerp(engineTorqueThrottle, targetengineTorqueThrottle, Time.deltaTime * DirectionChangeSpeed());
-        lateralHort = Mathf.Lerp(lateralHort, targetlateralHort, Time.deltaTime * DirectionChangeSpeed());
-        lateralVert = Mathf.Lerp(lateralVert, targetlateralVert, Time.deltaTime * DirectionChangeSpeed());
 
 
-
-
-        if (AttackTarget() == null || ship == null) { return; }
+        if (AttackTarget() == null) { return; }
 
         if (brainTimer > 0) { brainTimer -= Time.deltaTime; }
 
+        if (GetShip().Chasis() && GetShip().Chasis().ExternalForce() != Vector3.zero)
+        {
+            movementControls.Torque = 0;
+            movementControls.Speed = 0;
+            RB().velocity = (GetShip().Chasis().ExternalForce());
+            return;
+        }
 
-       // ship.secondaryEngine.GetComponent<LateralThruster>().Horizontal_Throttle(lateralHort);
-        //ship.secondaryEngine.GetComponent<LateralThruster>().Vertical_Throttle(lateralVert);
-        ship.primaryEngine.GetComponent<EngineBasic>().Thrust_Throttle(engineThrottle);
-        ship.primaryEngine.GetComponent<EngineBasic>().Roll_Throttle(engineTorqueThrottle);
+        if (ship.Hitpoints() <= 0)
+        {
+            Dying();
+            return;
 
-        ship.Movement();
+        }
+        if (GetShip().PrimaryWeapon())
+        {
+            float secondaryFacing = Vector3.Angle(ShipTransform().forward, (AttackTarget().position - ShipTransform().position).normalized);
+            if (secondaryFacing < angleTolerance)
+            {
+                if (gun != null) { gun.Act(); }
+            }
+            else { if (gun != null) { gun.Deactivate(); } }
+        }
 
         if (State() == AiState.adjusting)
         {
@@ -53,169 +68,78 @@ public class BasicEnemy : Enemy
             Moving();
 
         }
-        if (Vector3.Angle(ship.transform.position, AttackTarget().position) < 10 || Vector3.Angle(ship.transform.position, AttackTarget().position) > 80)
+        else if (State() == AiState.attackWindUp)
         {
+            AttackWindUp();
+
+        }
+        else if (State() == AiState.postAttack)
+        {
+            PostAttack();
 
         }
 
 
-    }
-
-
-    public void AttemptToMoveForwardOld(bool _on)
-    {
-        if (_on)
-        {
-            RaycastHit hit;
-            Vector3 _targetpos = Vector3.zero;
-
-            if (Physics.SphereCast(ShipTransform().position, 2.0f, ShipTransform().forward, out hit, 2 + ship.RB().velocity.magnitude))
-            {
-                targetengineThrottle -= Time.deltaTime;
-                targetengineTorqueThrottle += Time.deltaTime;
-
-
-
-                if (Vector3.Distance(ShipTransform().position + ShipTransform().right, AttackTarget().position) < Vector3.Distance(ShipTransform().position - ShipTransform().right, AttackTarget().position))
-                {
-                    _targetpos = ShipTransform().position + ShipTransform().right;
-                }
-                else
-                {
-                    _targetpos = (ShipTransform().position - ShipTransform().right);
-                }
-
-            }
-            else
-            {
-
-                targetengineThrottle = 1;
-                targetengineTorqueThrottle = 1;
-
-                if (Vector3.Distance(ShipTransform().position + ShipTransform().right, AttackTarget().position) < Vector3.Distance(ShipTransform().position + ShipTransform().forward, AttackTarget().position))
-                {
-                    _targetpos = (ShipTransform().position + ShipTransform().right);
-                }
-                else if (Vector3.Distance(ShipTransform().position - ShipTransform().right, AttackTarget().position) < Vector3.Distance(ShipTransform().position + ShipTransform().forward, AttackTarget().position))
-                {
-                    _targetpos = (ShipTransform().position - ShipTransform().right);
-                }
-                else if (Vector3.Distance(ShipTransform().position - ShipTransform().up, AttackTarget().position) < Vector3.Distance(ShipTransform().position + ShipTransform().forward, AttackTarget().position))
-                {
-                    _targetpos = (ShipTransform().position - ShipTransform().up);
-                }
-                else if (Vector3.Distance(ShipTransform().position + ShipTransform().up, AttackTarget().position) < Vector3.Distance(ShipTransform().position + ShipTransform().forward, AttackTarget().position))
-                {
-                    _targetpos = (ShipTransform().position + ShipTransform().up);
-                }
-                else { _targetpos = (AttackTarget().position); }
-
-
-
-
-            }
-
-            Vector3 relativePos = _targetpos - ShipTransform().position;
-
-            // the second argument, upwards, defaults to Vector3.up
-            Quaternion rotation = Quaternion.LookRotation(relativePos, Vector3.up);
-            ship.rotationTarget.rotation = rotation;
-            ship.rotationTarget.rotation = Quaternion.Slerp(ship.rotationTarget.rotation, rotation, Time.deltaTime * BrainTime());
-        }
 
     }
-    public void AttemptToMoveForward(bool _on)
-    {
-        if (_on)
-        {
-            RaycastHit hit;
-            Vector3 _targetpos = Vector3.zero;
-
-            if (Physics.SphereCast(ship.rotationTarget.position, 2.0f, ShipTransform().forward, out hit, 2 + ship.RB().velocity.magnitude))
-            {
-
-                targetengineTorqueThrottle = 0.5f;
-
-                ship.rotationTarget.rotation = Quaternion.Slerp(ship.rotationTarget.rotation, Quaternion.LookRotation(ShipTransform().position - AttackTarget().position  , Vector3.up), Time.deltaTime * 1);
-
-
-            }
-            else 
-            {
-
-            
-                targetengineTorqueThrottle = 1;
-
-                ship.rotationTarget.rotation = Quaternion.Slerp(ship.rotationTarget.rotation, Quaternion.LookRotation(AttackTarget().position - ShipTransform().position, Vector3.up), Time.deltaTime * BrainTime());
-
-
-
-
-
-            }
-
-            if (Vector3.Angle(ship.rotationTarget.forward, ship.transform.forward) < 10)
-            {
-                targetengineThrottle = 1;
-                targetengineTorqueThrottle = 0;
-            }
-            else 
-            {
-                targetengineTorqueThrottle = 0;
-                targetengineThrottle = 0;
-            }
-        }
-
-    }
-
 
 
     public override void MakeDecision()
     {
-        DetermineRangeZone(ship.transform.position);
+        //  DetermineRangeZone(ship.transform.position);
 
+        if (ship.Hitpoints() <= 0)
+        {
+            ship.Die();
+            return;
+
+        }
 
 
         AiState newState = State();
 
-
-
-        RaycastHit hit;
-
-        RaycastAt(ShipTransform().position,AttackTarget(),Vector3.Distance(ShipTransform().position, AttackTarget().position));
-
-        if (RaycastAt(ShipTransform().position, AttackTarget(), Vector3.Distance(ShipTransform().position, AttackTarget().position)))
+        if (State() == AiState.attacking)
         {
-            Debug.Log("making Decision: CAN see attack target");
+            newState = AiState.moving;
+            movementControls.Speed = engineThrottle;
+            movementControls.Torque = 0;
+            stateTimer = 5;
+
+        }
+        else if (State() == AiState.moving)
+        {
+            if (Vector3.Distance(ShipTransform().position, AttackTarget().position) > farRange * 2)
+            {
+                newState = AiState.attacking;
+                movementControls.Speed = engineThrottle;
+                movementControls.Torque = torquePower;
+            }
+            else if (Vector3.Distance(ShipTransform().position, AttackTarget().position) <= midRange)
+            {
+                newState = AiState.attacking;
+                movementControls.Speed = engineThrottle;
+                movementControls.Torque = torquePower;
+            }
+            else 
+            {
+                newState = AiState.recovering;
+                movementControls.Speed = engineThrottle;
+                movementControls.Torque = torquePower;
+                stateTimer = 5;
+                Vector3 rand = new Vector3(Random.Range(-midRange, midRange), Random.Range(-midRange, midRange), Random.Range(-midRange, midRange));
+                FocusObject().position = ShipTransform().position + rand;
+            }
+            
+
+        }
+        else if (State() == AiState.recovering)
+        {
+
             newState = AiState.attacking;
-   
+            stateTimer = 5;
 
         }
-        else 
-        {
-            Debug.Log("making Decision: cant see attack target");
-           
-            if (Vector3.Distance(AttackTarget().position, ShipTransform().position) < closeRange)
-            {
-                //cant see the target and is very close
-                newState = AiState.adjusting;
 
-            }
-            else
-            {
-                newState = AiState.moving;
-
-                if (RaycastAt(ShipTransform().position, AttackTarget().position, closeRange))
-                {
-                    targetPos = ShipTransform().position + ((ShipTransform().right - ShipTransform().forward).normalized * closeRange);
-                }
-                else
-                {
-                    targetPos = ShipTransform().position +( (AttackTarget().position - ShipTransform().position).normalized * closeRange );
-                }
-
-            }
-        }
 
 
 
@@ -225,28 +149,32 @@ public class BasicEnemy : Enemy
 
 
 
+    public override void AttackWindUp()
+    {
+        movementControls.Speed = engineThrottle;
+        movementControls.Torque = 0;
+
+        if (Vector3.Distance(ShipTransform().position, AttackTarget().position) <= closeRange)
+        {
+            State(AiState.attacking);
+        }
+
+    }
 
     public override void Attacking()
     {
-        targetPos = AttackTarget().position;
 
-        ship.rotationTarget.LookAt(AttackTarget().position);
-        ship.secondaryEngine.GetComponent<LateralThruster>().rotationTarget.LookAt(AttackTarget().position);
+        float secondaryFacing = Vector3.Angle(ShipTransform().forward, (AttackTarget().position - ShipTransform().position).normalized);
 
-        float facing = Vector3.Angle(ship.transform.forward, (targetPos - ship.transform.position).normalized);
-        float secondaryFacing = Vector3.Angle(ship.transform.forward, (AttackTarget().position - ship.transform.position).normalized);
+        movementControls.Speed = 0;
+        movementControls.Torque = 0;
+
+        ShipTransform().transform.rotation = Quaternion.Slerp(ShipTransform().transform.rotation, Quaternion.LookRotation(AttackTarget().position - ShipTransform().position, AttackTarget().up), Time.deltaTime * torquePower);
+        RB().velocity = Vector3.Lerp(RB().velocity, (FocusObject().position - ShipTransform().position).normalized * engineThrottle, Time.deltaTime);
 
 
-        if (Vector3.Distance(ship.transform.position, targetPos) > closeRange)
-        {
-            targetengineThrottle = 1;
-            targetengineTorqueThrottle = 1;
-        }
-        else
-        {
-            targetengineThrottle = 0;
-            targetengineTorqueThrottle = 1;
-        }
+        // FocusObject().position = AttackTarget().position;
+
         if (secondaryFacing < angleTolerance)
         {
             if (gun != null) { gun.Activate(); }
@@ -255,56 +183,83 @@ public class BasicEnemy : Enemy
 
 
 
+        //Debug.Log(Vector3.Angle(GetShip().transform.forward, (AttackTarget().position - transform.position).normalized));
 
+        //   GetShip().EnemyAct();
+        // GetShip().PrimaryEngine().Act();
 
         stateTimer -= Time.deltaTime;
+
         if (stateTimer <= 0)
         {
             stateTimer = StateTime();
 
-               MakeDecision();
+            MakeDecision();
 
+        }
+    }
+
+    public override void PostAttack()
+    {
+
+        float secondaryFacing = Vector3.Angle(ShipTransform().forward, (AttackTarget().position - ShipTransform().position).normalized);
+
+        movementControls.Speed = 0;
+        movementControls.Torque = 0;
+
+        ShipTransform().transform.rotation = Quaternion.Slerp(ShipTransform().transform.rotation, Quaternion.LookRotation(AttackTarget().position - ShipTransform().position, AttackTarget().up), Time.deltaTime * torquePower);
+        RB().velocity = Vector3.Lerp(RB().velocity, (FocusObject().position - ShipTransform().position).normalized * engineThrottle, Time.deltaTime);
+
+
+        // FocusObject().position = AttackTarget().position;
+
+        if (secondaryFacing < angleTolerance)
+        {
+            if (gun != null) { gun.Activate(); }
+        }
+        else { if (gun != null) { gun.Deactivate(); } }
+
+
+
+        //  Debug.Log(Vector3.Angle(GetShip().transform.forward, (AttackTarget().position - transform.position).normalized));
+
+        //   GetShip().EnemyAct();
+        // GetShip().PrimaryEngine().Act();
+
+        if (Vector3.Distance(ShipTransform().position, AttackTarget().position) <= closeRange)
+        {
+            State(AiState.recovering);
         }
     }
 
 
 
-    public override void Recovering() { }
+    public override void Recovering()
+    {
+        stateTimer -= Time.deltaTime;
+        if (stateTimer <= 0)
+        {
+            stateTimer = StateTime();
+
+            MakeDecision();
+
+        }
+    }
     public override void TakingDamage() { }
     public override void Moving()
     {
+        movementControls.Torque = Mathf.Lerp(movementControls.Torque, torquePower, Time.deltaTime * accelerate);
+        movementControls.Speed = Mathf.Lerp(movementControls.Speed, engineThrottle, Time.deltaTime * accelerate);
 
-        AttemptToMoveForward(true);
+        FocusObject().position = AttackTarget().position;
 
-        RaycastHit hit;
+        GetShip().EnemyAct();
 
-        //if (Physics.SphereCast(ShipTransform().position, 2.0f,ShipTransform().forward, out hit, ship.RB().velocity.magnitude))
-        //{
-        //    ship.rotationTarget.LookAt(ShipTransform().position + ShipTransform().right);
-        //    ship.secondaryEngine.GetComponent<LateralThruster>().rotationTarget.LookAt(ShipTransform().position + ShipTransform().right);
-        //    targetengineThrottle = 0.2f;
-
-
-        //}
-        //else if (Physics.SphereCast(ShipTransform().position, 4.0f, ShipTransform().forward, out hit, ship.RB().velocity.magnitude))
-        //{
-        //    ship.rotationTarget.LookAt(ShipTransform().position + ShipTransform().forward);
-        //    ship.secondaryEngine.GetComponent<LateralThruster>().rotationTarget.LookAt(ShipTransform().position + ShipTransform().forward);
-        //    targetengineThrottle = 1;
-        //}
-        //else 
-        //{
-        //    ship.rotationTarget.LookAt(AttackTarget().position);
-        //    ship.secondaryEngine.GetComponent<LateralThruster>().rotationTarget.LookAt(AttackTarget().position);
-        //    targetengineThrottle = 1;
-        //}
-
-
-
+        // rotationTarget.rotation = Quaternion.Lerp(rotationTarget.rotation, ShipTransform().rotation, Time.deltaTime * torquePower);
 
 
         stateTimer -= Time.deltaTime;
-        if (stateTimer <= 0 || Vector3.Distance(ShipTransform().position,targetPos) <= 1 )
+        if (stateTimer <= 0 || Vector3.Distance(ShipTransform().position, AttackTarget().position) <= closeRange)
         {
             stateTimer = StateTime();
 
@@ -317,10 +272,9 @@ public class BasicEnemy : Enemy
 
     public override void Adjusting()
     {
-        Vector3 away = ship.transform.position + ((ship.transform.position - AttackTarget().position).normalized * midRange);
-        ship.rotationTarget.LookAt(away);
-        ship.secondaryEngine.GetComponent<LateralThruster>().rotationTarget.LookAt(away);
 
+        movementControls.Torque = Mathf.Lerp(movementControls.Torque, 0, Time.deltaTime * accelerate);
+        movementControls.Speed = Mathf.Lerp(movementControls.Speed, 0, Time.deltaTime * accelerate);
 
         stateTimer -= Time.deltaTime;
         if (stateTimer <= 0)
@@ -336,7 +290,22 @@ public class BasicEnemy : Enemy
 
     public override void Pathfinding() { }
     public override void Special() { }
-    public override void Dying() { }
+    public override void Dying() 
+    {
+
+        movementControls.Torque = 2;
+        movementControls.Speed = 1;
+        FocusObject().position = ShipTransform().position + ShipTransform().right - ShipTransform().up + ShipTransform().forward;
+        stateTimer -= Time.deltaTime;
+
+        if (stateTimer <= 0)
+        {
+            stateTimer = StateTime();
+
+            MakeDecision();
+
+        }
+    }
     public override void Idle() { }
     public override void Dodging() { }
     public override void Fleeing() { }
@@ -347,6 +316,7 @@ public class BasicEnemy : Enemy
 
     public override void OnStateChange(AiState _newstate)
     {
+        FocusObject().parent = null;
         if (State() == _newstate) { return; } //didnt switch to a new state
 
 
@@ -360,19 +330,27 @@ public class BasicEnemy : Enemy
 
 
 
-        if (State() == AiState.spawned)
+        if (State() == AiState.attacking)
         {
+            Vector3 away = ShipTransform().position + (ShipTransform().forward * farRange);
 
-
+            //  FocusObject().position = away;
         }
-        else if (State() == AiState.adjusting)
+        else if (State() == AiState.moving)
         {
-
-            if (Vector3.Angle(transform.forward, (AttackTarget().position - transform.position).normalized) < 10 || Vector3.Angle(transform.forward, (AttackTarget().position - transform.position).normalized) > 80) { }
+            // FocusObject().position = AttackTarget().position;
         }
 
-   
+
     }
 
 
+    public Transform FocusObject()
+    {
+        if (focusObject == null) { return AttackTarget(); }
+
+        return focusObject;
+    }
+
 }
+
