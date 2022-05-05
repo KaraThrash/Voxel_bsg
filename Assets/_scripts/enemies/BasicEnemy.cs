@@ -8,15 +8,11 @@ public class BasicEnemy : Enemy
     public ShipPhysics movementControls;
     public ShipSystem gun;
 
-    public Transform focusObject, rotationTarget;
-
-    public float torquePower, engineThrottle;
-    public float accelerate, decelerate;
+    public Transform focusObject; //the object the polarith AI is trying to move towards. Use Polarith for general navigating, and set polarith to zero for specific actions
 
 
-    public float targetengineThrottle, targetengineTorqueThrottle;
 
-
+    
     public override void Act()
     {
 
@@ -39,15 +35,19 @@ public class BasicEnemy : Enemy
             return;
 
         }
-        if (GetShip().PrimaryWeapon())
+
+        RaycastHit hit;
+
+        if (Physics.Raycast(ShipTransform().position, (AttackTarget().position - ShipTransform().position),out hit))
         {
-            float secondaryFacing = Vector3.Angle(ShipTransform().forward, (AttackTarget().position - ShipTransform().position).normalized);
-            if (secondaryFacing < angleTolerance)
+            if (hit.transform == AttackTarget())
             {
-                if (gun != null) { gun.Act(); }
+                Attacking();
+                return;
             }
-            else { if (gun != null) { gun.Deactivate(); } }
         }
+        Moving();
+        return;
 
         if (State() == AiState.adjusting)
         {
@@ -95,54 +95,69 @@ public class BasicEnemy : Enemy
 
         }
 
+        if (GetShip().PrimaryWeapon())
+        {
+            float secondaryFacing = Vector3.Angle(ShipTransform().forward, (AttackTarget().position - ShipTransform().position).normalized);
+            if (secondaryFacing < Stats().angleTolerance)
+            {
+                if (gun != null) { gun.Act(); }
+            }
+            else { if (gun != null) { gun.Deactivate(); } }
+        }
+
+
+        FocusObject().position = AttackTarget().position;
 
         AiState newState = State();
 
         if (State() == AiState.attacking)
         {
             newState = AiState.moving;
-            movementControls.Speed = engineThrottle;
-            movementControls.Torque = 0;
-            stateTimer = 5;
+            movementControls.Speed = Stats().engineThrottle;
+            movementControls.Torque = Stats().torquePower;
 
         }
         else if (State() == AiState.moving)
         {
-            if (Vector3.Distance(ShipTransform().position, AttackTarget().position) > farRange * 2)
+
+            RangeBand currentRange = RangeTo();
+
+            if (currentRange == RangeBand.extreme)
             {
-                newState = AiState.attacking;
-                movementControls.Speed = engineThrottle;
-                movementControls.Torque = torquePower;
+                newState = AiState.moving;
+                movementControls.Speed = Stats().engineThrottle;
+                movementControls.Torque = Stats().torquePower;
             }
-            else if (Vector3.Distance(ShipTransform().position, AttackTarget().position) <= midRange)
+            else if (currentRange == RangeBand.close)
             {
                 newState = AiState.attacking;
-                movementControls.Speed = engineThrottle;
-                movementControls.Torque = torquePower;
+                movementControls.Speed = Stats().engineThrottle;
+                movementControls.Torque = Stats().torquePower;
+                FocusObject().position = AttackTarget().position - (AttackTarget().forward * 3);
             }
             else 
             {
-                newState = AiState.recovering;
-                movementControls.Speed = engineThrottle;
-                movementControls.Torque = torquePower;
-                stateTimer = 5;
-                Vector3 rand = new Vector3(Random.Range(-midRange, midRange), Random.Range(-midRange, midRange), Random.Range(-midRange, midRange));
-                FocusObject().position = ShipTransform().position + rand;
+                newState = AiState.attacking;
+                movementControls.Speed = Stats().engineThrottle;
+                movementControls.Torque = Stats().torquePower;
+                FocusObject().position = AttackTarget().position - (AttackTarget().forward * 3);
             }
             
 
         }
         else if (State() == AiState.recovering)
         {
+            movementControls.Speed = Stats().engineThrottle;
+            movementControls.Torque = Stats().torquePower;
 
+            FocusObject().position = AttackTarget().position ;
             newState = AiState.attacking;
-            stateTimer = 5;
 
         }
 
 
 
-
+        stateTimer = 5;
         State(newState);
 
     }
@@ -151,42 +166,33 @@ public class BasicEnemy : Enemy
 
     public override void AttackWindUp()
     {
-        movementControls.Speed = engineThrottle;
-        movementControls.Torque = 0;
-
-        if (Vector3.Distance(ShipTransform().position, AttackTarget().position) <= closeRange)
-        {
-            State(AiState.attacking);
-        }
+       
 
     }
 
     public override void Attacking()
     {
-
-        float secondaryFacing = Vector3.Angle(ShipTransform().forward, (AttackTarget().position - ShipTransform().position).normalized);
-
         movementControls.Speed = 0;
         movementControls.Torque = 0;
 
-        ShipTransform().transform.rotation = Quaternion.Slerp(ShipTransform().transform.rotation, Quaternion.LookRotation(AttackTarget().position - ShipTransform().position, AttackTarget().up), Time.deltaTime * torquePower);
-        RB().velocity = Vector3.Lerp(RB().velocity, (FocusObject().position - ShipTransform().position).normalized * engineThrottle, Time.deltaTime);
+
+        float secondaryFacing = Vector3.Angle(ShipTransform().forward, (AttackTarget().position - ShipTransform().position).normalized);
+
+        FocusObject().position = AttackTarget().position - (AttackTarget().forward * 3);
+
+        ShipTransform().transform.rotation = Quaternion.Slerp(ShipTransform().transform.rotation, Quaternion.LookRotation(AttackTarget().position - ShipTransform().position, AttackTarget().up), Time.deltaTime * Stats().torquePower);
 
 
-        // FocusObject().position = AttackTarget().position;
-
-        if (secondaryFacing < angleTolerance)
+        if (RangeTo(FocusObject(),ShipTransform()) == RangeBand.close || RangeTo(FocusObject(), ShipTransform()) == RangeBand.melee)
         {
-            if (gun != null) { gun.Activate(); }
+            RB().velocity = Vector3.Lerp(RB().velocity, Vector3.zero, Time.deltaTime);
         }
-        else { if (gun != null) { gun.Deactivate(); } }
+        else
+        {
+            RB().velocity = Vector3.Lerp(RB().velocity, ShipTransform().forward * Stats().engineThrottle, Time.deltaTime);
+        }
 
 
-
-        //Debug.Log(Vector3.Angle(GetShip().transform.forward, (AttackTarget().position - transform.position).normalized));
-
-        //   GetShip().EnemyAct();
-        // GetShip().PrimaryEngine().Act();
 
         stateTimer -= Time.deltaTime;
 
@@ -202,34 +208,7 @@ public class BasicEnemy : Enemy
     public override void PostAttack()
     {
 
-        float secondaryFacing = Vector3.Angle(ShipTransform().forward, (AttackTarget().position - ShipTransform().position).normalized);
-
-        movementControls.Speed = 0;
-        movementControls.Torque = 0;
-
-        ShipTransform().transform.rotation = Quaternion.Slerp(ShipTransform().transform.rotation, Quaternion.LookRotation(AttackTarget().position - ShipTransform().position, AttackTarget().up), Time.deltaTime * torquePower);
-        RB().velocity = Vector3.Lerp(RB().velocity, (FocusObject().position - ShipTransform().position).normalized * engineThrottle, Time.deltaTime);
-
-
-        // FocusObject().position = AttackTarget().position;
-
-        if (secondaryFacing < angleTolerance)
-        {
-            if (gun != null) { gun.Activate(); }
-        }
-        else { if (gun != null) { gun.Deactivate(); } }
-
-
-
-        //  Debug.Log(Vector3.Angle(GetShip().transform.forward, (AttackTarget().position - transform.position).normalized));
-
-        //   GetShip().EnemyAct();
-        // GetShip().PrimaryEngine().Act();
-
-        if (Vector3.Distance(ShipTransform().position, AttackTarget().position) <= closeRange)
-        {
-            State(AiState.recovering);
-        }
+       
     }
 
 
@@ -248,18 +227,20 @@ public class BasicEnemy : Enemy
     public override void TakingDamage() { }
     public override void Moving()
     {
-        movementControls.Torque = Mathf.Lerp(movementControls.Torque, torquePower, Time.deltaTime * accelerate);
-        movementControls.Speed = Mathf.Lerp(movementControls.Speed, engineThrottle, Time.deltaTime * accelerate);
+        movementControls.Torque = Mathf.Lerp(movementControls.Torque, Stats().torquePower, Time.deltaTime * Stats().accelerate);
+        movementControls.Speed = Mathf.Lerp(movementControls.Speed, Stats().engineThrottle, Time.deltaTime * Stats().accelerate);
 
-        FocusObject().position = AttackTarget().position;
+        ShipTransform().transform.localRotation = Quaternion.Slerp(ShipTransform().transform.localRotation, Quaternion.identity, Time.deltaTime * Stats().torquePower);
+
+
+        // FocusObject().position = AttackTarget().position;
 
         GetShip().EnemyAct();
 
-        // rotationTarget.rotation = Quaternion.Lerp(rotationTarget.rotation, ShipTransform().rotation, Time.deltaTime * torquePower);
 
 
         stateTimer -= Time.deltaTime;
-        if (stateTimer <= 0 || Vector3.Distance(ShipTransform().position, AttackTarget().position) <= closeRange)
+        if (stateTimer <= 0 )
         {
             stateTimer = StateTime();
 
@@ -273,17 +254,7 @@ public class BasicEnemy : Enemy
     public override void Adjusting()
     {
 
-        movementControls.Torque = Mathf.Lerp(movementControls.Torque, 0, Time.deltaTime * accelerate);
-        movementControls.Speed = Mathf.Lerp(movementControls.Speed, 0, Time.deltaTime * accelerate);
 
-        stateTimer -= Time.deltaTime;
-        if (stateTimer <= 0)
-        {
-            stateTimer = StateTime();
-
-            MakeDecision();
-
-        }
     }
 
 
@@ -314,6 +285,76 @@ public class BasicEnemy : Enemy
     public override void Ragdolling() { }
 
 
+
+
+
+
+
+
+    public RangeBand RangeTo()
+    {
+        if (Vector3.Distance(ShipTransform().position, AttackTarget().position) >= Stats().farRange * 2)
+        {
+            return RangeBand.extreme;
+        }
+        else if (Vector3.Distance(ShipTransform().position, AttackTarget().position) < Stats().closeRange * 0.5f)
+        {
+            return RangeBand.melee;
+        }
+        else if (Vector3.Distance(ShipTransform().position, AttackTarget().position) <= Stats().midRange)
+        {
+            return RangeBand.close;
+        }
+        else if (Vector3.Distance(ShipTransform().position, AttackTarget().position) > Stats().closeRange)
+        {
+            return RangeBand.mid;
+        }
+
+        return RangeBand.unknown;
+    }
+
+    public RangeBand RangeTo(Transform _target)
+    {
+        if (Vector3.Distance(ShipTransform().position, _target.position) >= Stats().farRange * 2)
+        {
+            return RangeBand.extreme;
+        }
+        else if (Vector3.Distance(ShipTransform().position, _target.position) < Stats().closeRange * 0.5f)
+        {
+            return RangeBand.melee;
+        }
+        else if (Vector3.Distance(ShipTransform().position, _target.position) <= Stats().midRange)
+        {
+            return RangeBand.close;
+        }
+        else if (Vector3.Distance(ShipTransform().position, _target.position) > Stats().closeRange)
+        {
+            return RangeBand.mid;
+        }
+
+        return RangeBand.unknown;
+    }
+
+
+    public RangeBand RangeTo(Transform _from,Transform _target)
+    {
+        //for conditions based around another object, like a treasure or fleetship [i.e.:do x when y is close to z]
+        if (Vector3.Distance(_from.position, _target.position) >= Stats().farRange * 2)
+        {
+            return RangeBand.extreme;
+        }
+        else if (Vector3.Distance(_from.position, _target.position) <= Stats().midRange)
+        {
+            return RangeBand.close;
+        }
+        else if (Vector3.Distance(_from.position, _target.position) > Stats().closeRange)
+        {
+            return RangeBand.mid;
+        }
+
+        return RangeBand.unknown;
+    }
+
     public override void OnStateChange(AiState _newstate)
     {
         FocusObject().parent = null;
@@ -332,7 +373,7 @@ public class BasicEnemy : Enemy
 
         if (State() == AiState.attacking)
         {
-            Vector3 away = ShipTransform().position + (ShipTransform().forward * farRange);
+            Vector3 away = ShipTransform().position + (ShipTransform().forward * Stats().farRange);
 
             //  FocusObject().position = away;
         }

@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-
+    public Stats_Enemy stats;
     public NpcManager npcManager;
     public Rigidbody rb;
     public Ship ship;
@@ -13,14 +13,13 @@ public class Enemy : MonoBehaviour
     public bool canAct;
 
     public AiState state;
-    public AiState pendingState;
+    private AiState pendingState;
     public Stance stance;
-    public RangeBand rangeBand;
 
-    public Transform mapArea, attackTarget, patrolparent, patroltarget;
+    public Transform attackTarget;
 
     public float hp;
-
+    [SerializeField]
     private Transform shipTransform;
 
 
@@ -28,7 +27,6 @@ public class Enemy : MonoBehaviour
     /// 
     /// 
     /// 
-    public float leashDistance, noticePlayerDistance = 50.0f;
 
     public bool alert;
 
@@ -36,7 +34,7 @@ public class Enemy : MonoBehaviour
     private float brainTime, stateTime; //brain time for checking if the enemy responds to an external condition [e.g. player being in their line of fire], state time for state specific holds
     protected float directionChangeSpeed; // how quickly this enemy changes the direction they want to go
 
-    public int substate; // differences within the same AI state: e.g. attcking when the playing is facing this enemy or facing away
+
 
     protected Vector3 targetPos;
     protected Vector3 targetDirection;
@@ -46,9 +44,7 @@ public class Enemy : MonoBehaviour
 
     protected float stuckCounter, timeSinceLastAction; // check if stuck
 
-    public int closeRange, midRange, farRange;
-    public float rangeVarience, angleTolerance; //check against varience not against the opposite range e.g.: when close check if further than close+varience to prevent riding the line  
-                                                //angle tolerance for the cone around a perfect facing
+
     private float angle;
 
     public float Angle
@@ -462,6 +458,15 @@ public class Enemy : MonoBehaviour
     }
 
 
+    public Stats_Enemy Stats()
+    {
+        if (stats == null)
+        { stats = new Stats_Enemy(); }
+
+        return stats;
+    }
+
+
     public Transform ShipTransform()
     {
         if (shipTransform == null)
@@ -498,33 +503,14 @@ public class Enemy : MonoBehaviour
     public Stance Stance() { return stance; }
     public void Stance(Stance _stance) { stance = _stance; }
 
-    public RangeBand RangeZone() { return rangeBand; }
-    public void RangeZone(RangeBand _rangeBand) { rangeBand = _rangeBand; }
 
-    public void DetermineRangeZone(Vector3 _pos)
-    {
-        float currentRange = 0;
-        if (RangeZone() == RangeBand.close)
-        { currentRange = closeRange; }
-        else if (RangeZone() == RangeBand.ideal)
-        { currentRange = closeRange; }
-        else if (RangeZone() == RangeBand.far)
-        { currentRange = closeRange; }
 
-        float dist = Vector3.Distance(_pos, transform.position);
-        //to prevent riding the line of range bands dont change if within the assigned varience
-        if (Mathf.Abs(dist - currentRange) <= rangeVarience)
-        { return; }
 
-        if (dist <= closeRange)
-        { RangeZone(RangeBand.close); }
-        else if (dist <= farRange)
-        { RangeZone(RangeBand.ideal); }
-        else if (dist > farRange * 2)
-        { RangeZone(RangeBand.extreme); }
-        else { RangeZone(RangeBand.far); }
 
-    }
+
+
+
+
 
 
 

@@ -35,13 +35,14 @@ public enum Stance
 
 public enum RangeBand
 {
-    ideal,close,far,extreme,unknown,infinity
+    ideal,melee,close,mid,far,extreme,unknown,infinity
 }
 
 
 public enum UpgradeType { ammo, health, chainsawReward, damage, clipsize, firerate, ammoPickupBonus }
 
 public enum EnemyType { basic, mortar, jetpack, boss }
+public enum EnviromentType { space,atmosphere,radiated,sand }
 public enum ItemTypes { sword, shield, mortarShell,fireBall,none }
 
 

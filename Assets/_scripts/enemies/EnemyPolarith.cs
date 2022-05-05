@@ -36,7 +36,7 @@ public class EnemyPolarith : Enemy
         if (GetShip().PrimaryWeapon() )
         {
             float secondaryFacing = Vector3.Angle(ShipTransform().forward, (AttackTarget().position - ShipTransform().position).normalized);
-            if (secondaryFacing < angleTolerance)
+            if (secondaryFacing < Stats().angleTolerance)
             {
                 if (gun != null) { gun.Act(); }
             }
@@ -88,17 +88,17 @@ public class EnemyPolarith : Enemy
 
         if (State() == AiState.attacking)
         {
-            if (Vector3.Distance(ShipTransform().position, AttackTarget().position) > midRange)
+            if (Vector3.Distance(ShipTransform().position, AttackTarget().position) > Stats().midRange)
             {
                 newState = AiState.recovering;
                 movementControls.Speed = engineThrottle;
                 movementControls.Torque = 0;
                 stateTimer = 5;
             }
-            else if (Vector3.Distance(ShipTransform().position, FocusObject().position) > closeRange)
+            else if (Vector3.Distance(ShipTransform().position, FocusObject().position) > Stats().closeRange)
             {
                 newState = AiState.attackWindUp;
-                focusObject.position = AttackTarget().position + ((AttackTarget().position - transform.position).normalized * midRange) + (transform.up * 5);
+                focusObject.position = AttackTarget().position + ((AttackTarget().position - transform.position).normalized * Stats().midRange) + (transform.up * 5);
 
             }
             else 
@@ -112,10 +112,10 @@ public class EnemyPolarith : Enemy
         }
         else if (State() == AiState.moving)
         {
-            if (Vector3.Distance(ShipTransform().position, AttackTarget().position) < midRange)
+            if (Vector3.Distance(ShipTransform().position, AttackTarget().position) < Stats().midRange)
             {
                 newState = AiState.attackWindUp;
-                focusObject.position = AttackTarget().position + ((AttackTarget().position - transform.position).normalized * midRange) + (transform.right * 5);
+                focusObject.position = AttackTarget().position + ((AttackTarget().position - transform.position).normalized * Stats().midRange) + (transform.right * 5);
 
             }
             else 
@@ -147,7 +147,7 @@ public class EnemyPolarith : Enemy
     {
         movementControls.Speed = engineThrottle;
         movementControls.Torque = 0;
-        if (Vector3.Distance(ShipTransform().position, AttackTarget().position) <= closeRange)
+        if (Vector3.Distance(ShipTransform().position, AttackTarget().position) <= Stats().closeRange)
         {
             State(AiState.attacking);
         }
@@ -168,7 +168,7 @@ public class EnemyPolarith : Enemy
 
        // FocusObject().position = AttackTarget().position;
 
-        if (secondaryFacing < angleTolerance)
+        if (secondaryFacing < Stats().angleTolerance)
         {
             if (gun != null) { gun.Activate(); }
         }
@@ -205,7 +205,7 @@ public class EnemyPolarith : Enemy
 
         // FocusObject().position = AttackTarget().position;
 
-        if (secondaryFacing < angleTolerance)
+        if (secondaryFacing < Stats().angleTolerance)
         {
             if (gun != null) { gun.Activate(); }
         }
@@ -218,7 +218,7 @@ public class EnemyPolarith : Enemy
         //   GetShip().EnemyAct();
         // GetShip().PrimaryEngine().Act();
 
-        if (Vector3.Distance(ShipTransform().position, AttackTarget().position) <= closeRange)
+        if (Vector3.Distance(ShipTransform().position, AttackTarget().position) <= Stats().closeRange)
         {
             State(AiState.recovering);
         }
@@ -251,7 +251,7 @@ public class EnemyPolarith : Enemy
 
 
         stateTimer -= Time.deltaTime;
-        if (stateTimer <= 0 || Vector3.Distance(ShipTransform().position, AttackTarget().position) <= closeRange)
+        if (stateTimer <= 0 || Vector3.Distance(ShipTransform().position, AttackTarget().position) <= Stats().closeRange)
         {
             stateTimer = StateTime();
 
@@ -309,7 +309,7 @@ public class EnemyPolarith : Enemy
 
          if (State() == AiState.attacking)
         {
-            Vector3 away = ShipTransform().position + (ShipTransform().forward * farRange);
+            Vector3 away = ShipTransform().position + (ShipTransform().forward * Stats().farRange);
 
           //  FocusObject().position = away;
         }

@@ -61,7 +61,6 @@ public class Raider : Enemy
 
     public override void MakeDecision() 
     {
-        DetermineRangeZone(ship.transform.position);
 
         //when moving head on make lateral moves to avoid possible attacks
         float facing = Vector3.Angle(ship.transform.forward, (AttackTarget().position - ship.transform.position).normalized);
@@ -83,21 +82,21 @@ public class Raider : Enemy
         
         AiState newState = State();
 
-        targetPos = AttackTarget().position - (AttackTarget().forward * closeRange);
+        targetPos = AttackTarget().position - (AttackTarget().forward * Stats().closeRange);
 
-        if (Vector3.Distance(targetPos, ship.transform.position) > farRange)
+        if (Vector3.Distance(targetPos, ship.transform.position) > Stats().farRange)
         {
             newState = AiState.moving;
 
         }
-        else if (Vector3.Distance(AttackTarget().position , ship.transform.position) < closeRange )
+        else if (Vector3.Distance(AttackTarget().position , ship.transform.position) < Stats().closeRange )
         {
             newState = AiState.adjusting;
 
         }
         else 
         {
-            if (State() == AiState.adjusting && (Vector3.Distance(targetPos, ship.transform.position) < midRange ) )
+            if (State() == AiState.adjusting && (Vector3.Distance(targetPos, ship.transform.position) < Stats().midRange ) )
             {
                 newState = AiState.adjusting;
             }
@@ -150,7 +149,7 @@ public class Raider : Enemy
 
     public override void Attacking()
     {
-        targetPos = AttackTarget().position - (AttackTarget().forward * closeRange);
+        targetPos = AttackTarget().position - (AttackTarget().forward * Stats().closeRange);
 
         ship.rotationTarget.LookAt(targetPos);
         ship.secondaryEngine.GetComponent<LateralThruster>().rotationTarget.LookAt(AttackTarget().position);
@@ -169,7 +168,7 @@ public class Raider : Enemy
             targetengineThrottle = 0;
             targetengineTorqueThrottle = 1;
         }
-        if (secondaryFacing < angleTolerance)
+        if (secondaryFacing < Stats().angleTolerance)
         {
             if (gun != null) { gun.Activate(); }
         }
@@ -238,7 +237,7 @@ public class Raider : Enemy
     
     public override void Adjusting()
     {
-        Vector3 away = ship.transform.position + ((ship.transform.position - AttackTarget().position).normalized * midRange);
+        Vector3 away = ship.transform.position + ((ship.transform.position - AttackTarget().position).normalized * Stats().midRange);
         ship.rotationTarget.LookAt(away);
         ship.secondaryEngine.GetComponent<LateralThruster>().rotationTarget.LookAt(away);
 
