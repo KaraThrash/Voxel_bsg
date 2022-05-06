@@ -36,11 +36,17 @@ Player:
 Enemies: 
     F.E.A.R enemy tactics
     Lean into the robotic AI of the enemy
-
+    -> Enemies do not react to the player: assess the current world state to make a decision
+        e.g.: Do -NOT- respond to the player firing their weapons
+                -DO- consider how much dmg the player has taken
+             Do -NOT- consider if the player is accelerating
+                -DO- consider player's current velocity
     Ai:
         --brain power:
             Enemies make decisions at intervals based on their 'brain power'
                 --e.g.: every Xseconds assess the state of the world and make a decision.
+        --brain as a ship part -> what it can and cannot get information about based on its capabilities
+            --e.g.: can detect velocity but not facing, or whether the weapons are hot
 
 Enemy Fleet: Acts similar to the player's talent tree to confer benefits to the enemies, either globally or locally[current map/zone] depending on the specifics of each Enemyfleetship type
 

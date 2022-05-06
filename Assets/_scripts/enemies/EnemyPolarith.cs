@@ -22,7 +22,7 @@ public class EnemyPolarith : Enemy
        
         if (AttackTarget() == null ) { return; }
 
-        if (brainTimer > 0) { brainTimer -= Time.deltaTime; }
+        if (timer_Brain > 0) { timer_Brain -= Time.deltaTime; }
 
         if (GetShip().Chasis() && GetShip().Chasis().ExternalForce() != Vector3.zero)
         {
@@ -93,7 +93,7 @@ public class EnemyPolarith : Enemy
                 newState = AiState.recovering;
                 movementControls.Speed = engineThrottle;
                 movementControls.Torque = 0;
-                stateTimer = 5;
+                timer_State = 5;
             }
             else if (Vector3.Distance(ShipTransform().position, FocusObject().position) > Stats().closeRange)
             {
@@ -106,7 +106,7 @@ public class EnemyPolarith : Enemy
                 newState = AiState.recovering;
                 movementControls.Speed = engineThrottle;
                 movementControls.Torque = 0;
-                stateTimer = 5;
+                timer_State = 5;
             }
 
         }
@@ -123,14 +123,14 @@ public class EnemyPolarith : Enemy
                 newState = AiState.recovering;
                 movementControls.Speed = 0;
                 movementControls.Torque = torquePower;
-                stateTimer = 5;
+                timer_State = 5;
             }
         }
         else if (State() == AiState.recovering)
         {
            
                 newState = AiState.moving;
-            stateTimer = 5;
+            timer_State = 5;
             
         }
 
@@ -181,10 +181,10 @@ public class EnemyPolarith : Enemy
          //   GetShip().EnemyAct();
        // GetShip().PrimaryEngine().Act();
 
-        stateTimer -= Time.deltaTime;
-        if (stateTimer <= 0)
+        timer_State -= Time.deltaTime;
+        if (timer_State <= 0)
         {
-            stateTimer = StateTime();
+            timer_State = StateTime();
 
           MakeDecision();
 
@@ -228,10 +228,10 @@ public class EnemyPolarith : Enemy
 
     public override void Recovering()
     {
-        stateTimer -= Time.deltaTime;
-        if (stateTimer <= 0)
+        timer_State -= Time.deltaTime;
+        if (timer_State <= 0)
         {
-            stateTimer = StateTime();
+            timer_State = StateTime();
 
             MakeDecision();
 
@@ -250,10 +250,10 @@ public class EnemyPolarith : Enemy
       // rotationTarget.rotation = Quaternion.Lerp(rotationTarget.rotation, ShipTransform().rotation, Time.deltaTime * torquePower);
 
 
-        stateTimer -= Time.deltaTime;
-        if (stateTimer <= 0 || Vector3.Distance(ShipTransform().position, AttackTarget().position) <= Stats().closeRange)
+        timer_State -= Time.deltaTime;
+        if (timer_State <= 0 || Vector3.Distance(ShipTransform().position, AttackTarget().position) <= Stats().closeRange)
         {
-            stateTimer = StateTime();
+            timer_State = StateTime();
 
             MakeDecision();
 
@@ -268,10 +268,10 @@ public class EnemyPolarith : Enemy
         movementControls.Torque = Mathf.Lerp(movementControls.Torque, 0, Time.deltaTime * accelerate);
         movementControls.Speed = Mathf.Lerp(movementControls.Speed, 0, Time.deltaTime * accelerate);
 
-        stateTimer -= Time.deltaTime;
-        if (stateTimer <= 0)
+        timer_State -= Time.deltaTime;
+        if (timer_State <= 0)
         {
-            stateTimer = StateTime();
+            timer_State = StateTime();
 
             MakeDecision();
 

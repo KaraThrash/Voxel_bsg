@@ -19,7 +19,7 @@ public class BasicEnemy : Enemy
 
         if (AttackTarget() == null) { return; }
 
-        if (brainTimer > 0) { brainTimer -= Time.deltaTime; }
+        if (timer_Brain > 0) { timer_Brain -= Time.deltaTime; }
 
         if (GetShip().Chasis() && GetShip().Chasis().ExternalForce() != Vector3.zero)
         {
@@ -38,7 +38,7 @@ public class BasicEnemy : Enemy
 
         RaycastHit hit;
 
-        if (Physics.Raycast(ShipTransform().position, (AttackTarget().position - ShipTransform().position),out hit))
+        if (Physics.SphereCast(ShipTransform().position, 1.0f,(AttackTarget().position - ShipTransform().position),out hit))
         {
             if (hit.transform == AttackTarget())
             {
@@ -107,7 +107,7 @@ public class BasicEnemy : Enemy
 
 
         FocusObject().position = AttackTarget().position;
-
+        return;
         AiState newState = State();
 
         if (State() == AiState.attacking)
@@ -157,7 +157,7 @@ public class BasicEnemy : Enemy
 
 
 
-        stateTimer = 5;
+        timer_State = 5;
         State(newState);
 
     }
@@ -178,14 +178,20 @@ public class BasicEnemy : Enemy
 
         float secondaryFacing = Vector3.Angle(ShipTransform().forward, (AttackTarget().position - ShipTransform().position).normalized);
 
-        FocusObject().position = AttackTarget().position - (AttackTarget().forward * 3);
+        FocusObject().position = AttackTarget().position;// - (AttackTarget().forward * 3);
 
         ShipTransform().transform.rotation = Quaternion.Slerp(ShipTransform().transform.rotation, Quaternion.LookRotation(AttackTarget().position - ShipTransform().position, AttackTarget().up), Time.deltaTime * Stats().torquePower);
 
 
         if (RangeTo(FocusObject(),ShipTransform()) == RangeBand.close || RangeTo(FocusObject(), ShipTransform()) == RangeBand.melee)
         {
-            RB().velocity = Vector3.Lerp(RB().velocity, Vector3.zero, Time.deltaTime);
+
+            RB().velocity = Vector3.Lerp(RB().velocity, ShipTransform().forward * -Stats().engineThrottle, Time.deltaTime);
+        }
+        else if (RangeTo(FocusObject(), ShipTransform()) == RangeBand.mid)
+        {
+
+           // RB().velocity = Vector3.Lerp(RB().velocity, AttackTarget().GetComponent<Ship>().RB().velocity * 1.1f, Time.deltaTime * Stats().accelerate);
         }
         else
         {
@@ -194,11 +200,11 @@ public class BasicEnemy : Enemy
 
 
 
-        stateTimer -= Time.deltaTime;
+        timer_State -= Time.deltaTime;
 
-        if (stateTimer <= 0)
+        if (timer_State <= 0)
         {
-            stateTimer = StateTime();
+            timer_State = StateTime();
 
             MakeDecision();
 
@@ -215,10 +221,10 @@ public class BasicEnemy : Enemy
 
     public override void Recovering()
     {
-        stateTimer -= Time.deltaTime;
-        if (stateTimer <= 0)
+        timer_State -= Time.deltaTime;
+        if (timer_State <= 0)
         {
-            stateTimer = StateTime();
+            timer_State = StateTime();
 
             MakeDecision();
 
@@ -239,10 +245,10 @@ public class BasicEnemy : Enemy
 
 
 
-        stateTimer -= Time.deltaTime;
-        if (stateTimer <= 0 )
+        timer_State -= Time.deltaTime;
+        if (timer_State <= 0 )
         {
-            stateTimer = StateTime();
+            timer_State = StateTime();
 
             MakeDecision();
 
@@ -267,11 +273,11 @@ public class BasicEnemy : Enemy
         movementControls.Torque = 2;
         movementControls.Speed = 1;
         FocusObject().position = ShipTransform().position + ShipTransform().right - ShipTransform().up + ShipTransform().forward;
-        stateTimer -= Time.deltaTime;
+        timer_State -= Time.deltaTime;
 
-        if (stateTimer <= 0)
+        if (timer_State <= 0)
         {
-            stateTimer = StateTime();
+            timer_State = StateTime();
 
             MakeDecision();
 
@@ -312,6 +318,8 @@ public class BasicEnemy : Enemy
 
         return RangeBand.unknown;
     }
+
+
 
     public RangeBand RangeTo(Transform _target)
     {
@@ -354,6 +362,8 @@ public class BasicEnemy : Enemy
 
         return RangeBand.unknown;
     }
+
+
 
     public override void OnStateChange(AiState _newstate)
     {

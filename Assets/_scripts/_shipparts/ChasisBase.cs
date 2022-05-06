@@ -72,7 +72,7 @@ public class ChasisBase : ShipSystem
         // a value of '1' means there is no resistance
 
         Vector3 modifiedForce = _force;
-        externalForce = Vector3.Lerp(modifiedForce, _force + ExternalForce(), 1 - STAT_PowerSecondary());
+        modifiedForce = Vector3.Lerp(modifiedForce, _force + ExternalForce(), 1 - STAT_PowerSecondary());
 
         return Vector3.Lerp(modifiedForce, _force + ExternalForce(), 1);
     }

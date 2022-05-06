@@ -2,8 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
+
 public class Sandbox : MonoBehaviour
 {
+
+
     public Camera camera;
     public Transform obj,newmapObj, spawnablesToPickFrom;
     public Transform object0, object1;

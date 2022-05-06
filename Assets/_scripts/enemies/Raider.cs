@@ -24,7 +24,7 @@ public class Raider : Enemy
 
         if (AttackTarget() == null || ship == null) { return; }
 
-        if (brainTimer > 0) { brainTimer -= Time.deltaTime; }
+        if (timer_Brain > 0) { timer_Brain -= Time.deltaTime; }
 
         ship.primaryEngine.GetComponent<EngineBasic>().Thrust_Throttle(engineThrottle);
         ship.primaryEngine.GetComponent<EngineBasic>().Roll_Throttle(engineTorqueThrottle);
@@ -178,10 +178,10 @@ public class Raider : Enemy
 
 
 
-        stateTimer -= Time.deltaTime;
-        if (stateTimer <= 0)
+        timer_State -= Time.deltaTime;
+        if (timer_State <= 0)
         {
-            stateTimer = StateTime();
+            timer_State = StateTime();
            
          //   MakeDecision();
             
@@ -223,10 +223,10 @@ public class Raider : Enemy
         }
 
 
-        stateTimer -= Time.deltaTime;
-        if (stateTimer <= 0)
+        timer_State -= Time.deltaTime;
+        if (timer_State <= 0)
         {
-            stateTimer = StateTime();
+            timer_State = StateTime();
 
             MakeDecision();
 
@@ -242,10 +242,10 @@ public class Raider : Enemy
         ship.secondaryEngine.GetComponent<LateralThruster>().rotationTarget.LookAt(away);
 
 
-        stateTimer -= Time.deltaTime;
-        if (stateTimer <= 0)
+        timer_State -= Time.deltaTime;
+        if (timer_State <= 0)
         {
-            stateTimer = StateTime();
+            timer_State = StateTime();
 
             MakeDecision();
 
@@ -293,7 +293,7 @@ public class Raider : Enemy
 
         //if (_newstate == AiState.attacking)
         //{
-        //  //  stateTimer = 0;
+        //  //  timer_State = 0;
         //    ship.primaryEngine.GetComponent<EngineBasic>().Throttle(1, 0);
         //    ship.secondaryEngine.GetComponent<LateralThruster>().Throttle(0, 0);
 
@@ -301,13 +301,13 @@ public class Raider : Enemy
         //}
         //else if (_newstate == AiState.adjusting)
         //{
-        //   // stateTimer = 0;
+        //   // timer_State = 0;
         //    ship.primaryEngine.GetComponent<EngineBasic>().Throttle(0, 1);
         //    ship.secondaryEngine.GetComponent<LateralThruster>().Throttle(0, 0);
         //}
         //else if (_newstate == AiState.recovering)
         //{
-        //   // stateTimer = StateTime();
+        //   // timer_State = StateTime();
         //    ship.primaryEngine.GetComponent<EngineBasic>().Throttle(1, 0);
         //    ship.secondaryEngine.GetComponent<LateralThruster>().Throttle(0, 0);
         //}

@@ -40,7 +40,7 @@ public class Enemy : MonoBehaviour
     protected Vector3 targetDirection;
     protected Quaternion targetRotation;
 
-    public float stateTimer, brainTimer;
+    protected float timer_State, timer_Brain;
 
     protected float stuckCounter, timeSinceLastAction; // check if stuck
 
@@ -84,33 +84,6 @@ public class Enemy : MonoBehaviour
 
         timeSinceLastAction = 0;
         stuckCounter = 0;
-
-
-
-        if (State() == AiState.spawned)
-        {
-
-
-        }
-        else if (State() == AiState.adjusting)
-        {
-
-        }
-
-        if (_newstate == AiState.attacking)
-        {
-
-        }
-        else if (_newstate == AiState.adjusting)
-        {
-
-        }
-        else if (_newstate == AiState.recovering)
-        {
-
-        }
-
-
 
 
     }
@@ -205,9 +178,9 @@ public class Enemy : MonoBehaviour
 
     public bool CheckBrain()
     {
-        if (brainTimer <= 0)
+        if (timer_Brain <= 0)
         {
-            brainTimer = BrainTime();
+            timer_Brain = BrainTime();
             return true;
         }
         return false;
@@ -235,7 +208,7 @@ public class Enemy : MonoBehaviour
 
         if (AttackTarget() == null || GetShip() == null) { return; }
 
-        if (brainTimer > 0) { brainTimer -= Time.deltaTime; }
+        if (timer_Brain > 0) { timer_Brain -= Time.deltaTime; }
 
         RotationTargetLookAt(AttackTarget());
 
@@ -280,8 +253,8 @@ public class Enemy : MonoBehaviour
                 }
 
 
-                stateTimer += Time.deltaTime;
-                if (stateTimer >= stateTime)
+                timer_State += Time.deltaTime;
+                if (timer_State >= stateTime)
                 {
                     State(AiState.recovering);
                     pendingState = AiState.adjusting;
@@ -311,8 +284,8 @@ public class Enemy : MonoBehaviour
 
             if (Vector3.Angle(GetShip().transform.forward, (AttackTarget().position - transform.position).normalized) > 80)
             {
-                stateTimer += Time.deltaTime;
-                if (stateTimer >= brainTime)
+                timer_State += Time.deltaTime;
+                if (timer_State >= brainTime)
                 {
                     State(AiState.recovering);
                     pendingState = AiState.adjusting;
@@ -329,8 +302,8 @@ public class Enemy : MonoBehaviour
             GetShip().primaryEngine.GetComponent<EngineBasic>().Thrust_Throttle(1);
             GetShip().primaryEngine.GetComponent<EngineBasic>().Roll_Throttle(1);
 
-            stateTimer -= Time.deltaTime;
-            if (stateTimer <= 0)
+            timer_State -= Time.deltaTime;
+            if (timer_State <= 0)
             {
                 State(pendingState);
             }
