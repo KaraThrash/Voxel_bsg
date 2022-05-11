@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum Axises { Horizontal, Vertical,Thrust }
+public enum Axises { Horizontal, Vertical,rightStickHorizontal,rightStickVertical,Thrust }
 public enum Buttons { none,A,B,X,Y,LB,RB,Leftstick,Rightstick,leftTrigger,rightTrigger }
 
 

@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using Polarith.AI.Package;
+﻿using UnityEngine;
 
 public class BasicEnemy : Enemy
 {
@@ -9,10 +6,13 @@ public class BasicEnemy : Enemy
     public ShipSystem gun;
 
     public Transform focusObject; //the object the polarith AI is trying to move towards. Use Polarith for general navigating, and set polarith to zero for specific actions
+    public GameObject effect_Explosion;
 
+    private float timer_inView; //track how long the target has been in view
 
+    public Transform patrolTarget;
+    private int count_PatrolPoint;
 
-    
     public override void Act()
     {
 
@@ -25,6 +25,7 @@ public class BasicEnemy : Enemy
         {
             movementControls.Torque = 0;
             movementControls.Speed = 0;
+
             RB().velocity = (GetShip().Chasis().ExternalForce());
             return;
         }
@@ -36,17 +37,53 @@ public class BasicEnemy : Enemy
 
         }
 
-        RaycastHit hit;
 
-        if (Physics.SphereCast(ShipTransform().position, 1.0f,(AttackTarget().position - ShipTransform().position),out hit))
+        if (State() == AiState.idle)
         {
-            if (hit.transform == AttackTarget())
+            Idle();
+
+        }
+        else 
+        {
+            RaycastHit hit;
+
+            if (Physics.SphereCast(ShipTransform().position, 1.0f, (AttackTarget().position - ShipTransform().position), out hit) && hit.transform == AttackTarget())
+            {
+                timer_inView += (Time.deltaTime * 2);
+
+                // return;
+            }
+            else
+            {
+                if (timer_inView > 0)
+                {
+                    timer_inView -= Time.deltaTime;
+
+                }
+            }
+
+            if (timer_inView > 0)
             {
                 Attacking();
-                return;
+            }
+            else
+            {
+                Moving();
             }
         }
-        Moving();
+
+
+        timer_State -= Time.deltaTime;
+
+        if (timer_State <= 0)
+        {
+            timer_State = StateTime();
+
+            MakeDecision();
+
+        }
+
+
         return;
 
         if (State() == AiState.adjusting)
@@ -78,7 +115,11 @@ public class BasicEnemy : Enemy
             PostAttack();
 
         }
+        else if (State() == AiState.idle)
+        {
+            Idle();
 
+        }
 
 
     }
@@ -86,76 +127,161 @@ public class BasicEnemy : Enemy
 
     public override void MakeDecision()
     {
-        //  DetermineRangeZone(ship.transform.position);
 
         if (ship.Hitpoints() <= 0)
         {
+
+            if (effect_Explosion != null)
+            {
+                effect_Explosion.transform.parent = null;
+                effect_Explosion.transform.position = ship.transform.position;
+                effect_Explosion.SetActive(true);
+            }
+            
             ship.Die();
+
             return;
 
         }
 
-        if (GetShip().PrimaryWeapon())
+
+
+
+        if (Vector3.Distance(AttackTarget().position, GetShip().transform.position) <= Stats().leashDistance && timer_inView > 0)
         {
-            float secondaryFacing = Vector3.Angle(ShipTransform().forward, (AttackTarget().position - ShipTransform().position).normalized);
-            if (secondaryFacing < Stats().angleTolerance)
+            RelativeFacing facing = AiBrain.Facing(ShipTransform(), AttackTarget());
+            if (gun != null) { gun.Deactivate(); }
+
+            if (State() == AiState.idle)
             {
-                if (gun != null) { gun.Act(); }
+                if (facing == RelativeFacing.behind || facing == RelativeFacing.behind)
+                {
+                    State(AiState.attacking);
+                }
+
             }
-            else { if (gun != null) { gun.Deactivate(); } }
+
+
+        }
+        else
+        {
+            if (State() == AiState.attacking)
+            {
+
+                State(AiState.postAttack);
+
+
+            }
+            else
+            {
+                if (State() == AiState.postAttack)
+                {
+                    if (patrolTarget != null && patrolTarget.childCount > 0)
+                    {
+                        
+                        FocusObject().position = patrolTarget.GetChild(0).position;
+
+                    }
+                    if (gun != null) { gun.Deactivate(); }
+                    State(AiState.idle);
+
+
+                }
+            }
         }
 
 
-        FocusObject().position = AttackTarget().position;
+        if (State() == AiState.idle)
+        {
+
+            
+        }
+        else
+        {
+
+            if (GetShip().PrimaryWeapon())
+            {
+                float secondaryFacing = Vector3.Angle(ShipTransform().forward, (AttackTarget().position - ShipTransform().position).normalized);
+                if (secondaryFacing < Stats().angleTolerance)
+                {
+                    if (gun != null) { gun.Act(); }
+                }
+                else { if (gun != null) { gun.Deactivate(); } }
+            }
+
+
+            FocusObject().position = AttackTarget().position;
+
+        }
+
+     
+
         return;
+
         AiState newState = State();
+
+        RangeBand currentRange = RangeBand.unknown;
+        //TODO: check if this enemy is capabable of detecting range -> repeat for each element
+        currentRange = AiBrain.DetermineRange(ShipTransform(), AttackTarget(), Stats());
+
+       // RelativeFacing facing = RelativeFacing.unknown;
+        //facing = AiBrain.Facing(ShipTransform(), AttackTarget());
+
+        float relativeVelocityMagnitude = 0;
+        if (AttackTarget().GetComponent<Ship>() && AttackTarget().GetComponent<Ship>().RB())
+        { 
+            relativeVelocityMagnitude = RB().velocity.magnitude - AttackTarget().GetComponent<Ship>().RB().velocity.magnitude;
+        }
+
+        Vector3 pendingFocusPosition = AttackTarget().position;
+
+        float newSpeed = Stats().engineThrottle;
+        float newTorque = Stats().torquePower;
+       
+        //Debug.Log("Range: " + currentRange.ToString() + "\nFacing: " + facing.ToString() + "\nvelocity Difference: " + relativeVelocityMagnitude.ToString());
 
         if (State() == AiState.attacking)
         {
             newState = AiState.moving;
-            movementControls.Speed = Stats().engineThrottle;
-            movementControls.Torque = Stats().torquePower;
+
 
         }
         else if (State() == AiState.moving)
         {
 
-            RangeBand currentRange = RangeTo();
 
             if (currentRange == RangeBand.extreme)
             {
                 newState = AiState.moving;
-                movementControls.Speed = Stats().engineThrottle;
-                movementControls.Torque = Stats().torquePower;
+
             }
             else if (currentRange == RangeBand.close)
             {
                 newState = AiState.attacking;
-                movementControls.Speed = Stats().engineThrottle;
-                movementControls.Torque = Stats().torquePower;
-                FocusObject().position = AttackTarget().position - (AttackTarget().forward * 3);
+
+                pendingFocusPosition  = AttackTarget().position - (AttackTarget().forward * 3);
             }
             else 
             {
                 newState = AiState.attacking;
-                movementControls.Speed = Stats().engineThrottle;
-                movementControls.Torque = Stats().torquePower;
-                FocusObject().position = AttackTarget().position - (AttackTarget().forward * 3);
+
+                pendingFocusPosition = AttackTarget().position - (AttackTarget().forward * 3);
             }
             
 
         }
         else if (State() == AiState.recovering)
         {
-            movementControls.Speed = Stats().engineThrottle;
-            movementControls.Torque = Stats().torquePower;
 
-            FocusObject().position = AttackTarget().position ;
+            pendingFocusPosition = AttackTarget().position ;
             newState = AiState.attacking;
 
         }
 
 
+        FocusObject().position = pendingFocusPosition;
+        movementControls.Speed = newSpeed;
+        movementControls.Torque = newTorque;
 
         timer_State = 5;
         State(newState);
@@ -186,12 +312,12 @@ public class BasicEnemy : Enemy
         if (RangeTo(FocusObject(),ShipTransform()) == RangeBand.close || RangeTo(FocusObject(), ShipTransform()) == RangeBand.melee)
         {
 
-            RB().velocity = Vector3.Lerp(RB().velocity, ShipTransform().forward * -Stats().engineThrottle, Time.deltaTime);
+            RB().velocity = Vector3.Lerp(RB().velocity, AttackTarget().right * -Stats().engineThrottle, Time.deltaTime);
         }
         else if (RangeTo(FocusObject(), ShipTransform()) == RangeBand.mid)
         {
 
-           // RB().velocity = Vector3.Lerp(RB().velocity, AttackTarget().GetComponent<Ship>().RB().velocity * 1.1f, Time.deltaTime * Stats().accelerate);
+            RB().velocity = Vector3.Lerp(RB().velocity, Vector3.zero, Time.deltaTime * Stats().accelerate);
         }
         else
         {
@@ -200,15 +326,7 @@ public class BasicEnemy : Enemy
 
 
 
-        timer_State -= Time.deltaTime;
-
-        if (timer_State <= 0)
-        {
-            timer_State = StateTime();
-
-            MakeDecision();
-
-        }
+        
     }
 
     public override void PostAttack()
@@ -248,9 +366,9 @@ public class BasicEnemy : Enemy
         timer_State -= Time.deltaTime;
         if (timer_State <= 0 )
         {
-            timer_State = StateTime();
+           // timer_State = StateTime();
 
-            MakeDecision();
+           // MakeDecision();
 
         }
     }
@@ -283,7 +401,44 @@ public class BasicEnemy : Enemy
 
         }
     }
-    public override void Idle() { }
+    public override void Idle() 
+    {
+        if (gun != null) { gun.Deactivate(); }
+        //  movementControls.Torque = Stats().torquePower;
+        // movementControls.Speed = Stats().engineThrottle;
+
+        Quaternion toFace = Quaternion.LookRotation(FocusObject().position - GetShip().transform.position);
+        transform.rotation = Quaternion.Lerp(transform.rotation, toFace, Mathf.Min(Stats().torquePower * Time.deltaTime, 1));
+
+        GetShip().transform.position += GetShip().transform.forward * Time.deltaTime * Stats().engineThrottle;
+
+        float dist = Vector3.Distance(focusObject.position, GetShip().transform.position);
+
+        if (dist <= Stats().rangeVarience )
+        {
+            count_PatrolPoint++;
+           
+
+            if (patrolTarget != null && patrolTarget.childCount > 0)
+            {
+                if (patrolTarget.childCount <= count_PatrolPoint)
+                { count_PatrolPoint = 0; }
+
+                FocusObject().position = patrolTarget.GetChild(count_PatrolPoint).position;
+
+            }
+            else 
+            {
+                FocusObject().position = (GetShip().transform.position - GetShip().transform.forward + GetShip().transform.up);
+            }
+
+
+        }
+        else
+        {
+            
+        }
+    }
     public override void Dodging() { }
     public override void Fleeing() { }
     public override void Spawned() { }

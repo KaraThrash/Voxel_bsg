@@ -6,6 +6,7 @@ using UnityEngine;
 public class Enemy : MonoBehaviour
 {
     public Stats_Enemy stats;
+    private GameManager gameManager;
     public NpcManager npcManager;
     public Rigidbody rb;
     public Ship ship;
@@ -310,7 +311,7 @@ public class Enemy : MonoBehaviour
 
 
         }
-
+        else if (State() == AiState.idle) { Idle(); }
         if (Vector3.Angle(GetShip().transform.position, AttackTarget().position) < 10 || Vector3.Angle(GetShip().transform.position, AttackTarget().position) > 80)
         {
 
@@ -388,6 +389,11 @@ public class Enemy : MonoBehaviour
 
     public Transform AttackTarget()
     {
+        if (attackTarget == null)
+        {
+            attackTarget = GameManager.instance.Player().Ship().transform;
+        }
+
         return attackTarget;
     }
 

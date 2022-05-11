@@ -7,6 +7,35 @@ public class Player : MonoBehaviour {
 
     public bool camControlsRotation;
 
+
+    public Ship Ship()
+    {
+        if (ship == null)
+        {
+        
+        }
+
+        return ship;
+    }
+
+    public Vector3 Position()
+    {
+        if (Ship())
+        {
+            return Ship().transform.position;
+        }
+        return transform.position;
+    }
+
+
+
+
+
+
+
+
+
+
     public void Update()
     {
         //DetectPressedKeyOrButton();

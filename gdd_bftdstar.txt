@@ -48,6 +48,14 @@ Enemies:
         --brain as a ship part -> what it can and cannot get information about based on its capabilities
             --e.g.: can detect velocity but not facing, or whether the weapons are hot
 
+    --types/activity:
+            -get close -> follow: close the distance and if out of range move to follow
+            -get close -> move to new position in range
+            - fly towards -> continue straight through [collision course]
+
+
+
+
 Enemy Fleet: Acts similar to the player's talent tree to confer benefits to the enemies, either globally or locally[current map/zone] depending on the specifics of each Enemyfleetship type
 
         

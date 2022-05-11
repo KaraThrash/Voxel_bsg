@@ -37,7 +37,12 @@ public enum RangeBand
 {
     ideal,melee,close,mid,far,extreme,unknown,infinity
 }
-
+public enum RelativeFacing
+{
+    unknown, chicken, behind, away,backToBack
+        //chicken: facing each other - behind the target - is facing away from the target
+        //backToBack - both facing away
+}
 
 public enum UpgradeType { ammo, health, chainsawReward, damage, clipsize, firerate, ammoPickupBonus }
 

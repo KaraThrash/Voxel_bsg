@@ -156,7 +156,7 @@ public class EngineBasic : EngineBase
             }
 
 
-            targetRotation = Quaternion.Slerp(targetRotation, Ship().RotationTarget(), Time.deltaTime * STAT_Power() * Ship().ShipInput().GetParameter(ShipInputParameters.turn));
+            targetRotation = Quaternion.Slerp(targetRotation, Ship().RotationTarget(), Time.deltaTime  *  STAT_Power() * Ship().ShipInput().GetParameter(ShipInputParameters.turn));
 
             if (ship && Ship().CanAct() && torquePower != 0)
             {

@@ -13,7 +13,8 @@ public class GameManager : MonoBehaviour {
     new GlobalSingletonGetter<GameManager>(gameObjectName: "GameManager");
 
 
-    public Player playerManager;
+    public Player player;
+   // public PlayerManager playerManager;
     public Menus menuManager;
     public MapManager mapManager;
     public NpcManager npcManager;
@@ -26,6 +27,14 @@ public class GameManager : MonoBehaviour {
     public Text contextText;
     public bool inMenu,inBattle,inMap;
 
+    public Player Player()
+    {
+        if (player == null)
+        {
+            player = FindObjectOfType<Player>();
+        }
+        return player;
+    }
 
     // Use this for initialization
     void Start () {
@@ -89,6 +98,8 @@ public class GameManager : MonoBehaviour {
     {
       
     }
+
+ 
 
 
 }

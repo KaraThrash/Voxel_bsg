@@ -71,7 +71,7 @@ public class ThirdPersonCamera : MonoBehaviour
 
     {
         
-        transform.position = player.transform.position;
+        transform.position = player.transform.position ;
 
 
         if (!playerControlled)
@@ -128,7 +128,7 @@ public class ThirdPersonCamera : MonoBehaviour
 
         if (InputControls.CheckAxis(Axises.Thrust) == 1 || player.GetComponent<Rigidbody>().velocity.magnitude > 1)
         {
-            targetPosition = player.transform.position;
+            targetPosition = player.transform.position ;
             idleTimer = -1;
             idleRot = internalSphere.rotation;
            // currentAcc = 0;
