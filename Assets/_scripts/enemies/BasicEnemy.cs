@@ -13,6 +13,8 @@ public class BasicEnemy : Enemy
     public Transform patrolTarget;
     private int count_PatrolPoint;
 
+    private Vector3 targetVelocity;
+
     public override void Act()
     {
 
@@ -23,8 +25,8 @@ public class BasicEnemy : Enemy
 
         if (GetShip().Chasis() && GetShip().Chasis().ExternalForce() != Vector3.zero)
         {
-            movementControls.Torque = 0;
-            movementControls.Speed = 0;
+            //movementControls.Torque = 0;
+            //movementControls.Speed = 0;
 
             RB().velocity = (GetShip().Chasis().ExternalForce());
             return;
@@ -64,7 +66,13 @@ public class BasicEnemy : Enemy
 
             if (timer_inView > 0)
             {
-                Attacking();
+                
+                if (State() == AiState.moving)
+                {
+                    Moving();
+
+                }
+                else { Attacking(); }
             }
             else
             {
@@ -120,6 +128,7 @@ public class BasicEnemy : Enemy
             Idle();
 
         }
+        else { Idle(); }
 
 
     }
@@ -144,21 +153,37 @@ public class BasicEnemy : Enemy
 
         }
 
+        AiState newState = State();
+
+        RelativeFacing facing = AiBrain.Facing(ShipTransform(), AttackTarget());
+        float distToPlayer = Vector3.Distance(AttackTarget().position, GetShip().transform.position);
+        RangeBand currentRange = RangeTo(FocusObject(), ShipTransform());
 
 
-
-        if (Vector3.Distance(AttackTarget().position, GetShip().transform.position) <= Stats().leashDistance && timer_inView > 0)
+        if (distToPlayer <= Stats().leashDistance && timer_inView > 0)
         {
-            RelativeFacing facing = AiBrain.Facing(ShipTransform(), AttackTarget());
-            if (gun != null) { gun.Deactivate(); }
+            
+
+            
+            if ((facing == RelativeFacing.behind || facing == RelativeFacing.chicken || facing == RelativeFacing.backToBack) && currentRange  != RangeBand.melee)
+            {
+                SetStance(Stance.neutral);
+                State(AiState.attacking);
+
+                if (facing == RelativeFacing.chicken)
+                { SetStance(Stance.defensive); }
+                else  if (facing == RelativeFacing.backToBack || currentRange == RangeBand.far || currentRange == RangeBand.extreme)
+                { SetStance(Stance.aggressive); }
+
+            }
+            else
+            {
+                FocusObject().position = AttackTarget().position - AttackTarget().forward * Stats().closeRange;
+                State(AiState.moving); 
+            }
 
             if (State() == AiState.idle)
             {
-                if (facing == RelativeFacing.behind || facing == RelativeFacing.behind)
-                {
-                    State(AiState.attacking);
-                }
-
             }
 
 
@@ -174,6 +199,7 @@ public class BasicEnemy : Enemy
             }
             else
             {
+
                 if (State() == AiState.postAttack)
                 {
                     if (patrolTarget != null && patrolTarget.childCount > 0)
@@ -182,7 +208,6 @@ public class BasicEnemy : Enemy
                         FocusObject().position = patrolTarget.GetChild(0).position;
 
                     }
-                    if (gun != null) { gun.Deactivate(); }
                     State(AiState.idle);
 
 
@@ -193,8 +218,15 @@ public class BasicEnemy : Enemy
 
         if (State() == AiState.idle)
         {
+            if (gun != null) { gun.Deactivate(); }
 
-            
+
+        }
+        else if (State() == AiState.moving)
+        {
+            if (gun != null) { gun.Deactivate(); }
+
+
         }
         else
         {
@@ -216,76 +248,6 @@ public class BasicEnemy : Enemy
 
      
 
-        return;
-
-        AiState newState = State();
-
-        RangeBand currentRange = RangeBand.unknown;
-        //TODO: check if this enemy is capabable of detecting range -> repeat for each element
-        currentRange = AiBrain.DetermineRange(ShipTransform(), AttackTarget(), Stats());
-
-       // RelativeFacing facing = RelativeFacing.unknown;
-        //facing = AiBrain.Facing(ShipTransform(), AttackTarget());
-
-        float relativeVelocityMagnitude = 0;
-        if (AttackTarget().GetComponent<Ship>() && AttackTarget().GetComponent<Ship>().RB())
-        { 
-            relativeVelocityMagnitude = RB().velocity.magnitude - AttackTarget().GetComponent<Ship>().RB().velocity.magnitude;
-        }
-
-        Vector3 pendingFocusPosition = AttackTarget().position;
-
-        float newSpeed = Stats().engineThrottle;
-        float newTorque = Stats().torquePower;
-       
-        //Debug.Log("Range: " + currentRange.ToString() + "\nFacing: " + facing.ToString() + "\nvelocity Difference: " + relativeVelocityMagnitude.ToString());
-
-        if (State() == AiState.attacking)
-        {
-            newState = AiState.moving;
-
-
-        }
-        else if (State() == AiState.moving)
-        {
-
-
-            if (currentRange == RangeBand.extreme)
-            {
-                newState = AiState.moving;
-
-            }
-            else if (currentRange == RangeBand.close)
-            {
-                newState = AiState.attacking;
-
-                pendingFocusPosition  = AttackTarget().position - (AttackTarget().forward * 3);
-            }
-            else 
-            {
-                newState = AiState.attacking;
-
-                pendingFocusPosition = AttackTarget().position - (AttackTarget().forward * 3);
-            }
-            
-
-        }
-        else if (State() == AiState.recovering)
-        {
-
-            pendingFocusPosition = AttackTarget().position ;
-            newState = AiState.attacking;
-
-        }
-
-
-        FocusObject().position = pendingFocusPosition;
-        movementControls.Speed = newSpeed;
-        movementControls.Torque = newTorque;
-
-        timer_State = 5;
-        State(newState);
-
     }
 
 
@@ -301,32 +263,60 @@ public class BasicEnemy : Enemy
         movementControls.Speed = 0;
         movementControls.Torque = 0;
 
-
+        
         float secondaryFacing = Vector3.Angle(ShipTransform().forward, (AttackTarget().position - ShipTransform().position).normalized);
 
-        FocusObject().position = AttackTarget().position;// - (AttackTarget().forward * 3);
-
-        ShipTransform().transform.rotation = Quaternion.Slerp(ShipTransform().transform.rotation, Quaternion.LookRotation(AttackTarget().position - ShipTransform().position, AttackTarget().up), Time.deltaTime * Stats().torquePower);
+        //  FocusObject().position = AttackTarget().position;// - (AttackTarget().forward * 3);
 
 
-        if (RangeTo(FocusObject(),ShipTransform()) == RangeBand.close || RangeTo(FocusObject(), ShipTransform()) == RangeBand.melee)
+        if (RangeTo(FocusObject(), ShipTransform()) != RangeBand.melee)
         {
-
-            RB().velocity = Vector3.Lerp(RB().velocity, AttackTarget().right * -Stats().engineThrottle, Time.deltaTime);
-        }
-        else if (RangeTo(FocusObject(), ShipTransform()) == RangeBand.mid)
-        {
-
-            RB().velocity = Vector3.Lerp(RB().velocity, Vector3.zero, Time.deltaTime * Stats().accelerate);
-        }
-        else
-        {
-            RB().velocity = Vector3.Lerp(RB().velocity, ShipTransform().forward * Stats().engineThrottle, Time.deltaTime);
+            Quaternion rot = Quaternion.LookRotation(AttackTarget().position - ShipTransform().position, AttackTarget().up);
+            float pwr = Time.deltaTime * Stats().torquePower;
+            ShipTransform().transform.rotation = Quaternion.Slerp(ShipTransform().transform.rotation, rot, pwr);
         }
 
+        Vector3 newVel = (AttackTarget().position - ShipTransform().position).normalized;
+
+        if (GetStance() == Stance.aggressive)
+        {
+            newVel =  ShipTransform().forward ;
+        }
+        else if (GetStance() == Stance.neutral)
+        {
+            newVel = Vector3.zero;
+        }
+        else 
+        {
+            
+
+            if (GetSubID() == SubID.A )
+            {
+                newVel = (newVel + AttackTarget().right).normalized;
+            }
+            else if(GetSubID() == SubID.B)
+            {
+                newVel = (newVel - AttackTarget().right).normalized;
+            }
+            else if (GetSubID() == SubID.C)
+            {
+                newVel = (newVel + AttackTarget().up).normalized;
+            }
+            else 
+            {
+                newVel = (newVel - AttackTarget().up).normalized;
+            }
+
+        }
 
 
-        
+        RB().velocity = Vector3.Lerp(RB().velocity, newVel * Stats().engineThrottle, Time.deltaTime);
+
+
+
+
+
+
     }
 
     public override void PostAttack()
@@ -354,7 +344,7 @@ public class BasicEnemy : Enemy
         movementControls.Torque = Mathf.Lerp(movementControls.Torque, Stats().torquePower, Time.deltaTime * Stats().accelerate);
         movementControls.Speed = Mathf.Lerp(movementControls.Speed, Stats().engineThrottle, Time.deltaTime * Stats().accelerate);
 
-        ShipTransform().transform.localRotation = Quaternion.Slerp(ShipTransform().transform.localRotation, Quaternion.identity, Time.deltaTime * Stats().torquePower);
+       // ShipTransform().transform.localRotation = Quaternion.Slerp(ShipTransform().transform.localRotation, Quaternion.identity, Time.deltaTime * Stats().torquePower);
 
 
         // FocusObject().position = AttackTarget().position;
@@ -506,6 +496,10 @@ public class BasicEnemy : Enemy
         {
             return RangeBand.extreme;
         }
+        else if (Vector3.Distance(_from.position, _target.position) < Stats().closeRange * 0.5f)
+        {
+            return RangeBand.melee;
+        }
         else if (Vector3.Distance(_from.position, _target.position) <= Stats().midRange)
         {
             return RangeBand.close;
@@ -514,6 +508,7 @@ public class BasicEnemy : Enemy
         {
             return RangeBand.mid;
         }
+       
 
         return RangeBand.unknown;
     }

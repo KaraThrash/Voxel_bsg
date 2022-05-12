@@ -175,4 +175,16 @@ public class EngineBase : ShipSystem
 
     }
 
+    public bool RaycastAtNextPosition(Transform _pos,Vector3 _newPos)
+    {
+
+
+        RaycastHit hit;
+        if (Physics.Raycast(_pos.position, _newPos ,out hit, ~LayerMask.GetMask("Enviroment")))
+        {
+            return false;// (hit.point - _pos) * 0.95f;
+        }
+        return true;
+    }
+
 }

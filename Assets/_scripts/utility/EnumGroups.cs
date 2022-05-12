@@ -7,13 +7,20 @@ public enum Maneuver { barrelRoll,spinAround}
 public enum SystemType { armor,body,engine,guidance,maneuver,targeting,weapon}
 public enum SystemState { on,off,locked,broken,damaged, menuLocked, maneuver } //menulocked for points that everything is paused by still observable
 
+public enum InGameEvent { none,objectiveLost,fleetShipLost}
+public enum SubID { none,A,B,C,D,E,F,G,Boss} //to create small differences [strafe directions and order for grouping Wings of fighters]
+
+
+
+public enum BulletType { basic, missile, lance, boomerang, spiral }
+
+
 public enum PlayerTypes { left, right, observer, test, neutral, enemy }
 
 
 public enum GameState { playing, inOverTime, rest, upgradeScreen, lobby, playersdead, bonusRound, tutorial, inactive,attractMode }
 public enum GunType { auto,burst, semiauto, shotgun, spread, laser }
 
-public enum BulletType { basic, missile, lance, boomerang, spiral }
 
 
 

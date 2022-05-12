@@ -15,11 +15,23 @@ public class LateralThruster : EngineBase
 
     public override Vector3 Lateral()
     {
-        Vector3 up = Vector3.zero;
-        Vector3 right = Vector3.zero;
-        if (Mathf.Abs(ActOn().localPosition.x) >= boundary.x * 0.7f) { right = ActOn().parent.right * ActOn().localPosition.x; }
-        if (Mathf.Abs(ActOn().localPosition.y) >= boundary.y * 0.7f) { up = ActOn().parent.up * ActOn().localPosition.y; }
-        return (up + right).normalized ;
+        Vector3 up = ActOn().parent.up * vertical;
+        Vector3 right = ActOn().parent.right * horizontal;
+
+        //if (Mathf.Abs(ActOn().localPosition.x) >= boundary.x * 0.7f) { right = ActOn().parent.right * ActOn().localPosition.x; }
+        //if (Mathf.Abs(ActOn().localPosition.y) >= boundary.y * 0.7f) { up = ActOn().parent.up * ActOn().localPosition.y; }
+
+        //if (Mathf.Abs(horizontal) == 1) { right = ActOn().parent.right * horizontal; }
+        //if (Mathf.Abs(vertical) == 1) { up = ActOn().parent.up * vertical; }
+
+        if (PositiveButton())
+        {
+            return (up + right).normalized;
+        }
+        else { return Vector3.zero; }
+
+        
+        
         //return new Vector3(ActOn().localPosition.x, ActOn().localPosition.y,0);
 
     }
@@ -56,7 +68,22 @@ public class LateralThruster : EngineBase
             }
             else 
             {
-                ActOn().localPosition = Vector3.Lerp(ActOn().localPosition, targetPos, Time.deltaTime * STAT_Power() * Ship().ShipInput().GetParameter(ShipInputParameters.lateral));
+
+                if (PositiveButton())
+                { }
+                    //Vector3 pos = RaycastAtNextPosition(ActOn().localPosition, targetPos);
+                    if (RaycastAtNextPosition(ActOn(), targetPos + ActOn().localPosition) )
+                    {
+                        ActOn().localPosition = Vector3.Lerp(ActOn().localPosition, targetPos, Time.deltaTime * STAT_Power() * Ship().ShipInput().GetParameter(ShipInputParameters.lateral));
+
+                    }
+                    else
+                    {
+                        ActOn().localPosition = Vector3.Lerp(ActOn().localPosition, Vector3.zero, Time.deltaTime * STAT_Power() * Ship().ShipInput().GetParameter(ShipInputParameters.lateral));
+
+                    }
+                
+                
 
             }
             //if (Lateral() == Vector3.zero)
@@ -140,6 +167,8 @@ public class LateralThruster : EngineBase
         }
 
     }
+
+ 
 
     public override void Activate()
     {

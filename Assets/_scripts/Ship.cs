@@ -211,7 +211,7 @@ public class Ship : MonoBehaviour
         //NOTE: forces like recoild from a railgun or ground collisions are included here
         if (Chasis())
         {
-            newVelocity = Chasis().ApplyExternalForces(newVelocity);
+          //  newVelocity = Chasis().ApplyExternalForces(newVelocity);
 
         }
         

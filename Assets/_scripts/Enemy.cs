@@ -16,6 +16,7 @@ public class Enemy : MonoBehaviour
     public AiState state;
     private AiState pendingState;
     public Stance stance;
+    public SubID subid;
 
     public Transform attackTarget;
 
@@ -159,6 +160,7 @@ public class Enemy : MonoBehaviour
 
     void Start()
     {
+        GetSubID();
         if (AttackTarget() == null || GetShip() == null) { return; }
         State(AiState.attacking);
         stateTime = 5;
@@ -479,11 +481,18 @@ public class Enemy : MonoBehaviour
     public float BrainTime() { return brainTime; }
     public float DirectionChangeSpeed() { return directionChangeSpeed; }
     public AiState State() { return state; }
-    public Stance Stance() { return stance; }
-    public void Stance(Stance _stance) { stance = _stance; }
+    public Stance GetStance() { return stance; }
+    public void SetStance(Stance _stance) { stance = _stance; }
 
 
-
+    public SubID GetSubID() 
+    {
+        if (subid == SubID.none)
+        {
+            subid = (SubID)Random.Range(1, 6);
+        }
+        return subid;
+    }
 
 
 
