@@ -473,7 +473,7 @@ public class Ship : Actor
         { 
             uiDisplay.SetHP(Hitpoints().ToString());
             uiDisplay.SetStamina(stamina);
-            uiDisplay.SetWeapons(PrimaryWeapon().timerCooldown.ToString());
+            uiDisplay.SetWeapons(PrimaryWeapon().timer_Cooldown.ToString());
         }
     }
 

@@ -4,12 +4,48 @@ using UnityEngine;
 
 public class Map : MonoBehaviour
 {
+    private GameManager gameManager;
+
     [SerializeField]
     Transform gravityCenter;
 
     public EnviromentType enviroment;
     public float gravityStrength;
     public float mapRadius;
+
+    private Spawn[] spawnSpots;
+
+    public Spawn[] GetSpawnSpots()
+    {
+        if (spawnSpots == null)
+        {
+            spawnSpots = FindObjectsOfType<Spawn>();
+        }
+            return spawnSpots;
+    }
+
+
+    public void Start()
+    {
+        Init();
+    }
+
+    public void Init()
+    {
+        GameManager().GetObjectiveEvent().AddListener(ObjectiveEvent);
+    }
+
+    public void ObjectiveEvent(InGameEvent _event)
+    {
+        if (_event == InGameEvent.objectiveLost)
+        {
+            foreach (Spawn el in GetSpawnSpots())
+            {
+                el.SpawnOne();
+            }
+        }
+    }
+
 
 
 
@@ -67,6 +103,13 @@ public class Map : MonoBehaviour
 
     public void Enviroment(EnviromentType _env) { enviroment = _env; }
     public EnviromentType Enviroment( ) { return enviroment ; }
+    
+    public GameManager GameManager()
+    {
+        if (gameManager == null)
+        { gameManager = FindObjectOfType<GameManager>(); }
 
+        return gameManager;
+    }
 
 }

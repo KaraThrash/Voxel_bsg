@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Actor : MonoBehaviour
 {
+    [SerializeField]
+    private int maxHP = 10;
     public int currentHealth;
     private Map currentMap;
 
@@ -19,7 +21,7 @@ public class Actor : MonoBehaviour
     }
 
 
-    public void TakeDamage(int _dmg)
+    public virtual void TakeDamage(int _dmg)
     {
         //apply dmg reduc, external forces, other talents etc
 
@@ -50,6 +52,11 @@ public class Actor : MonoBehaviour
 
     public int Hitpoints()
     { return currentHealth; }
+
+    public int MaxHP()
+    { return maxHP; }
+
+
 
 
     public void Die()

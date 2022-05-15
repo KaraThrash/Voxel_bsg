@@ -216,6 +216,16 @@ public class BasicEnemy : Enemy
         }
 
 
+        if (GetShip().PrimaryWeapon())
+        {
+            float secondaryFacing = Vector3.Angle(ShipTransform().forward, (AttackTarget().position - ShipTransform().position).normalized);
+            if (secondaryFacing < Stats().angleTolerance)
+            {
+                if (gun != null) { gun.Activate(); }
+            }
+           // else { if (gun != null) { gun.Deactivate(); } }
+        }
+
         if (State() == AiState.idle)
         {
             if (gun != null) { gun.Deactivate(); }
@@ -224,22 +234,14 @@ public class BasicEnemy : Enemy
         }
         else if (State() == AiState.moving)
         {
-            if (gun != null) { gun.Deactivate(); }
+           // if (gun != null) { gun.Deactivate(); }
 
 
         }
         else
         {
 
-            if (GetShip().PrimaryWeapon())
-            {
-                float secondaryFacing = Vector3.Angle(ShipTransform().forward, (AttackTarget().position - ShipTransform().position).normalized);
-                if (secondaryFacing < Stats().angleTolerance)
-                {
-                    if (gun != null) { gun.Act(); }
-                }
-                else { if (gun != null) { gun.Deactivate(); } }
-            }
+            
 
 
             FocusObject().position = AttackTarget().position;
@@ -260,6 +262,8 @@ public class BasicEnemy : Enemy
 
     public override void Attacking()
     {
+        if (gun != null) { gun.Act(); }
+
         movementControls.Speed = 0;
         movementControls.Torque = 0;
 

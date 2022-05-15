@@ -18,6 +18,7 @@ public class EnemyManager : MonoBehaviour
         
     }
 
+    //private GameManager gameManager;
     public GameManager GameManager()
     {
         if (gameManager == null)

@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class MapManager : MonoBehaviour {
 
+    //for switching maps and loading/unloading them
+
     public Map currentMap;
 
     public Map GetMap()

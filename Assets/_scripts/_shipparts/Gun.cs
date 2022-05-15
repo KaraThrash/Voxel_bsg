@@ -70,13 +70,13 @@ public class Gun : ShipSystem
             if (!OnCooldown())
             {
                 FireBullet();
-                timerCooldown = STAT_CooldownTime();
+                timer_Cooldown = STAT_CooldownTime();
             }
 
 
             if (burstTracker <= 0)
             {
-                timerCooldown = burstTime;
+                timer_Cooldown = burstTime;
 
             }
         }
@@ -92,7 +92,7 @@ public class Gun : ShipSystem
         if (!OnCooldown())
         {
             FireBullet();
-            timerCooldown = STAT_CooldownTime();
+            timer_Cooldown = STAT_CooldownTime();
         }
     }
 
@@ -103,7 +103,7 @@ public class Gun : ShipSystem
         if (burstTracker >= burstTime)
         {
             FireBullet();
-            timerCooldown = STAT_CooldownTime();
+            timer_Cooldown = STAT_CooldownTime();
             burstTracker = 0;
             on = false;
         }

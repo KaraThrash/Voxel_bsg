@@ -68,21 +68,28 @@ public class WeaponBase : ShipSystem
 
     public void Burst()
     {
-        if (OnCooldown())
+        if (!on)
+        {
+            return;
+        }
+
+        if (bulletCount < BurstBulletCount())
         {
             burstTracker -= Time.deltaTime;
 
-            if (burstTracker <= 0 && bulletCount < BurstBulletCount())
+            if (burstTracker <= 0 )
             {
                 FireBullet();
                 burstTracker = burstTime;
                 bulletCount++;
             }
+
         }
 
         else
-        { 
-            timerCooldown = STAT_CooldownTime();
+        {
+            on = false;
+            timer_Cooldown = STAT_CooldownTime();
             bulletCount = 0;
         }
     }
@@ -95,7 +102,7 @@ public class WeaponBase : ShipSystem
         if (!OnCooldown())
         {
             FireBullet();
-            timerCooldown = STAT_CooldownTime();
+            timer_Cooldown = STAT_CooldownTime();
         }
     }
 
@@ -106,7 +113,7 @@ public class WeaponBase : ShipSystem
         if (burstTracker >= burstTime)
         {
             FireBullet();
-            timerCooldown = STAT_CooldownTime();
+            timer_Cooldown = STAT_CooldownTime();
             burstTracker = 0;
             on = false;
         }
@@ -132,7 +139,7 @@ public class WeaponBase : ShipSystem
             if (burstTracker <= 0)
             {
                 burstTracker = burstTime;
-
+                bulletCount = 0;
             }
         }
         else if (GetGunType() == GunType.auto)

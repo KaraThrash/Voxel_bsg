@@ -23,7 +23,7 @@ public class Spawn : MonoBehaviour {
 	// Update is called once per frame
 	void FixedUpdate () {
 
-        if (toWatch == null && tospawn != null)
+        if (toWatch == null && tospawn != null && spawnclock != -1)
         {
             toWatch =  SpawnOne();
             toWatch.SetActive(true);
@@ -50,6 +50,7 @@ public class Spawn : MonoBehaviour {
 
         GameObject clone = Instantiate(tospawn, transform.position, transform.rotation) as GameObject;
         clone.transform.parent = enemyparent.transform;
+        clone.SetActive(true);
         return clone;
     }
     

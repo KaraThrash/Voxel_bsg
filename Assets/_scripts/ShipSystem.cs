@@ -19,7 +19,7 @@ public class ShipSystem : MonoBehaviour
     public float  STAT_cooldownTime;
     public float  STAT_power;
     public float  STAT_powerSecondary;
-    public float  timerCooldown;
+    public float  timer_Cooldown;
 
 
     protected float lockoutTimer;//for taking damage, being frozen or other circumstances that render this system unusable
@@ -34,7 +34,7 @@ public class ShipSystem : MonoBehaviour
     public void STAT_CooldownTime(float _val) { STAT_cooldownTime = _val; }
     public float STAT_CooldownTime( ) { return STAT_cooldownTime;}
 
-    public bool OnCooldown() { return timerCooldown > 0 || timerCooldown == -1 ; }
+    public bool OnCooldown() { return timer_Cooldown > 0 || timer_Cooldown == -1 ; }
 
     public void STAT_Power(float _val) { STAT_power = _val; }
     public float STAT_Power() { return STAT_power; }
@@ -95,9 +95,9 @@ public class ShipSystem : MonoBehaviour
 
     public virtual void TrackCooldown()
     {
-        if (timerCooldown > 0)
+        if (timer_Cooldown > 0)
         {
-            timerCooldown -= Time.deltaTime;
+            timer_Cooldown -= Time.deltaTime;
         }
     }
 
