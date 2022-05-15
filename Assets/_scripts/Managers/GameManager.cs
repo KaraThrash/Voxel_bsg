@@ -1,7 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Events;
+using System;
 
 public class GameManager : MonoBehaviour {
     public static GameManager instance
@@ -27,6 +28,8 @@ public class GameManager : MonoBehaviour {
     public Text contextText;
     public bool inMenu,inBattle,inMap;
 
+    public ObjectiveEvent event_Objective;
+
     public Player Player()
     {
         if (player == null)
@@ -36,18 +39,46 @@ public class GameManager : MonoBehaviour {
         return player;
     }
 
+
+    public void ObjectiveEvent(InGameEvent _event)
+    {
+        Debug.Log(_event);
+        //throw new NotImplementedException();
+
+    }
+    public UnityEvent<InGameEvent> GetObjectiveEvent()
+    {
+        if (event_Objective == null)
+        {
+            event_Objective = new ObjectiveEvent();
+
+        }
+        return event_Objective;
+    }
+
+
     // Use this for initialization
     void Start () {
 
+        GetObjectiveEvent().AddListener(ObjectiveEvent);
+
     }
 
-	// Update is called once per frame
-	void Update () {
-
-          
 
 
+    // Update is called once per frame
+    void Update () {
 
+
+        if (Input.GetKeyDown(KeyCode.M) )
+        {
+            GetObjectiveEvent().Invoke(InGameEvent.fleetShipLost);
+        }
+
+        if (Input.GetKeyDown(KeyCode.N))
+        {
+            GetObjectiveEvent().Invoke(InGameEvent.objectiveLost);
+        }
     }
 
 

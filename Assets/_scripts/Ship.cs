@@ -76,7 +76,7 @@ public class ShipInput
 
 
 
-public class Ship : MonoBehaviour
+public class Ship : Actor
 {
     public Rigidbody rb;
 
@@ -91,7 +91,7 @@ public class Ship : MonoBehaviour
     public bool canAct;
 
     public List<ShipSystem> systems;
-    public int currentHealth;
+    
     public float stamina, maxStamina, staminaRechargeRate;
 
     public float acceleration;
@@ -108,6 +108,8 @@ public class Ship : MonoBehaviour
     public UiShipDisplay uiDisplay;
 
     private ShipInput shipInput;
+
+    
 
     public ShipInput ShipInput() 
     {
@@ -192,6 +194,9 @@ public class Ship : MonoBehaviour
 
     public void Movement()
     {
+       
+
+
         //get engines target velocity
         //
 
@@ -214,7 +219,15 @@ public class Ship : MonoBehaviour
           //  newVelocity = Chasis().ApplyExternalForces(newVelocity);
 
         }
-        
+
+
+        if (Map() && Map().OutOfBounds(transform.position ))
+        {
+          //  TurnBack();
+           // RB().velocity = newVelocity.magnitude * transform.forward;
+
+          //  return;
+        }
 
         RB().velocity = newVelocity;
 
@@ -227,7 +240,14 @@ public class Ship : MonoBehaviour
 
 
 
+    public void TurnBack()
+    {
+        Quaternion newrot = Quaternion.LookRotation(Map().CenterOfMap() - transform.position);
 
+        transform.rotation = Quaternion.Slerp(transform.rotation, newrot, Time.deltaTime *  PrimaryEngine().STAT_Power());
+     //   RB().velocity = transform.forward *  PrimaryEngine().STAT_Power();
+
+    }
 
 
 
@@ -310,38 +330,7 @@ public class Ship : MonoBehaviour
     }
 
 
-    public void TakeDamage(int _dmg)
-    {
-        //apply dmg reduc, external forces, other talents etc
-
-        Hitpoints(-_dmg);
-    }
-
-    public void Hitpoints(int _change)
-    {
-        if (currentHealth != -1)
-        {
-            currentHealth += _change;
-
-            if (currentHealth <= 0)
-            { 
-                //NOTE: die when it needs to 'make decision' to create the dying animation
-                
-                //Die();
-            }
-        }
-        
-    }
-
-    public int Hitpoints()
-    { return currentHealth; }
-
-
-    public void Die()
-    {
-
-        Destroy(gameObject);
-    }
+    
 
 
 
@@ -496,6 +485,16 @@ public class Ship : MonoBehaviour
 
         return mainTransform;
     }
+
+  
+
+
+
+
+
+
+
+
 
     public void AddSystems()
     {

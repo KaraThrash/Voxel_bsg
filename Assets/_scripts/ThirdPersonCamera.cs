@@ -37,6 +37,9 @@ public class ThirdPersonCamera : MonoBehaviour
     public float yRot;
 
     private Vector3 targetPosition;
+    private Map currentMap;
+
+
 
     public void Start()
     {
@@ -152,7 +155,12 @@ public class ThirdPersonCamera : MonoBehaviour
         if (clampVerticalRotation) { m_CameraTargetRot = ClampRotationAroundXAxis(m_CameraTargetRot); }
 
 
-        
+        if (Map() && Map().OutOfBounds(transform.position ))
+        {
+            TurnBack();
+
+            return;
+        }
 
 
         if (smooth)
@@ -260,4 +268,23 @@ public class ThirdPersonCamera : MonoBehaviour
         return q;
     }
 
+
+    public void TurnBack()
+    {
+        Quaternion newrot = Quaternion.LookRotation(Map().CenterOfMap() - transform.position);
+
+        transform.rotation = Quaternion.Slerp(transform.rotation, newrot, Time.deltaTime * smoothTime);
+        //   RB().velocity = transform.forward *  PrimaryEngine().STAT_Power();
+
+    }
+
+    public Map Map()
+    {
+        if (currentMap == null)
+        {
+            currentMap = FindObjectOfType<Map>();
+        }
+
+        return currentMap;
+    }
 }

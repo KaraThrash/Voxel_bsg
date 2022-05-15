@@ -9,8 +9,37 @@ public class Map : MonoBehaviour
 
     public EnviromentType enviroment;
     public float gravityStrength;
+    public float mapRadius;
 
 
+
+    public bool OutOfBounds(Vector3 _actor)
+    {
+        if (gravityCenter)
+        {
+            if (Vector3.Distance(_actor, gravityCenter.position) >= mapRadius)
+            {
+                return true;
+            }
+        }
+        else
+        {
+            if (_actor.magnitude > mapRadius)
+            { return true; }
+        }
+
+        
+
+        return false;
+    }
+
+    public Vector3 CenterOfMap()
+    {
+        if (gravityCenter)
+        { return gravityCenter.position; }
+
+        return transform.position;
+    }
 
 
     public Vector3 Gravity()

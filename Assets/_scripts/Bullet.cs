@@ -30,6 +30,8 @@ public class Bullet : MonoBehaviour
     private Transform bulletParent;
     private string bulletParentName = "";
 
+    
+
     public float LifeTimeMax() { return lifetimeMax; }
     public float Speed() { return speed; }
     public float RotationSpeed() { return rotSpeed; }
@@ -105,9 +107,14 @@ public class Bullet : MonoBehaviour
     public virtual void ProcessCollisionEnter(Collision collision)
     {
 
+        
         if (collision.gameObject.GetComponent<Ship>() != null)
         {
             CollideWithShip(collision.gameObject.GetComponent<Ship>(), collision.contacts[0].point);
+        }
+        else if (collision.gameObject.GetComponent<Actor>() != null)
+        {
+            CollideWithShip(collision.gameObject.GetComponent<Actor>(), collision.contacts[0].point);
         }
         else if (collision.transform.CompareTag("Enviroment"))
         {
@@ -123,8 +130,29 @@ public class Bullet : MonoBehaviour
         {
             CollideWithShip(collision.gameObject.GetComponent<Ship>(), collision.ClosestPoint(transform.position));
         }
+        else if (collision.gameObject.GetComponent<Actor>() != null)
+        {
+            CollideWithShip(collision.gameObject.GetComponent<Actor>(), collision.ClosestPoint(transform.position));
+        }
     }
 
+
+    public virtual void CollideWithShip(Actor _actor, Vector3 _pos)
+    {
+
+        GetComponent<Collider>().enabled = false;
+
+        if (explosion != null)
+        {
+            Instantiate(explosion, transform.position, transform.rotation);
+        }
+
+
+        _actor.TakeDamage(Damage());
+
+        Die();
+
+    }
 
     public virtual void CollideWithShip(Ship _ship, Vector3 _pos)
     {
@@ -136,7 +164,11 @@ public class Bullet : MonoBehaviour
             Instantiate(explosion, transform.position, transform.rotation);
         }
 
-        _ship.Chasis().ExternalForce(damage * (transform.position - _pos).normalized);
+        if (_ship.Chasis())
+        {
+            _ship.Chasis().ExternalForce(damage * (transform.position - _pos).normalized);
+        }
+        
         _ship.TakeDamage(Damage());
 
 
@@ -190,9 +222,13 @@ public class Bullet : MonoBehaviour
 
     public void Die()
     {
-        SetCollider(false);
+        SetCollider(false);https://docs.unity3d.com/ScriptReference/TrailRenderer.Clear.html
         RB().isKinematic = true;
         lifeTime = -1;
+
+        if (GetComponent<TrailRenderer>())
+        { GetComponent<TrailRenderer>().Clear(); }
+
         gameObject.SetActive(false);
 
     }

@@ -3,5 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class MapManager : MonoBehaviour {
+
+    public Map currentMap;
+
+    public Map GetMap()
+    { return currentMap; }
+
+
     
 }

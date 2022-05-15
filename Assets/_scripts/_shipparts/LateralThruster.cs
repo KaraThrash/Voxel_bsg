@@ -61,7 +61,24 @@ public class LateralThruster : EngineBase
 
         if (ship && ship.CanAct() && STAT_Power() != 0)
         {
-             targetPos = new Vector3(boundary.x * horizontal, boundary.y * vertical, 0);
+            //if (horizontal != 0)
+            //{
+            //    targetPos = new Vector3(boundary.x * horizontal, targetPos.y, 0);
+            //}
+            //else 
+            //{ 
+            //    targetPos = new Vector3(ActOn().localPosition.x, targetPos.y, 0);
+            //}
+            //if (vertical != 0)
+            //{
+            //    targetPos = new Vector3(targetPos.x, boundary.y * vertical, 0);
+            //}
+            //else
+            //{
+            //    targetPos = new Vector3(targetPos.x, ActOn().localPosition.y, 0);
+            //}
+            targetPos = new Vector3(boundary.x * horizontal, boundary.y * vertical, 0);
+
             if (Vector3.Distance(targetPos, ActOn().localEulerAngles) < 0.1f)
             {
                 ActOn().localPosition = targetPos;
@@ -110,7 +127,7 @@ public class LateralThruster : EngineBase
             {
 
                 ActOn().transform.rotation = Quaternion.Slerp(ActOn().rotation, Quaternion.LookRotation((rotationTarget.position + (rotationTarget.forward * focalDepth)) - ActOn().position, rotationTarget.up), Time.deltaTime * torquePower * Ship().ShipInput().GetParameter(ShipInputParameters.turn));
-
+  
             }
 
            
