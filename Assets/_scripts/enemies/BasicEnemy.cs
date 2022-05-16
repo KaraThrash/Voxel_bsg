@@ -40,20 +40,19 @@ public class BasicEnemy : Enemy
         }
 
 
-        if (State() == AiState.idle)
-        {
-            Idle();
-
-        }
-        else 
-        {
-            RaycastHit hit;
-
-            if (Physics.SphereCast(ShipTransform().position, 1.0f, (AttackTarget().position - ShipTransform().position), out hit) && hit.transform == AttackTarget())
+        
+            
+            if (CheckInView(AttackTarget()))
             {
-                timer_inView += (Time.deltaTime * 2);
 
-                // return;
+                if (timer_inView <= 0)
+                { timer_inView = 0.5f; }
+                else
+                {
+                    timer_inView += (Time.deltaTime * 2);
+
+                }
+
             }
             else
             {
@@ -64,21 +63,28 @@ public class BasicEnemy : Enemy
                 }
             }
 
-            if (timer_inView > 0)
-            {
-                
-                if (State() == AiState.moving)
-                {
-                    Moving();
+        //if (State() == AiState.idle)
+        //{
+        //    Idle();
 
-                }
-                else { Attacking(); }
-            }
-            else
-            {
-                Moving();
-            }
-        }
+        //}
+        //else
+        //{
+        //    if (timer_inView > 0)
+        //    {
+                
+        //        if (State() == AiState.moving)
+        //        {
+        //            Moving();
+
+        //        }
+        //        else { Attacking(); }
+        //    }
+        //    else
+        //    {
+        //        Moving();
+        //    }
+        //}
 
 
         timer_State -= Time.deltaTime;
@@ -88,11 +94,9 @@ public class BasicEnemy : Enemy
             timer_State = StateTime();
 
             MakeDecision();
-
+            return;
         }
 
-
-        return;
 
         if (State() == AiState.adjusting)
         {
@@ -134,6 +138,20 @@ public class BasicEnemy : Enemy
     }
 
 
+    public override bool CheckInView(Transform _lookingFor)
+    {
+        RaycastHit hit;
+
+        if (Physics.SphereCast(ShipTransform().position, 1.0f, (_lookingFor.position - ShipTransform().position), out hit) && hit.transform == _lookingFor)
+        {
+
+            return true ;
+        }
+   
+        return false;
+    }
+
+
     public override void MakeDecision()
     {
 
@@ -162,28 +180,39 @@ public class BasicEnemy : Enemy
 
         if (distToPlayer <= Stats().leashDistance && timer_inView > 0)
         {
-            
 
-            
-            if ((facing == RelativeFacing.behind || facing == RelativeFacing.chicken || facing == RelativeFacing.backToBack) && currentRange  != RangeBand.melee)
+
+            if (currentRange == RangeBand.melee)
+            {
+                SetStance(Stance.aggressive);
+                State(AiState.attacking);
+                Vector3 distPast = (AttackTarget().position - ShipTransform().position).normalized * Stats().closeRange;
+                FocusObject().position = AttackTarget().position + distPast;
+
+            }
+            else if ((facing == RelativeFacing.behind || facing == RelativeFacing.backToBack) )
             {
                 SetStance(Stance.neutral);
                 State(AiState.attacking);
-
-                if (facing == RelativeFacing.chicken)
-                { SetStance(Stance.defensive); }
-                else  if (facing == RelativeFacing.backToBack || currentRange == RangeBand.far || currentRange == RangeBand.extreme)
-                { SetStance(Stance.aggressive); }
+                Vector3 distPast = (AttackTarget().position - ShipTransform().position).normalized * Stats().closeRange;
+                FocusObject().position = AttackTarget().position + distPast;
 
             }
             else
             {
-                FocusObject().position = AttackTarget().position - AttackTarget().forward * Stats().closeRange;
+                Vector3 distPast = AttackTarget().forward * Stats().closeRange;
+                FocusObject().position = AttackTarget().position - distPast;
                 State(AiState.moving); 
             }
 
-            if (State() == AiState.idle)
+            if (GetShip().PrimaryWeapon())
             {
+                float secondaryFacing = Vector3.Angle(ShipTransform().forward, (AttackTarget().position - ShipTransform().position).normalized);
+                if (secondaryFacing < Stats().angleTolerance)
+                {
+                    if (gun != null) { gun.Activate(); }
+                }
+                 else { if (gun != null) { gun.Deactivate(); } }
             }
 
 
@@ -194,7 +223,7 @@ public class BasicEnemy : Enemy
             {
 
                 State(AiState.postAttack);
-
+                if (gun != null) { gun.Deactivate(); }
 
             }
             else
@@ -208,8 +237,9 @@ public class BasicEnemy : Enemy
                         FocusObject().position = patrolTarget.GetChild(0).position;
 
                     }
-                    State(AiState.idle);
 
+                    State(AiState.idle);
+                    if (gun != null) { gun.Deactivate(); }
 
                 }
             }
@@ -228,7 +258,7 @@ public class BasicEnemy : Enemy
 
         if (State() == AiState.idle)
         {
-            if (gun != null) { gun.Deactivate(); }
+            
 
 
         }
@@ -244,7 +274,7 @@ public class BasicEnemy : Enemy
             
 
 
-            FocusObject().position = AttackTarget().position;
+          //  FocusObject().position = AttackTarget().position;
 
         }
 
@@ -273,26 +303,23 @@ public class BasicEnemy : Enemy
         //  FocusObject().position = AttackTarget().position;// - (AttackTarget().forward * 3);
 
 
-        if (RangeTo(FocusObject(), ShipTransform()) != RangeBand.melee)
-        {
-            Quaternion rot = Quaternion.LookRotation(AttackTarget().position - ShipTransform().position, AttackTarget().up);
-            float pwr = Time.deltaTime * Stats().torquePower;
-            ShipTransform().transform.rotation = Quaternion.Slerp(ShipTransform().transform.rotation, rot, pwr);
-        }
-
+   
+        Quaternion rot = Quaternion.identity;
         Vector3 newVel = (AttackTarget().position - ShipTransform().position).normalized;
 
         if (GetStance() == Stance.aggressive)
         {
+             rot = Quaternion.LookRotation(FocusObject().position - ShipTransform().position, AttackTarget().up);
             newVel =  ShipTransform().forward ;
         }
-        else if (GetStance() == Stance.neutral)
-        {
-            newVel = Vector3.zero;
-        }
+        //else if (GetStance() == Stance.neutral)
+        //{
+        //    rot = Quaternion.LookRotation(AttackTarget().position - ShipTransform().position, AttackTarget().up);
+        //    newVel = Vector3.zero;
+        //}
         else 
         {
-            
+            rot = Quaternion.LookRotation(AttackTarget().position - ShipTransform().position, AttackTarget().up);
 
             if (GetSubID() == SubID.A )
             {
@@ -314,9 +341,10 @@ public class BasicEnemy : Enemy
         }
 
 
-        RB().velocity = Vector3.Lerp(RB().velocity, newVel * Stats().engineThrottle, Time.deltaTime);
+        RB().velocity = Vector3.Lerp(RB().velocity, newVel * Stats().engineThrottle, Stats().accelerate * Time.deltaTime);
 
-
+        float pwr = Time.deltaTime * Stats().torquePower;
+        ShipTransform().rotation = Quaternion.Slerp(ShipTransform().transform.rotation, rot, pwr);
 
 
 
@@ -325,8 +353,9 @@ public class BasicEnemy : Enemy
 
     public override void PostAttack()
     {
-
-       
+        RB().velocity = Vector3.Lerp(RB().velocity, Vector3.zero, Stats().accelerate * Time.deltaTime);
+        float pwr = Time.deltaTime * Stats().torquePower;
+        ShipTransform().rotation = Quaternion.Slerp(ShipTransform().transform.rotation, Quaternion.identity, pwr);
     }
 
 

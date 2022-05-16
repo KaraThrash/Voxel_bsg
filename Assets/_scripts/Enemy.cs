@@ -151,6 +151,7 @@ public class Enemy : MonoBehaviour
 
     //check the enviromenty, and current state to determine what to do next
     public virtual void MakeDecision() { }
+    public virtual bool CheckInView(Transform _lookingFor) { return false; }
 
 
 

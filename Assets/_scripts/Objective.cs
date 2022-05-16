@@ -17,9 +17,10 @@ public class Objective : Actor
     public MeshRenderer meshRenderer;
 
 
-    private string SHADER_Color = "Color_796B3B6"; 
+    private string SHADER_color = "Color_796B3B6";
+    public UnityEvent onDamageTaken;
+    public UnityEvent onDeath;
 
-    
 
     // Start is called before the first frame update
     void Start()
@@ -42,9 +43,10 @@ public class Objective : Actor
     {
         Hitpoints(-_dmg);
 
-        if (Hitpoints() > 0 && meshRenderer != null)
+        if (Hitpoints() > 0 )
         {
-            meshRenderer.material.SetColor(SHADER_Color, Color.Lerp(defaultColor, deadColor, (float)Hitpoints() / (float)MaxHP()));
+            //NOTE: just color is not enough of an indicator [i.e. shape/texture]
+            UpdateColor(Color.Lerp(defaultColor, deadColor, PercentHealth()));
         }
         else 
         {
@@ -54,6 +56,17 @@ public class Objective : Actor
 
 
     }
+
+    public void UpdateColor(Color _color)
+    {
+
+        if ( meshRenderer != null)
+        {
+            meshRenderer.material.SetColor(SHADER_color, Color.Lerp(defaultColor, deadColor, (float)Hitpoints() / (float)MaxHP()));
+        }
+    }
+
+    
 
 
 }
