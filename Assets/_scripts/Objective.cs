@@ -62,7 +62,7 @@ public class Objective : Actor
 
         if ( meshRenderer != null)
         {
-            meshRenderer.material.SetColor(SHADER_color, Color.Lerp(defaultColor, deadColor, (float)Hitpoints() / (float)MaxHP()));
+            meshRenderer.material.SetColor(SHADER_color, Color.Lerp(defaultColor, deadColor, (float)Hitpoints() / (float)STAT_MaxHP()));
         }
     }
 

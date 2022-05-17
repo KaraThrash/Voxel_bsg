@@ -43,10 +43,17 @@ public class Spawn : MonoBehaviour {
             }
         }
 	}
+
+
+
     public GameObject SpawnOne( )
     {
-        count--;
-        if (count <= 0) { spawnclock = -1; }
+        if (count != -1)
+        {
+            count--;
+            if (count <= 0) { spawnclock = -1; }
+        }
+        
 
         GameObject clone = Instantiate(tospawn, transform.position, transform.rotation) as GameObject;
         clone.transform.parent = enemyparent.transform;

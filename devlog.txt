@@ -1,4 +1,21 @@
 Battle for the dark star:
 
+
+
+Gameloop:
+
+NPCs/Targets: -> Actor: anything with hitpoints
+
+Progress: Competing fleets -> stateful game progress:
+    Player and Enemy fleet act as part of a talent tree that changes the game state:
+    -rescue a ship that can upgrade items
+    -destroy a fuel refinery to increase the time before the next attack
+    -capture mining facility to decrease number of enemies that respawn
+    etc
+
+
+Camera Control: for hitting the map boundary and returning thr player back to the play are -> for the player -> camera controls the rotation back to center to avoid the jitter and possible motion sickness 
+
 Enemy AI: -> always turn to target and move forward results in a small constant bumping when too close
 Enemy AI: -> some states have conditions in them external of the 'make decision' paradigm [ a strafing run would start at one end of the ship and end at the other, so that enemy would check when it reaches the end NOT wait to 'make decision']
+

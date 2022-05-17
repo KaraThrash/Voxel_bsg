@@ -53,13 +53,13 @@ public class Actor : MonoBehaviour
     public int Hitpoints()
     { return currentHealth; }
 
-    public int MaxHP()
+    public int STAT_MaxHP()
     { return maxHP; }
 
     public float PercentHealth()
     {
         float current = Hitpoints();
-        float max = Mathf.Clamp(MaxHP(), 1, 100);
+        float max = Mathf.Clamp(STAT_MaxHP(), 1, 100);
 
         return current / max;
     }
