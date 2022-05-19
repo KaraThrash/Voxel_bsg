@@ -9,7 +9,13 @@ public class MapManager : MonoBehaviour {
     public Map currentMap;
 
     public Map GetMap()
-    { return currentMap; }
+    {
+        if (currentMap == null)
+        {
+            currentMap = FindObjectOfType<Map>();
+        }
+        return currentMap;
+    }
 
 
     

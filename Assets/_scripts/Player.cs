@@ -2,11 +2,55 @@
 using UnityEngine;
 public class Player : MonoBehaviour {
 
+    private GameManager gameManager;
     public Ship ship;
     public ThirdPersonCamera cam;
 
     public bool camControlsRotation;
 
+
+    public void InitForLevel()
+    {
+
+        if (Ship()) 
+        { 
+            Ship().gameObject.SetActive(true);
+            Ship().Hitpoints(1);
+            Ship().CanAct(true);
+
+        }
+        if (GetCamera()) { GetCamera().gameObject.SetActive(true); }
+
+    }
+
+
+    public void Playing()
+    {
+        if (Ship() && Ship().CanAct())
+        {
+            if (Ship().Hitpoints() <= 0)
+            {
+                Ship().CanAct(false);
+                GameManager().GetPlayerDeathEvent().Invoke();
+            }
+        }
+
+    }
+
+
+
+
+
+
+
+
+    public GameManager GameManager()
+    {
+        if (gameManager == null)
+        { gameManager = FindObjectOfType<GameManager>(); }
+
+        return gameManager;
+    }
 
     public Ship Ship()
     {
@@ -17,6 +61,13 @@ public class Player : MonoBehaviour {
 
         return ship;
     }
+
+    public ThirdPersonCamera GetCamera()
+    {
+
+        return cam;
+    }
+
 
     public Vector3 Position()
     {
@@ -50,7 +101,7 @@ public class Player : MonoBehaviour {
                 cam.PlayerControlled();
 
 
-                ship.Act();
+                //ship.Act();
 
             }
         }

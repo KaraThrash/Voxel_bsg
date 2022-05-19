@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 using System;
 
 public class GameManager : MonoBehaviour {
@@ -14,7 +15,9 @@ public class GameManager : MonoBehaviour {
     new GlobalSingletonGetter<GameManager>(gameObjectName: "GameManager");
 
 
+    public GameState gameState;
     public Player player;
+    public EnemyManager enemyManager;
    // public PlayerManager playerManager;
     public Menus menuManager;
     public MapManager mapManager;
@@ -29,39 +32,22 @@ public class GameManager : MonoBehaviour {
     public bool inMenu,inBattle,inMap;
 
     public ObjectiveEvent event_Objective;
+    public UnityEvent event_PlayerDeath;
 
-    public Player Player()
-    {
-        if (player == null)
-        {
-            player = FindObjectOfType<Player>();
-        }
-        return player;
-    }
+    
 
 
-    public void ObjectiveEvent(InGameEvent _event)
-    {
-        Debug.Log(_event);
-        //throw new NotImplementedException();
-
-    }
-    public UnityEvent<InGameEvent> GetObjectiveEvent()
-    {
-        if (event_Objective == null)
-        {
-            event_Objective = new ObjectiveEvent();
-
-        }
-        return event_Objective;
-    }
+ 
 
 
     // Use this for initialization
     void Start () {
 
-        GetObjectiveEvent().AddListener(ObjectiveEvent);
+        DontDestroyOnLoad(this);
 
+        GetObjectiveEvent().AddListener(ObjectiveEvent);
+        GetPlayerDeathEvent().AddListener(PlayerDeathEvent);
+        SceneManager.sceneLoaded += StartLevel;
     }
 
 
@@ -79,7 +65,30 @@ public class GameManager : MonoBehaviour {
         {
             GetObjectiveEvent().Invoke(InGameEvent.objectiveLost);
         }
+
+
+
+        if (GetGameState() == GameState.playing)
+        {
+            Player().Playing();
+
+
+        }
+        else if (GetGameState() == GameState.playersdead)
+        {
+
+
+
+        }
+
+
+
+
     }
+
+
+
+
 
 
     public void PlayerShipDestroyed()
@@ -127,10 +136,122 @@ public class GameManager : MonoBehaviour {
     //can be called from the ftl menu screen after a target is selected
     public void TravelFromHub(int dest)
     {
-      
+        SceneManager.LoadScene(dest);
+        SetGameState(GameState.playing);
+
+
+
     }
 
- 
+    public void SpendExtraLife()
+    {
+        //deduct a ship from the player's inventory
+        //move the player back to spawn, reset their hitpoints
+        Player().InitForLevel();
+        Player().Ship().transform.position = MapManager().GetMap().GetPlayerSpawnPosition();
+        MenuManager().StartInGame();
+        SetGameState(GameState.playing);
+        EnemyManager().StartLevel();
+    }
 
+
+    public void StartLevel(Scene scene, LoadSceneMode mode)
+    {
+        if (GetGameState() == GameState.playing)
+        {
+            Player().InitForLevel();
+            Player().Ship().transform.position = MapManager().GetMap().GetPlayerSpawnPosition();
+            MenuManager().StartInGame();
+            EnemyManager().StartLevel();
+        }
+        
+        
+    }
+
+
+
+
+
+
+
+    public void PlayerDeathEvent( )
+    {
+        Debug.Log("PlayerDeathEvent: " );
+        //decide to spend a life or restart or return to firelink
+        SetGameState(GameState.playersdead);
+        MenuManager().PlayerDeath();
+    }
+    public UnityEvent GetPlayerDeathEvent()
+    {
+        if (event_PlayerDeath == null)
+        {
+            event_PlayerDeath = new UnityEvent();
+
+        }
+        return event_PlayerDeath;
+    }
+
+    public void ObjectiveEvent(InGameEvent _event)
+    {
+        Debug.Log(_event);
+        //throw new NotImplementedException();
+
+    }
+    public UnityEvent<InGameEvent> GetObjectiveEvent()
+    {
+        if (event_Objective == null)
+        {
+            event_Objective = new ObjectiveEvent();
+
+        }
+        return event_Objective;
+    }
+
+
+
+
+
+
+
+    public void SetGameState(GameState _state)
+    { gameState = _state; }
+    public GameState GetGameState()
+    { return gameState; }
+
+    public Player Player()
+    {
+        if (player == null)
+        {
+            player = FindObjectOfType<Player>();
+        }
+        return player;
+    }
+
+    public EnemyManager EnemyManager()
+    {
+        if (enemyManager == null)
+        {
+            enemyManager = FindObjectOfType<EnemyManager>();
+        }
+        return enemyManager;
+    }
+
+    public Menus MenuManager()
+    {
+        if (menuManager == null)
+        {
+            menuManager = FindObjectOfType<Menus>();
+        }
+        return menuManager;
+    }
+
+    public MapManager MapManager()
+    {
+        if (mapManager == null)
+        {
+            mapManager = FindObjectOfType<MapManager>();
+        }
+        return mapManager;
+    }
 
 }

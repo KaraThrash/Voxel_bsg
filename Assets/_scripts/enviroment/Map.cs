@@ -8,6 +8,8 @@ public class Map : MonoBehaviour
 
     [SerializeField]
     Transform gravityCenter;
+    [SerializeField]
+    Transform playerSpawn;
 
     public EnviromentType enviroment;
     public float gravityStrength;
@@ -68,6 +70,19 @@ public class Map : MonoBehaviour
 
         return false;
     }
+
+
+    public Vector3 GetPlayerSpawnPosition()
+    {
+        if (playerSpawn == null)
+        {
+            return transform.position;
+
+        }
+
+        return playerSpawn.position;
+    }
+
 
     public Vector3 CenterOfMap()
     {

@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
+    private EnemyManager enemyManager;
     public Stats_Enemy stats;
     private GameManager gameManager;
     public NpcManager npcManager;
@@ -162,6 +163,8 @@ public class Enemy : MonoBehaviour
     void Start()
     {
         GetSubID();
+        EnemyManager().AddEnemyToList(this);
+
         if (AttackTarget() == null || GetShip() == null) { return; }
         State(AiState.attacking);
         stateTime = 5;
@@ -538,5 +541,12 @@ public class Enemy : MonoBehaviour
 
     }
 
-
+    public EnemyManager EnemyManager()
+    {
+        if (enemyManager == null)
+        {
+            enemyManager = FindObjectOfType<EnemyManager>();
+        }
+        return enemyManager;
+    }
 }
