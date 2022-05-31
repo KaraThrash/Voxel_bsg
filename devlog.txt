@@ -19,3 +19,40 @@ Camera Control: for hitting the map boundary and returning thr player back to th
 Enemy AI: -> always turn to target and move forward results in a small constant bumping when too close
 Enemy AI: -> some states have conditions in them external of the 'make decision' paradigm [ a strafing run would start at one end of the ship and end at the other, so that enemy would check when it reaches the end NOT wait to 'make decision']
 
+
+
+====
+Enemy
+===
+## Data:
+hp,pointValue,itemdrops
+===
+## Functionaility
+
+- [Stance](#idle,aggressive,neutral,defensive,active)
+  + [idle](#unaware_of_target)
+  + [alert](#aggressive,neutral,defensive)
+        - [State](#AI_logic)
+    **_OR_**
+  + [active](#always_in_alert)
+        - [State](#AI_logic)
+
+
+====
+
+
+
+
+
+
+
+
+Hi Morgan,
+
+That is great to hear. On [6/6-6/8] and [6/13-6/17] I am available anytime between 10am and 2pm Eastern Time.
+
+Thanks,
+Dan Donato
+
+
+  

@@ -5,7 +5,6 @@ public class BasicEnemy : Enemy
     public ShipPhysics movementControls;
     public ShipSystem gun;
 
-    public Transform focusObject; //the object the polarith AI is trying to move towards. Use Polarith for general navigating, and set polarith to zero for specific actions
     public GameObject effect_Explosion;
 
     private float timer_inView; //track how long the target has been in view
@@ -176,7 +175,7 @@ public class BasicEnemy : Enemy
         RelativeFacing facing = AiBrain.Facing(ShipTransform(), AttackTarget());
         float distToPlayer = Vector3.Distance(AttackTarget().position, GetShip().transform.position);
         RangeBand currentRange = RangeTo(FocusObject(), ShipTransform());
-
+        Vector3 distPast = Vector3.zero;
 
         if (distToPlayer <= Stats().leashDistance && timer_inView > 0)
         {
@@ -186,7 +185,7 @@ public class BasicEnemy : Enemy
             {
                 SetStance(Stance.aggressive);
                 State(AiState.attacking);
-                Vector3 distPast = (AttackTarget().position - ShipTransform().position).normalized * Stats().closeRange;
+                distPast = (AttackTarget().position - ShipTransform().position).normalized * Stats().closeRange;
                 FocusObject().position = AttackTarget().position + distPast;
 
             }
@@ -194,13 +193,13 @@ public class BasicEnemy : Enemy
             {
                 SetStance(Stance.neutral);
                 State(AiState.attacking);
-                Vector3 distPast = (AttackTarget().position - ShipTransform().position).normalized * Stats().closeRange;
+                distPast = (AttackTarget().position - ShipTransform().position).normalized * Stats().closeRange;
                 FocusObject().position = AttackTarget().position + distPast;
 
             }
             else
             {
-                Vector3 distPast = AttackTarget().forward * Stats().closeRange;
+                distPast = AttackTarget().forward * Stats().closeRange;
                 FocusObject().position = AttackTarget().position - distPast;
                 State(AiState.moving); 
             }
@@ -374,8 +373,8 @@ public class BasicEnemy : Enemy
     public override void TakingDamage() { }
     public override void Moving()
     {
-        movementControls.Torque = Mathf.Lerp(movementControls.Torque, Stats().torquePower, Time.deltaTime * Stats().accelerate);
-        movementControls.Speed = Mathf.Lerp(movementControls.Speed, Stats().engineThrottle, Time.deltaTime * Stats().accelerate);
+        movementControls.Torque = Stats().torquePower;// Mathf.Lerp(movementControls.Torque, Stats().torquePower, Time.deltaTime * Stats().accelerate);
+        movementControls.Speed = Stats().engineThrottle;// Mathf.Lerp(movementControls.Speed, Stats().engineThrottle, Time.deltaTime * Stats().accelerate);
 
        // ShipTransform().transform.localRotation = Quaternion.Slerp(ShipTransform().transform.localRotation, Quaternion.identity, Time.deltaTime * Stats().torquePower);
 
@@ -579,12 +578,7 @@ public class BasicEnemy : Enemy
     }
 
 
-    public Transform FocusObject()
-    {
-        if (focusObject == null) { return AttackTarget(); }
-
-        return focusObject;
-    }
+   
 
 }
 

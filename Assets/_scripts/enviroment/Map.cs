@@ -11,6 +11,10 @@ public class Map : MonoBehaviour
     [SerializeField]
     Transform playerSpawn;
 
+    public MapChunk currentChunk;
+    private MapChunk previousChunk; //stagger disabling chunks to make changing over smoother and less noticable to the player
+
+
     public EnviromentType enviroment;
     public float gravityStrength;
     public float mapRadius;
@@ -37,6 +41,36 @@ public class Map : MonoBehaviour
         GameManager().GetObjectiveEvent().AddListener(ObjectiveEvent);
     }
 
+    public void EnterNewChunk()
+    {
+        if (PreviousChunk())
+        { }
+
+        PreviousChunk(CurrentChunk());
+
+
+        foreach (SpawnSpot el in CurrentChunk().GetStartPositions())
+        {
+            GameManager().EnemyManager().SpawnEnemy(el.prefab_Enemy,el.transform);
+        }
+    }
+
+    public void EnterNewChunk(MapChunk _chunk)
+    {
+        if (PreviousChunk())
+        { }
+
+        PreviousChunk(CurrentChunk());
+
+        CurrentChunk(_chunk);
+
+        foreach (SpawnSpot el in CurrentChunk().GetStartPositions())
+        {
+            GameManager().EnemyManager().SpawnEnemy(el.prefab_Enemy, el.transform);
+        }
+    }
+
+
     public void ObjectiveEvent(InGameEvent _event)
     {
         if (_event == InGameEvent.objectiveLost)
@@ -53,22 +87,53 @@ public class Map : MonoBehaviour
 
     public bool OutOfBounds(Vector3 _actor)
     {
-        if (gravityCenter)
+
+        Transform pointToCheckAgainst = gravityCenter;
+        float dist = mapRadius;
+
+        if (CurrentChunk())
+        { 
+            pointToCheckAgainst = CurrentChunk().transform;
+            dist = CurrentChunk().Radius();
+        }
+
+        if (pointToCheckAgainst)
         {
-            if (Vector3.Distance(_actor, gravityCenter.position) >= mapRadius)
+            if (Vector3.Distance(_actor, pointToCheckAgainst.position) >= dist)
             {
                 return true;
             }
         }
         else
         {
-            if (_actor.magnitude > mapRadius)
+            if (_actor.magnitude > dist)
             { return true; }
         }
 
         
 
         return false;
+    }
+
+
+    public MapChunk CurrentChunk()
+    {
+        return currentChunk;
+    }
+
+    public void CurrentChunk(MapChunk _chunk)
+    {
+        currentChunk = _chunk;
+    }
+
+    public MapChunk PreviousChunk()
+    {
+        return previousChunk;
+    }
+
+    public void PreviousChunk(MapChunk _chunk)
+    {
+        previousChunk = _chunk;
     }
 
 
@@ -82,6 +147,10 @@ public class Map : MonoBehaviour
 
         return playerSpawn.position;
     }
+
+
+
+
 
 
     public Vector3 CenterOfMap()

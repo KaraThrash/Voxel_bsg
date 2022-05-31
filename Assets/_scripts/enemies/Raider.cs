@@ -4,225 +4,340 @@ using UnityEngine;
 
 public class Raider : Enemy
 {
+    public ShipPhysics movementControls;
     public ShipSystem gun;
 
-    public float engineThrottle, engineTorqueThrottle;
-    public float lateralHort, lasteralVert;
+    public GameObject effect_Explosion;
 
-    public float targetengineThrottle, targetengineTorqueThrottle;
-    public float targetlateralHort, targetlateralVert;
+    private float timer_inView; //track how long the target has been in view
+
+    public Transform patrolTarget;
+    private int count_PatrolPoint;
+
+    private Vector3 targetVelocity;
+
+    private Vector3 moveDir;
+    private Vector3 lookAt;
 
     public override void Act()
     {
-        engineThrottle = Mathf.Lerp(engineThrottle, targetengineThrottle, Time.deltaTime * DirectionChangeSpeed());
-        engineTorqueThrottle = Mathf.Lerp(engineTorqueThrottle, targetengineTorqueThrottle, Time.deltaTime * DirectionChangeSpeed());
-        lateralHort = Mathf.Lerp(lateralHort, targetlateralHort, Time.deltaTime * DirectionChangeSpeed());
-        lasteralVert = Mathf.Lerp(lasteralVert, targetlateralVert, Time.deltaTime * DirectionChangeSpeed());
 
-
-        
 
         if (AttackTarget() == null || ship == null) { return; }
 
         if (timer_Brain > 0) { timer_Brain -= Time.deltaTime; }
 
-        ship.primaryEngine.GetComponent<EngineBasic>().Thrust_Throttle(engineThrottle);
-        ship.primaryEngine.GetComponent<EngineBasic>().Roll_Throttle(engineTorqueThrottle);
-        ship.secondaryEngine.GetComponent<LateralThruster>().Horizontal_Throttle(lateralHort);
-        ship.secondaryEngine.GetComponent<LateralThruster>().Vertical_Throttle( lasteralVert);
-
-        if (State() == AiState.adjusting)
+        if (GetShip().Chasis() && GetShip().Chasis().ExternalForce() != Vector3.zero)
         {
-            Adjusting();
+            RB().velocity = (GetShip().Chasis().ExternalForce()) * 1;
+            RB().angularVelocity = (GetShip().Chasis().ExternalForce()) * 10;
+            return;
         }
-        else if (State() == AiState.attacking)
-        {
-            Attacking();
 
-        }
-        else if (State() == AiState.recovering)
+
+        if (ship.Hitpoints() <= 0)
         {
-            Recovering();
+            //is dead
+            Dying();
+            return;
 
         }
-        else if (State() == AiState.moving)
+
+
+
+
+        
+
+
+        timer_State -= Time.deltaTime;
+
+        if (timer_State <= 0)
         {
-            Moving();
+            timer_State = StateTime();
+
+            MakeDecision();
+            return;
+        }
+
+        if (GetStance() == Stance.idle)
+        {
+            if (CheckInView(AttackTarget()))
+            {
+                timer_inView += Time.deltaTime;
+
+                if (timer_inView >= BrainTime())
+                { SetStance(Stance.neutral) ; }
+
+            }
+        }
+        else
+        {
+
+            float pwr = Time.deltaTime * Stats().torquePower;
+            ShipTransform().rotation = Quaternion.Slerp(ShipTransform().transform.rotation, Quaternion.LookRotation(AttackTarget().position - ShipTransform().position, ShipTransform().up), pwr);
+
+            if (Vector3.Distance(FocusObject().position, ShipTransform().position) > Stats().rangeVarience)
+            {
+                RB().velocity = Vector3.Lerp(RB().velocity, (FocusObject().position - GetShip().transform.position).normalized * Stats().engineThrottle, Stats().accelerate * Time.deltaTime);
+            }
+
 
         }
-        if (Vector3.Angle(ship.transform.position, AttackTarget().position) < 10 || Vector3.Angle(ship.transform.position, AttackTarget().position) > 80)
-        {
 
-        }
+
+        
+
+
+
+
+
+        //if (State() == AiState.adjusting)
+        //{
+        //    Adjusting();
+        //}
+        //else if (State() == AiState.attacking)
+        //{
+        //    Attacking();
+
+        //}
+        //else if (State() == AiState.recovering)
+        //{
+        //    Recovering();
+
+        //}
+        //else if (State() == AiState.moving)
+        //{
+        //    Moving();
+
+        //}
+        //else if (State() == AiState.attackWindUp)
+        //{
+        //    AttackWindUp();
+
+        //}
+        //else if (State() == AiState.postAttack)
+        //{
+        //    PostAttack();
+
+        //}
+        //else if (State() == AiState.idle)
+        //{
+        //    Idle();
+
+        //}
+        //else { Idle(); }
 
 
     }
 
 
-    public override void MakeDecision() 
+    public override bool CheckInView(Transform _lookingFor)
     {
+        RaycastHit hit;
 
-        //when moving head on make lateral moves to avoid possible attacks
-        float facing = Vector3.Angle(ship.transform.forward, (AttackTarget().position - ship.transform.position).normalized);
-        float targetfacing = Vector3.Angle(AttackTarget().forward, (ship.transform.position - AttackTarget().position).normalized);
-
-        if (targetfacing < 90 && facing < 90)
+        if (Physics.SphereCast(ShipTransform().position, 1.0f, (_lookingFor.position - ShipTransform().position), out hit) && hit.transform == _lookingFor)
         {
 
-                targetlateralVert = -1 * Mathf.Sign(targetlateralVert);
-                targetlateralHort = -1 * Mathf.Sign(targetlateralVert);
+            return true;
+        }
+
+        return false;
+    }
+
+    
+
+    public override void MakeDecision()
+    {
+
+        if (ship.Hitpoints() <= 0)
+        {
+            Explode();
+            return;
+
+        }
+
+        AiState newState = State();
+
+        RelativeFacing facing = AiBrain.Facing(ShipTransform(), AttackTarget());
+        float distToPlayer = Vector3.Distance(AttackTarget().position, GetShip().transform.position);
+        RangeBand currentRange = RangeTo(FocusObject(), ShipTransform());
+        Vector3 distPast = Vector3.zero;
+
+        if (distToPlayer <= Stats().leashDistance && timer_inView > 0)
+        {
+
+
+            if (currentRange == RangeBand.melee)
+            {
+                SetStance(Stance.aggressive);
+                State(AiState.attacking);
+                //distPast = (AttackTarget().position - ShipTransform().position).normalized * Stats().farRange;
+                distPast = (AttackTarget().transform.right + AttackTarget().transform.up + AttackTarget().transform.forward) * Stats().farRange;
+                FocusObject().position = AttackTarget().position + distPast;
+
+            }
+            else if ((facing == RelativeFacing.behind || facing == RelativeFacing.backToBack))
+            {
+                SetStance(Stance.neutral);
+                State(AiState.attacking);
+                distPast = (AttackTarget().position - ShipTransform().position).normalized * Stats().farRange;
+                FocusObject().position = AttackTarget().position + distPast;
+
+            }
+            else
+            {
+                distPast = AttackTarget().forward * Stats().farRange;
+                FocusObject().position = AttackTarget().position - distPast;
+                State(AiState.moving);
+            }
+
+            if (GetShip().PrimaryWeapon())
+            {
+                float secondaryFacing = Vector3.Angle(ShipTransform().forward, (AttackTarget().position - ShipTransform().position).normalized);
+                if (secondaryFacing < Stats().angleTolerance)
+                {
+                    if (gun != null) { gun.Activate(); }
+                }
+                else { if (gun != null) { gun.Deactivate(); } }
+            }
+
 
         }
         else
         {
-                targetlateralVert = 0;
-                targetlateralHort = 0;
-        }
-
-        
-        AiState newState = State();
-
-        targetPos = AttackTarget().position - (AttackTarget().forward * Stats().closeRange);
-
-        if (Vector3.Distance(targetPos, ship.transform.position) > Stats().farRange)
-        {
-            newState = AiState.moving;
-
-        }
-        else if (Vector3.Distance(AttackTarget().position , ship.transform.position) < Stats().closeRange )
-        {
-            newState = AiState.adjusting;
-
-        }
-        else 
-        {
-            if (State() == AiState.adjusting && (Vector3.Distance(targetPos, ship.transform.position) < Stats().midRange ) )
+            if (State() == AiState.attacking)
             {
-                newState = AiState.adjusting;
+
+                State(AiState.postAttack);
+                if (gun != null) { gun.Deactivate(); }
+
             }
-            else 
+            else
             {
-                newState = AiState.attacking;
+
+                if (State() == AiState.postAttack)
+                {
+                    if (patrolTarget != null && patrolTarget.childCount > 0)
+                    {
+
+                        FocusObject().position = patrolTarget.GetChild(0).position;
+
+                    }
+
+                    State(AiState.idle);
+                    if (gun != null) { gun.Deactivate(); }
+
+                }
             }
-            
         }
 
-        //to make the lateral movements not always the same direction
-        if (newState == AiState.adjusting)
-        {
-            targetengineThrottle = 1;
-            targetengineTorqueThrottle = 1;
-            targetlateralVert = 0;
-                targetlateralHort = 0;
-            
 
-        }
-        else if (newState == AiState.attacking)
+        if (GetShip().PrimaryWeapon())
         {
-            if (targetfacing < facing)
+            float secondaryFacing = Vector3.Angle(ShipTransform().forward, (AttackTarget().position - ShipTransform().position).normalized);
+            if (secondaryFacing < Stats().angleTolerance)
             {
-                targetlateralHort = -targetlateralHort;
+                if (gun != null) { gun.Activate(); }
             }
-
-
-        }
-        else if (newState  == AiState.recovering)
-        {
-            if (targetfacing < facing)
-            {
-                targetlateralVert = -targetlateralVert;
-                targetlateralHort = -targetlateralHort;
-            }
-        
-        }
-        else if (newState == AiState.moving)
-        {
-
+            // else { if (gun != null) { gun.Deactivate(); } }
         }
 
-        State(newState);
+
+
 
     }
 
+    public void Explode()
+    {
+        if (effect_Explosion != null)
+        {
+            effect_Explosion.transform.parent = null;
+            effect_Explosion.transform.position = ship.transform.position;
+            effect_Explosion.SetActive(true);
+        }
+
+        EnemyManager().GameManager().GetEnemyDeathEvent().Invoke(this);
+        ship.Die();
+    }
+
+    public override void AttackWindUp()
+    {
 
 
+    }
 
     public override void Attacking()
     {
-        targetPos = AttackTarget().position - (AttackTarget().forward * Stats().closeRange);
+        if (gun != null) { gun.Act(); }
 
-        ship.rotationTarget.LookAt(targetPos);
-        ship.secondaryEngine.GetComponent<LateralThruster>().rotationTarget.LookAt(AttackTarget().position);
-
-        float facing = Vector3.Angle(ship.transform.forward, (targetPos - ship.transform.position).normalized);
-        float secondaryFacing = Vector3.Angle(ship.transform.forward, (AttackTarget().position - ship.transform.position).normalized);
+        movementControls.Speed = 0;
+        movementControls.Torque = 0;
 
 
-        if (Vector3.Distance(ship.transform.position, targetPos) > 5)
+        float secondaryFacing = Vector3.Angle(ShipTransform().forward, (AttackTarget().position - ShipTransform().position).normalized);
+
+        //  FocusObject().position = AttackTarget().position;// - (AttackTarget().forward * 3);
+
+
+
+        Quaternion rot = Quaternion.identity;
+        Vector3 newVel = (AttackTarget().position - ShipTransform().position).normalized;
+
+        if (GetStance() == Stance.aggressive)
         {
-            targetengineThrottle = 1;
-            targetengineTorqueThrottle = 1;
+            rot = Quaternion.LookRotation(FocusObject().position - ShipTransform().position, AttackTarget().up);
+            newVel = ShipTransform().forward;
         }
-        else 
-        {
-            targetengineThrottle = 0;
-            targetengineTorqueThrottle = 1;
-        }
-        if (secondaryFacing < Stats().angleTolerance)
-        {
-            if (gun != null) { gun.Activate(); }
-        }
-        else { if (gun != null) { gun.Deactivate(); } }
-       
-
-
-
-
-        timer_State -= Time.deltaTime;
-        if (timer_State <= 0)
-        {
-            timer_State = StateTime();
-           
-         //   MakeDecision();
-            
-        }
-    }
-
-
-
-    public override void Recovering() { }
-    public override void TakingDamage() { }
-    public override void Moving() 
-    {
-        targetPos = AttackTarget().position;
-
-        targetPos += AttackTarget().up * ( 0.5f *  Vector3.Distance(AttackTarget().position , ship.transform.position));
-
-        ship.rotationTarget.LookAt(targetPos);
-        ship.secondaryEngine.GetComponent<LateralThruster>().rotationTarget.LookAt(targetPos);
-
-        float facing = Vector3.Angle(ship.transform.forward, (targetPos - ship.transform.position).normalized);
-        float secondaryFacing = Vector3.Angle(ship.transform.forward, (AttackTarget().position - ship.transform.position).normalized);
-
-        float angle = Vector3.Angle(ship.transform.forward, (AttackTarget().position - ship.transform.position).normalized);
-
-
-
-
-        if (facing < 90)
-        {
-            targetengineThrottle = 1;
-            targetengineTorqueThrottle = 1;
-       
-        }
+        //else if (GetStance() == Stance.neutral)
+        //{
+        //    rot = Quaternion.LookRotation(AttackTarget().position - ShipTransform().position, AttackTarget().up);
+        //    newVel = Vector3.zero;
+        //}
         else
         {
-            targetengineThrottle = 0.2f;
-            targetengineTorqueThrottle = 1;
-          
+            rot = Quaternion.LookRotation(AttackTarget().position - ShipTransform().position, AttackTarget().up);
+
+            if (GetSubID() == SubID.A)
+            {
+                newVel = (newVel + AttackTarget().right).normalized;
+            }
+            else if (GetSubID() == SubID.B)
+            {
+                newVel = (newVel - AttackTarget().right).normalized;
+            }
+            else if (GetSubID() == SubID.C)
+            {
+                newVel = (newVel + AttackTarget().up).normalized;
+            }
+            else
+            {
+                newVel = (newVel - AttackTarget().up).normalized;
+            }
+
         }
 
 
+        RB().velocity = Vector3.Lerp(RB().velocity, newVel * Stats().engineThrottle, Stats().accelerate * Time.deltaTime);
+
+        float pwr = Time.deltaTime * Stats().torquePower;
+        ShipTransform().rotation = Quaternion.Slerp(ShipTransform().transform.rotation, rot, pwr);
+
+
+
+
+    }
+
+    public override void PostAttack()
+    {
+        RB().velocity = Vector3.Lerp(RB().velocity, Vector3.zero, Stats().accelerate * Time.deltaTime);
+        float pwr = Time.deltaTime * Stats().torquePower;
+        ShipTransform().rotation = Quaternion.Slerp(ShipTransform().transform.rotation, Quaternion.identity, pwr);
+    }
+
+
+
+    public override void Recovering()
+    {
         timer_State -= Time.deltaTime;
         if (timer_State <= 0)
         {
@@ -232,32 +347,99 @@ public class Raider : Enemy
 
         }
     }
-
-
-    
-    public override void Adjusting()
+    public override void TakingDamage() { }
+    public override void Moving()
     {
-        Vector3 away = ship.transform.position + ((ship.transform.position - AttackTarget().position).normalized * Stats().midRange);
-        ship.rotationTarget.LookAt(away);
-        ship.secondaryEngine.GetComponent<LateralThruster>().rotationTarget.LookAt(away);
+        movementControls.Torque = Mathf.Lerp(movementControls.Torque, Stats().torquePower, Time.deltaTime * Stats().accelerate);
+        movementControls.Speed = Mathf.Lerp(movementControls.Speed, Stats().engineThrottle, Time.deltaTime * Stats().accelerate);
+
+        // ShipTransform().transform.localRotation = Quaternion.Slerp(ShipTransform().transform.localRotation, Quaternion.identity, Time.deltaTime * Stats().torquePower);
+
+
+        // FocusObject().position = AttackTarget().position;
+
+        GetShip().EnemyAct();
+
 
 
         timer_State -= Time.deltaTime;
         if (timer_State <= 0)
         {
-            timer_State = StateTime();
+            // timer_State = StateTime();
 
-            MakeDecision();
+            // MakeDecision();
 
         }
+    }
+
+
+
+    public override void Adjusting()
+    {
+
+
     }
 
 
 
     public override void Pathfinding() { }
     public override void Special() { }
-    public override void Dying() { }
-    public override void Idle() { }
+    public override void Dying()
+    {
+
+        FocusObject().position = ShipTransform().position + ShipTransform().right - ShipTransform().up + ShipTransform().forward;
+        timer_State -= Time.deltaTime;
+
+        if (timer_State <= 0)
+        {
+            timer_State = StateTime();
+
+            MakeDecision();
+
+        }
+    }
+    public override void Idle()
+    {
+        if (gun != null) { gun.Deactivate(); }
+        //  movementControls.Torque = Stats().torquePower;
+        // movementControls.Speed = Stats().engineThrottle;
+
+        Quaternion toFace = Quaternion.LookRotation(FocusObject().position - GetShip().transform.position);
+        transform.rotation = Quaternion.Lerp(transform.rotation, toFace, Mathf.Min(Stats().torquePower * Time.deltaTime, 1));
+
+       // GetShip().transform.position += GetShip().transform.forward * Time.deltaTime * Stats().engineThrottle;
+
+        float dist = Vector3.Distance(focusObject.position, GetShip().transform.position);
+
+        if (dist <= Stats().rangeVarience)
+        {
+            count_PatrolPoint++;
+
+
+            if (patrolTarget != null && patrolTarget.childCount > 0)
+            {
+                if (patrolTarget.childCount <= count_PatrolPoint)
+                { count_PatrolPoint = 0; }
+
+                FocusObject().position = patrolTarget.GetChild(count_PatrolPoint).position;
+
+            }
+            else
+            {
+                FocusObject().position = (GetShip().transform.position - GetShip().transform.forward + GetShip().transform.up);
+            }
+
+
+        }
+        else
+        {
+
+        }
+
+        RB().velocity = Vector3.Lerp(RB().velocity, GetShip().transform.forward * Stats().engineThrottle, Stats().accelerate * Time.deltaTime);
+
+
+    }
     public override void Dodging() { }
     public override void Fleeing() { }
     public override void Spawned() { }
@@ -265,8 +447,88 @@ public class Raider : Enemy
     public override void Ragdolling() { }
 
 
+
+
+
+
+
+
+    public RangeBand RangeTo()
+    {
+        if (Vector3.Distance(ShipTransform().position, AttackTarget().position) >= Stats().farRange * 2)
+        {
+            return RangeBand.extreme;
+        }
+        else if (Vector3.Distance(ShipTransform().position, AttackTarget().position) < Stats().closeRange * 0.5f)
+        {
+            return RangeBand.melee;
+        }
+        else if (Vector3.Distance(ShipTransform().position, AttackTarget().position) <= Stats().midRange)
+        {
+            return RangeBand.close;
+        }
+        else if (Vector3.Distance(ShipTransform().position, AttackTarget().position) > Stats().closeRange)
+        {
+            return RangeBand.mid;
+        }
+
+        return RangeBand.unknown;
+    }
+
+
+
+    public RangeBand RangeTo(Transform _target)
+    {
+        if (Vector3.Distance(ShipTransform().position, _target.position) >= Stats().farRange * 2)
+        {
+            return RangeBand.extreme;
+        }
+        else if (Vector3.Distance(ShipTransform().position, _target.position) < Stats().closeRange * 0.5f)
+        {
+            return RangeBand.melee;
+        }
+        else if (Vector3.Distance(ShipTransform().position, _target.position) <= Stats().midRange)
+        {
+            return RangeBand.close;
+        }
+        else if (Vector3.Distance(ShipTransform().position, _target.position) > Stats().closeRange)
+        {
+            return RangeBand.mid;
+        }
+
+        return RangeBand.unknown;
+    }
+
+
+    public RangeBand RangeTo(Transform _from, Transform _target)
+    {
+        //for conditions based around another object, like a treasure or fleetship [i.e.:do x when y is close to z]
+        if (Vector3.Distance(_from.position, _target.position) >= Stats().farRange * 2)
+        {
+            return RangeBand.extreme;
+        }
+        else if (Vector3.Distance(_from.position, _target.position) < Stats().closeRange * 0.5f)
+        {
+            return RangeBand.melee;
+        }
+        else if (Vector3.Distance(_from.position, _target.position) <= Stats().midRange)
+        {
+            return RangeBand.close;
+        }
+        else if (Vector3.Distance(_from.position, _target.position) > Stats().closeRange)
+        {
+            return RangeBand.mid;
+        }
+
+
+        return RangeBand.unknown;
+    }
+
+
+
     public override void OnStateChange(AiState _newstate)
     {
+        FocusObject().parent = null;
         if (State() == _newstate) { return; } //didnt switch to a new state
 
 
@@ -280,42 +542,26 @@ public class Raider : Enemy
 
 
 
-        if (State() == AiState.spawned)
+        if (State() == AiState.attacking)
         {
+            Vector3 away = ShipTransform().position + (ShipTransform().forward * Stats().farRange);
 
-
+            //  FocusObject().position = away;
         }
-        else if (State() == AiState.adjusting)
+        else if (State() == AiState.moving)
         {
-
-            if (Vector3.Angle(transform.forward, (AttackTarget().position - transform.position).normalized) < 10 || Vector3.Angle(transform.forward, (AttackTarget().position - transform.position).normalized) > 80) { }
+            // FocusObject().position = AttackTarget().position;
         }
-
-        //if (_newstate == AiState.attacking)
-        //{
-        //  //  timer_State = 0;
-        //    ship.primaryEngine.GetComponent<EngineBasic>().Throttle(1, 0);
-        //    ship.secondaryEngine.GetComponent<LateralThruster>().Throttle(0, 0);
-
-
-        //}
-        //else if (_newstate == AiState.adjusting)
-        //{
-        //   // timer_State = 0;
-        //    ship.primaryEngine.GetComponent<EngineBasic>().Throttle(0, 1);
-        //    ship.secondaryEngine.GetComponent<LateralThruster>().Throttle(0, 0);
-        //}
-        //else if (_newstate == AiState.recovering)
-        //{
-        //   // timer_State = StateTime();
-        //    ship.primaryEngine.GetComponent<EngineBasic>().Throttle(1, 0);
-        //    ship.secondaryEngine.GetComponent<LateralThruster>().Throttle(0, 0);
-        //}
-
-
 
 
     }
 
+
+    public Transform FocusObject()
+    {
+        if (focusObject == null) { return AttackTarget(); }
+
+        return focusObject;
+    }
 
 }

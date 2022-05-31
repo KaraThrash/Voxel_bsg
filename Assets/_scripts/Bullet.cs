@@ -166,7 +166,7 @@ public class Bullet : MonoBehaviour
 
         if (_ship.Chasis())
         {
-            _ship.Chasis().ExternalForce(damage * (transform.position - _pos).normalized);
+            _ship.Chasis().ExternalForce(damage  * (transform.position - _pos).normalized);
         }
         
         _ship.TakeDamage(Damage());

@@ -12,14 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca065c695e5099245a159337351dc1ae, type: 3}
   m_Name: basic
   m_EditorClassIdentifier: 
+  pointValue: 55
   closeRange: 10
-  midRange: 20
-  farRange: 30
-  rangeVarience: 3
-  angleTolerance: 123
-  leashDistance: 294.38
+  midRange: 15
+  farRange: 20
+  rangeVarience: 2
+  angleTolerance: 5
+  leashDistance: 300
   noticePlayerDistance: 100
-  torquePower: 3
-  engineThrottle: 12
-  accelerate: 0.1
+  makeDecisionTime: 3
+  torquePower: 1
+  engineThrottle: 0
+  accelerate: 2
   decelerate: 1

@@ -76,7 +76,8 @@ public class WorldTime : MonoBehaviour
         if(timeUntilAttack > 0){  timeUntilAttack -= (Time.deltaTime * timerate);}
 
         currentMinutes = (int)timeUntilAttack / 60;
-          if(gameManager.inMenu == false){clockText.text = currentMinutes.ToString();}
+
+          if(gameManager.GetGameState() == GameState.playing){clockText.text = currentMinutes.ToString();}
 
 
 

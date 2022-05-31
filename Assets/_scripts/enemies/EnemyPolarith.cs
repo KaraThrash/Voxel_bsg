@@ -7,7 +7,7 @@ public class EnemyPolarith : Enemy
    public ShipPhysics movementControls;
     public ShipSystem gun;
 
-    public Transform focusObject, rotationTarget;
+    public Transform  rotationTarget;
 
     public float torquePower,engineThrottle;
     public float accelerate,decelerate;
@@ -99,6 +99,7 @@ public class EnemyPolarith : Enemy
             {
                 newState = AiState.attackWindUp;
                 focusObject.position = AttackTarget().position + ((AttackTarget().position - transform.position).normalized * Stats().midRange) + (transform.up * 5);
+
 
             }
             else 
@@ -322,11 +323,6 @@ public class EnemyPolarith : Enemy
     }
 
 
-    public Transform FocusObject()
-    {
-        if (focusObject == null) { return AttackTarget(); }
-
-        return focusObject;
-    }
+ 
 
 }

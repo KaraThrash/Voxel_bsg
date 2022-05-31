@@ -37,7 +37,7 @@ public enum AiState {
 
 public enum Stance
 {
-    neutral,defensive,aggressive,special
+    idle,neutral,defensive,aggressive,special
 }
 
 public enum RangeBand
@@ -56,6 +56,7 @@ public enum UpgradeType { ammo, health, chainsawReward, damage, clipsize, firera
 public enum EnemyType { basic, mortar, jetpack, boss }
 public enum EnviromentType { space,atmosphere,radiated,sand }
 public enum ItemTypes { sword, shield, mortarShell,fireBall,none }
+public enum ResourceType { none,currency,food,fuel,morale,pop,raptors,vipers }
 
 
 

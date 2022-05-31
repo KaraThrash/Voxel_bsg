@@ -29,9 +29,9 @@ public class GameManager : MonoBehaviour {
     public GameObject dockMenu;
     public ScrollingText scrollingText;
     public Text contextText;
-    public bool inMenu,inBattle,inMap;
 
     public ObjectiveEvent event_Objective;
+    public EnemyEvent event_EnemyDeath;
     public UnityEvent event_PlayerDeath;
 
     
@@ -47,6 +47,7 @@ public class GameManager : MonoBehaviour {
 
         GetObjectiveEvent().AddListener(ObjectiveEvent);
         GetPlayerDeathEvent().AddListener(PlayerDeathEvent);
+
         SceneManager.sceneLoaded += StartLevel;
     }
 
@@ -66,7 +67,20 @@ public class GameManager : MonoBehaviour {
             GetObjectiveEvent().Invoke(InGameEvent.objectiveLost);
         }
 
+        if (Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            TravelFromHub(1);
+        }
+        if (Input.GetKeyDown(KeyCode.RightShift))
+        {
+            Player().InitForLevel();
+            Player().Ship().transform.position = MapManager().GetMap().GetPlayerSpawnPosition();
+            MenuManager().StartInGame();
 
+            MapManager().GetMap().EnterNewChunk();
+
+            EnemyManager().StartLevel();
+        }
 
         if (GetGameState() == GameState.playing)
         {
@@ -162,7 +176,12 @@ public class GameManager : MonoBehaviour {
             Player().InitForLevel();
             Player().Ship().transform.position = MapManager().GetMap().GetPlayerSpawnPosition();
             MenuManager().StartInGame();
+
+            MapManager().GetMap().EnterNewChunk();
+
             EnemyManager().StartLevel();
+
+
         }
         
         
@@ -173,6 +192,23 @@ public class GameManager : MonoBehaviour {
 
 
 
+
+
+    public void EnemyDeathEvent(Enemy _enemy)
+    {
+        Debug.Log("EnemyDeathEvent: ");
+        
+    }
+
+    public EnemyEvent GetEnemyDeathEvent()
+    {
+        if (event_EnemyDeath == null)
+        {
+            event_EnemyDeath = new EnemyEvent();
+
+        }
+        return event_EnemyDeath;
+    }
 
     public void PlayerDeathEvent( )
     {
@@ -202,8 +238,8 @@ public class GameManager : MonoBehaviour {
         if (event_Objective == null)
         {
             event_Objective = new ObjectiveEvent();
-
         }
+
         return event_Objective;
     }
 

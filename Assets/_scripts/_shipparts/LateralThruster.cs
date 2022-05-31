@@ -26,7 +26,8 @@ public class LateralThruster : EngineBase
 
         if (PositiveButton())
         {
-            return (up + right).normalized;
+            
+            return (up + right);
         }
         else { return Vector3.zero; }
 
@@ -77,32 +78,41 @@ public class LateralThruster : EngineBase
             //{
             //    targetPos = new Vector3(targetPos.x, ActOn().localPosition.y, 0);
             //}
-            targetPos = new Vector3(boundary.x * horizontal, boundary.y * vertical, 0);
 
-            if (Vector3.Distance(targetPos, ActOn().localEulerAngles) < 0.1f)
+
+
+            //test: only move to center when moving the ship
+            if (ship && ship.PrimaryEngine().throttle_A != 0)
             {
-                ActOn().localPosition = targetPos;
+
+                ActOn().localPosition = Vector3.Lerp(ActOn().localPosition, Vector3.zero, Time.deltaTime * STAT_Power() * Ship().ShipInput().GetParameter(ShipInputParameters.lateral));
+
             }
-            else 
+            else
             {
-
                 if (PositiveButton())
-                { }
-                    //Vector3 pos = RaycastAtNextPosition(ActOn().localPosition, targetPos);
-                    if (RaycastAtNextPosition(ActOn(), targetPos + ActOn().localPosition) )
+                {
+                    ActOn().localPosition = Vector3.Lerp(ActOn().localPosition, Vector3.zero , Time.deltaTime * STAT_Power() * Ship().ShipInput().GetParameter(ShipInputParameters.lateral));
+                }
+                else 
+                {
+                    if ((horizontal != 0 || vertical != 0))
                     {
+                        targetPos = new Vector3(boundary.x * horizontal, boundary.y * vertical, 0);
                         ActOn().localPosition = Vector3.Lerp(ActOn().localPosition, targetPos, Time.deltaTime * STAT_Power() * Ship().ShipInput().GetParameter(ShipInputParameters.lateral));
 
                     }
-                    else
-                    {
-                        ActOn().localPosition = Vector3.Lerp(ActOn().localPosition, Vector3.zero, Time.deltaTime * STAT_Power() * Ship().ShipInput().GetParameter(ShipInputParameters.lateral));
+                }
 
-                    }
-                
                 
 
             }
+
+
+            
+
+            //if (Vector3.Distance(targetPos, ActOn().localEulerAngles) < 0.1f)
+            
             //if (Lateral() == Vector3.zero)
             //{
 
@@ -126,13 +136,14 @@ public class LateralThruster : EngineBase
             else 
             {
 
-                ActOn().transform.rotation = Quaternion.Slerp(ActOn().rotation, Quaternion.LookRotation((rotationTarget.position + (rotationTarget.forward * focalDepth)) - ActOn().position, rotationTarget.up), Time.deltaTime * torquePower * Ship().ShipInput().GetParameter(ShipInputParameters.turn));
-  
+                //ActOn().transform.rotation = Quaternion.Slerp(ActOn().rotation, Quaternion.LookRotation((rotationTarget.position + (rotationTarget.forward * focalDepth)) - ActOn().position, rotationTarget.up), Time.deltaTime * torquePower * Ship().ShipInput().GetParameter(ShipInputParameters.turn));
+                Vector3 fwdVector = (rotationTarget.position + (rotationTarget.forward * focalDepth)) - ActOn().position;
+                ActOn().transform.rotation = Quaternion.LookRotation((rotationTarget.position + fwdVector) - ActOn().position, rotationTarget.up);
             }
 
-           
 
-
+            //ControllerHorizontal
+            //ControllerVertical
         }
     }
  

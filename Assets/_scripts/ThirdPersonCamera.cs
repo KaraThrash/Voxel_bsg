@@ -71,10 +71,45 @@ public class ThirdPersonCamera : MonoBehaviour
 
 
     public void Update()
-
     {
-        
-        transform.position = player.transform.position ;
+          transform.position = player.transform.position;
+
+
+
+        //NOTE: Testing a less reigid camera movement
+        //if (Vector3.Distance(transform.position, player.transform.position) > 1)
+        //{
+            //transform.position += transform.forward * Time.deltaTime * smoothTime;
+        //}
+        //if (player.GetComponent<Rigidbody>().velocity.magnitude > 5)
+        //{
+
+        //    if (Vector3.Distance(transform.position, player.transform.position) > 0.1f)
+        //    {
+        //        //transform.position = player.transform.position - player.transform.forward;
+        //        transform.position = Vector3.Lerp(transform.position, player.transform.position, 0.5f / Vector3.Distance(transform.position, player.transform.position));
+        //    }
+        //    else { transform.position = player.transform.position; }
+        //}
+        //else
+        //{
+        //    if (Vector3.Distance(transform.position, player.transform.position) < 1)
+        //    {
+        //        //transform.position = player.transform.position - player.transform.forward;
+        //        transform.position = Vector3.Lerp(transform.position, player.transform.position, Time.deltaTime);
+        //    }
+        //    else if (Vector3.Distance(transform.position, player.transform.position) > 3)
+        //    {
+        //        transform.position = Vector3.Lerp(transform.position, player.transform.position, 0.1f * Vector3.Distance(transform.position, player.transform.position));
+        //    }
+        //    else
+        //    {
+        //        transform.position = Vector3.Lerp(transform.position, player.transform.position, Time.deltaTime * smoothTime);
+        //    }
+        //}
+        //NOTE: Testing a less reigid camera movement
+
+
 
 
         if (!playerControlled)

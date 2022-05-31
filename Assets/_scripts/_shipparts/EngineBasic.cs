@@ -156,7 +156,7 @@ public class EngineBasic : EngineBase
             }
 
 
-            targetRotation = Quaternion.Slerp(targetRotation, Ship().RotationTarget(), Time.deltaTime  *  STAT_Power() * Ship().ShipInput().GetParameter(ShipInputParameters.turn));
+            targetRotation = Ship().RotationTarget();// Quaternion.Slerp(targetRotation, Ship().RotationTarget(), Time.deltaTime  *  STAT_Power() * Ship().ShipInput().GetParameter(ShipInputParameters.turn));
 
             if (ship && Ship().CanAct() && torquePower != 0)
             {
@@ -186,7 +186,7 @@ public class EngineBasic : EngineBase
         }
         else if (throttle_A > 0)
         {
-            currentAcc = Mathf.Lerp(currentAcc, Mathf.Abs(_throttle), accelerationRate * Time.deltaTime);
+            currentAcc = Mathf.Clamp(currentAcc + (accelerationRate * Time.deltaTime), 0,1);
 
         }
         else

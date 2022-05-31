@@ -19,7 +19,10 @@ public class Player : MonoBehaviour {
             Ship().CanAct(true);
 
         }
-        if (GetCamera()) { GetCamera().gameObject.SetActive(true); }
+        if (GetCamera())
+        { 
+            GetCamera().gameObject.SetActive(true);
+        }
 
     }
 
@@ -41,7 +44,11 @@ public class Player : MonoBehaviour {
 
 
 
+    public void EnemyDeathEvent(Enemy _enemy)
+    {
 
+
+    }
 
 
     public GameManager GameManager()

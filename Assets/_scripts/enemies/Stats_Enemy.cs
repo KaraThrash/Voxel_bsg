@@ -8,6 +8,7 @@ public class Stats_Enemy : ScriptableObject
 
 
 
+    public int pointValue = 1;
     public int closeRange= 10;
     public int midRange = 20;
     public int farRange = 30;
@@ -17,6 +18,7 @@ public class Stats_Enemy : ScriptableObject
                                  //angle tolerance for the cone around a perfect facing
     public float leashDistance = 100.0f;
     public float  noticePlayerDistance = 50.0f;
+    public float  makeDecisionTime = 5.0f;
 
     public float torquePower = 1;
     public float engineThrottle = 1;

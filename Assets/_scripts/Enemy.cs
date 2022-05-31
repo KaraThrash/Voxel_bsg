@@ -20,6 +20,7 @@ public class Enemy : MonoBehaviour
     public SubID subid;
 
     public Transform attackTarget;
+    public Transform focusObject; //the object the polarith AI is trying to move towards. Use Polarith for general navigating, and set polarith to zero for specific actions
 
     public float hp;
     [SerializeField]
@@ -59,7 +60,12 @@ public class Enemy : MonoBehaviour
 
 
 
+    public Transform FocusObject()
+    {
+        if (focusObject == null) { return AttackTarget(); }
 
+        return focusObject;
+    }
 
     /// 
     /// 
@@ -162,19 +168,32 @@ public class Enemy : MonoBehaviour
 
     void Start()
     {
-        GetSubID();
-        EnemyManager().AddEnemyToList(this);
-
-        if (AttackTarget() == null || GetShip() == null) { return; }
-        State(AiState.attacking);
-        stateTime = 5;
-        brainTime = 12;
-        directionChangeSpeed = 12;
+        Init();
     }
     void Awake()
     {
 
 
+    }
+
+
+    public void Init()
+    {
+        GetSubID();
+        EnemyManager().AddEnemyToList(this);
+
+        if (AttackTarget() == null || GetShip() == null)
+        {
+            AttackTarget(EnemyManager().AttackTarget());
+
+        }
+        FocusObject().position = AttackTarget().position;
+        
+
+        State(AiState.attacking);
+        stateTime = 5;
+        brainTime = 12;
+        directionChangeSpeed = 12;
     }
 
 
@@ -211,7 +230,7 @@ public class Enemy : MonoBehaviour
 
     public virtual void Act()
     {
-        Debug.Log(Vector3.Angle(transform.position + transform.forward, GetShip().rotationTarget.position + GetShip().rotationTarget.forward));
+        Debug.Log("Virtual act:  -> " + Vector3.Angle(transform.position + transform.forward, GetShip().rotationTarget.position + GetShip().rotationTarget.forward));
 
         if (AttackTarget() == null || GetShip() == null) { return; }
 
@@ -392,7 +411,12 @@ public class Enemy : MonoBehaviour
 
 
 
+    public void AttackTarget(Transform _target)
+    {
 
+            attackTarget = _target;
+
+    }
     public Transform AttackTarget()
     {
         if (attackTarget == null)
@@ -435,9 +459,11 @@ public class Enemy : MonoBehaviour
     public void Die()
     {
 
+       
         if (npcManager != null)
         {
             // npcManager.NPCkilled(GetComponent<Enemy>());
+
         }
 
     }
@@ -481,7 +507,7 @@ public class Enemy : MonoBehaviour
 
 
 
-    public float StateTime() { return stateTime; }
+    public float StateTime() { return Stats().makeDecisionTime; }
     public float BrainTime() { return brainTime; }
     public float DirectionChangeSpeed() { return directionChangeSpeed; }
     public AiState State() { return state; }

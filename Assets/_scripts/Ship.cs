@@ -233,8 +233,11 @@ public class Ship : Actor
 
         if (PrimaryEngine())
         {
-            transform.rotation = Quaternion.Slerp(transform.rotation, primaryEngine.GetTargetRotation(), primaryEngine.RotationAcceleration());
+            //note: part of a test for a less rigid camera
+          //  Quaternion newrot = Quaternion.LookRotation((rotationTarget.position + (rotationTarget.forward * 10)) - transform.position);
 
+            transform.rotation = Quaternion.Slerp(transform.rotation, primaryEngine.GetTargetRotation(), primaryEngine.RotationAcceleration());
+            
         }
     }
 
@@ -309,7 +312,11 @@ public class Ship : Actor
         if (Chasis() && Chasis().BelowMinimumMagnitude(collision.impulse))
         {
             Chasis().CollideWithEnviroment(collision);
-            PrimaryEngine().CollideWithEnviroment(collision);
+            if (PrimaryEngine())
+            {
+
+                PrimaryEngine().CollideWithEnviroment(collision);
+            }
         }
         
         //TODO: engine after impact
