@@ -17,6 +17,9 @@ public class ChasisBase : ShipSystem
 
     public Vector3 externalForce;
 
+    public MeshRenderer externalForceIndicator;
+
+
     public Vector3 ExternalForce() 
     {
         if (externalForce.magnitude < Time.deltaTime || timer <= Time.deltaTime)
@@ -32,7 +35,7 @@ public class ChasisBase : ShipSystem
 
         if (externalForce.magnitude > externalForceMagnitudeCap)
         { externalForce = externalForce.normalized * externalForceMagnitudeCap; }
-
+        SetVisualIndicator(true);
         //TODO: envirment modifiers: gravity/friction
 
     }
@@ -41,6 +44,8 @@ public class ChasisBase : ShipSystem
     {
         if (_impulse >= minMagnitude)
         {
+            SetVisualIndicator(true);
+
             timer = ExternalForceTimeCap();
             externalForce += (_dir * _impulse);
 
@@ -57,6 +62,8 @@ public class ChasisBase : ShipSystem
         if ( timer <= 0)
         {
             externalForce = Vector3.zero;
+            SetVisualIndicator(false);
+
         }
         externalForce = Vector3.Lerp(ExternalForce(), Vector3.zero, Time.deltaTime * externalForceDecay);
     }
@@ -72,22 +79,32 @@ public class ChasisBase : ShipSystem
         // a value of '1' means there is no resistance
 
         Vector3 modifiedForce = _force;
-        modifiedForce = Vector3.Lerp(modifiedForce, _force + ExternalForce(), 1 - STAT_PowerSecondary());
+        //_force +
+        modifiedForce = Vector3.Lerp(modifiedForce,  ExternalForce(), 1 - STAT_PowerSecondary());
 
         return Vector3.Lerp(modifiedForce, _force + ExternalForce(), 1);
     }
 
 
 
-
-
-
-    public override void CollideWithEnviroment(Collision collision)
+    public override void CollideWithShip(Collision collision)
     {
+
         ExternalForce(Vector3.Reflect(collision.contacts[0].point - (transform.position), collision.contacts[0].normal).normalized, Ship().GetVelocity().magnitude * 1.2f);
     }
 
 
+    public override void CollideWithEnviroment(Collision collision)
+    {
+        //ExternalForce(Vector3.Reflect(collision.contacts[0].point - (transform.position), collision.contacts[0].normal).normalized, Ship().GetVelocity().magnitude * 1.2f);
+        ExternalForce( ((transform.position - collision.contacts[0].point).normalized + Ship().GetVelocity().normalized) * ( Ship().GetVelocity().magnitude * 1.2f));
+    }
+
+    public override int DamageFromCollision(Collision collision)
+    {
+
+        return 1;
+    }
 
 
     public override void Act()
@@ -96,7 +113,14 @@ public class ChasisBase : ShipSystem
         {
             ReduceExternalForce();
         }
+        else { SetVisualIndicator(false); }
         
+    }
+
+
+    public void SetVisualIndicator(bool _on)
+    {
+        if (externalForceIndicator != null) { externalForceIndicator.enabled = _on; }
     }
 
 

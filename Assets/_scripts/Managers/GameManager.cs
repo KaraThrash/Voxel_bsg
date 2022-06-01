@@ -43,7 +43,7 @@ public class GameManager : MonoBehaviour {
     // Use this for initialization
     void Start () {
 
-        DontDestroyOnLoad(this);
+        //DontDestroyOnLoad(this);
 
         GetObjectiveEvent().AddListener(ObjectiveEvent);
         GetPlayerDeathEvent().AddListener(PlayerDeathEvent);

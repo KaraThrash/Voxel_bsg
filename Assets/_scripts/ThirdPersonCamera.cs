@@ -7,8 +7,10 @@ public class ThirdPersonCamera : MonoBehaviour
     public bool playerControlled;
 
     public Transform internalSphere;
+
     public GameObject realCamera,myfwdobj,reticle;
     public GameObject player,target;
+
     public Quaternion newrot;
     public bool inMenu,movetowards;
     public float lockOnSpeed,damping,inputbufferforlockon; 
@@ -19,20 +21,24 @@ public class ThirdPersonCamera : MonoBehaviour
     public float ZSensitivity = 2f;
 
     public bool clampVerticalRotation = true;
+
     public float MinimumX = -90F;
     public float MaximumX = 90F;
+
     public bool smooth;
     public float smoothTime = 5f;
     public float angleLimit = 15f; // when reangling the camera from stand still how in line does it need to be before it goes fulling back to player control
+
     public bool lockCursor = true;
     public float rollz;
 
     private Quaternion m_CharacterTargetRot;
     private Quaternion m_CameraTargetRot;
     private Quaternion idleRot;
-    private bool m_cursorIsLocked = true;
 
+    private bool m_cursorIsLocked = true;
     public bool useController;
+
     public float xRot;
     public float yRot;
 
@@ -72,14 +78,35 @@ public class ThirdPersonCamera : MonoBehaviour
 
     public void Update()
     {
-          transform.position = player.transform.position;
+          transform.position = player.transform.position ;
+       // Test_Camera_UnParented();
+
+
+       // if (!playerControlled)
+       // {
+       //    ShipControlled();
+       // }
+    }
+
+    public Vector3 pos_Camera;
+    public void Test_Camera_UnParented()
+    {
+
+        realCamera.transform.position = transform.position + (pos_Camera.x * transform.right) + (pos_Camera.y * transform.up) + (pos_Camera.z * transform.forward);
+        Quaternion newrot = Quaternion.LookRotation((transform.position + transform.forward) - realCamera.transform.position);
+        realCamera.transform.rotation = Quaternion.Slerp(realCamera.transform.rotation, newrot, 1);
+
+
+    }
 
 
 
+    public void Test_UnboundShip()
+    {
         //NOTE: Testing a less reigid camera movement
         //if (Vector3.Distance(transform.position, player.transform.position) > 1)
         //{
-            //transform.position += transform.forward * Time.deltaTime * smoothTime;
+        //transform.position += transform.forward * Time.deltaTime * smoothTime;
         //}
         //if (player.GetComponent<Rigidbody>().velocity.magnitude > 5)
         //{
@@ -108,31 +135,21 @@ public class ThirdPersonCamera : MonoBehaviour
         //    }
         //}
         //NOTE: Testing a less reigid camera movement
-
-
-
-
-        if (!playerControlled)
-        {
-            ShipControlled();
-        }
     }
+
+
+
+
+
 
 
     public void ShipControlled()
     {
        
 
-
-               
                     transform.rotation = Quaternion.Slerp(transform.rotation, player.transform.rotation,
                         resetCameraSmooth * 1 * Time.deltaTime);
-               
 
-
-            
-        
-        
 
        // UpdateCursorLock();
 

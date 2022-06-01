@@ -216,8 +216,8 @@ public class Ship : Actor
         //NOTE: forces like recoild from a railgun or ground collisions are included here
         if (Chasis())
         {
-          //  newVelocity = Chasis().ApplyExternalForces(newVelocity);
-
+            newVelocity = Chasis().ApplyExternalForces(newVelocity);
+    
         }
 
 
@@ -234,11 +234,12 @@ public class Ship : Actor
         if (PrimaryEngine())
         {
             //note: part of a test for a less rigid camera
-          //  Quaternion newrot = Quaternion.LookRotation((rotationTarget.position + (rotationTarget.forward * 10)) - transform.position);
+            //  Quaternion newrot = Quaternion.LookRotation((rotationTarget.position + (rotationTarget.forward * 10)) - transform.position);
 
             transform.rotation = Quaternion.Slerp(transform.rotation, primaryEngine.GetTargetRotation(), primaryEngine.RotationAcceleration());
-            
+
         }
+
     }
 
 
@@ -309,7 +310,7 @@ public class Ship : Actor
         // Chasis().ExternalForce(collision.impulse.magnitude * (transform.position - collision.contacts[0].point));
         // Chasis().ExternalForce(collision.impulse.magnitude * Vector3.Reflect(collision.contacts[0].point - transform.position, collision.impulse).normalized);
 
-        if (Chasis() && Chasis().BelowMinimumMagnitude(collision.impulse))
+        if (Chasis() && Chasis().BelowMinimumMagnitude(collision.impulse) == false)
         {
             Chasis().CollideWithEnviroment(collision);
             if (PrimaryEngine())

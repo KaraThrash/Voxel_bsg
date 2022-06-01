@@ -163,6 +163,17 @@ public class ShipSystem : MonoBehaviour
 
     }
 
+    public virtual void CollideWithShip(Collision collision)
+    {
+
+    }
+
+    public virtual int DamageFromCollision(Collision collision)
+    {
+
+        return 0;
+    }
+
 
     public void RbTarget(Rigidbody _rb) { rbTarget = _rb; }
 
