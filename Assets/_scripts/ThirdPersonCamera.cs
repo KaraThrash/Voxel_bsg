@@ -27,6 +27,7 @@ public class ThirdPersonCamera : MonoBehaviour
 
     public bool smooth;
     public float smoothTime = 5f;
+    public float typeASmoothTime = 5f;
     public float angleLimit = 15f; // when reangling the camera from stand still how in line does it need to be before it goes fulling back to player control
 
     public bool lockCursor = true;
@@ -76,16 +77,47 @@ public class ThirdPersonCamera : MonoBehaviour
     public float currentAcc;
 
 
+    
+
     public void Update()
     {
-          transform.position = player.transform.position ;
-       // Test_Camera_UnParented();
+        if (GameConstants.typeA)
+        {
+            // manually control the ship rotation, the camera focuses in front of the ship
+            transform.position = player.transform.position;
+
+            if (Input.GetKey(KeyCode.Space))
+            {
+                //match player rotation
+              //  transform.rotation = player.transform.rotation;// Quaternion.Slerp(transform.rotation, player.transform.rotation, smoothTime * Time.deltaTime);
+
+            }
+            else
+            {
+                Quaternion newrot = Quaternion.LookRotation((player.transform.position + (player.transform.forward * GameConstants.playerFocalLength)) - realCamera.transform.position, player.transform.up);
+                transform.localRotation = Quaternion.Slerp(transform.localRotation, newrot,
+                                typeASmoothTime * Time.deltaTime);
+                //transform.LookAt((player.transform.position + (player.transform.forward * GameConstants.playerFocalLength)));
 
 
-       // if (!playerControlled)
-       // {
-       //    ShipControlled();
-       // }
+            }
+
+        }
+        else
+        {
+            transform.position = player.transform.position;
+            
+
+        }
+          
+
+        // Test_Camera_UnParented();
+
+
+        // if (!playerControlled)
+        // {
+        //    ShipControlled();
+        // }
     }
 
     public Vector3 pos_Camera;
@@ -161,7 +193,7 @@ public class ThirdPersonCamera : MonoBehaviour
         xRot = (Input.GetAxis("Mouse Y") * -YSensitivity) + (InputControls.CameraVerticalAxis() * YSensitivity);
 
 
-        rollz = InputControls.RollAxis();
+        rollz = InputControls.RollAxis() ;
 
         if (InputControls.PreviousButton())
         {
@@ -171,15 +203,15 @@ public class ThirdPersonCamera : MonoBehaviour
         {
             rollz = 1;
         }
-        //m_CharacterTargetRot *= Quaternion.Euler(xRot, yRot, -rollz * ZSensitivity);
+        m_CharacterTargetRot *= Quaternion.Euler(xRot, yRot, -rollz * ZSensitivity);
 
-        //if (xRot == 0 && yRot == 0 && rollz == 0)
-        //{ }
-        //else
-        //{
-        //    idleTimer = 0;
-        //    currentAcc = 0;
-        //}
+        if (xRot == 0 && yRot == 0 && rollz == 0)
+        { }
+        else
+        {
+            idleTimer = 0;
+            currentAcc = 0;
+        }
 
         if (InputControls.CheckAxis(Axises.Thrust) == 1 || player.GetComponent<Rigidbody>().velocity.magnitude > 1)
         {
@@ -216,26 +248,26 @@ public class ThirdPersonCamera : MonoBehaviour
 
         if (smooth)
         {
-
+            transform.Rotate(new Vector3(xRot, yRot, -rollz * ZSensitivity) * Time.deltaTime * smoothTime);
             if (idleTimer == -2)
             {
 
 
-                internalSphere.Rotate(new Vector3(xRot, yRot, -rollz * ZSensitivity) * Time.deltaTime * smoothTime);
+               // internalSphere.Rotate(new Vector3(xRot, yRot, -rollz ) * Time.deltaTime * smoothTime);
             }
             else
 
             {
                 if (Vector3.Angle(internalSphere.forward , transform.forward) < angleLimit)
                 {
-                    transform.Rotate(new Vector3(xRot, yRot, -rollz * ZSensitivity) * Time.deltaTime * smoothTime);
+                    transform.Rotate(new Vector3(xRot, yRot, -rollz ) * Time.deltaTime * smoothTime);
                 }
                 else
                 {
                     transform.rotation = Quaternion.Lerp(transform.rotation, idleRot, Time.deltaTime * flyspeed * smoothTime);
                 }
 
-                internalSphere.localRotation = Quaternion.Lerp(internalSphere.localRotation, Quaternion.identity, Time.deltaTime * flyspeed * smoothTime);
+            //    internalSphere.localRotation = Quaternion.Lerp(internalSphere.localRotation, Quaternion.identity, Time.deltaTime * flyspeed * smoothTime);
 
 
 
@@ -245,8 +277,8 @@ public class ThirdPersonCamera : MonoBehaviour
         else
         {
           
-            internalSphere.localRotation = Quaternion.identity;
-            transform.rotation = m_CharacterTargetRot;
+           // internalSphere.localRotation = Quaternion.identity;
+           // transform.rotation = m_CharacterTargetRot;
 
 
 

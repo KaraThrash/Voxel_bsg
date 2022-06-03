@@ -22,8 +22,6 @@ public class EngineBasic : EngineBase
         {
             maneverRotCount = 0;
             SetSystemState(SystemState.maneuver);
-            lateralEngine.SetSystemState(SystemState.maneuver);
-            //maneuverRotation = transform.right;
             maneuverRotation = transform.position - (transform.forward * 100);
         }
     }
@@ -46,41 +44,9 @@ public class EngineBasic : EngineBase
             if (maneverCooldown > 0) { maneverCooldown -= Time.deltaTime; }
 
         }
-        else if (GetSystemState() == SystemState.locked)
-        {
-            if (LockoutTimer() > 0)
-            {
-                //Accelerate(0);
-
-                Accelerate(-1);
-                forwardVelocity = Vector3.Lerp(forwardVelocity, Vector3.zero, Time.deltaTime * accelerationRate);
-
-                LockoutTimer(LockoutTimer() - Time.deltaTime);
-
-                if (LockoutTimer() <= 0)
-                {
-                    SetSystemState(SystemState.on);
-
-                }
-            }
-            return;
-        }
-        else if (GetSystemState() == SystemState.damaged)
-        {
-            LockoutTimer(LockoutTimer() - Time.deltaTime);
-
-           
-
-            if (LockoutTimer() <= 0)
-            {
-              
-                SetSystemState(SystemState.on);
-
-            }
-        }
         else
         {
-            if (currentAcc > 0)
+            if (current_Acceleration > 0)
             {
                 Accelerate(0);
             }
@@ -114,44 +80,17 @@ public class EngineBasic : EngineBase
             if (Ship() && Ship().CanAct() && STAT_Power() != 0)
             {
 
-
-                lateralVelocity = Vector3.zero;
-
-                if (lateralEngine != null && PositiveButton())
-                {
-                    lateralVelocity = lateralEngine.Lateral() * STAT_PowerSecondary();
-                    lateralVelocity *= Ship().ShipInput().GetParameter(ShipInputParameters.lateral);
-                }
-
-                verticalVelocity = Vector3.zero;
-
-                if (PositiveButton())
-                {
-                    verticalVelocity = Ship().Up() * STAT_PowerSecondary() ;
-                    verticalVelocity *= Ship().ShipInput().GetParameter(ShipInputParameters.vertical);
-                }
-
-                else if (NegativeButton())
-                {
-                    verticalVelocity = -Ship().Up() * STAT_PowerSecondary();
-                    verticalVelocity *= Ship().ShipInput().GetParameter(ShipInputParameters.vertical);
-                }
-
-
                 if (throttle_A != 0)
                 {
-                    forwardVelocity = Vector3.Lerp(forwardVelocity, (Ship().Forward() * (STAT_Power() * currentAcc)) , Time.deltaTime );
+                    forwardVelocity = Vector3.Lerp(forwardVelocity, (Ship().Forward() * (STAT_Power() * current_Acceleration)) , Time.deltaTime );
                     forwardVelocity *= Ship().ShipInput().GetParameter(ShipInputParameters.thrust);
                 }
                 else
                 {
                     //Vector3.zero +
-                    forwardVelocity = Vector3.Lerp(forwardVelocity, Vector3.zero , Time.deltaTime * decelRate);
+                    forwardVelocity = Vector3.Lerp(forwardVelocity, forwardVelocity * current_Acceleration, Time.deltaTime);
                     forwardVelocity *= Ship().ShipInput().GetParameter(ShipInputParameters.thrust);
                 }
-
-               
-
 
             }
 
@@ -169,30 +108,42 @@ public class EngineBasic : EngineBase
 
 
 
- 
 
 
 
+    public override Vector3 Lateral()
+    {
+        return (Ship().Right() * horizontal) + (Ship().Up() * vertical);
+        //return new Vector3(ActOn().localPosition.x, ActOn().localPosition.y,0);
+
+    }
 
 
 
 
     public void Accelerate(float _throttle)
     {
-        if (_throttle < 0)
-        {
-            currentAcc = Mathf.Lerp(currentAcc, 0, brakePower * Time.deltaTime);
+        float rate = rate_Acceleration * Time.deltaTime;
 
+        if (_throttle == 0)
+        {
+            rate = -rate_Deceleration * Time.deltaTime;
         }
-        else if (throttle_A > 0)
-        {
-            currentAcc = Mathf.Clamp(currentAcc + (accelerationRate * Time.deltaTime), 0,1);
 
+        if (PositiveButton())
+        {
+            //glide
+        }
+        else if (NegativeButton())
+        {
+            //brake
+            current_Acceleration = Mathf.Clamp(current_Acceleration - (brakePower * Time.deltaTime), 0, 1);
         }
         else
         {
-            currentAcc = 0;
+            current_Acceleration = Mathf.Clamp(current_Acceleration + rate, 0, 1);
         }
+
     }
 
 

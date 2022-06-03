@@ -102,15 +102,13 @@ public class Player : MonoBehaviour {
 
         if (ship != null)
         {
-            if (camControlsRotation)
+            if (GameConstants.typeA)
             {
-
-                cam.PlayerControlled();
-
-
+                
                 //ship.Act();
-
             }
+            else { cam.PlayerControlled(); }
+
         }
 
     }
@@ -149,7 +147,7 @@ public class Player : MonoBehaviour {
         }
         else
         {
-            cam.PlayerControlled();
+           // cam.PlayerControlled();
         }
     }
 

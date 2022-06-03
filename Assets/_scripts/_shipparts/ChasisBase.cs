@@ -58,6 +58,7 @@ public class ChasisBase : ShipSystem
 
     public void ReduceExternalForce()
     {
+        if (Ship() && Ship().Hitpoints() <= 0) { return; }
         timer -= Time.deltaTime;
         if ( timer <= 0)
         {

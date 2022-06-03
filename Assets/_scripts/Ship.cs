@@ -152,8 +152,49 @@ public class Ship : Actor
 
         Weapons();
 
+        if (GameConstants.typeA)
+        {
+            TypeA();
+
+        }
+        else
+        {
+            if (PrimaryEngine())
+            { 
+                transform.rotation = Quaternion.Slerp(transform.rotation, PrimaryEngine().GetTargetRotation(), PrimaryEngine().RotationAcceleration());
+
+            }
+
+        }
+
+
 
     }
+    public float XSensitivity, YSensitivity, ZSensitivity, smoothTime;
+
+    public void TypeA()
+    {
+        float yRot = (Input.GetAxis("Mouse X") * XSensitivity) + (InputControls.CameraHorizontalAxis() * XSensitivity);
+        float xRot = (Input.GetAxis("Mouse Y") * -YSensitivity) + (InputControls.CameraVerticalAxis() * YSensitivity);
+        
+
+        float rollz = InputControls.RollAxis();
+
+        if (InputControls.PreviousButton())
+        {
+            rollz = -1;
+        }
+        else if (InputControls.NextButton())
+        {
+            rollz = 1;
+        }
+
+        transform.Rotate(new Vector3(xRot, yRot, -rollz * ZSensitivity) * Time.deltaTime * smoothTime);
+
+
+
+    }
+
 
     public void EnemyAct()
     {
@@ -206,8 +247,8 @@ public class Ship : Actor
         if (PrimaryEngine())
         {
             //Get the engine's intended output
-            newVelocity = PrimaryEngine().GetTargetVelocity();
-            newVelocity += SecondaryEngine().Lateral() * PrimaryEngine().lateralPower;
+            newVelocity = PrimaryEngine().GetTargetVelocity() * primaryEngine.LinearAcceleration();
+            newVelocity += PrimaryEngine().Lateral() * PrimaryEngine().lateralPower;
             accel = primaryEngine.LinearAcceleration();
 
         }
@@ -236,7 +277,7 @@ public class Ship : Actor
             //note: part of a test for a less rigid camera
             //  Quaternion newrot = Quaternion.LookRotation((rotationTarget.position + (rotationTarget.forward * 10)) - transform.position);
 
-            transform.rotation = Quaternion.Slerp(transform.rotation, primaryEngine.GetTargetRotation(), primaryEngine.RotationAcceleration());
+            //transform.rotation = Quaternion.Slerp(transform.rotation, primaryEngine.GetTargetRotation(), primaryEngine.RotationAcceleration());
 
         }
 

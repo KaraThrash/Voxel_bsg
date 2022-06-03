@@ -11,11 +11,11 @@ public class EngineBase : ShipSystem
     public float lateralPower;
     public float torquePower;
     [Min(0.01f)]
-    public float accelerationRate, brakePower, decelRate; //brake power for manual slow as determined by negative throttle, decelRate is the engines ambient force to return to rest
+    public float rate_Acceleration, brakePower, rate_Deceleration; //brake power for manual slow as determined by negative throttle, decelRate is the engines ambient force to return to rest
 
     public float throttle_A, throttle_B;
     public float horizontal, vertical;
-    public float currentAcc;
+    public float current_Acceleration;
 
     public Transform target;
     public Vector3 forwardVelocity;
@@ -142,7 +142,7 @@ public class EngineBase : ShipSystem
 
     public float LinearAcceleration()
     {
-        return Time.deltaTime * accelerationRate;
+        return  rate_Acceleration;
     }
 
     public float RotationAcceleration()

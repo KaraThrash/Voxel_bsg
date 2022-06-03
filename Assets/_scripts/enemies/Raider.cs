@@ -27,12 +27,7 @@ public class Raider : Enemy
 
         if (timer_Brain > 0) { timer_Brain -= Time.deltaTime; }
 
-        if (GetShip().Chasis() && GetShip().Chasis().ExternalForce() != Vector3.zero)
-        {
-            RB().velocity = (GetShip().Chasis().ExternalForce()) * 1;
-            RB().angularVelocity = (GetShip().Chasis().ExternalForce()) * 10;
-            return;
-        }
+        
 
 
         if (ship.Hitpoints() <= 0)
@@ -43,10 +38,15 @@ public class Raider : Enemy
 
         }
 
+        if (GetShip().Chasis() && GetShip().Chasis().ExternalForce() != Vector3.zero)
+        {
+            RB().velocity = (GetShip().Chasis().ExternalForce()) * 1;
+            RB().angularVelocity = (GetShip().Chasis().ExternalForce()) * 10;
+            return;
+        }
 
 
 
-        
 
 
         timer_State -= Time.deltaTime;
@@ -389,6 +389,9 @@ public class Raider : Enemy
 
         FocusObject().position = ShipTransform().position + ShipTransform().right - ShipTransform().up + ShipTransform().forward;
         timer_State -= Time.deltaTime;
+
+       // RB().angularVelocity = transform.forward * 12;
+       // RB().velocity = Vector3.down * 5;
 
         if (timer_State <= 0)
         {

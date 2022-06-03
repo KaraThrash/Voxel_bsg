@@ -82,6 +82,12 @@ public class GameManager : MonoBehaviour {
             EnemyManager().StartLevel();
         }
 
+        if (Input.GetKeyDown(KeyCode.Tab))
+        {
+            GameConstants.typeA = !GameConstants.typeA;
+        }
+
+
         if (GetGameState() == GameState.playing)
         {
             Player().Playing();
