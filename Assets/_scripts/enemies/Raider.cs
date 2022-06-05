@@ -152,6 +152,9 @@ public class Raider : Enemy
         if (ship.Hitpoints() <= 0)
         {
             Explode();
+
+            EnemyManager().GameManager().GetEnemyDeathEvent().Invoke(this);
+            ship.Die();
             return;
 
         }
@@ -256,8 +259,7 @@ public class Raider : Enemy
             effect_Explosion.SetActive(true);
         }
 
-        EnemyManager().GameManager().GetEnemyDeathEvent().Invoke(this);
-        ship.Die();
+        
     }
 
     public override void AttackWindUp()

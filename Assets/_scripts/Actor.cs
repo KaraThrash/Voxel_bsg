@@ -6,8 +6,42 @@ public class Actor : MonoBehaviour
 {
     [SerializeField]
     private int maxHP = 10;
+
     public int currentHealth;
+
     private Map currentMap;
+
+
+
+
+
+
+    public void OnCollisionEnter(Collision collision)
+    {
+        ProcessCollisionEnter(collision);
+    }
+
+    public void OnTriggerEnter(Collider collision)
+    {
+        ProcessTriggerEnter(collision);
+    }
+
+    public virtual void ProcessCollisionEnter(Collision collision)
+    {
+
+    }
+
+    public virtual void ProcessTriggerEnter(Collider collision)
+    {
+
+    }
+
+
+
+
+
+
+
 
 
     public Map Map()
@@ -65,7 +99,7 @@ public class Actor : MonoBehaviour
     }
 
 
-    public void Die()
+    public virtual void Die()
     {
 
         Destroy(gameObject);

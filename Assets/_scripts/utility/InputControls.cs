@@ -116,10 +116,7 @@ public static class InputControls
     }
 
 
-    static void Start()
-    {
-     
-    }
+
 
     // Update is called once per frame
      static void Update()

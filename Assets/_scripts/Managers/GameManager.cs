@@ -5,7 +5,7 @@ using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using System;
 
-public class GameManager : MonoBehaviour {
+public class GameManager : Manager {
     public static GameManager instance
     {
         get => singleton.instance;
@@ -17,13 +17,7 @@ public class GameManager : MonoBehaviour {
 
     public GameState gameState;
     public Player player;
-    public EnemyManager enemyManager;
-   // public PlayerManager playerManager;
-    public Menus menuManager;
-    public MapManager mapManager;
-    public NpcManager npcManager;
-    public ItemManager itemManager;
-    public WorldTime timeManager;
+   
     public ThirdPersonCamera cam;
     public FtlImageFade imageFade;
     public GameObject dockMenu;
@@ -46,6 +40,7 @@ public class GameManager : MonoBehaviour {
         //DontDestroyOnLoad(this);
 
         GetObjectiveEvent().AddListener(ObjectiveEvent);
+        GetEnemyDeathEvent().AddListener(EnemyDeathEvent);
         GetPlayerDeathEvent().AddListener(PlayerDeathEvent);
 
         SceneManager.sceneLoaded += StartLevel;
@@ -269,31 +264,6 @@ public class GameManager : MonoBehaviour {
         return player;
     }
 
-    public EnemyManager EnemyManager()
-    {
-        if (enemyManager == null)
-        {
-            enemyManager = FindObjectOfType<EnemyManager>();
-        }
-        return enemyManager;
-    }
-
-    public Menus MenuManager()
-    {
-        if (menuManager == null)
-        {
-            menuManager = FindObjectOfType<Menus>();
-        }
-        return menuManager;
-    }
-
-    public MapManager MapManager()
-    {
-        if (mapManager == null)
-        {
-            mapManager = FindObjectOfType<MapManager>();
-        }
-        return mapManager;
-    }
+    
 
 }

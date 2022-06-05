@@ -5,9 +5,12 @@ using UnityEngine;
 public class Spawn : MonoBehaviour {
 
     public GameObject tospawn;
+
     public GameObject toWatch;
 
     public GameObject enemyparent;
+
+    public Map map;
 
 
     public int count;
@@ -23,12 +26,15 @@ public class Spawn : MonoBehaviour {
 	// Update is called once per frame
 	void FixedUpdate () {
 
-        if (toWatch == null && tospawn != null && spawnclock != -1)
-        {
-            toWatch =  SpawnOne();
-            toWatch.SetActive(true);
-        }
+        RespawnWhenKilled();
 
+        SpawnOnClock();
+
+
+    }
+
+    public void SpawnOnClock()
+    {
         if (spawnclock != -1 && count > 0)
         {
             spawnclock -= Time.deltaTime;
@@ -36,14 +42,22 @@ public class Spawn : MonoBehaviour {
             {
 
                 SpawnOne();
-                
+
                 if (randomspawn == true)
-                { spawnclock = Random.Range(20.0f,150.0f); }
+                { spawnclock = Random.Range(20.0f, 150.0f); }
                 else { spawnclock = spawnspeed; }
             }
         }
-	}
+    }
 
+    public void RespawnWhenKilled()
+    {
+        if (toWatch == null && tospawn != null && spawnclock != -1)
+        {
+            toWatch = SpawnOne();
+            toWatch.SetActive(true);
+        }
+    }
 
 
     public GameObject SpawnOne( )
@@ -60,6 +74,10 @@ public class Spawn : MonoBehaviour {
         clone.SetActive(true);
         return clone;
     }
-    
 
+    public Map Map()
+    { return map; }
+
+    public GameObject EnemyPrefab()
+    { return tospawn; }
 }

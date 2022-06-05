@@ -1,8 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿
 using UnityEngine;
 
-public class Bullet : MonoBehaviour
+public class Bullet : Actor
 {
 
     public float speed, rotSpeed;
@@ -25,10 +24,10 @@ public class Bullet : MonoBehaviour
     private Vector3 direction, secondaryDirection, relativeVelocity;
     private Rigidbody rb;
 
-    private Collider collider;
+    private Collider myCollider;
 
     private Transform bulletParent;
-    private string bulletParentName = "";
+    private string bulletParentName = "PARENT_Bullet";
 
     
 
@@ -61,7 +60,7 @@ public class Bullet : MonoBehaviour
         transform.parent = null;
         transform.parent = BulletParent();
 
-        RB().velocity = (transform.forward * _power);
+        RB().velocity = transform.forward * _power;
         SetCollider(true);
 
     }
@@ -93,51 +92,40 @@ public class Bullet : MonoBehaviour
         { Die(); }
     }
 
-
-    public void OnCollisionEnter(Collision collision)
-    {
-        ProcessCollisionEnter(collision);
-    }
-
-    public void OnTriggerEnter(Collider collision)
-    {
-        ProcessTriggerEnter(collision);
-    }
-
-    public virtual void ProcessCollisionEnter(Collision collision)
+    public override void ProcessCollisionEnter(Collision collision)
     {
 
         
         if (collision.gameObject.GetComponent<Ship>() != null)
         {
-            CollideWithShip(collision.gameObject.GetComponent<Ship>(), collision.contacts[0].point);
+            HitShip(collision.gameObject.GetComponent<Ship>(), collision.contacts[0].point);
         }
         else if (collision.gameObject.GetComponent<Actor>() != null)
         {
-            CollideWithShip(collision.gameObject.GetComponent<Actor>(), collision.contacts[0].point);
+            HitActor(collision.gameObject.GetComponent<Actor>(), collision.contacts[0].point);
         }
         else if (collision.transform.CompareTag("Enviroment"))
         {
-            CollideWithEnviroment(collision);
+            HitEnviroment(collision);
         }
 
     }
 
-    public virtual void ProcessTriggerEnter(Collider collision)
+    public override void ProcessTriggerEnter(Collider collision)
     {
 
         if (collision.gameObject.GetComponent<Ship>() != null)
         {
-            CollideWithShip(collision.gameObject.GetComponent<Ship>(), collision.ClosestPoint(transform.position));
+            HitShip(collision.gameObject.GetComponent<Ship>(), collision.ClosestPoint(transform.position));
         }
         else if (collision.gameObject.GetComponent<Actor>() != null)
         {
-            CollideWithShip(collision.gameObject.GetComponent<Actor>(), collision.ClosestPoint(transform.position));
+            HitActor(collision.gameObject.GetComponent<Actor>(), collision.ClosestPoint(transform.position));
         }
     }
 
 
-    public virtual void CollideWithShip(Actor _actor, Vector3 _pos)
+    public virtual void HitActor(Actor _actor, Vector3 _pos)
     {
 
         GetComponent<Collider>().enabled = false;
@@ -147,14 +135,13 @@ public class Bullet : MonoBehaviour
             Instantiate(explosion, transform.position, transform.rotation);
         }
 
-
         _actor.TakeDamage(Damage());
 
         Die();
 
     }
 
-    public virtual void CollideWithShip(Ship _ship, Vector3 _pos)
+    public virtual void HitShip(Ship _ship, Vector3 _pos)
     {
 
         GetComponent<Collider>().enabled = false;
@@ -181,7 +168,7 @@ public class Bullet : MonoBehaviour
 
 
 
-    public void CollideWithEnviroment(Collision collision)
+    public void HitEnviroment(Collision collision)
     {
 
 
@@ -220,10 +207,11 @@ public class Bullet : MonoBehaviour
         return bulletParent;
     }
 
-    public void Die()
+    public override void Die()
     {
-        SetCollider(false);https://docs.unity3d.com/ScriptReference/TrailRenderer.Clear.html
+        SetCollider(false);
         RB().isKinematic = true;
+
         lifeTime = -1;
 
         if (GetComponent<TrailRenderer>())
@@ -254,16 +242,16 @@ public class Bullet : MonoBehaviour
 
     public Collider GetCollider()
     {
-        if (collider == null)
+        if (myCollider == null)
         {
-            collider = GetComponent<Collider>();
+            myCollider = GetComponent<Collider>();
         }
-        if (collider == null)
+        if (myCollider == null)
         {
             gameObject.AddComponent<SphereCollider>();
         }
 
-        return collider;
+        return myCollider;
     }
 
 }

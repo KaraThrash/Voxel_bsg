@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Map : MonoBehaviour
+public class Map : Manager
 {
-    private GameManager gameManager;
-
     [SerializeField]
     Transform gravityCenter;
     [SerializeField]
@@ -16,6 +14,7 @@ public class Map : MonoBehaviour
 
 
     public EnviromentType enviroment;
+
     public float gravityStrength;
     public float mapRadius;
 
@@ -39,6 +38,7 @@ public class Map : MonoBehaviour
     public void Init()
     {
         GameManager().GetObjectiveEvent().AddListener(ObjectiveEvent);
+        
     }
 
     public void EnterNewChunk()
@@ -71,13 +71,19 @@ public class Map : MonoBehaviour
     }
 
 
-    public void ObjectiveEvent(InGameEvent _event)
+    public virtual void ObjectiveEvent(InGameEvent _event)
     {
+        
         if (_event == InGameEvent.objectiveLost)
         {
             foreach (Spawn el in GetSpawnSpots())
             {
-                el.SpawnOne();
+                if (el.Map() == this)
+                {
+                    EnemyManager().SpawnEnemy(el.EnemyPrefab(), el.transform);
+                }
+                
+                //el.SpawnOne();
             }
         }
     }
@@ -187,13 +193,8 @@ public class Map : MonoBehaviour
 
     public void Enviroment(EnviromentType _env) { enviroment = _env; }
     public EnviromentType Enviroment( ) { return enviroment ; }
-    
-    public GameManager GameManager()
-    {
-        if (gameManager == null)
-        { gameManager = FindObjectOfType<GameManager>(); }
 
-        return gameManager;
-    }
+
+
 
 }

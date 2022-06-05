@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
 
-public class Enemy : MonoBehaviour
+public class Enemy : Actor
 {
     private EnemyManager enemyManager;
     public Stats_Enemy stats;
@@ -388,21 +388,19 @@ public class Enemy : MonoBehaviour
 
     }
 
-    public void OnCollisionEnter(Collision col)
-    {
 
-
-    }
-    public void OnTriggerStay(Collider other)
+    public override void ProcessCollisionEnter(Collision collision)
     {
 
     }
 
-
-    public void OnTriggerEnter(Collider other)
+    public override void ProcessTriggerEnter(Collider collision)
     {
 
     }
+
+
+
     public void FireGuns()
     {
 
@@ -456,7 +454,7 @@ public class Enemy : MonoBehaviour
 
 
 
-    public void Die()
+    public override void Die()
     {
 
        

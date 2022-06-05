@@ -7,7 +7,8 @@ public class WeaponBase : ShipSystem
     public GameObject bullet;
     public GunType gunType;
 
-
+    public Transform gunParent; //if the gun has multiple muzzle's
+    
 
     [Min(0.01f)]
     public float burstTime;
@@ -180,6 +181,11 @@ public class WeaponBase : ShipSystem
 
     public void FireBullet()
     {
+        if (gunParent != null)
+        {
+            FireBullet(gunParent);
+            return;
+        }
 
         if (BulletParent().childCount == 0 || BulletParent().GetChild(0).gameObject.activeSelf)
         {
@@ -201,6 +207,40 @@ public class WeaponBase : ShipSystem
         }
 
         
+    }
+
+
+    public void FireBullet(Transform _guns)
+    {
+        if (_guns != null)
+        {
+            foreach (Transform el in _guns)
+            {
+                if (BulletParent().childCount == 0 || BulletParent().GetChild(0).gameObject.activeSelf)
+                {
+                    if (bullet != null)
+                    {
+                        GameObject clone = Instantiate(bullet, el.position, el.rotation);
+                        clone.SetActive(true);
+                        clone.GetComponent<Bullet>().Launch(STAT_Power());
+                    }
+                }
+                else
+                {
+                    Transform newBullet = BulletParent().GetChild(0);
+                    newBullet.position = el.position;
+                    newBullet.rotation = el.rotation;
+                    newBullet.gameObject.SetActive(true);
+                    newBullet.GetComponent<Bullet>().Launch(STAT_Power());
+
+                }
+            }
+            
+        }
+
+        
+
+
     }
 
 

@@ -50,8 +50,12 @@ public class EnemyManager : MonoBehaviour
     {
         if (EnemyParent().childCount >= maxOnScreen)
         { return ; }
+
         Enemy enemy = Instantiate(_enemy, _spot.position, _spot.rotation).GetComponent<Enemy>();
         enemy.transform.parent = EnemyParent();
+
+        enemy.AttackTarget(playerShip);
+        enemy.SetStance(Stance.aggressive);
        
     }
 
@@ -59,6 +63,7 @@ public class EnemyManager : MonoBehaviour
     public void StartLevel()
     {
         if (Enemies() == null) { return; }
+
         foreach (Enemy el in Enemies())
         {
             el.canAct = true;
