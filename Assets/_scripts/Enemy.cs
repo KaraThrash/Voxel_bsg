@@ -48,6 +48,8 @@ public class Enemy : Actor
 
     protected float stuckCounter, timeSinceLastAction; // check if stuck
 
+    protected int count_patrolPoint;
+
 
     private float angle;
 
@@ -187,6 +189,8 @@ public class Enemy : Actor
             AttackTarget(EnemyManager().AttackTarget());
 
         }
+
+        //FocusObject().position = Map().GetNextPatrolPoint(count_patrolPoint);
         FocusObject().position = AttackTarget().position;
         
 

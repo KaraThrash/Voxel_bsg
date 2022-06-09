@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class Map : Manager
 {
     [SerializeField]
     Transform gravityCenter;
     [SerializeField]
     Transform playerSpawn;
+
+    public Transform parent_PatrolPoints;
 
     public MapChunk currentChunk;
     private MapChunk previousChunk; //stagger disabling chunks to make changing over smoother and less noticable to the player
@@ -19,6 +22,20 @@ public class Map : Manager
     public float mapRadius;
 
     private Spawn[] spawnSpots;
+
+
+    public Vector3 GetNextPatrolPoint(int _point)
+    {
+        if (parent_PatrolPoints != null)
+        {
+            if (parent_PatrolPoints.childCount > 0 && _point >= 0)
+            {
+                return parent_PatrolPoints.GetChild(_point % parent_PatrolPoints.childCount).position;
+            }
+        }
+
+        return Vector3.zero;
+    }
 
     public Spawn[] GetSpawnSpots()
     {
@@ -35,11 +52,23 @@ public class Map : Manager
         Init();
     }
 
-    public void Init()
+    public void Update()
+    {
+        ActiveMap();
+    }
+
+
+    public virtual void Init()
     {
         GameManager().GetObjectiveEvent().AddListener(ObjectiveEvent);
         
     }
+
+    public virtual void ActiveMap()
+    { 
+    
+    }
+
 
     public void EnterNewChunk()
     {

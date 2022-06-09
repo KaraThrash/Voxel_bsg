@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class WeaponBase : ShipSystem
 {
     public GameObject bullet;

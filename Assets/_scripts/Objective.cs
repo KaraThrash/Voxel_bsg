@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
+
 [System.Serializable]
 public class ObjectiveEvent : UnityEvent<InGameEvent>
 {
@@ -18,6 +19,8 @@ public class Objective : Actor
 
 
     private string SHADER_color = "Color_796B3B6";
+
+    public GameObject explosion;
     public UnityEvent onDamageTaken;
     public UnityEvent onDeath;
 
@@ -50,7 +53,7 @@ public class Objective : Actor
         }
         else 
         {
-            GameManager.instance.GetObjectiveEvent().Invoke(InGameEvent.objectiveLost);
+            
             Die();
         }
 
@@ -66,7 +69,17 @@ public class Objective : Actor
         }
     }
 
-    
 
+    public override void Die()
+    {
+        GameManager.instance.GetObjectiveEvent().Invoke(InGameEvent.objectiveLost);
+
+        if (explosion != null)
+        {
+            Instantiate(explosion,transform.position,transform.rotation);
+        }
+
+        Destroy(gameObject);
+    }
 
 }

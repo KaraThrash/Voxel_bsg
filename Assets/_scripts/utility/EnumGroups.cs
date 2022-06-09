@@ -1,63 +1,59 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
-public enum Maneuver { barrelRoll,spinAround}
-public enum SystemType { armor,body,engine,guidance,maneuver,targeting,weapon}
-public enum SystemState { on,off,locked,broken,damaged, menuLocked, maneuver } //menulocked for points that everything is paused by still observable
+    public enum Maneuver { barrelRoll, spinAround }
+    public enum SystemType { armor, body, engine, guidance, maneuver, targeting, weapon }
+    public enum SystemState { on, off, locked, broken, damaged, menuLocked, maneuver } //menulocked for points that everything is paused by still observable
 
-public enum InGameEvent { none,objectiveLost,fleetShipLost}
-public enum SubID { none,A,B,C,D,E,F,G,Boss} //to create small differences [strafe directions and order for grouping Wings of fighters]
+    public enum InGameEvent { none, objectiveLost, fleetShipLost }
+    public enum SubID { none, A, B, C, D, E, F, G, Boss } //to create small differences [strafe directions and order for grouping Wings of fighters]
 
+    public enum BulletType { basic, missile, lance, boomerang, spiral }
 
 
-public enum BulletType { basic, missile, lance, boomerang, spiral }
+    public enum PlayerTypes { left, right, observer, test, neutral, enemy }
 
 
-public enum PlayerTypes { left, right, observer, test, neutral, enemy }
-
-
-public enum GameState { playing, inOverTime, rest, upgradeScreen, lobby, playersdead, bonusRound, tutorial, inactive,attractMode }
-public enum GunType { auto,burst, semiauto, shotgun, spread, laser }
+    public enum GameState { playing, inOverTime, rest, upgradeScreen, lobby, playersdead, bonusRound, tutorial, inactive, attractMode }
+    public enum GunType { auto, burst, semiauto, shotgun, spread, laser }
 
 
 
 
-public enum AiState { 
-    recovering, takingDamage, 
-    pathfinding, moving, 
-    attackWindUp,attacking, postAttack,
-    adjusting, special, dying, 
-    dodging,fleeing,
-    idle, spawned,
-    inactive,
-    ragdolling
-}
+    public enum AiState
+    {
+        recovering, takingDamage,
+        pathfinding, moving,
+        attackWindUp, attacking, postAttack,
+        adjusting, special, dying,
+        dodging, fleeing,
+        idle, spawned,
+        inactive,
+        ragdolling
+    }
 
-public enum Stance
-{
-    idle,neutral,defensive,aggressive,special
-}
+    public enum Stance
+    {
+        idle, neutral, defensive, aggressive, special
+    }
 
-public enum RangeBand
-{
-    ideal,melee,close,mid,far,extreme,unknown,infinity
-}
-public enum RelativeFacing
-{
-    unknown, chicken, behind, away,backToBack
+    public enum RangeBand
+    {
+        ideal, melee, close, mid, far, extreme, unknown, infinity
+    }
+    public enum RelativeFacing
+    {
+        unknown, chicken, behind, away, backToBack
         //chicken: facing each other - behind the target - is facing away from the target
         //backToBack - both facing away
-}
+    }
 
-public enum UpgradeType { ammo, health, chainsawReward, damage, clipsize, firerate, ammoPickupBonus }
+    public enum UpgradeType { ammo, health, chainsawReward, damage, clipsize, firerate, ammoPickupBonus }
 
-public enum EnemyType { basic, mortar, jetpack, boss }
-public enum EnviromentType { space,atmosphere,radiated,sand }
-public enum ItemTypes { sword, shield, mortarShell,fireBall,none }
-public enum ResourceType { none,currency,food,fuel,morale,pop,raptors,vipers }
+    public enum EnemyType { basic, mortar, jetpack, boss }
+    public enum EnviromentType { space, atmosphere, radiated, sand }
 
+public enum ItemTypes { weapon, chasis, engine, usable, ammo,none }
+public enum ResourceType { none, currency, food, fuel, morale, pop, raptors, vipers }
 
 
 

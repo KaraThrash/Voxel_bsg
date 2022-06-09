@@ -5,6 +5,7 @@ using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using System;
 
+
 public class GameManager : Manager {
     public static GameManager instance
     {
@@ -37,7 +38,7 @@ public class GameManager : Manager {
     // Use this for initialization
     void Start () {
 
-        //DontDestroyOnLoad(this);
+        DontDestroyOnLoad(this);
 
         GetObjectiveEvent().AddListener(ObjectiveEvent);
         GetEnemyDeathEvent().AddListener(EnemyDeathEvent);
@@ -50,38 +51,6 @@ public class GameManager : Manager {
 
     // Update is called once per frame
     void Update () {
-
-
-        if (Input.GetKeyDown(KeyCode.M) )
-        {
-            GetObjectiveEvent().Invoke(InGameEvent.fleetShipLost);
-        }
-
-        if (Input.GetKeyDown(KeyCode.N))
-        {
-            GetObjectiveEvent().Invoke(InGameEvent.objectiveLost);
-        }
-
-        if (Input.GetKeyDown(KeyCode.LeftShift))
-        {
-            TravelFromHub(1);
-        }
-        if (Input.GetKeyDown(KeyCode.RightShift))
-        {
-            Player().InitForLevel();
-            Player().Ship().transform.position = MapManager().GetMap().GetPlayerSpawnPosition();
-            MenuManager().StartInGame();
-
-            MapManager().GetMap().EnterNewChunk();
-
-            EnemyManager().StartLevel();
-        }
-
-        if (Input.GetKeyDown(KeyCode.Tab))
-        {
-            GameConstants.typeA = !GameConstants.typeA;
-        }
-
 
         if (GetGameState() == GameState.playing)
         {
@@ -97,9 +66,48 @@ public class GameManager : Manager {
         }
 
 
+        ListenToInput();
 
 
     }
+
+    public void ListenToInput()
+    {
+        if (Input.GetKeyDown(KeyCode.M))
+        {
+            GetObjectiveEvent().Invoke(InGameEvent.fleetShipLost);
+        }
+
+        if (Input.GetKeyDown(KeyCode.N))
+        {
+            GetObjectiveEvent().Invoke(InGameEvent.objectiveLost);
+        }
+
+        if (Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            //TravelFromHub(1);
+        }
+        if (Input.GetKeyDown(KeyCode.RightShift))
+        {
+            //Player().InitForLevel();
+            //Player().Ship().transform.position = MapManager().GetMap().GetPlayerSpawnPosition();
+            //MenuManager().StartInGame();
+
+            //MapManager().GetMap().EnterNewChunk();
+
+            //EnemyManager().StartLevel();
+        }
+
+        if (Input.GetKeyDown(KeyCode.Tab))
+        {
+            GameConstants.typeA = !GameConstants.typeA;
+        }
+
+
+       
+
+    }
+
 
 
 
@@ -234,6 +242,15 @@ public class GameManager : Manager {
         //throw new NotImplementedException();
 
     }
+
+    public void ForUiButton_ObjectiveEvent(int _event)
+    {
+        Debug.Log((InGameEvent)_event);
+        //throw new NotImplementedException();
+
+    }
+
+
     public UnityEvent<InGameEvent> GetObjectiveEvent()
     {
         if (event_Objective == null)

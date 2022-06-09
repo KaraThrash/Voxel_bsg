@@ -4,6 +4,7 @@ using UnityEngine;
 
 
 
+
 //single shot weapon - > shoot on button press [allowing for a cooldown/firerate] 
 //burst shot weapon - > button press starts the micro timer that checks the cooldown to fire a bullet
 

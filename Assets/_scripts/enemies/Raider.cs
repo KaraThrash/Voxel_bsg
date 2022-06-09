@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class Raider : Enemy
 {
     public ShipPhysics movementControls;
@@ -59,8 +60,19 @@ public class Raider : Enemy
             return;
         }
 
-        if (GetStance() == Stance.idle)
+        if (State() == AiState.idle)
         {
+            float pwr = Time.deltaTime * Stats().torquePower;
+            ShipTransform().rotation = Quaternion.Slerp(ShipTransform().transform.rotation, Quaternion.LookRotation(FocusObject().position - ShipTransform().position, -ShipTransform().forward), pwr);
+            RB().velocity = Vector3.Lerp(RB().velocity, GetShip().transform.forward.normalized * Stats().engineThrottle, Stats().accelerate * Time.deltaTime);
+
+            if (Vector3.Distance(FocusObject().position, ShipTransform().position) < Stats().rangeVarience)
+            {
+                count_patrolPoint++;
+                FocusObject().position = Map().GetNextPatrolPoint(count_patrolPoint);
+            }
+            // count_patrolPoint
+
             if (CheckInView(AttackTarget()))
             {
                 timer_inView += Time.deltaTime;

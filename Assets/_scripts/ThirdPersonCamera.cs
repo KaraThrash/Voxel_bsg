@@ -238,12 +238,12 @@ public class ThirdPersonCamera : MonoBehaviour
         if (clampVerticalRotation) { m_CameraTargetRot = ClampRotationAroundXAxis(m_CameraTargetRot); }
 
 
-        if (Map() && Map().OutOfBounds(transform.position ))
-        {
-            TurnBack();
+        //if (Map() && Map().OutOfBounds(transform.position ))
+        //{
+        //    TurnBack();
 
-            return;
-        }
+        //    return;
+        //}
 
 
         if (smooth)
