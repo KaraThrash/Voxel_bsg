@@ -46,48 +46,6 @@ public class Player : MonoBehaviour {
 
 
 
-    public void EnemyDeathEvent(Enemy _enemy)
-    {
-
-
-    }
-
-
-    public GameManager GameManager()
-    {
-        if (gameManager == null)
-        { gameManager = FindObjectOfType<GameManager>(); }
-
-        return gameManager;
-    }
-
-    public Ship Ship()
-    {
-        if (ship == null)
-        {
-        
-        }
-
-        return ship;
-    }
-
-    public ThirdPersonCamera GetCamera()
-    {
-
-        return cam;
-    }
-
-
-    public Vector3 Position()
-    {
-        if (Ship())
-        {
-            return Ship().transform.position;
-        }
-        return transform.position;
-    }
-
-
 
 
 
@@ -156,28 +114,6 @@ public class Player : MonoBehaviour {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
-
-
     public void DetectPressedKeyOrButton()
     {
         if (ship == null) { return; }
@@ -196,6 +132,66 @@ public class Player : MonoBehaviour {
         }
     }
 
+
+
+
+
+    public void EquipItem(Item _item)
+    {
+        if (Ship() == null)
+        { return; }
+
+        Ship().EquipItem(_item);
+
+        GameManager().MenuManager().DisplayEquipmentTotals(Ship().GetEquipment());
+
+    }
+
+
+
+
+    public void EnemyDeathEvent(Enemy _enemy)
+    {
+
+
+    }
+
+
+
+
+    public Ship Ship()
+    {
+        if (ship == null)
+        {
+
+        }
+
+        return ship;
+    }
+
+    public ThirdPersonCamera GetCamera()
+    {
+
+        return cam;
+    }
+
+    public GameManager GameManager()
+    {
+        if (gameManager == null)
+        { gameManager = FindObjectOfType<GameManager>(); }
+
+        return gameManager;
+    }
+
+
+    public Vector3 Position()
+    {
+        if (Ship())
+        {
+            return Ship().transform.position;
+        }
+        return transform.position;
+    }
 
 
 

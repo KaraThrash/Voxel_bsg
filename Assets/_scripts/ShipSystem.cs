@@ -11,6 +11,7 @@ public class ShipSystem : MonoBehaviour
     public SystemState systemState;
 
     public Ship ship;
+  
 
     public Rigidbody rbTarget;
     public Buttons listenForButton;

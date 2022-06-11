@@ -11,6 +11,7 @@ public class Manager : MonoBehaviour
     public MapManager mapManager;
     public NpcManager npcManager;
     public ItemManager itemManager;
+    public Player player;
     public WorldTime timeManager;
 
     public GameManager GameManager()
@@ -30,6 +31,15 @@ public class Manager : MonoBehaviour
         return enemyManager;
     }
 
+    public ItemManager ItemManager()
+    {
+        if (itemManager == null)
+        {
+            itemManager = FindObjectOfType<ItemManager>();
+        }
+        return itemManager;
+    }
+
     public Menus MenuManager()
     {
         if (menuManager == null)
@@ -47,5 +57,12 @@ public class Manager : MonoBehaviour
         }
         return mapManager;
     }
-
+    public Player Player()
+    {
+        if (player == null)
+        {
+            player = FindObjectOfType<Player>();
+        }
+        return player;
+    }
 }

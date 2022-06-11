@@ -12,7 +12,7 @@ public class ShipPhysics : EngineBase
 
     [Tooltip("Defines how much a translation force is applied to the spaceship.")]
     [SerializeField]
-    private float speed = 1000.0f;
+    private float shipSpeed = 1000.0f;
 
     [Tooltip("The 'Spaceship Controller' component that is used to calculate force and rotation values.")]
     [SerializeField]
@@ -42,8 +42,8 @@ public class ShipPhysics : EngineBase
     /// </summary>
     public float Speed
     {
-        get { return speed; }
-        set { speed = value; }
+        get { return shipSpeed; }
+        set { shipSpeed = value; }
     }
 
     //--------------------------------------------------------------------------------------------------------------

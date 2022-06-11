@@ -17,7 +17,6 @@ public class GameManager : Manager {
 
 
     public GameState gameState;
-    public Player player;
    
     public ThirdPersonCamera cam;
     public FtlImageFade imageFade;

@@ -2,59 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Item {
-
-    public string name;
-
-    //0 = weapon //1 = chasis // 2 = engine // 3 = usable // 4 = ammo
-    public int type;
-
-    public int armor;
-    public int damage;
-    public int speed;
-    public int mobility;
-    public int subtype;
 
 
 
-    private int count;
-    public string stats;
-
-
-    public int GetCount ( )
-    {
-        return count;
-    }
-    public void SetCount (int value)
-    {
-        count = value;
-    }
-
-    public void AddCount(int value)
-    {
-        count += value;
-    }
-
-    public override string ToString()
-    {
-        string newString = "";
-        newString += (ItemTypes)type;
-        newString += " <" + name + "> ";
-        newString += " :armor: " + armor;
-        newString += " :damage: " + damage;
-        newString += " :speed: " + speed;
-        newString += " :mobility: " + mobility;
-        return newString;
-    }
-
-}
-
-
-public class ItemManager : MonoBehaviour {
+public class ItemManager : Manager {
 
     private Dictionary<string, Item> masterItemList;
 
-    private List<Item> weapon;
+    public List<Item> weapon;
     private List<Item> chasis;
     private List<Item> engine;
     private List<Item> usable;
@@ -77,7 +32,6 @@ public class ItemManager : MonoBehaviour {
 
     public List<Item> GetAllByType(ItemTypes _type)
     {
-        List<Item> newList = new List<Item>();
 
         if (_type == ItemTypes.weapon)
         {
@@ -102,7 +56,7 @@ public class ItemManager : MonoBehaviour {
         }
 
 
-        return null;
+        return WeaponList();
     }
 
 
@@ -111,23 +65,23 @@ public class ItemManager : MonoBehaviour {
 
     public void AddToListByType(Item _item)
     {
-        if (_item.type == (int)ItemTypes.weapon)
+        if (_item.type == ItemTypes.weapon)
         {
             WeaponList().Add(_item);
         }
-        if (_item.type == (int)ItemTypes.chasis)
+        if (_item.type == ItemTypes.chasis)
         {
             ChasisList().Add(_item);
         }
-        if (_item.type == (int)ItemTypes.engine)
+        if (_item.type == ItemTypes.engine)
         {
             EngineList().Add(_item);
         }
-        if (_item.type == (int)ItemTypes.ammo)
+        if (_item.type == ItemTypes.ammo)
         {
             AmmoList().Add(_item);
         }
-        if (_item.type == (int)ItemTypes.usable)
+        if (_item.type == ItemTypes.usable)
         {
             UsableList().Add(_item);
         }
@@ -137,18 +91,18 @@ public class ItemManager : MonoBehaviour {
     {
         //an item should have 7 extries for stats
         string[] text = _line.Split(',');
-        Debug.Log(_line);
+        
         if (text.Length >= 7)
         {
             Item newItem = new Item();
-            newItem.name = text[0];
+            newItem.name = text[0].Trim();
             
-            newItem.type = (int)EnumGroups.ItemFromString(text[1]);
-            newItem.armor = int.Parse(text[2]);
-            newItem.damage = int.Parse(text[3]);
-            newItem.speed = int.Parse(text[4]);
-            newItem.mobility = int.Parse(text[5]);
-            newItem.subtype = int.Parse(text[6]);
+            newItem.type = EnumGroups.ItemFromString(text[1].Trim());
+            newItem.armor = int.Parse(text[2].Trim());
+            newItem.damage = int.Parse(text[3].Trim());
+            newItem.speed = int.Parse(text[4].Trim());
+            newItem.mobility = int.Parse(text[5].Trim());
+            newItem.subtype = int.Parse(text[6].Trim());
             // name;
 
             //    //0 = weapon //1 = chasis // 2 = engine // 3 = usable // 4 = ammo
@@ -158,31 +112,94 @@ public class ItemManager : MonoBehaviour {
             //damage;
             // speed;
             //subtype;
+            Debug.Log("new Item: " + newItem.ToString());
 
+            AddToListByType(newItem);
         }
+         
+        return null;
+    }
+
+    public Item ALT_ParseToItem(string _line)
+    {
+        //an item should have 7 extries for stats
+        string[] text = _line.Split(',');
+        if (text.Length < 5) { return null; }
+
+            Item newItem = new Item();
+
+        int count = 0;
+
+        while (count < text.Length)
+        {
+            string[] newstat = text[count].Split(':');
+
+            if (newstat.Length == 2)
+            {
+                if (newstat[0].ToLower().Equals("name"))
+                {
+                    newItem.name = newstat[1];
+                }
+                else if(newstat[0].ToLower().Equals("type"))
+                {
+                    newItem.type = EnumGroups.ItemFromString(newstat[1].Trim());
+                }
+                else if (newstat[0].ToLower().Equals("armor"))
+                {
+                    newItem.armor = int.Parse(newstat[1].Trim());
+                }
+                else if (newstat[0].ToLower().Equals("damage"))
+                {
+                    newItem.damage = int.Parse(newstat[1].Trim());
+                }
+                else if (newstat[0].ToLower().Equals("speed"))
+                {
+                    newItem.speed = int.Parse(newstat[1].Trim());
+                }
+                else if (newstat[0].ToLower().Equals("mobility"))
+                {
+                    newItem.mobility = int.Parse(newstat[1].Trim());
+                }
+                else 
+                {
+
+                }
+
+                Debug.Log("new Item: " + newItem.ToString());
+
+                
+
+
+            }
+            count++;
+        }
+        AddToListByType(newItem);
+
 
         return null;
     }
 
 
+
     public void ReadSpreadsheet()
     {
-         string data = System.IO.File.ReadAllText("Assets/Resources/Items/MasterItemSheetcsv.csv");
-         string[] lines  = data.Split("\n"[0]);
+         string data = System.IO.File.ReadAllText("Assets/Resources/Items/readable_itemsheet.csv");
+         string[] lines  = data.Split('\n');
 
         int count = 0;
         foreach (string el in lines)
         {
             //skip the first header line
+            
+            Item newItem = ALT_ParseToItem(el.Trim().ToLower());
+            if (newItem != null)
+            {
+                masterItemList.Add(newItem.name,newItem);
+
+                //AddToListByType(newItem);
+            }
             if (count > 0)
             {
-                Item newItem = ParseToItem(el);
-                if (newItem != null)
-                {
-                    masterItemList.Add(newItem.name,newItem);
-                    AddToListByType(newItem);
-                }
-                
             }
             
             count++;

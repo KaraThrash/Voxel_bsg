@@ -78,6 +78,8 @@ public class ShipInput
 
 public class Ship : Actor
 {
+    public Equipment equipment;
+
     public Rigidbody rb;
 
     //the engines push the ship 'forward' and combined with the lateral control this transform should be used
@@ -122,6 +124,7 @@ public class Ship : Actor
     // Start is called before the first frame update
     void Start()
     {
+        if (GetEquipment()) { GetEquipment().ResetItems(); }
         AddSystems();
     }
 
@@ -313,18 +316,7 @@ public class Ship : Actor
 
 
 
-
-    public void OnCollisionEnter(Collision collision)
-    {
-        ProcessCollisionEnter(collision);
-    }
-
-    public void OnTriggerEnter(Collider collision)
-    {
-        ProcessTriggerEnter(collision);
-    }
-
-    public virtual void ProcessCollisionEnter(Collision collision)
+    public override void ProcessCollisionEnter(Collision collision)
     {
 
         if (Chasis() != null && collision.transform.CompareTag("Enviroment"))
@@ -338,7 +330,7 @@ public class Ship : Actor
 
     }
 
-    public virtual void ProcessTriggerEnter(Collider collision)
+    public override void ProcessTriggerEnter(Collider collision)
     {
 
     }
@@ -379,7 +371,18 @@ public class Ship : Actor
     }
 
 
-    
+    public override void TakeDamage(int _dmg)
+    {
+        float newDamage = _dmg;
+        if (Chasis())
+        {
+            newDamage = Mathf.Clamp(newDamage - Chasis().STAT_Power(),0,_dmg);
+        }
+
+        //apply dmg reduc, external forces, other talents etc
+        Hitpoints(-_dmg);
+
+    }
 
 
 
@@ -425,8 +428,13 @@ public class Ship : Actor
     }
 
     /// <summary>
-    /// Stamina
+    /// End Stamina
     /// </summary>
+
+
+
+
+
 
 
 
@@ -435,6 +443,53 @@ public class Ship : Actor
 
     public bool CanAct()
     { return canAct; }
+
+
+
+
+
+
+
+    public void EquipItem(Item _item)
+    {
+        if (GetEquipment() == null)
+        { return; }
+
+        GetEquipment().SetItem(_item);
+
+        if (PrimaryEngine())
+        { PrimaryEngine().STAT_Power(GetEquipment().speed) ; }
+
+    }
+
+
+    public void SetEquipment(Equipment _equipment)
+    {
+         equipment = _equipment;
+         
+    }
+
+    public void UpdateShipPartStats()
+    {
+        // if (PrimaryWeapon() != null)
+        // { PrimaryWeapon().STAT_Power(); }
+        if (GetEquipment() == null) { return; }
+
+        if (PrimaryEngine() != null)
+        { PrimaryEngine().STAT_Power(GetEquipment().speed); }
+
+        if (Chasis() != null)
+        { Chasis().STAT_Power(GetEquipment().armor); }
+    }
+
+
+
+
+    public Equipment GetEquipment()
+    {
+        return equipment;
+    }
+
 
     public WeaponBase PrimaryWeapon()
     {
