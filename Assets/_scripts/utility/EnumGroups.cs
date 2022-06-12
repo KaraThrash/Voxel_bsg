@@ -7,7 +7,7 @@
     public enum InGameEvent { none, objectiveLost, fleetShipLost }
     public enum SubID { none, A, B, C, D, E, F, G, Boss } //to create small differences [strafe directions and order for grouping Wings of fighters]
 
-    public enum BulletType { basic, missile, lance, boomerang, spiral }
+    public enum BulletType { basic, missile, lance, boomerang, spiral,spread }
 
 
     public enum PlayerTypes { left, right, observer, test, neutral, enemy }
@@ -52,7 +52,14 @@
     public enum EnemyType { basic, mortar, jetpack, boss }
     public enum EnviromentType { space, atmosphere, radiated, sand }
 
-public enum ItemTypes { weapon, chasis, engine, usable, ammo,none }
+public enum ItemTypes
+{ 
+    weapon, chasis,
+    engine, usable,
+    ammo,none,
+    vehicle, // 6
+    resource
+}
 public enum ResourceType { none, currency, food, fuel, morale, pop, raptors, vipers }
 
 

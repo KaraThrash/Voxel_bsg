@@ -13,7 +13,8 @@ public class ItemManager : Manager {
     private List<Item> chasis;
     private List<Item> engine;
     private List<Item> usable;
-    private List<Item> ammo;
+    private List<Item> bullet;
+    private List<Item> vehicles;
 
     public void Start()
     {
@@ -48,13 +49,16 @@ public class ItemManager : Manager {
 
         if (_type == ItemTypes.ammo)
         {
-            return AmmoList();
+            return BulletList();
         }
         if (_type == ItemTypes.usable)
         {
             return UsableList();
         }
-
+        if (_type == ItemTypes.vehicle)
+        {
+            return VehicleList();
+        }
 
         return WeaponList();
     }
@@ -79,11 +83,15 @@ public class ItemManager : Manager {
         }
         if (_item.type == ItemTypes.ammo)
         {
-            AmmoList().Add(_item);
+            BulletList().Add(_item);
         }
         if (_item.type == ItemTypes.usable)
         {
             UsableList().Add(_item);
+        }
+        if (_item.type == ItemTypes.vehicle)
+        {
+            VehicleList().Add(_item);
         }
     }
 
@@ -160,6 +168,7 @@ public class ItemManager : Manager {
                 {
                     newItem.mobility = int.Parse(newstat[1].Trim());
                 }
+
                 else 
                 {
 
@@ -229,11 +238,11 @@ public class ItemManager : Manager {
         { engine = new List<Item>(); }
         return engine;
     }
-    public List<Item> AmmoList()
+    public List<Item> BulletList()
     {
-        if (ammo == null)
-        { ammo = new List<Item>(); }
-        return ammo;
+        if (bullet == null)
+        { bullet = new List<Item>(); }
+        return bullet;
     }
     public List<Item> UsableList()
     {
@@ -241,4 +250,12 @@ public class ItemManager : Manager {
         { usable = new List<Item>(); }
         return usable;
     }
+
+    public List<Item> VehicleList()
+    {
+        if (vehicles == null)
+        { vehicles = new List<Item>(); }
+        return vehicles;
+    }
+
 }

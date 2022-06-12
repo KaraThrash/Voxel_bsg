@@ -155,12 +155,13 @@ public class GameManager : Manager {
 
     }
 
+
+
     //can be called from the ftl menu screen after a target is selected
     public void TravelFromHub(int dest)
     {
         SceneManager.LoadScene(dest);
         SetGameState(GameState.playing);
-
 
 
     }
@@ -175,6 +176,9 @@ public class GameManager : Manager {
         SetGameState(GameState.playing);
         EnemyManager().StartLevel();
     }
+
+
+
 
 
     public void StartLevel(Scene scene, LoadSceneMode mode)
@@ -271,14 +275,7 @@ public class GameManager : Manager {
     public GameState GetGameState()
     { return gameState; }
 
-    public Player Player()
-    {
-        if (player == null)
-        {
-            player = FindObjectOfType<Player>();
-        }
-        return player;
-    }
+
 
     
 

@@ -17,7 +17,10 @@ public class Equipment : ScriptableObject
     public Item chasis;
     public Item ph_other;
 
+    public List<Item> bullets;
+    public List<Item> consumables;
     public List<Item> storage;
+    
 
     public void ResetItems()
     {
@@ -29,6 +32,10 @@ public class Equipment : ScriptableObject
         speed = 0;
         damage = 0;
         mobility = 0;
+
+        consumables = new List<Item>();
+        bullets = new List<Item>();
+        storage = new List<Item>();
     }
 
     public void SetItem(Item _item)
@@ -93,6 +100,26 @@ public class Equipment : ScriptableObject
         if (storage == null)
         { storage = new List<Item>(); }
         storage.Add(_item);
+    }
+
+
+    public List<Item> GetConsumableList()
+    {
+        if (consumables == null)
+        { consumables = new List<Item>(); }
+        return consumables;
+    }
+    public List<Item> GetBulletList()
+    {
+        if (bullets == null)
+        { bullets = new List<Item>(); }
+        return bullets;
+    }
+    public List<Item> GetStorageList()
+    {
+        if (storage == null)
+        { storage = new List<Item>(); }
+        return storage;
     }
 
 }
