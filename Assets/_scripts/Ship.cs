@@ -146,7 +146,7 @@ public class Ship : Actor
 
     //Engine -> chasis -> weapons -> other
 
-    public void Act()
+    public virtual void Act()
     {
 
         RechargeStamina();
@@ -177,6 +177,8 @@ public class Ship : Actor
 
     public void TypeA()
     {
+        //test idea: rotate the ship indepenet of the camera
+
         float yRot = (Input.GetAxis("Mouse X") * XSensitivity) + (InputControls.CameraHorizontalAxis() * XSensitivity);
         float xRot = (Input.GetAxis("Mouse Y") * -YSensitivity) + (InputControls.CameraVerticalAxis() * YSensitivity);
         
@@ -226,7 +228,7 @@ public class Ship : Actor
     }
 
 
-    public void Weapons()
+    public virtual void Weapons()
     {
         if (PrimaryWeapon())
         {
@@ -236,7 +238,7 @@ public class Ship : Actor
     }
 
 
-    public void Movement()
+    public virtual void Movement()
     {
        
 
@@ -288,28 +290,13 @@ public class Ship : Actor
 
 
 
-    public void TurnBack()
+    public virtual void TurnBack()
     {
         Quaternion newrot = Quaternion.LookRotation(Map().CenterOfMap() - transform.position);
 
         transform.rotation = Quaternion.Slerp(transform.rotation, newrot, Time.deltaTime *  PrimaryEngine().STAT_Power());
      //   RB().velocity = transform.forward *  PrimaryEngine().STAT_Power();
 
-    }
-
-
-
-    public virtual void Control(KeyCode _input, bool _on)
-    {
-        foreach (ShipSystem el in systems)
-        {
-
-            if (_on)
-            {
-                el.Control(_input);
-
-            }
-        }
     }
 
 
