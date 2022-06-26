@@ -10,6 +10,9 @@ public class Map : Manager
     [SerializeField]
     Transform playerSpawn;
 
+
+    public GameObject prefab_enemy;
+
     public Transform parent_PatrolPoints;
 
     public MapChunk currentChunk;
@@ -21,7 +24,9 @@ public class Map : Manager
     public float gravityStrength;
     public float mapRadius;
 
-    private Spawn[] spawnSpots;
+ 
+    private List<Map_POI> poi;
+
 
 
     public Vector3 GetNextPatrolPoint(int _point)
@@ -37,13 +42,20 @@ public class Map : Manager
         return Vector3.zero;
     }
 
-    public Spawn[] GetSpawnSpots()
+    public List<Map_POI> GetPOIList()
     {
-        if (spawnSpots == null)
+        if (poi == null || poi.Count == 0)
         {
-            spawnSpots = FindObjectsOfType<Spawn>();
+            poi = new List<Map_POI>();
+
+            foreach (Map_POI el in FindObjectsOfType<Map_POI>())
+            {
+                poi.Add(el);
+            }
+
+           
         }
-            return spawnSpots;
+            return poi;
     }
 
 
@@ -60,7 +72,7 @@ public class Map : Manager
 
     public virtual void Init()
     {
-        GameManager().GetObjectiveEvent().AddListener(ObjectiveEvent);
+        GameManager().GetObjectiveEvent().AddListener(GameEventListener);
         
     }
 
@@ -100,18 +112,18 @@ public class Map : Manager
     }
 
 
-    public virtual void ObjectiveEvent(InGameEvent _event)
+    public virtual void GameEventListener(InGameEvent _event)
     {
-        
+
         if (_event == InGameEvent.objectiveLost)
         {
-            foreach (Spawn el in GetSpawnSpots())
+            foreach (Map_POI el in GetPOIList())
             {
                 if (el.Map() == this)
                 {
-                    EnemyManager().SpawnEnemy(el.EnemyPrefab(), el.transform);
+                    EnemyManager().SpawnEnemy(prefab_enemy, el.transform);
                 }
-                
+
                 //el.SpawnOne();
             }
         }

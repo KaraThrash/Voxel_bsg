@@ -1,4 +1,5 @@
 ﻿
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -24,18 +25,25 @@ public class Menus : Manager {
     //the text is the only thing updated, the buttons
     //the buttons pass an int that references the saved list
     public List<Text> inventoryChoiceButtonsText;
-   
     public List<Item> currentItemChoices;
 
     public Text TEXT_itemChoiceStatDisplay;
     public Text TEXT_equipmentTotals;
+
+
+    public Text TEXT_playerStamina;
+    public Text TEXT_playerHitPoints;
 
     public Button button_weapon;
     public Button button_chasis;
     public Button button_engine;
     public Button button_vehicle;
 
+
+    private GameObject currentOpenMenu;
     private int bookmark_itemList;
+
+
 
     public void StartInGame( )
     {
@@ -65,6 +73,9 @@ public class Menus : Manager {
         if (MenuDeathChoice())
         { MenuDeathChoice().gameObject.SetActive(false); }
 
+        if (screen_pause)
+        { screen_pause.gameObject.SetActive(false); }
+
         if (parent_pauseMenus)
         {
             foreach (Transform el in parent_pauseMenus)
@@ -73,6 +84,19 @@ public class Menus : Manager {
             }
         }
 
+    }
+
+
+    public void OpenPauseMenu( )
+    {
+        DisableMenus();
+
+        if (screen_pause)
+        {
+            if (screen_pause.gameObject.activeSelf )
+            { screen_pause.gameObject.SetActive(false); }
+            else { screen_pause.gameObject.SetActive(true); }
+        }
     }
 
 
@@ -94,6 +118,24 @@ public class Menus : Manager {
             menu_FTL.gameObject.SetActive(true);
         }
     }
+
+    public void ButtonEvent_OpenMenu(GameObject _menu)
+    {
+       // DisableMenus();
+
+        if (currentOpenMenu) 
+        {
+            currentOpenMenu.SetActive(false);
+        }
+        
+        if (_menu)
+        {
+                currentOpenMenu = _menu;
+                _menu.gameObject.SetActive(true);
+        }
+    }
+
+
 
     /// <summary>
     /// 
@@ -223,21 +265,28 @@ public class Menus : Manager {
     {
         if (TEXT_equipmentTotals == null) { return; }
 
-        string tempString = "";
-        tempString += "Armor:  ";
-        tempString += _equipment.armor;
-        tempString += " \n";
+        string tempString = "Total:       ";
 
-        tempString += "Speed:  ";
-        tempString += _equipment.speed;
-        tempString += " \n";
 
-        tempString += "Damage:  ";
-        tempString += _equipment.damage;
-        tempString += " \n";
 
-        tempString += "Mobility:  ";
-        tempString += _equipment.mobility;
+        foreach (Stats el in (Stats[])Enum.GetValues(typeof(Stats)))
+        {
+            if (_equipment.GetStats().ContainsKey(el) )
+            {
+                if (el != Stats.none && el != Stats.pointValue)
+                {
+                    tempString += " \n";
+                    tempString += el.ToString();
+                    tempString += ":   ";
+                    tempString += _equipment.GetStats()[el];
+
+                }
+            }
+
+
+
+        }
+
         TEXT_equipmentTotals.text = tempString;
     }
 
@@ -248,10 +297,43 @@ public class Menus : Manager {
         DisableMenus();
         if (screen_pause) { screen_pause.gameObject.SetActive(false); }
 
-        
         GameManager().TravelFromHub(_level);
     }
 
+
+    public void Set_PlayerStaminaText(float _value=0)
+    {
+        if (TEXT_playerStamina)
+        {
+            SetText(TEXT_playerStamina, TurnNumberIntoBar(_value));
+        }
+    }
+
+    public void Set_PlayerHitPointsText(float _value = 0)
+    {
+        if (TEXT_playerHitPoints)
+        {
+            SetText(TEXT_playerHitPoints, TurnNumberIntoBar(_value));
+        }
+    }
+
+    public void SetText(Text _textObj,string _text)
+    {
+        _textObj.text = _text;
+    }
+
+    public string TurnNumberIntoBar(float _value)
+    {
+        string bars = "";
+        int count = 0; //sanity check for the loop
+        while (count < _value || count > 100)
+        {
+            bars = bars + ".";
+            count++;
+        }
+
+        return bars;
+    }
 
 
 

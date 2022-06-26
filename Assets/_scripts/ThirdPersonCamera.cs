@@ -31,9 +31,9 @@ public class ThirdPersonCamera : MonoBehaviour
     public float angleLimit = 15f; // when reangling the camera from stand still how in line does it need to be before it goes fulling back to player control
 
     public bool lockCursor = true;
+
     public float rollz;
 
-    private Quaternion m_CharacterTargetRot;
     private Quaternion m_CameraTargetRot;
     private Quaternion idleRot;
 
@@ -47,26 +47,29 @@ public class ThirdPersonCamera : MonoBehaviour
     private Map currentMap;
 
 
-
     public void Start()
     {
      //   InputControls.cameraHorizontal = "4th Axis"; InputControls.cameraVertical = "5th Axis";
-        m_CharacterTargetRot = transform.rotation;
 
     }
     public void SetInMenu(bool menuOn)
     {
-      inMenu = menuOn;
-      if(inMenu == true)
-      {
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
-      }
+        inMenu = menuOn;
+
+        if (inMenu == true)
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
+        else 
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
     }
 
     public void ResetCameraAngle()
     {
-      m_CharacterTargetRot = player.transform.rotation;
       transform.rotation = player.transform.rotation;
     }
 
@@ -81,97 +84,11 @@ public class ThirdPersonCamera : MonoBehaviour
 
     public void Update()
     {
-        if (GameConstants.typeA)
-        {
-            // manually control the ship rotation, the camera focuses in front of the ship
+       
             transform.position = player.transform.position;
-
-            if (Input.GetKey(KeyCode.Space))
-            {
-                //match player rotation
-              //  transform.rotation = player.transform.rotation;// Quaternion.Slerp(transform.rotation, player.transform.rotation, smoothTime * Time.deltaTime);
-
-            }
-            else
-            {
-                Quaternion newrot = Quaternion.LookRotation((player.transform.position + (player.transform.forward * GameConstants.playerFocalLength)) - realCamera.transform.position, player.transform.up);
-                transform.localRotation = Quaternion.Slerp(transform.localRotation, newrot,
-                                typeASmoothTime * Time.deltaTime);
-                //transform.LookAt((player.transform.position + (player.transform.forward * GameConstants.playerFocalLength)));
-
-
-            }
-
-        }
-        else
-        {
-            transform.position = player.transform.position;
-            
-
-        }
-          
-
-        // Test_Camera_UnParented();
-
-
-        // if (!playerControlled)
-        // {
-        //    ShipControlled();
-        // }
-    }
-
-    public Vector3 pos_Camera;
-    public void Test_Camera_UnParented()
-    {
-
-        realCamera.transform.position = transform.position + (pos_Camera.x * transform.right) + (pos_Camera.y * transform.up) + (pos_Camera.z * transform.forward);
-        Quaternion newrot = Quaternion.LookRotation((transform.position + transform.forward) - realCamera.transform.position);
-        realCamera.transform.rotation = Quaternion.Slerp(realCamera.transform.rotation, newrot, 1);
-
+  
 
     }
-
-
-
-    public void Test_UnboundShip()
-    {
-        //NOTE: Testing a less reigid camera movement
-        //if (Vector3.Distance(transform.position, player.transform.position) > 1)
-        //{
-        //transform.position += transform.forward * Time.deltaTime * smoothTime;
-        //}
-        //if (player.GetComponent<Rigidbody>().velocity.magnitude > 5)
-        //{
-
-        //    if (Vector3.Distance(transform.position, player.transform.position) > 0.1f)
-        //    {
-        //        //transform.position = player.transform.position - player.transform.forward;
-        //        transform.position = Vector3.Lerp(transform.position, player.transform.position, 0.5f / Vector3.Distance(transform.position, player.transform.position));
-        //    }
-        //    else { transform.position = player.transform.position; }
-        //}
-        //else
-        //{
-        //    if (Vector3.Distance(transform.position, player.transform.position) < 1)
-        //    {
-        //        //transform.position = player.transform.position - player.transform.forward;
-        //        transform.position = Vector3.Lerp(transform.position, player.transform.position, Time.deltaTime);
-        //    }
-        //    else if (Vector3.Distance(transform.position, player.transform.position) > 3)
-        //    {
-        //        transform.position = Vector3.Lerp(transform.position, player.transform.position, 0.1f * Vector3.Distance(transform.position, player.transform.position));
-        //    }
-        //    else
-        //    {
-        //        transform.position = Vector3.Lerp(transform.position, player.transform.position, Time.deltaTime * smoothTime);
-        //    }
-        //}
-        //NOTE: Testing a less reigid camera movement
-    }
-
-
-
-
 
 
 
@@ -203,7 +120,6 @@ public class ThirdPersonCamera : MonoBehaviour
         {
             rollz = 1;
         }
-        m_CharacterTargetRot *= Quaternion.Euler(xRot, yRot, -rollz * ZSensitivity);
 
         if (xRot == 0 && yRot == 0 && rollz == 0)
         { }
@@ -250,7 +166,10 @@ public class ThirdPersonCamera : MonoBehaviour
 
         if (smooth)
         {
+
             transform.Rotate(new Vector3(xRot, yRot, -rollz * ZSensitivity) * Time.deltaTime * smoothTime);
+
+
             if (idleTimer == -2)
             {
 

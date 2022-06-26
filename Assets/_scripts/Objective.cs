@@ -72,7 +72,7 @@ public class Objective : Actor
 
     public override void Die()
     {
-        GameManager.instance.GetObjectiveEvent().Invoke(InGameEvent.objectiveLost);
+        GameManager().GetObjectiveEvent().Invoke(InGameEvent.objectiveLost);
 
         if (explosion != null)
         {

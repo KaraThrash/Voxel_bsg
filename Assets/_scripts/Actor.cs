@@ -4,13 +4,26 @@ using UnityEngine;
 
 public class Actor : MonoBehaviour
 {
+    private GameManager gameManager;
+    public bool isPlayer = false;
     [SerializeField]
+
     private int maxHP = 10;
 
     public int currentHealth;
 
     private Map currentMap;
 
+    
+
+
+    public GameManager GameManager()
+    {
+        if (gameManager == null)
+        { gameManager = FindObjectOfType<GameManager>(); }
+
+        return gameManager;
+    }
 
 
 
@@ -79,6 +92,10 @@ public class Actor : MonoBehaviour
                 currentHealth = 0;
                 //NOTE: for enemies die when it needs to 'make decision' to create the dying animation
 
+            }
+            if (isPlayer)
+            {
+                GameManager().MenuManager().Set_PlayerHitPointsText(currentHealth);
             }
         }
 

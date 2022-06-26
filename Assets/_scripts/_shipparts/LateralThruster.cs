@@ -13,17 +13,14 @@ public class LateralThruster : EngineBase
 
     public int focalDepth; // how far in front the local ship should look towards
 
+    //to prevent the cost of players idly tapping the stick for figit reasons
+    private float minValueToIgnoreStaminaCost = 0.5f; 
+
 
     public override Vector3 Lateral()
     {
         Vector3 up = ActOn().parent.up * vertical;
         Vector3 right = ActOn().parent.right * horizontal;
-
-        //if (Mathf.Abs(ActOn().localPosition.x) >= boundary.x * 0.7f) { right = ActOn().parent.right * ActOn().localPosition.x; }
-        //if (Mathf.Abs(ActOn().localPosition.y) >= boundary.y * 0.7f) { up = ActOn().parent.up * ActOn().localPosition.y; }
-
-        //if (Mathf.Abs(horizontal) == 1) { right = ActOn().parent.right * horizontal; }
-        //if (Mathf.Abs(vertical) == 1) { up = ActOn().parent.up * vertical; }
 
         if (PositiveButton())
         {
@@ -32,147 +29,77 @@ public class LateralThruster : EngineBase
         }
         else { return Vector3.zero; }
 
-        
-        
-        //return new Vector3(ActOn().localPosition.x, ActOn().localPosition.y,0);
-
     }
 
     public override void Act()
     {
 
-        if (GetSystemState() == SystemState.maneuver)
-        { return; }
-
-        if (GetSystemState() == SystemState.on)
-        {
-
-
-
-        }
-        else if (GetSystemState() == SystemState.locked)
-        {
-
-
-        }
-        else
-        {
-            
-
-        }
+   
 
         if (ship && ship.CanAct() && STAT_Power() != 0)
         {
-            //if (horizontal != 0)
-            //{
-            //    targetPos = new Vector3(boundary.x * horizontal, targetPos.y, 0);
-            //}
-            //else 
-            //{ 
-            //    targetPos = new Vector3(ActOn().localPosition.x, targetPos.y, 0);
-            //}
-            //if (vertical != 0)
-            //{
-            //    targetPos = new Vector3(targetPos.x, boundary.y * vertical, 0);
-            //}
-            //else
-            //{
-            //    targetPos = new Vector3(targetPos.x, ActOn().localPosition.y, 0);
-            //}
 
 
-
-            //test: only move to center when moving the ship
-            if (ship && ship.PrimaryEngine().throttle_A != 0)
+            targetPos = new Vector3(boundary.x * horizontal, boundary.y * vertical, 0);
+            
+            if (horizontal != 0 || vertical != 0)
             {
-
-                ActOn().localPosition = Vector3.Lerp(ActOn().localPosition, Vector3.zero, Time.deltaTime * STAT_Power() * Ship().ShipInput().GetParameter(ShipInputParameters.lateral));
-
+                targetPos = new Vector3(boundary.x * horizontal, boundary.y * vertical, 0);
             }
-            else
+
+
+            if (PositiveButton())
             {
-                if (PositiveButton())
+                targetPos = Vector3.zero;
+            }
+
+
+            if ((horizontal + vertical) > minValueToIgnoreStaminaCost)
+            {
+                if (ship.CheckStamina(StaminaCost()) == false)
                 {
-                    ActOn().localPosition = Vector3.Lerp(ActOn().localPosition, Vector3.zero , Time.deltaTime * STAT_Power() * Ship().ShipInput().GetParameter(ShipInputParameters.lateral));
+                    targetPos = Vector3.zero;
                 }
                 else 
                 {
-                    if ((horizontal != 0 || vertical != 0))
-                    {
-                        targetPos = new Vector3(boundary.x * horizontal, boundary.y * vertical, 0);
-                        ActOn().localPosition = Vector3.Lerp(ActOn().localPosition, targetPos, Time.deltaTime * STAT_Power() * Ship().ShipInput().GetParameter(ShipInputParameters.lateral));
-
-                    }
+                    ship.UseStamina(StaminaCost());
                 }
+            }
 
-                
+            if (Vector3.Distance(ActOn().localPosition, targetPos) < Time.deltaTime * STAT_Power())
+            {
+                ActOn().localPosition = targetPos;
 
+            }
+            else 
+            {
+                ActOn().localPosition = Vector3.Lerp(ActOn().localPosition, targetPos, Time.deltaTime * STAT_Power());
             }
 
 
-            
-
-            //if (Vector3.Distance(targetPos, ActOn().localEulerAngles) < 0.1f)
-            
-            //if (Lateral() == Vector3.zero)
-            //{
 
 
-            //}
-            //else 
-            //{
-            //    ActOn().localPosition = Vector3.Lerp(ActOn().localPosition, Vector3.zero, Time.deltaTime * STAT_Power());
-            //}
-        }
-
-        if (ship && ship.CanAct() && torquePower != 0)
-        {
-
-            // ActOn().transform.rotation = Quaternion.Lerp(ActOn().rotation, Quaternion.LookRotation((rotationTarget.position + (rotationTarget.forward * focalDepth)) - rotationTarget.position, rotationTarget.up), Time.deltaTime * torquePower);
             if (focalDepth == 0)
             {
                 ActOn().transform.rotation = Quaternion.Slerp(ActOn().rotation, rotationTarget.rotation, Time.deltaTime * torquePower * Ship().ShipInput().GetParameter(ShipInputParameters.turn));
 
             }
-            else 
+            else
             {
 
-                //ActOn().transform.rotation = Quaternion.Slerp(ActOn().rotation, Quaternion.LookRotation((rotationTarget.position + (rotationTarget.forward * focalDepth)) - ActOn().position, rotationTarget.up), Time.deltaTime * torquePower * Ship().ShipInput().GetParameter(ShipInputParameters.turn));
                 Vector3 fwdVector = (rotationTarget.position + (rotationTarget.forward * focalDepth)) - ActOn().position;
                 ActOn().transform.rotation = Quaternion.LookRotation((rotationTarget.position + fwdVector) - ActOn().position, rotationTarget.up);
             }
 
+            
 
-            //ControllerHorizontal
-            //ControllerVertical
         }
+
+
     }
- 
 
 
-    //public Vector3 oldLateral()
-    //{
 
-    //    if (boundary.x - Mathf.Abs(ActOn().localPosition.x) < 0.1f * boundary.x)
-    //    {
-    //        if (boundary.y - Mathf.Abs(ActOn().localPosition.y) < 0.1f * boundary.y)
-    //        {
-    //            return (ActOn().right * ActOn().localPosition.x) + (ActOn().up * ActOn().localPosition.y);
-    //        }
-    //        else
-    //        {
-    //            return (ActOn().right * ActOn().localPosition.x);
-    //        }
-    //    }
-    //    else
-    //    {
-    //        if (boundary.y - Mathf.Abs(ActOn().localPosition.y) < 0.1f * boundary.y)
-    //        {
-    //            return (ActOn().up * ActOn().localPosition.y);
-    //        }
-    //    }
-    //    return Vector3.zero;
-    //}
 
 
 

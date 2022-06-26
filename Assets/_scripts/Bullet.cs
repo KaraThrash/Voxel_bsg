@@ -35,6 +35,7 @@ public class Bullet : Actor
     public float Speed() { return speed; }
     public float RotationSpeed() { return rotSpeed; }
     public int Damage() { return damage; }
+    public void Damage(int _dmg) {  damage = _dmg; }
 
 
 

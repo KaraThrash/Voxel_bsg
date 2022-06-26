@@ -4,7 +4,12 @@
     public enum SystemType { armor, body, engine, guidance, maneuver, targeting, weapon }
     public enum SystemState { on, off, locked, broken, damaged, menuLocked, maneuver } //menulocked for points that everything is paused by still observable
 
-    public enum InGameEvent { none, objectiveLost, fleetShipLost }
+    public enum InGameEvent
+    {
+        none, objectiveLost, fleetShipLost,
+        enemyKilled,playerDamaged
+
+    }
     public enum SubID { none, A, B, C, D, E, F, G, Boss } //to create small differences [strafe directions and order for grouping Wings of fighters]
 
     public enum BulletType { basic, missile, lance, boomerang, spiral,spread }
@@ -60,9 +65,35 @@ public enum ItemTypes
     vehicle, // 6
     resource
 }
+
 public enum ResourceType { none, currency, food, fuel, morale, pop, raptors, vipers }
 
+[System.Serializable]
+public enum Stats
+{
+    none
+    , armor
 
+    , damage
+
+    , speed
+
+    , mobility
+
+    , fireRate
+    , projectileSpeed
+    , bulletsPerBurst
+
+    , stamina_max
+    , stamina_cost
+    , stamina_rechargeLockout
+
+    , backpack_slots
+
+    , pointValue
+
+    
+}
 
 
 public static class EnumGroups
@@ -187,6 +218,19 @@ public static class EnumGroups
     }
 
 
+    public static Stats StatsFromString(string _type)
+    {
+
+        foreach (Stats el in (Stats[])Enum.GetValues(typeof(Stats)))
+        {
+            if (el.ToString().ToLower().Equals(_type.ToLower()))
+            { return el; }
+        }
+
+
+        return Stats.none;
+
+    }
 
 
 

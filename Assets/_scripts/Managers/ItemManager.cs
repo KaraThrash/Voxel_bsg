@@ -1,4 +1,5 @@
 ﻿
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -97,91 +98,118 @@ public class ItemManager : Manager {
 
     public Item ParseToItem(string _line)
     {
+        string lowerline = _line.ToLower();
         //an item should have 7 extries for stats
-        string[] text = _line.Split(',');
-        
-        if (text.Length >= 7)
+        string[] text = lowerline.Split(',');
+        Item newItem = new Item();
+
+        foreach (string el in text)
         {
-            Item newItem = new Item();
-            newItem.name = text[0].Trim();
-            
-            newItem.type = EnumGroups.ItemFromString(text[1].Trim());
-            newItem.armor = int.Parse(text[2].Trim());
-            newItem.damage = int.Parse(text[3].Trim());
-            newItem.speed = int.Parse(text[4].Trim());
-            newItem.mobility = int.Parse(text[5].Trim());
-            newItem.subtype = int.Parse(text[6].Trim());
-            // name;
+            string[] statline = el.Split(':');
+            if (statline.Length == 2)
+            {
+                if (statline[0].ToLower() == "name") { newItem.name = statline[1]; }
+                if (statline[0].ToLower() == "type")
+                { newItem.type = EnumGroups.ItemFromString(statline[1].Trim()); }
 
-            //    //0 = weapon //1 = chasis // 2 = engine // 3 = usable // 4 = ammo
-            //type;
+                if (statline[0].ToLower() == "armor") { newItem.armor = int.Parse(statline[1].Trim()); }
+                if (statline[0].ToLower() == "speed") { newItem.speed = int.Parse(statline[1].Trim()); }
+                if (statline[0].ToLower() == "damage") { newItem.damage = int.Parse(statline[1].Trim()); }
+                if (statline[0].ToLower() == "mobility") { newItem.mobility = int.Parse(statline[1].Trim()); }
+                if (statline[0].ToLower() == "firerate") { newItem.fireRate = int.Parse(statline[1].Trim()); }
+                if (statline[0].ToLower() == "projectileSpeed") { newItem.projectileSpeed = int.Parse(statline[1].Trim()); }
+                if (statline[0].ToLower() == "bulletsPerBurst") { newItem.bulletsPerBurst = int.Parse(statline[1].Trim()); }
+                
+                if (statline[0].ToLower() == "staminamax") { newItem.stamina_max = int.Parse(statline[1].Trim()); }
+                if (statline[0].ToLower() == "staminarecharge") { newItem.stamina_recharge = int.Parse(statline[1].Trim()); }
+                if (statline[0].ToLower() == "staminacost") { newItem.stamina_cost = int.Parse(statline[1].Trim()); }
+                if (statline[0].ToLower() == "staminarechargelockout") { newItem.stamina_rechargeLockout = int.Parse(statline[1].Trim()); }
 
-            //armor;
-            //damage;
-            // speed;
-            //subtype;
-            Debug.Log("new Item: " + newItem.ToString());
 
-            AddToListByType(newItem);
+
+
+            }
         }
+        Debug.Log("new Item: " + newItem.ToString());
+        AddToListByType(newItem);
+        //if (text.Length >= 7)
+        //{
+        //    Item newItem = new Item();
+        //    newItem.name = text[0].Trim();
+            
+        //    newItem.type = EnumGroups.ItemFromString(text[1].Trim());
+        //    newItem.armor = int.Parse(text[2].Trim());
+        //    newItem.damage = int.Parse(text[3].Trim());
+        //    newItem.speed = int.Parse(text[4].Trim());
+        //    newItem.mobility = int.Parse(text[5].Trim());
+        //    newItem.subtype = int.Parse(text[6].Trim());
+        //    // name;
+
+        //    //    //0 = weapon //1 = chasis // 2 = engine // 3 = usable // 4 = ammo
+        //    //type;
+
+        //    //armor;
+        //    //damage;
+        //    // speed;
+        //    //subtype;
+
+
+
+
+
+        //    Debug.Log("new Item: " + newItem.ToString());
+
+        //    AddToListByType(newItem);
+        //}
          
         return null;
     }
 
     public Item ALT_ParseToItem(string _line)
     {
+        string lowerline = _line.ToLower();
         //an item should have 7 extries for stats
-        string[] text = _line.Split(',');
-        if (text.Length < 5) { return null; }
+        string[] text = lowerline.Split(',');
+        Item newItem = new Item();
 
-            Item newItem = new Item();
-
-        int count = 0;
-
-        while (count < text.Length)
+        foreach (string el in text)
         {
-            string[] newstat = text[count].Split(':');
-
-            if (newstat.Length == 2)
+            string[] statline = el.Split(':');
+            if (statline.Length == 2)
             {
-                if (newstat[0].ToLower().Equals("name"))
+                if (statline[0].ToLower() == "name") { newItem.name = statline[1]; }
+                else if (statline[0].ToLower() == "type")
+                { newItem.type = EnumGroups.ItemFromString(statline[1].Trim()); }
+                else
                 {
-                    newItem.name = newstat[1];
-                }
-                else if(newstat[0].ToLower().Equals("type"))
-                {
-                    newItem.type = EnumGroups.ItemFromString(newstat[1].Trim());
-                }
-                else if (newstat[0].ToLower().Equals("armor"))
-                {
-                    newItem.armor = int.Parse(newstat[1].Trim());
-                }
-                else if (newstat[0].ToLower().Equals("damage"))
-                {
-                    newItem.damage = int.Parse(newstat[1].Trim());
-                }
-                else if (newstat[0].ToLower().Equals("speed"))
-                {
-                    newItem.speed = int.Parse(newstat[1].Trim());
-                }
-                else if (newstat[0].ToLower().Equals("mobility"))
-                {
-                    newItem.mobility = int.Parse(newstat[1].Trim());
-                }
+                    newItem.GetStats()[EnumGroups.StatsFromString(statline[0])] = int.Parse(statline[1].Trim());
+                    newItem.GetStatList().Add(new StatClass(EnumGroups.StatsFromString(statline[0]), int.Parse(statline[1].Trim())) );
+             
 
-                else 
-                {
+
+
+                    //if (statline[0].ToLower() == "armor") { newItem.armor = int.Parse(statline[1].Trim()); }
+                    //if (statline[0].ToLower() == "speed") { newItem.speed = int.Parse(statline[1].Trim()); }
+                    //if (statline[0].ToLower() == "damage") { newItem.damage = int.Parse(statline[1].Trim()); }
+                    //if (statline[0].ToLower() == "mobility") { newItem.mobility = int.Parse(statline[1].Trim()); }
+                    //if (statline[0].ToLower() == "firerate") { newItem.fireRate = int.Parse(statline[1].Trim()); }
+                    //if (statline[0].ToLower() == "projectileSpeed") { newItem.projectileSpeed = int.Parse(statline[1].Trim()); }
+                    //if (statline[0].ToLower() == "bulletsPerBurst") { newItem.bulletsPerBurst = int.Parse(statline[1].Trim()); }
+
+                    //if (statline[0].ToLower() == "staminamax") { newItem.stamina_max = int.Parse(statline[1].Trim()); }
+                    //if (statline[0].ToLower() == "staminarecharge") { newItem.stamina_recharge = int.Parse(statline[1].Trim()); }
+                    //if (statline[0].ToLower() == "staminacost") { newItem.stamina_cost = int.Parse(statline[1].Trim()); }
+                    //if (statline[0].ToLower() == "staminarechargelockout") { newItem.stamina_rechargeLockout = int.Parse(statline[1].Trim()); }
+
 
                 }
 
-                Debug.Log("new Item: " + newItem.ToString());
-
-                
 
 
             }
-            count++;
         }
+        Debug.Log("new Item: " + newItem.ToString());
+
         AddToListByType(newItem);
 
 

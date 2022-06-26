@@ -87,7 +87,6 @@ public class Ship : Actor
     // be slightly off center from camera logically
     public Transform mainTransform;
 
-
     public Transform rotationTarget;
 
     public bool canAct;
@@ -95,6 +94,9 @@ public class Ship : Actor
     public List<ShipSystem> systems;
     
     public float stamina, maxStamina, staminaRechargeRate;
+    public float STAT_lockOutStaminaRecharge = 0.1f;
+    public float timer_lockOutStaminaRecharge;
+
 
     public float acceleration;
 
@@ -131,7 +133,7 @@ public class Ship : Actor
     
 
     // Update is called once per frame 
-    void Update()
+    void FixedUpdate()
     {
         if (canAct)
         {
@@ -148,8 +150,12 @@ public class Ship : Actor
 
     public virtual void Act()
     {
+        if (timer_lockOutStaminaRecharge > 0)
+        {
+            timer_lockOutStaminaRecharge -= Time.deltaTime;
+        }
+        else { RechargeStamina(); }
 
-        RechargeStamina();
 
         Movement();
 
@@ -388,7 +394,11 @@ public class Ship : Actor
             if (stamina > maxStamina) { stamina = maxStamina; }
         }
 
-        SetStaminaText(stamina.ToString());
+        if (isPlayer)
+        {
+            GameManager().MenuManager().Set_PlayerStaminaText(stamina);
+        }
+
     }
 
     public bool UseStamina(float _cost)
@@ -397,6 +407,12 @@ public class Ship : Actor
         if (_cost <= Mathf.Ceil(stamina))
         {
             stamina -= _cost;
+            timer_lockOutStaminaRecharge = STAT_lockOutStaminaRecharge;
+
+            if (isPlayer)
+            {
+                GameManager().MenuManager().Set_PlayerStaminaText(stamina);
+            }
             return true;
         }
 
@@ -444,8 +460,7 @@ public class Ship : Actor
 
         GetEquipment().SetItem(_item);
 
-        if (PrimaryEngine())
-        { PrimaryEngine().STAT_Power(GetEquipment().speed) ; }
+        UpdateStats();
 
     }
 
@@ -455,6 +470,30 @@ public class Ship : Actor
          equipment = _equipment;
          
     }
+
+    public void UpdateStats()
+    {
+        if (PrimaryEngine())
+        {
+            PrimaryEngine().STAT_Power(GetEquipment().speed);
+        }
+
+        if (PrimaryWeapon())
+        {
+
+            PrimaryWeapon().STAT_Power(GetEquipment().projectileSpeed);
+
+            PrimaryWeapon().BurstBulletCount(GetEquipment().bulletsPerBurst);
+            PrimaryWeapon().STAT_CooldownTime(GetEquipment().fireRate);
+
+            if (PrimaryWeapon().bullet)
+            {
+                PrimaryWeapon().bullet.GetComponent<Bullet>().Damage(GetEquipment().damage);
+            }
+            
+        }
+    }
+
 
     public void UpdateShipPartStats()
     {
@@ -560,11 +599,12 @@ public class Ship : Actor
 
     public void UpdateUi()
     {
-        if (uiDisplay != null)
-        { 
-            uiDisplay.SetHP(Hitpoints().ToString());
-            uiDisplay.SetStamina(stamina);
-            uiDisplay.SetWeapons(PrimaryWeapon().timer_Cooldown.ToString());
+        if (isPlayer)
+        {
+            GameManager().MenuManager().Set_PlayerHitPointsText(Hitpoints());
+            GameManager().MenuManager().Set_PlayerStaminaText(stamina);
+
+          //  uiDisplay.SetWeapons(PrimaryWeapon().timer_Cooldown.ToString());
         }
     }
 

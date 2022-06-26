@@ -1,5 +1,19 @@
 Battle for the dark star:
 
+
+
+
+
+
+
+
+
+
+june23: started turning stats into a dictionary constructed from the enum:
+-> this way adding stats is easier and I dont need to update multiple portions of the inventory and item manager code
+---should it bne a list to be seen in the inspector?
+
+
 expand the stats to make having some items apply to multiple areas easier. A chasis reducing speed or engine increasing dmg etc
 
 Stat sheets: making the master sheet easy to read and add to will make item creation easier in the long run. Doesnt need to be fancy with xml or json, just  ',' and ':' with the stat names
@@ -23,6 +37,7 @@ Enemy AI: -> some states have conditions in them external of the 'make decision'
 
 
 
+
 ====
 Enemy
 ===
@@ -43,7 +58,28 @@ hp,pointValue,itemdrops
 ====
 
 
+public enum Stats
+{
+    none
+    , armor
+    , damage
+    , speed
 
+    , mobility
+
+    , fireRate
+    , stamina_max
+    , stamina_cost
+    , stamina_rechargeLockout
+    , backpack_slots
+    , pointValue
+
+    ??
+     collision resistance
+     collision attack damage
+}
+
+?? ---> engine's have a 'use % of speed stat' for [fwd,lateral, etc]
 
 
 

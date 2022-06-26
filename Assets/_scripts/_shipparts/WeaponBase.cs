@@ -11,7 +11,7 @@ public class WeaponBase : ShipSystem
     public Transform gunParent; //if the gun has multiple muzzle's
     
 
-    [Min(0.01f)]
+    [Min(0.01f)] 
     public float burstTime;
     public float burstTracker;
 
@@ -243,6 +243,8 @@ public class WeaponBase : ShipSystem
 
 
     }
+
+
 
 
     public Transform BulletParent()

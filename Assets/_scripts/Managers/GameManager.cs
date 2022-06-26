@@ -102,8 +102,24 @@ public class GameManager : Manager {
             GameConstants.typeA = !GameConstants.typeA;
         }
 
+        if (Input.GetKeyDown(KeyCode.Return))
+        {
+            if (MenuManager().screen_pause.gameObject.activeSelf)
+            {
+                MenuManager().DisableMenus();
+                cam.SetInMenu(false);
+            }
+            else
+            {
+                MenuManager().OpenPauseMenu();
+                cam.SetInMenu(true);
+            }
 
-       
+           
+        }
+
+
+
 
     }
 

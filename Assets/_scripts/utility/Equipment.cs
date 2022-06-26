@@ -1,26 +1,73 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 
 [CreateAssetMenu(fileName = "Equipment")]
+
 public class Equipment : ScriptableObject
 {
 
     public int armor;
     public int damage;
     public int speed;
+
     public int mobility;
+
+    public int fireRate;
+    public int projectileSpeed;
+    public int bulletsPerBurst;
+
+
+    public int stamina_max; //additive: two items of value 1 gives the ship a max stamina of 2
+    public int stamina_recharge;
+    public int stamina_cost;
+
+    public int stamina_rechargeLockout;
 
     public Item weapon;
     public Item engine;
     public Item chasis;
+
     public Item ph_other;
 
     public List<Item> bullets;
     public List<Item> consumables;
     public List<Item> storage;
-    
+
+    [SerializeField]
+    public Dictionary<Stats, int> statMap;
+    public List<StatClass> statList;
+    public Dictionary<Stats, int> GetStats()
+    {
+        if (statMap == null)
+        {
+            statMap = new Dictionary<Stats, int>();
+
+            foreach (Stats el in (Stats[])Enum.GetValues(typeof(Stats)))
+            {
+                statMap.Add(el, 0);
+            }
+        }
+        return statMap;
+    }
+
+    public List<StatClass> GetStatList()
+    {
+        if (statList == null)
+        {
+            statList = new List<StatClass>();
+
+            foreach (Stats el in (Stats[])Enum.GetValues(typeof(Stats)))
+            {
+                statList.Add(new StatClass(el, 0));
+            }
+        }
+        return statList;
+    }
+
+
 
     public void ResetItems()
     {
@@ -73,10 +120,48 @@ public class Equipment : ScriptableObject
 
     public void CalculateStats()
     {
+        if (statMap != null)
+        {
+            foreach (Stats el in (Stats[])Enum.GetValues(typeof(Stats)))
+            {
+                if (GetStats().ContainsKey(el))
+                {
+                    GetStats()[el] = 0;
+
+
+                }
+
+            }
+
+        }
+
+        if (GetStatList() != null)
+        {
+           // GetStatList().Clear();
+
+        }
+
+
+        foreach (Stats el in (Stats[])Enum.GetValues(typeof(Stats)))
+        {
+            if (GetStats().ContainsKey(el) )
+            {
+                GetStatList().Add(new StatClass(el,GetStats()[el]));
+
+
+            }
+
+        }
+
+
+
+
         armor = 0;
         speed = 0;
         damage = 0;
         mobility = 0;
+
+
         if (weapon != null) { AddStats(weapon); }
         if (engine != null) { AddStats(engine); }
         if (chasis != null) { AddStats(chasis); }
@@ -85,11 +170,32 @@ public class Equipment : ScriptableObject
     }
 
     public void AddStats(Item _item,int _subtract=1)
-    { 
-        armor += (_item.armor * _subtract);
-        damage += (_item.damage * _subtract);
-        speed += (_item.speed * _subtract);
-        mobility += (_item.mobility * _subtract);
+    {
+        foreach (Stats el in (Stats[])Enum.GetValues(typeof(Stats)))
+        {
+            if (GetStats().ContainsKey(el) && _item.GetStats().ContainsKey(el))
+            {
+                GetStats()[el] = GetStats()[el] + _item.GetStats()[el];
+            }
+
+            foreach (StatClass jay in GetStatList())
+            {
+                if (jay.stat == el && _item.GetStats().ContainsKey(el))
+                {
+                    jay.value = jay.value + _item.GetStats()[el];
+                }
+
+               
+
+
+            }
+
+        }
+
+        //armor += (_item.armor * _subtract);
+        //damage += (_item.damage * _subtract);
+        //speed += (_item.speed * _subtract);
+        //mobility += (_item.mobility * _subtract);
     }
 
 

@@ -99,7 +99,7 @@ public class EngineBase : ShipSystem
 
         if(axis_throttle_B.Length > 0)
         {
-            if ((Input.GetAxis(axis_throttle_B) != 0) && ship.UseStamina(staminaCost))
+            if ((Input.GetAxis(axis_throttle_B) != 0) && ship.UseStamina(0))
             {
                 throttle_B = Input.GetAxis(axis_throttle_B);
 
@@ -110,7 +110,7 @@ public class EngineBase : ShipSystem
 
         if (axis_horizontal.Length > 0)
         {
-            if ((Input.GetAxis(axis_horizontal) != 0) && ship.UseStamina(staminaCost))
+            if ((Input.GetAxis(axis_horizontal) != 0) && ship.UseStamina(0))
             {
                 horizontal = Input.GetAxis(axis_horizontal);
 
@@ -120,7 +120,7 @@ public class EngineBase : ShipSystem
         }
         if (axis_vertical.Length > 0)
         {
-            if ((Input.GetAxis(axis_vertical) != 0) && ship.UseStamina(staminaCost))
+            if ((Input.GetAxis(axis_vertical) != 0) && ship.UseStamina(0))
             {
                 vertical = Input.GetAxis(axis_vertical);
 

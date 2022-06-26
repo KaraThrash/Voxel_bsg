@@ -7,7 +7,6 @@ public class Enemy : Actor
 {
     private EnemyManager enemyManager;
     public Stats_Enemy stats;
-    private GameManager gameManager;
     public NpcManager npcManager;
     public Rigidbody rb;
     public Ship ship;
@@ -423,7 +422,7 @@ public class Enemy : Actor
     {
         if (attackTarget == null)
         {
-            attackTarget = GameManager.instance.Player().Ship().transform;
+            attackTarget = GameManager().Player().Ship().transform;
         }
 
         return attackTarget;
