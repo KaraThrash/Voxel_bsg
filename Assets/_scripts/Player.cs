@@ -33,6 +33,29 @@ public class Player : MonoBehaviour {
     {
         if (Ship() && Ship().CanAct())
         {
+
+            if (InputControls.DpadHortAsButton())
+            {
+                Ship().GetEquipment().MoveBulletListBookmark((int)Mathf.Sign(InputControls.DpadHort()));
+
+                if (Ship().GetEquipment().GetBullet() != null)
+                {
+                    GameManager().MenuManager().Set_PlayerBulletEquippedText(Ship().GetEquipment().GetBullet().name);
+                }
+
+              
+
+            }
+
+            if (InputControls.DpadVertAsButton())
+            {
+                Ship().GetEquipment().MoveConsumableListBookmark((int)Mathf.Sign(InputControls.DpadVert()));
+                if (Ship().GetEquipment().GetConsumable() != null)
+                {
+                    GameManager().MenuManager().Set_PlayerConsumableEquippedText(Ship().GetEquipment().GetConsumable().name);
+                }
+            }
+
             if (Ship().Hitpoints() <= 0)
             {
                 Ship().CanAct(false);

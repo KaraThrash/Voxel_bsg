@@ -34,10 +34,14 @@ public class Menus : Manager {
     public Text TEXT_playerStamina;
     public Text TEXT_playerHitPoints;
 
+    public Text TEXT_bulletEquipped;
+    public Text TEXT_consumableEquipped;
+
     public Button button_weapon;
     public Button button_chasis;
     public Button button_engine;
     public Button button_vehicle;
+    public Button button_bullet;
 
 
     private GameObject currentOpenMenu;
@@ -164,7 +168,10 @@ public class Menus : Manager {
         {
             tempButton = button_vehicle;
         }
-
+        if (_item.type == ItemTypes.bullet)
+        {
+            tempButton = button_bullet;
+        }
 
         if (tempButton != null)
         {
@@ -316,6 +323,23 @@ public class Menus : Manager {
             SetText(TEXT_playerHitPoints, TurnNumberIntoBar(_value));
         }
     }
+
+    public void Set_PlayerBulletEquippedText(string _value)
+    {
+        if (TEXT_bulletEquipped)
+        {
+            SetText(TEXT_bulletEquipped, _value);
+        }
+    }
+
+    public void Set_PlayerConsumableEquippedText(string _value )
+    {
+        if (TEXT_consumableEquipped)
+        {
+            SetText(TEXT_consumableEquipped, _value);
+        }
+    }
+
 
     public void SetText(Text _textObj,string _text)
     {

@@ -34,7 +34,9 @@ public class ItemManager : Manager {
 
     public List<Item> GetAllByType(ItemTypes _type)
     {
-
+        //The reason this are broken down to presorted lists is to avoid querying the inventory
+        //This way in the future if there are a large number of items or types of items
+        // it wont create a cascading search cost
         if (_type == ItemTypes.weapon)
         {
             return WeaponList();
@@ -48,7 +50,7 @@ public class ItemManager : Manager {
             return EngineList();
         }
 
-        if (_type == ItemTypes.ammo)
+        if (_type == ItemTypes.bullet)
         {
             return BulletList();
         }
@@ -82,7 +84,7 @@ public class ItemManager : Manager {
         {
             EngineList().Add(_item);
         }
-        if (_item.type == ItemTypes.ammo)
+        if (_item.type == ItemTypes.bullet)
         {
             BulletList().Add(_item);
         }
@@ -131,44 +133,18 @@ public class ItemManager : Manager {
             }
         }
         Debug.Log("new Item: " + newItem.ToString());
+
         AddToListByType(newItem);
-        //if (text.Length >= 7)
-        //{
-        //    Item newItem = new Item();
-        //    newItem.name = text[0].Trim();
-            
-        //    newItem.type = EnumGroups.ItemFromString(text[1].Trim());
-        //    newItem.armor = int.Parse(text[2].Trim());
-        //    newItem.damage = int.Parse(text[3].Trim());
-        //    newItem.speed = int.Parse(text[4].Trim());
-        //    newItem.mobility = int.Parse(text[5].Trim());
-        //    newItem.subtype = int.Parse(text[6].Trim());
-        //    // name;
-
-        //    //    //0 = weapon //1 = chasis // 2 = engine // 3 = usable // 4 = ammo
-        //    //type;
-
-        //    //armor;
-        //    //damage;
-        //    // speed;
-        //    //subtype;
-
-
-
-
-
-        //    Debug.Log("new Item: " + newItem.ToString());
-
-        //    AddToListByType(newItem);
-        //}
+  
          
         return null;
     }
 
+    
     public Item ALT_ParseToItem(string _line)
     {
         string lowerline = _line.ToLower();
-        //an item should have 7 extries for stats
+
         string[] text = lowerline.Split(',');
         Item newItem = new Item();
 
@@ -178,42 +154,35 @@ public class ItemManager : Manager {
             if (statline.Length == 2)
             {
                 if (statline[0].ToLower() == "name") { newItem.name = statline[1]; }
+                else if (statline[0].ToLower() == "id") { newItem.referenceID = statline[1]; }
                 else if (statline[0].ToLower() == "type")
                 { newItem.type = EnumGroups.ItemFromString(statline[1].Trim()); }
+                else if (statline[0].ToLower() == "subtype")
+                {
+                    if (newItem.type == ItemTypes.bullet)
+                    {
+                        newItem.subtype = (int)EnumGroups.BulletTypeFromString(statline[1].Trim());
+                    }
+
+                }
                 else
                 {
                     newItem.GetStats()[EnumGroups.StatsFromString(statline[0])] = int.Parse(statline[1].Trim());
-                    newItem.GetStatList().Add(new StatClass(EnumGroups.StatsFromString(statline[0]), int.Parse(statline[1].Trim())) );
-             
-
-
-
-                    //if (statline[0].ToLower() == "armor") { newItem.armor = int.Parse(statline[1].Trim()); }
-                    //if (statline[0].ToLower() == "speed") { newItem.speed = int.Parse(statline[1].Trim()); }
-                    //if (statline[0].ToLower() == "damage") { newItem.damage = int.Parse(statline[1].Trim()); }
-                    //if (statline[0].ToLower() == "mobility") { newItem.mobility = int.Parse(statline[1].Trim()); }
-                    //if (statline[0].ToLower() == "firerate") { newItem.fireRate = int.Parse(statline[1].Trim()); }
-                    //if (statline[0].ToLower() == "projectileSpeed") { newItem.projectileSpeed = int.Parse(statline[1].Trim()); }
-                    //if (statline[0].ToLower() == "bulletsPerBurst") { newItem.bulletsPerBurst = int.Parse(statline[1].Trim()); }
-
-                    //if (statline[0].ToLower() == "staminamax") { newItem.stamina_max = int.Parse(statline[1].Trim()); }
-                    //if (statline[0].ToLower() == "staminarecharge") { newItem.stamina_recharge = int.Parse(statline[1].Trim()); }
-                    //if (statline[0].ToLower() == "staminacost") { newItem.stamina_cost = int.Parse(statline[1].Trim()); }
-                    //if (statline[0].ToLower() == "staminarechargelockout") { newItem.stamina_rechargeLockout = int.Parse(statline[1].Trim()); }
-
-
+                    newItem.GetStatList().Add(new StatClass(EnumGroups.StatsFromString(statline[0]), int.Parse(statline[1].Trim())));
                 }
-
-
-
             }
         }
+
+        if (newItem.referenceID.Length == 0) { newItem.referenceID = newItem.name; }
+
         Debug.Log("new Item: " + newItem.ToString());
 
-        AddToListByType(newItem);
 
 
-        return null;
+       
+
+
+        return newItem;
     }
 
 
@@ -229,9 +198,13 @@ public class ItemManager : Manager {
             //skip the first header line
             
             Item newItem = ALT_ParseToItem(el.Trim().ToLower());
+
             if (newItem != null)
             {
-                masterItemList.Add(newItem.name,newItem);
+
+                MasterItems.AddNewItem( newItem);
+
+                AddToListByType(newItem);
 
                 //AddToListByType(newItem);
             }

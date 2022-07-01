@@ -9,22 +9,22 @@ using UnityEngine;
 public class Equipment : ScriptableObject
 {
 
-    public int armor;
-    public int damage;
-    public int speed;
+    public int armor = 0;
+    public int damage = 0;
+    public int speed = 0;
 
-    public int mobility;
+    public int mobility = 0;
 
-    public int fireRate;
-    public int projectileSpeed;
-    public int bulletsPerBurst;
+    public int fireRate = 0;
+    public int projectileSpeed = 0;
+    public int bulletsPerBurst = 0;
 
 
-    public int stamina_max; //additive: two items of value 1 gives the ship a max stamina of 2
-    public int stamina_recharge;
-    public int stamina_cost;
+    public int stamina_max = 0; //additive: two items of value 1 gives the ship a max stamina of 2
+    public int stamina_recharge = 0;
+    public int stamina_cost = 0;
 
-    public int stamina_rechargeLockout;
+    public int stamina_rechargeLockout = 0;
 
     public Item weapon;
     public Item engine;
@@ -33,12 +33,17 @@ public class Equipment : ScriptableObject
     public Item ph_other;
 
     public List<Item> bullets;
+    private int bookmark_BulletList;
+
     public List<Item> consumables;
+    private int bookmark_ConsumableList;
     public List<Item> storage;
 
     [SerializeField]
     public Dictionary<Stats, int> statMap;
+
     public List<StatClass> statList;
+
     public Dictionary<Stats, int> GetStats()
     {
         if (statMap == null)
@@ -103,6 +108,10 @@ public class Equipment : ScriptableObject
         {
             oldItem = chasis;
             chasis = _item;
+        }
+        else if (_item.type == ItemTypes.bullet)
+        {
+            GetBulletList().Add(_item);
         }
         else 
         {
@@ -207,6 +216,41 @@ public class Equipment : ScriptableObject
         { storage = new List<Item>(); }
         storage.Add(_item);
     }
+
+
+
+
+
+    public void MoveBulletListBookmark(int _dir = 0)
+    {
+        if (GetBulletList().Count == 0) { return; }
+
+        bookmark_BulletList = Mathf.Clamp(bookmark_BulletList += _dir,0,GetBulletList().Count - 1);
+        
+    }
+
+    public void MoveConsumableListBookmark(int _dir = 0)
+    {
+        if (GetConsumableList().Count == 0) { return; }
+
+        bookmark_ConsumableList = Mathf.Clamp(bookmark_ConsumableList += _dir, 0, GetConsumableList().Count - 1);
+
+    }
+
+    public Item GetBullet()
+    {
+        if (bullets == null || bullets.Count == 0)
+        { return null; }
+        return bullets[bookmark_ConsumableList];
+    }
+
+    public Item GetConsumable()
+    {
+        if (consumables == null || consumables.Count == 0)
+        { return null; }
+        return consumables[bookmark_ConsumableList];
+    }
+
 
 
     public List<Item> GetConsumableList()

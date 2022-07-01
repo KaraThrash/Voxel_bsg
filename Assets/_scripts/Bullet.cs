@@ -4,6 +4,8 @@ using UnityEngine;
 public class Bullet : Actor
 {
 
+    public BulletType bulletType;
+
     public float speed, rotSpeed;
     public GameObject explosion, target;
     public bool large;
@@ -70,10 +72,10 @@ public class Bullet : Actor
     {
         if (newtarget) { target = newtarget; }
 
-        if (boomerang == true)
+        if (bulletType == BulletType.boomerang)
         {
-            direction = (target.transform.forward + target.transform.right).normalized;
-            secondaryDirection = -target.transform.right;
+           // direction = (target.transform.forward + target.transform.right).normalized;
+           // secondaryDirection = -target.transform.right;
         }
 
 
@@ -86,9 +88,17 @@ public class Bullet : Actor
     {
 
         lifeTime -= Time.deltaTime;
-      
+
+        if (bulletType == BulletType.boomerang)
+        {
+            transform.Rotate(transform.right * speed);
+        }
+        else
+        {
+           
+        }
         RB().velocity = (transform.forward * speed) + relativeVelocity;
-        
+
         if ((lifeTime <= 0 && lifeTime != -1) || (target != null && transform.position == target.transform.position)) 
         { Die(); }
     }

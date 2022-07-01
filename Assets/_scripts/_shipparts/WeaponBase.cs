@@ -182,7 +182,8 @@ public class WeaponBase : ShipSystem
 
     public void FireBullet()
     {
-        if (gunParent != null)
+
+            if (gunParent != null)
         {
             FireBullet(gunParent);
             return;
@@ -193,6 +194,7 @@ public class WeaponBase : ShipSystem
             if (bullet != null)
             {
                 GameObject clone = Instantiate(bullet, transform.position, transform.rotation);
+                clone.GetComponent<Bullet>().bulletType = (BulletType)Ship().GetEquipment().GetBullet().subtype;
                 clone.SetActive(true);
                 clone.GetComponent<Bullet>().Launch(STAT_Power());
             }
@@ -200,6 +202,7 @@ public class WeaponBase : ShipSystem
         else 
         {
             Transform newBullet = BulletParent().GetChild(0);
+            newBullet.GetComponent<Bullet>().bulletType = (BulletType)Ship().GetEquipment().GetBullet().subtype;
             newBullet.position = transform.position;
             newBullet.rotation = transform.rotation;
             newBullet.gameObject.SetActive(true);
@@ -222,6 +225,7 @@ public class WeaponBase : ShipSystem
                     if (bullet != null)
                     {
                         GameObject clone = Instantiate(bullet, el.position, el.rotation);
+                        clone.GetComponent<Bullet>().bulletType = (BulletType)Ship().GetEquipment().GetBullet().subtype;
                         clone.SetActive(true);
                         clone.GetComponent<Bullet>().Launch(STAT_Power());
                     }
@@ -229,6 +233,7 @@ public class WeaponBase : ShipSystem
                 else
                 {
                     Transform newBullet = BulletParent().GetChild(0);
+                    newBullet.GetComponent<Bullet>().bulletType = (BulletType)Ship().GetEquipment().GetBullet().subtype;
                     newBullet.position = el.position;
                     newBullet.rotation = el.rotation;
                     newBullet.gameObject.SetActive(true);

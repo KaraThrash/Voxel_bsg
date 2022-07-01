@@ -12,7 +12,7 @@
     }
     public enum SubID { none, A, B, C, D, E, F, G, Boss } //to create small differences [strafe directions and order for grouping Wings of fighters]
 
-    public enum BulletType { basic, missile, lance, boomerang, spiral,spread }
+
 
 
     public enum PlayerTypes { left, right, observer, test, neutral, enemy }
@@ -61,10 +61,14 @@ public enum ItemTypes
 { 
     weapon, chasis,
     engine, usable,
-    ammo,none,
+    bullet,none,
     vehicle, // 6
     resource
 }
+
+public enum BulletType { basic, missile, lance, boomerang, spiral, spread }
+
+
 
 public enum ResourceType { none, currency, food, fuel, morale, pop, raptors, vipers }
 
@@ -95,6 +99,19 @@ public enum Stats
     
 }
 
+//This was put here as an test during a rubber duck conversation and left here as a curiosity to think about later
+//probably will remove this later
+public enum Grades { F = 0, D = 1, C = 2, B = 3, A = 4 };
+public static class Extensions
+{
+    public static Grades minPassing = Grades.D;
+    public static bool Passing(this Grades grade)
+    {
+        return grade >= minPassing;
+    }
+}
+
+// end of code mentioned in the previous comment
 
 public static class EnumGroups
 {
@@ -232,7 +249,19 @@ public static class EnumGroups
 
     }
 
+    public static BulletType BulletTypeFromString(string _type)
+    {
 
+        foreach (BulletType el in (BulletType[])Enum.GetValues(typeof(BulletType)))
+        {
+            if (el.ToString().Equals(_type))
+            { return el; }
+        }
+
+
+        return BulletType.basic;
+
+    }
 
 
 

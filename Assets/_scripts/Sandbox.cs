@@ -7,7 +7,7 @@ using UnityEngine;
 public class Sandbox : MonoBehaviour
 {
 
-
+    public Grades grade;
     public Camera camera;
     public Transform obj,newmapObj, spawnablesToPickFrom;
     public Transform object0, object1;
@@ -16,6 +16,9 @@ public class Sandbox : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Debug.Log(grade.Passing());
+ 
+
        // IterateObjects();
         //SpawnPrimitiveCuveEnviroment();
         //meth();

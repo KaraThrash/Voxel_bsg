@@ -21,26 +21,27 @@ public class Item
 {
 
     public string name;
+    public string referenceID = "";
 
     //0 = weapon //1 = chasis // 2 = engine // 3 = usable // 4 = ammo 
     //6 vehicle //7 resource
     public ItemTypes type;
 
-    public int armor;
-    public int damage;
-    public int speed;
+    public int armor = 0;
+    public int damage = 0;
+    public int speed = 0;
 
-    public int mobility;
+    public int mobility = 0;
 
-    public int fireRate; // bullets per second -> actual fire rate would be this stat / 60 
-    public int projectileSpeed;
-    public int bulletsPerBurst;
+    public int fireRate = 0; // bullets per second -> actual fire rate would be this stat / 60 
+    public int projectileSpeed = 0;
+    public int bulletsPerBurst = 0;
     
-    public int stamina_max; //additive: two items of value 1 gives the ship a max stamina of 2
-    public int stamina_recharge;
-    public int stamina_cost;
+    public int stamina_max = 0; //additive: two items of value 1 gives the ship a max stamina of 2
+    public int stamina_recharge = 0;
+    public int stamina_cost = 0;
 
-    public int stamina_rechargeLockout;
+    public int stamina_rechargeLockout = 0;
 
 
     public int backpack_slots;
@@ -54,6 +55,7 @@ public class Item
 
     [SerializeField]
     public Dictionary<Stats,int> statMap;
+
     public List<StatClass> statList;
 
     public Dictionary<Stats, int> GetStats()
@@ -105,6 +107,7 @@ public class Item
         string secondaryString = "";
 
         newString += " <" + name + ">   ";
+        newString += " [" + referenceID + "]   ";
         newString += '\n';
         newString += type;
 

@@ -11,4 +11,5 @@ public static class GameConstants
 
     public static bool typeA = false;// manually control the ship rotation, the camera focuses in front of the ship
 
+
 }

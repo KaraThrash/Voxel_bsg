@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class LVL_DestroyObjectives : Map
 {
-    
+    public int interval_spawnEvent;
+    private float timer_spawnEvent;
 
 
     [SerializeField]

@@ -10,7 +10,6 @@ public class Map : Manager
     [SerializeField]
     Transform playerSpawn;
 
-
     public GameObject prefab_enemy;
 
     public Transform parent_PatrolPoints;
@@ -18,12 +17,10 @@ public class Map : Manager
     public MapChunk currentChunk;
     private MapChunk previousChunk; //stagger disabling chunks to make changing over smoother and less noticable to the player
 
-
     public EnviromentType enviroment;
 
     public float gravityStrength;
     public float mapRadius;
-
  
     private List<Map_POI> poi;
 

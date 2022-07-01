@@ -35,6 +35,7 @@ public class ThirdPersonCamera : MonoBehaviour
     public float rollz;
 
     private Quaternion m_CameraTargetRot;
+
     private Quaternion idleRot;
 
     private bool m_cursorIsLocked = true;
