@@ -39,7 +39,7 @@ public class WeaponBase : ShipSystem
     public override void Act()
     {
 
-
+        if (STAT_cooldownTime < 0.1f) { STAT_cooldownTime = 0.5f; }
 
 
         if (GetGunType() == GunType.auto)
@@ -196,17 +196,20 @@ public class WeaponBase : ShipSystem
                 GameObject clone = Instantiate(bullet, transform.position, transform.rotation);
                 clone.GetComponent<Bullet>().bulletType = (BulletType)Ship().GetEquipment().GetBullet().subtype;
                 clone.SetActive(true);
-                clone.GetComponent<Bullet>().Launch(STAT_Power());
+                clone.GetComponent<Bullet>().Init();
+                clone.GetComponent<Bullet>().Launch(Ship());
             }
         }
         else 
         {
             Transform newBullet = BulletParent().GetChild(0);
             newBullet.GetComponent<Bullet>().bulletType = (BulletType)Ship().GetEquipment().GetBullet().subtype;
+            
+            newBullet.gameObject.SetActive(true);
+            newBullet.GetComponent<Bullet>().Init();
             newBullet.position = transform.position;
             newBullet.rotation = transform.rotation;
-            newBullet.gameObject.SetActive(true);
-            newBullet.GetComponent<Bullet>().Launch(STAT_Power());
+            newBullet.GetComponent<Bullet>().Launch(Ship());
 
         }
 
@@ -227,17 +230,20 @@ public class WeaponBase : ShipSystem
                         GameObject clone = Instantiate(bullet, el.position, el.rotation);
                         clone.GetComponent<Bullet>().bulletType = (BulletType)Ship().GetEquipment().GetBullet().subtype;
                         clone.SetActive(true);
-                        clone.GetComponent<Bullet>().Launch(STAT_Power());
+                        clone.GetComponent<Bullet>().Init();
+                        clone.GetComponent<Bullet>().Launch(Ship());
                     }
                 }
                 else
                 {
                     Transform newBullet = BulletParent().GetChild(0);
                     newBullet.GetComponent<Bullet>().bulletType = (BulletType)Ship().GetEquipment().GetBullet().subtype;
+                    
+                    newBullet.gameObject.SetActive(true);
+                    newBullet.GetComponent<Bullet>().Init();
                     newBullet.position = el.position;
                     newBullet.rotation = el.rotation;
-                    newBullet.gameObject.SetActive(true);
-                    newBullet.GetComponent<Bullet>().Launch(STAT_Power());
+                    newBullet.GetComponent<Bullet>().Launch(Ship());
 
                 }
             }

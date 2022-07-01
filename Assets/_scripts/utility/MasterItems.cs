@@ -29,6 +29,9 @@ public static class MasterItems
 
     public static void AddNewItem(Item _item)
     {
+        if (_item == null) { return; }
+        
+        if (_item.referenceID.Length <= 1) { _item.referenceID = _item.name; }
         if (MasterItemList().ContainsKey(_item.referenceID) == false)
         {
             MasterItemList().Add(_item.referenceID,_item);

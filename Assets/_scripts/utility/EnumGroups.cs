@@ -87,6 +87,7 @@ public enum Stats
     , fireRate
     , projectileSpeed
     , bulletsPerBurst
+    , bulletlifetime
 
     , stamina_max
     , stamina_cost

@@ -33,7 +33,7 @@ public class Equipment : ScriptableObject
     public Item ph_other;
 
     public List<Item> bullets;
-    private int bookmark_BulletList;
+    public int bookmark_BulletList;
 
     public List<Item> consumables;
     private int bookmark_ConsumableList;
@@ -135,7 +135,7 @@ public class Equipment : ScriptableObject
             {
                 if (GetStats().ContainsKey(el))
                 {
-                    GetStats()[el] = 0;
+                    GetStats()[el] = 1;
 
 
                 }
@@ -221,27 +221,37 @@ public class Equipment : ScriptableObject
 
 
 
-    public void MoveBulletListBookmark(int _dir = 0)
+    public void MoveBulletListBookmark(int _dir = 1)
     {
+        Debug.Log(_dir);
+
         if (GetBulletList().Count == 0) { return; }
 
-        bookmark_BulletList = Mathf.Clamp(bookmark_BulletList += _dir,0,GetBulletList().Count - 1);
+        bookmark_BulletList += _dir;
+        if (bookmark_BulletList < 0) { bookmark_BulletList = GetBulletList().Count - 1; }
+        if (bookmark_BulletList >= GetBulletList().Count) { bookmark_BulletList = 0; }
+
+
         
     }
 
-    public void MoveConsumableListBookmark(int _dir = 0)
+    public void MoveConsumableListBookmark(int _dir = 1)
     {
         if (GetConsumableList().Count == 0) { return; }
 
-        bookmark_ConsumableList = Mathf.Clamp(bookmark_ConsumableList += _dir, 0, GetConsumableList().Count - 1);
 
+        bookmark_ConsumableList += _dir;
+          if (bookmark_ConsumableList < 0) { bookmark_ConsumableList = GetConsumableList().Count - 1; }
+        if (bookmark_ConsumableList >= GetConsumableList().Count) { bookmark_ConsumableList = 0; }
     }
 
     public Item GetBullet()
     {
         if (bullets == null || bullets.Count == 0)
         { return null; }
-        return bullets[bookmark_ConsumableList];
+
+        Debug.Log(bullets[bookmark_BulletList].name);
+        return bullets[bookmark_BulletList];
     }
 
     public Item GetConsumable()

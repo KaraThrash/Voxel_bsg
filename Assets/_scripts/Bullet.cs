@@ -1,4 +1,5 @@
 ﻿
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Bullet : Actor
@@ -11,8 +12,10 @@ public class Bullet : Actor
     public bool large;
 
     public GameObject intialExplosion, childObject;
+    [Min(1)]
+    public float lifetimeMax = 10.0f;
+    public float  lifeTime, impactForce;
 
-    public float lifetimeMax = 10.0f, lifeTime, impactForce;
     public int  damage;
 
     public float timeIncrement = 1.0f, incrementTimer = 1.0f, spiralRange = 40.0f;
@@ -24,7 +27,10 @@ public class Bullet : Actor
     public bool ice;
 
     private Vector3 direction, secondaryDirection, relativeVelocity;
+    private Vector3 rotationDirection;
+
     private Rigidbody rb;
+    private Rigidbody anchorPoint; //for attacks that are part of the attacker [e.g. lance]
 
     private Collider myCollider;
 
@@ -54,6 +60,79 @@ public class Bullet : Actor
     }
 
 
+    public void Init()
+    {
+        SetCollider(false);
+        RB().isKinematic = false;
+        lifeTime = LifeTimeMax();
+        //move to the bottom of the child list [bullets are selected from the first child '0']
+        transform.parent = null;
+        transform.parent = BulletParent();
+
+        rotationDirection = Vector3.zero;
+    }
+
+    public void Launch(Ship _ship)
+    {
+        Dictionary<Stats, int> stats = _ship.GetEquipment().GetStats();
+        Item bulletStats = _ship.GetEquipment().GetBullet();
+
+
+        float pwr = stats[Stats.projectileSpeed];
+        pwr = (pwr / 100) * bulletStats.GetStats()[Stats.projectileSpeed];
+        pwr += bulletStats.GetStats()[Stats.projectileSpeed];
+
+
+        float dmg = stats[Stats.damage];
+        dmg = (dmg / 100) * bulletStats.GetStats()[Stats.damage];
+        dmg += bulletStats.GetStats()[Stats.damage];
+
+        float newLifeTime = stats[Stats.bulletlifetime];
+        newLifeTime = (newLifeTime / 100) * bulletStats.GetStats()[Stats.bulletlifetime];
+        newLifeTime += bulletStats.GetStats()[Stats.bulletlifetime];
+
+
+        rotSpeed = bulletStats.GetStats()[Stats.mobility];
+
+        lifeTime = newLifeTime;
+
+        if (lifeTime < 1) { lifeTime = 1; }
+
+        speed = pwr;
+
+        Damage(Mathf.FloorToInt(dmg));
+
+        rotationDirection = Vector3.zero;
+        direction = transform.forward ;
+        if (bulletType == BulletType.basic)
+        {
+            RB().velocity = transform.forward * pwr;
+        }
+        else if (bulletType == BulletType.boomerang)
+        {
+            direction = transform.right;
+            rotationDirection = _ship.MainTransform().forward ;
+        }
+        else if (bulletType == BulletType.spread)
+        {
+
+        }
+        else if (bulletType == BulletType.lance)
+        {
+
+        }
+        else if (bulletType == BulletType.spiral)
+        {
+            rotationDirection = -_ship.MainTransform().right - _ship.MainTransform().up;
+        }
+        else
+        {
+            RB().velocity = transform.forward * pwr;
+        }
+
+
+        SetCollider(true);
+    }
 
     public void Launch(float _power = 1)
     {
@@ -63,45 +142,128 @@ public class Bullet : Actor
         transform.parent = null;
         transform.parent = BulletParent();
 
-        RB().velocity = transform.forward * _power;
-        SetCollider(true);
 
-    }
 
-    public void Launched(GameObject newtarget = null)
-    {
-        if (newtarget) { target = newtarget; }
 
-        if (bulletType == BulletType.boomerang)
+        if (bulletType == BulletType.basic)
         {
-           // direction = (target.transform.forward + target.transform.right).normalized;
-           // secondaryDirection = -target.transform.right;
+            RB().velocity = transform.forward * _power;
+        }
+        else if (bulletType == BulletType.boomerang)
+        {
+
+        }
+        else if (bulletType == BulletType.spread)
+        {
+
+        }
+        else
+        {
+            RB().velocity = transform.forward * _power;
         }
 
 
+        SetCollider(true);
     }
+
+    public void SetTarget(GameObject newtarget = null)
+    {
+        if (newtarget) { target = newtarget; }
+
+
+    }
+
     public void SetRelativeVelocity(Vector3 newvel)
     { relativeVelocity = newvel; }
 
     // Update is called once per frame
     void FixedUpdate()
     {
-
-        lifeTime -= Time.deltaTime;
+        if (lifeTime != -1 )
+        { lifeTime -= Time.deltaTime; }
+        
 
         if (bulletType == BulletType.boomerang)
         {
-            transform.Rotate(transform.right * speed);
+            Boomerang();
+        }
+        else if (bulletType == BulletType.spiral)
+        {
+            Spiral();
         }
         else
         {
-           
+            Basic();
         }
-        RB().velocity = (transform.forward * speed) + relativeVelocity;
+
+        
 
         if ((lifeTime <= 0 && lifeTime != -1) || (target != null && transform.position == target.transform.position)) 
         { Die(); }
     }
+
+    /// <summary>
+    /// Basic
+    /// </summary>
+
+    public void Basic()
+    {
+        RB().velocity = (transform.forward * speed) + relativeVelocity;
+    }
+
+    public void Basic_Collision(Collision collision)
+    {
+
+    }
+
+    public void Basic_Trigger(Collider collision)
+    {
+
+    }
+
+    /// <summary>
+    /// Boomerang
+    /// </summary>
+
+    public void Boomerang()
+    {
+        RB().velocity = (transform.forward * speed);// + relativeVelocity;
+        transform.Rotate((rotationDirection) * rotSpeed * Time.deltaTime);
+    }
+
+    public void Boomerang_Collision(Collision collision)
+    {
+       
+    }
+
+    public void Boomerang_Trigger(Collider collision)
+    {
+       
+    }
+
+    /// <summary>
+    /// Spiral
+    /// </summary>
+
+
+    public void Spiral()
+    {
+        RB().velocity = (direction * speed) + (transform.forward * speed);// + relativeVelocity;
+        RB().angularVelocity = (rotationDirection) * rotSpeed;// + relativeVelocity;
+       // transform.Rotate((transform.right - transform.up) * rotSpeed * Time.deltaTime);
+    }
+
+    public void Spiral_Collision(Collision collision)
+    {
+
+    }
+
+    public void Spiral_Trigger(Collider collision)
+    {
+
+    }
+
+
 
     public override void ProcessCollisionEnter(Collision collision)
     {

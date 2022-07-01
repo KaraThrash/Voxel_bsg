@@ -71,6 +71,7 @@ Respawning: fleet attacks is the interval that repeating events use as a benchma
 
 Player:
 
+
 Enemies: 
     F.E.A.R enemy tactics
     Lean into the robotic AI of the enemy
@@ -110,6 +111,11 @@ Fleet:
 
 Progression:
 
+
+ships/equipment/items:
+ -> the primary equipment slots [weapon, chasis. engine, computer? ] are added together for the ships primary stats
+ -- values like projectile speed or damage are a percentage that is then multiplied to the bullet being fired
+        e.g. ship has damage 50, fires a bullet with damage 2 -> [50/100 * (2)] + 2 the bullet damage is [3]
 
 
 Movement:
@@ -154,6 +160,9 @@ Upgrades:
 ? light / heavy attacks
 ? parries
 
+
+
+=======================================
 
 Thoughts and design whiteboard:
     Everspace 2, like star wars squadrons have the same terrible camera/gun controls: you can mouse move around in the small center area

@@ -71,6 +71,8 @@ public class ShipSystem : MonoBehaviour
         }
         deactivateKey = activateKey;
         deactivateButton = activateButton;
+
+        
     }
 
     void Update()

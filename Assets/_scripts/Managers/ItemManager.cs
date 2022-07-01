@@ -173,7 +173,7 @@ public class ItemManager : Manager {
             }
         }
 
-        if (newItem.referenceID.Length == 0) { newItem.referenceID = newItem.name; }
+        if (newItem.referenceID.Length <= 1) { newItem.referenceID = newItem.name; }
 
         Debug.Log("new Item: " + newItem.ToString());
 

@@ -32,11 +32,13 @@ public class Item
     public int speed = 0;
 
     public int mobility = 0;
-
+    [Min(1)]
     public int fireRate = 0; // bullets per second -> actual fire rate would be this stat / 60 
     public int projectileSpeed = 0;
     public int bulletsPerBurst = 0;
-    
+    [Min(1)]
+    public int bulletlifetime = 0;
+
     public int stamina_max = 0; //additive: two items of value 1 gives the ship a max stamina of 2
     public int stamina_recharge = 0;
     public int stamina_cost = 0;

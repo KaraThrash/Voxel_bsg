@@ -33,10 +33,19 @@ public class Player : MonoBehaviour {
     {
         if (Ship() && Ship().CanAct())
         {
+            InputControls.TrackAxisButtons();
 
             if (InputControls.DpadHortAsButton())
             {
-                Ship().GetEquipment().MoveBulletListBookmark((int)Mathf.Sign(InputControls.DpadHort()));
+                if (InputControls.DpadHort() > 0)
+                {
+                    Ship().GetEquipment().MoveBulletListBookmark(1);
+                }
+                else 
+                {
+                    Ship().GetEquipment().MoveBulletListBookmark(-1);
+                }
+
 
                 if (Ship().GetEquipment().GetBullet() != null)
                 {
