@@ -5,9 +5,11 @@ using UnityEngine;
 public class dieintime : MonoBehaviour
 {
 
-      // Start is called before the first frame update
+
       public float lifetime;
-       // Start is called before the first frame update
+    public string parentName = "";
+    private Transform parentTransform;
+
        void Start()
        {
 
@@ -19,7 +21,23 @@ public class dieintime : MonoBehaviour
            if (lifetime != -1)
            {
                lifetime -= Time.deltaTime;
-               if (lifetime <= 0) { Destroy(this.gameObject); }
+               if (lifetime <= 0) 
+            {
+                Die();
+                
+            }
            }
        }
+
+
+    public void Die()
+    {
+        if (parentTransform)
+        {
+            transform.parent = parentTransform;
+            gameObject.SetActive(false);
+        }
+        else { Destroy(this.gameObject); }
+    }
+
   }

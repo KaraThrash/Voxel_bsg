@@ -225,20 +225,37 @@ public class WeaponBase : ShipSystem
             {
                 if (BulletParent().childCount == 0 || BulletParent().GetChild(0).gameObject.activeSelf)
                 {
-                    if (bullet != null)
+                    if (Ship().GetEquipment().GetBullet() != null && bullet != null)
                     {
                         GameObject clone = Instantiate(bullet, el.position, el.rotation);
                         clone.GetComponent<Bullet>().bulletType = (BulletType)Ship().GetEquipment().GetBullet().subtype;
-                        clone.SetActive(true);
+
                         clone.GetComponent<Bullet>().Init();
+                        clone.SetActive(true);
                         clone.GetComponent<Bullet>().Launch(Ship());
+                    }
+                    else
+                    {
+                        if (bullet != null)
+                        {
+                            GameObject clone = Instantiate(bullet, el.position, el.rotation);
+
+                            clone.GetComponent<Bullet>().Init();
+                            clone.SetActive(true);
+                            clone.GetComponent<Bullet>().Launch(Ship());
+                        }
                     }
                 }
                 else
                 {
                     Transform newBullet = BulletParent().GetChild(0);
-                    newBullet.GetComponent<Bullet>().bulletType = (BulletType)Ship().GetEquipment().GetBullet().subtype;
-                    
+
+                    if (Ship().GetEquipment().GetBullet() != null)
+                    { 
+                        newBullet.GetComponent<Bullet>().bulletType = (BulletType)Ship().GetEquipment().GetBullet().subtype;
+
+                    }
+
                     newBullet.gameObject.SetActive(true);
                     newBullet.GetComponent<Bullet>().Init();
                     newBullet.position = el.position;

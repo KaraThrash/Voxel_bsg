@@ -66,7 +66,7 @@ public enum ItemTypes
     resource
 }
 
-public enum BulletType { basic, missile, lance, boomerang, spiral, spread }
+public enum BulletType { basic, missile, lance, boomerang, spiral, spread,zigzag }
 
 
 
@@ -99,6 +99,17 @@ public enum Stats
 
     
 }
+
+
+/// visuals
+
+public enum SFX { basic,bulletImpact,shipImpact };
+
+/// end visuals
+
+
+
+
 
 //This was put here as an test during a rubber duck conversation and left here as a curiosity to think about later
 //probably will remove this later

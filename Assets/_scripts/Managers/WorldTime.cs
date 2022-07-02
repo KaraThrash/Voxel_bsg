@@ -4,9 +4,8 @@ using UnityEngine;
 using UnityEngine.UI;
 
 
-public class WorldTime : MonoBehaviour
+public class WorldTime : Manager
 {
-  public GameManager gameManager;
   public Text clockText,fleetJumpReadiness;
   public GameObject joinAttackButton,fleetJumpButton;
   public int totalTimePassed,currentMinutes;
@@ -79,7 +78,7 @@ public class WorldTime : MonoBehaviour
 
         currentMinutes = (int)timeUntilAttack / 60;
 
-          if(gameManager.GetGameState() == GameState.playing){clockText.text = currentMinutes.ToString();}
+          if(GameManager().GetGameState() == GameState.playing){clockText.text = currentMinutes.ToString();}
 
 
 

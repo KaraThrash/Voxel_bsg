@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Hangar : Actor
 {
-    private GameManager gameManager;
+
     public GameObject enemyPrefab;
     public Transform locationToSpawn;
 
@@ -48,11 +48,5 @@ public class Hangar : Actor
         }
     }
 
-    public GameManager GameManager()
-    {
-        if (gameManager == null)
-        { gameManager = FindObjectOfType<GameManager>(); }
 
-        return gameManager;
-    }
 }

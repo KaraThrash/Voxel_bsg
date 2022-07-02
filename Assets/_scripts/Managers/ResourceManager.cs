@@ -4,8 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 
-public class ResourceManager : MonoBehaviour {
-    private GameManager gameManager;
+public class ResourceManager : Manager {
 
     public int currency;
 
@@ -151,12 +150,6 @@ public class ResourceManager : MonoBehaviour {
     }
 
 
-    public GameManager GameManager()
-    {
-        if (gameManager == null)
-        { gameManager = FindObjectOfType<GameManager>(); }
 
-        return gameManager;
-    }
 
 }

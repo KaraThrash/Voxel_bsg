@@ -1,14 +1,26 @@
 Battle for the dark star:
 
+TODO: default item values
+
+
+
+====
+more bullet type stuff: added zig zags
+======
+bullets and sfx [explosions] use the factory format on their own
+-> my natural inclination is to now centralize this, but thats an extra step that I could easily do later
+--> and right now its not clear if any more would end up being needed to constitute the need for the work
+---> and the sfx /bullet script are both parent scripts to alternate to match what is needed when they are called so I wont be adding more subtypes
+============
+july2:
+===============
+
+added bullet types to the enum groups, for the types of projectiles that can be fired [spirals, boomerang etc]
 
 
 
 
-
-
-
-
-
+=====
 june23: started turning stats into a dictionary constructed from the enum:
 -> this way adding stats is easier and I dont need to update multiple portions of the inventory and item manager code
 ---should it bne a list to be seen in the inspector?

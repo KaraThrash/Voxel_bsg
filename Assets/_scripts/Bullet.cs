@@ -8,13 +8,21 @@ public class Bullet : Actor
     public BulletType bulletType;
 
     public float speed, rotSpeed;
+    private float currentRotSpeed;
     public GameObject explosion, target;
     public bool large;
 
     public GameObject intialExplosion, childObject;
     [Min(1)]
     public float lifetimeMax = 10.0f;
-    public float  lifeTime, impactForce;
+    public float  lifeTime;
+    private float  eventTimestamp = -1;
+    private float  eventIncrement = -1;
+
+
+
+
+    public float  impactForce;
 
     public int  damage;
 
@@ -36,8 +44,9 @@ public class Bullet : Actor
 
     private Transform bulletParent;
     private string bulletParentName = "PARENT_Bullet";
+    private Transform explosionParent;
+    private string explosionParentName = "PARENT_Explosion";
 
-    
 
     public float LifeTimeMax() { return lifetimeMax; }
     public float Speed() { return speed; }
@@ -77,24 +86,40 @@ public class Bullet : Actor
         Dictionary<Stats, int> stats = _ship.GetEquipment().GetStats();
         Item bulletStats = _ship.GetEquipment().GetBullet();
 
+        float pwr = 1;
+        float dmg = 0;
+        float newLifeTime = LifeTimeMax();
 
-        float pwr = stats[Stats.projectileSpeed];
-        pwr = (pwr / 100) * bulletStats.GetStats()[Stats.projectileSpeed];
-        pwr += bulletStats.GetStats()[Stats.projectileSpeed];
+        currentRotSpeed = 0;
+
+        if (bulletStats == null)
+        {
+           
+            rotSpeed = 1;
+        }
+        else
+        {
+             pwr = stats[Stats.projectileSpeed];
+            pwr = (pwr / 100) * bulletStats.GetStats()[Stats.projectileSpeed];
+            pwr += bulletStats.GetStats()[Stats.projectileSpeed];
 
 
-        float dmg = stats[Stats.damage];
-        dmg = (dmg / 100) * bulletStats.GetStats()[Stats.damage];
-        dmg += bulletStats.GetStats()[Stats.damage];
+             dmg = stats[Stats.damage];
+            dmg = (dmg / 100) * bulletStats.GetStats()[Stats.damage];
+            dmg += bulletStats.GetStats()[Stats.damage];
 
-        float newLifeTime = stats[Stats.bulletlifetime];
-        newLifeTime = (newLifeTime / 100) * bulletStats.GetStats()[Stats.bulletlifetime];
-        newLifeTime += bulletStats.GetStats()[Stats.bulletlifetime];
+             newLifeTime = stats[Stats.bulletlifetime];
+            newLifeTime = (newLifeTime / 100) * bulletStats.GetStats()[Stats.bulletlifetime];
+            newLifeTime += bulletStats.GetStats()[Stats.bulletlifetime];
 
+            rotSpeed = bulletStats.GetStats()[Stats.mobility];
 
-        rotSpeed = bulletStats.GetStats()[Stats.mobility];
+            
+        }
 
         lifeTime = newLifeTime;
+        eventTimestamp = -1;
+
 
         if (lifeTime < 1) { lifeTime = 1; }
 
@@ -103,7 +128,7 @@ public class Bullet : Actor
         Damage(Mathf.FloorToInt(dmg));
 
         rotationDirection = Vector3.zero;
-        direction = transform.forward ;
+        direction = transform.forward;
         if (bulletType == BulletType.basic)
         {
             RB().velocity = transform.forward * pwr;
@@ -112,6 +137,14 @@ public class Bullet : Actor
         {
             direction = transform.right;
             rotationDirection = _ship.MainTransform().forward ;
+
+            eventTimestamp = newLifeTime * 0.7f;
+            target = _ship.MainTransform().gameObject;
+
+        }
+        else if (bulletType == BulletType.missile)
+        {
+
         }
         else if (bulletType == BulletType.spread)
         {
@@ -125,11 +158,21 @@ public class Bullet : Actor
         {
             rotationDirection = -_ship.MainTransform().right - _ship.MainTransform().up;
         }
+        else if (bulletType == BulletType.zigzag)
+        {
+            direction = transform.forward + transform.right;
+            rotationDirection = transform.forward - transform.right;
+
+            eventIncrement = lifeTime * 0.1f;
+            eventTimestamp = lifeTime - (eventIncrement * 0.5f);
+
+        }
         else
         {
             RB().velocity = transform.forward * pwr;
         }
 
+        gameObject.name = "Bullet_" + bulletType;
 
         SetCollider(true);
     }
@@ -191,6 +234,10 @@ public class Bullet : Actor
         {
             Spiral();
         }
+        else if (bulletType == BulletType.zigzag)
+        {
+            ZigZag();
+        }
         else
         {
             Basic();
@@ -228,7 +275,23 @@ public class Bullet : Actor
     public void Boomerang()
     {
         RB().velocity = (transform.forward * speed);// + relativeVelocity;
-        transform.Rotate((rotationDirection) * rotSpeed * Time.deltaTime);
+
+        if (target && eventTimestamp > lifeTime)
+        {
+            if (currentRotSpeed < rotSpeed)
+            {
+                currentRotSpeed += Time.deltaTime;
+                if (currentRotSpeed > rotSpeed)
+                {
+                    currentRotSpeed = rotSpeed;
+                }
+            }
+           
+            Quaternion targetRotation = Quaternion.LookRotation(target.transform.position - transform.position);
+
+            transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, currentRotSpeed * Time.deltaTime);
+        }
+
     }
 
     public void Boomerang_Collision(Collision collision)
@@ -240,6 +303,45 @@ public class Bullet : Actor
     {
        
     }
+
+    /// <summary>
+    /// Missile
+    /// </summary>
+
+    public void Missile()
+    {
+        RB().velocity = (transform.forward * speed);// + relativeVelocity;
+
+
+
+        if (target)
+        {
+            if (currentRotSpeed < rotSpeed)
+            {
+                currentRotSpeed += Time.deltaTime;
+                if (currentRotSpeed > rotSpeed)
+                {
+                    currentRotSpeed = rotSpeed;
+                }
+            }
+
+            Quaternion targetRotation = Quaternion.LookRotation(target.transform.position - transform.position);
+
+            transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, currentRotSpeed * Time.deltaTime);
+        }
+       
+    }
+
+    public void Missile_Collision(Collision collision)
+    {
+
+    }
+
+    public void Missile_Trigger(Collider collision)
+    {
+
+    }
+
 
     /// <summary>
     /// Spiral
@@ -263,6 +365,38 @@ public class Bullet : Actor
 
     }
 
+    /// <summary>
+    /// zigzag
+    /// </summary>
+
+    public void ZigZag()
+    {
+        RB().velocity = (direction * speed);// + relativeVelocity;
+
+
+        if (eventTimestamp > lifeTime)
+        {
+            eventTimestamp = lifeTime - eventIncrement ;
+
+            Vector3 oldDir = direction;
+            direction = rotationDirection;
+            rotationDirection = oldDir;
+            
+
+
+        }
+
+    }
+
+    public void ZigZag_Collision(Collision collision)
+    {
+
+    }
+
+    public void ZigZag_Trigger(Collider collision)
+    {
+
+    }
 
 
     public override void ProcessCollisionEnter(Collision collision)
@@ -279,7 +413,11 @@ public class Bullet : Actor
         }
         else if (collision.transform.CompareTag("Enviroment"))
         {
-            HitEnviroment(collision);
+            HitEnviroment();
+        }
+        else 
+        {
+            HitEnviroment();
         }
 
     }
@@ -295,6 +433,14 @@ public class Bullet : Actor
         {
             HitActor(collision.gameObject.GetComponent<Actor>(), collision.ClosestPoint(transform.position));
         }
+        else if (collision.transform.CompareTag("Enviroment"))
+        {
+            HitEnviroment();
+        }
+        else
+        {
+            HitEnviroment();
+        }
     }
 
 
@@ -303,10 +449,7 @@ public class Bullet : Actor
 
         GetComponent<Collider>().enabled = false;
 
-        if (explosion != null)
-        {
-            Instantiate(explosion, transform.position, transform.rotation);
-        }
+        PlaceExplosion();
 
         _actor.TakeDamage(Damage());
 
@@ -319,10 +462,7 @@ public class Bullet : Actor
 
         GetComponent<Collider>().enabled = false;
 
-        if (explosion != null)
-        {
-            Instantiate(explosion, transform.position, transform.rotation);
-        }
+        PlaceExplosion();
 
         if (_ship.Chasis())
         {
@@ -341,16 +481,13 @@ public class Bullet : Actor
 
 
 
-    public void HitEnviroment(Collision collision)
+    public void HitEnviroment()
     {
 
 
         GetComponent<Collider>().enabled = false;
 
-        if (explosion != null)
-        {
-            Instantiate(explosion, transform.position, transform.rotation);
-        }
+        PlaceExplosion();
 
         Die();
 
@@ -379,6 +516,65 @@ public class Bullet : Actor
 
         return bulletParent;
     }
+
+    public Transform ExplosionParent()
+    {
+        if (explosionParent == null)
+        {
+            if (explosionParentName.Length < 1)
+            {
+                explosionParentName = "PARENT_Explosion";// + this.GetType().ToString();
+            }
+
+            GameObject findParent = GameObject.Find(explosionParentName);
+
+
+            if (findParent == null)
+            {
+                explosionParent = new GameObject(explosionParentName).transform;
+            }
+            else { explosionParent = findParent.transform; }
+        }
+
+        return explosionParent;
+    }
+
+
+
+    public void PlaceExplosion()
+    {
+
+        if (ExplosionParent().childCount == 0 || ExplosionParent().GetChild(0).gameObject.activeSelf)
+        {
+            if (explosion != null)
+            {
+                GameObject clone = Instantiate(explosion, transform.position, transform.rotation);
+                clone.SetActive(true);
+                clone.GetComponent<SfxExplosion>().Init(SFX.bulletImpact);
+
+            }
+        }
+        else
+        {
+            Transform newExplosion = ExplosionParent().GetChild(0);
+            newExplosion.gameObject.SetActive(true);
+            newExplosion.GetComponent<SfxExplosion>().Init(SFX.bulletImpact);
+
+
+            newExplosion.position = transform.position;
+            newExplosion.rotation = transform.rotation;
+
+
+        }
+
+
+        if (explosion != null)
+        {
+           // Instantiate(explosion, transform.position, transform.rotation);
+        }
+
+    }
+
 
     public override void Die()
     {

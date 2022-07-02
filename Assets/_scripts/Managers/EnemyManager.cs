@@ -10,9 +10,8 @@ public class EnemyEvent : UnityEvent<Enemy>
 
 }
 
-public class EnemyManager : MonoBehaviour
+public class EnemyManager : Manager
 {
-    private GameManager gameManager;
     private Transform playerShip;
     private Transform parent_Enemy;
 
@@ -118,12 +117,6 @@ public class EnemyManager : MonoBehaviour
 
 
     //private GameManager gameManager;
-    public GameManager GameManager()
-    {
-        if (gameManager == null)
-        { gameManager = FindObjectOfType<GameManager>(); }
 
-        return gameManager;
-    }
 
 }
