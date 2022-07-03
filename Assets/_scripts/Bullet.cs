@@ -9,6 +9,10 @@ public class Bullet : Actor
 
     public float speed, rotSpeed;
     private float currentRotSpeed;
+
+    private float acceleration;
+    private float current_acceleration;
+
     public GameObject explosion, target;
     public bool large;
 
@@ -16,8 +20,12 @@ public class Bullet : Actor
     [Min(1)]
     public float lifetimeMax = 10.0f;
     public float  lifeTime;
+
     private float  eventTimestamp = -1;
     private float  eventIncrement = -1;
+
+    private float tracker_DirectionChanges = 0;
+    private float stat_DirectionChanges = 0;
 
 
 
@@ -31,6 +39,7 @@ public class Bullet : Actor
 
 
     private int toggleValue = 1;
+
     public bool lance, missile, spray, twinlinked, boomerang, spiral; //toggles on instead of being a projectile
     public bool ice;
 
@@ -87,10 +96,14 @@ public class Bullet : Actor
         Item bulletStats = _ship.GetEquipment().GetBullet();
 
         float pwr = 1;
+        float acc = 0;
         float dmg = 0;
+
         float newLifeTime = LifeTimeMax();
 
         currentRotSpeed = 0;
+        current_acceleration = 1;
+
 
         if (bulletStats == null)
         {
@@ -115,6 +128,8 @@ public class Bullet : Actor
             rotSpeed = bulletStats.GetStats()[Stats.mobility];
 
             
+            acc = bulletStats.GetStats()[Stats.speed];
+
         }
 
         lifeTime = newLifeTime;
@@ -125,10 +140,13 @@ public class Bullet : Actor
 
         speed = pwr;
 
+   
+
         Damage(Mathf.FloorToInt(dmg));
 
         rotationDirection = Vector3.zero;
         direction = transform.forward;
+
         if (bulletType == BulletType.basic)
         {
             RB().velocity = transform.forward * pwr;
@@ -144,7 +162,12 @@ public class Bullet : Actor
         }
         else if (bulletType == BulletType.missile)
         {
-
+            if (acc > 0)
+            {
+                //projectiles with no acceleration have a stable constant speec [i.e. current acceleration is 1]
+                acceleration = acc;
+                current_acceleration = 0;
+            }
         }
         else if (bulletType == BulletType.spread)
         {
@@ -160,6 +183,7 @@ public class Bullet : Actor
         }
         else if (bulletType == BulletType.zigzag)
         {
+
             direction = transform.forward + transform.right;
             rotationDirection = transform.forward - transform.right;
 
@@ -184,8 +208,6 @@ public class Bullet : Actor
         //move to the bottom of the child list [bullets are selected from the first child '0']
         transform.parent = null;
         transform.parent = BulletParent();
-
-
 
 
         if (bulletType == BulletType.basic)
@@ -325,6 +347,16 @@ public class Bullet : Actor
                 }
             }
 
+            if (current_acceleration < 1)
+            {
+                current_acceleration += Time.deltaTime * acceleration;
+
+                if (current_acceleration > 1)
+                {
+                    currentRotSpeed = 1;
+                }
+            }
+
             Quaternion targetRotation = Quaternion.LookRotation(target.transform.position - transform.position);
 
             transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, currentRotSpeed * Time.deltaTime);
@@ -381,7 +413,38 @@ public class Bullet : Actor
             Vector3 oldDir = direction;
             direction = rotationDirection;
             rotationDirection = oldDir;
-            
+
+            //tracker_DirectionChanges++;
+
+            //if (tracker_DirectionChanges >= stat_DirectionChanges)
+            //{ tracker_DirectionChanges = 0; }
+
+
+            //Vector3 oldDir = direction;
+
+            //if (tracker_DirectionChanges == 0)
+            //{
+            //    direction = transform.forward + transform.right - transform.up;
+            //}
+            //else if (tracker_DirectionChanges == 1)
+            //{
+            //    direction = transform.forward - transform.right;
+            //}
+            //else if (tracker_DirectionChanges == 2)
+            //{
+            //    direction = transform.forward - transform.up + transform.right;
+            //}
+            //else if (tracker_DirectionChanges == 3)
+            //{
+            //    direction = transform.forward + transform.up ;
+            //}
+            //else
+            //{
+                
+            //}
+
+
+
 
 
         }

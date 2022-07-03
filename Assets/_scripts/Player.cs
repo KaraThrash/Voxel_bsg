@@ -33,41 +33,12 @@ public class Player : MonoBehaviour {
     {
         if (Ship() && Ship().CanAct())
         {
-            InputControls.TrackAxisButtons();
-
-            if (InputControls.DpadHortAsButton())
-            {
-                if (InputControls.DpadHort() > 0)
-                {
-                    Ship().GetEquipment().MoveBulletListBookmark(1);
-                }
-                else 
-                {
-                    Ship().GetEquipment().MoveBulletListBookmark(-1);
-                }
-
-
-                if (Ship().GetEquipment().GetBullet() != null)
-                {
-                    GameManager().MenuManager().Set_PlayerBulletEquippedText(Ship().GetEquipment().GetBullet().name);
-                }
-
-              
-
-            }
-
-            if (InputControls.DpadVertAsButton())
-            {
-                Ship().GetEquipment().MoveConsumableListBookmark((int)Mathf.Sign(InputControls.DpadVert()));
-                if (Ship().GetEquipment().GetConsumable() != null)
-                {
-                    GameManager().MenuManager().Set_PlayerConsumableEquippedText(Ship().GetEquipment().GetConsumable().name);
-                }
-            }
+            InputListen();
 
             if (Ship().Hitpoints() <= 0)
             {
                 Ship().CanAct(false);
+
                 GameManager().GetPlayerDeathEvent().Invoke();
             }
         }
@@ -75,7 +46,40 @@ public class Player : MonoBehaviour {
     }
 
 
+    public void InputListen()
+    {
+        InputControls.TrackAxisButtons();
 
+        if (InputControls.DpadHortAsButton())
+        {
+            if (InputControls.DpadHort() > 0)
+            {
+                Ship().GetEquipment().MoveBulletListBookmark(1);
+            }
+            else
+            {
+                Ship().GetEquipment().MoveBulletListBookmark(-1);
+            }
+
+
+            if (Ship().GetEquipment().GetBullet() != null)
+            {
+                GameManager().MenuManager().Set_PlayerBulletEquippedText(Ship().GetEquipment().GetBullet().name);
+            }
+
+
+
+        }
+
+        if (InputControls.DpadVertAsButton())
+        {
+            Ship().GetEquipment().MoveConsumableListBookmark((int)Mathf.Sign(InputControls.DpadVert()));
+            if (Ship().GetEquipment().GetConsumable() != null)
+            {
+                GameManager().MenuManager().Set_PlayerConsumableEquippedText(Ship().GetEquipment().GetConsumable().name);
+            }
+        }
+    }
 
 
 
@@ -92,7 +96,7 @@ public class Player : MonoBehaviour {
 
        // InputListenForSpecialActions();
 
-        if (ship != null)
+        if (ship != null && GameManager().GetGameState() == GameState.playing)
         {
             if (GameConstants.typeA)
             {

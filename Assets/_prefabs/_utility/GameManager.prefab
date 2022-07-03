@@ -640,7 +640,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4141473752847195072}
   m_LocalRotation: {x: 0, y: 0, z: 0.38268343, w: 0.92387956}
-  m_LocalPosition: {x: 0, y: -0.36, z: -0.661}
+  m_LocalPosition: {x: 0, y: -0.125, z: -0.454}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 3124516334111372011}
@@ -1382,7 +1382,6 @@ MonoBehaviour:
   timeToResetRotation: 555
   idleCameraAcceleration: 1
   currentAcc: 0
-  pos_Camera: {x: 0, y: 0, z: 0}
 --- !u!1 &6353758917913992792
 GameObject:
   m_ObjectHideFlags: 0
@@ -1947,6 +1946,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 73b829eca1470ae40bdc1daff1eab9bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  enemyManager: {fileID: 0}
+  menuManager: {fileID: 0}
+  mapManager: {fileID: 0}
+  npcManager: {fileID: 0}
+  itemManager: {fileID: 0}
+  player: {fileID: 0}
+  timeManager: {fileID: 0}
   currency: 0
   pop: 3
   food: 3
@@ -2004,7 +2010,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c36804d24f0ad864c9b0c86497738598, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameManager: {fileID: 8370050522675975534}
+  enemyManager: {fileID: 0}
+  menuManager: {fileID: 0}
+  mapManager: {fileID: 0}
+  npcManager: {fileID: 0}
+  itemManager: {fileID: 0}
+  player: {fileID: 0}
+  timeManager: {fileID: 0}
   clockText: {fileID: 210256402}
   fleetJumpReadiness: {fileID: 272424902}
   joinAttackButton: {fileID: 984656234}
@@ -2137,6 +2149,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e1b1173d412eeb4c8a4e78b64994400, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  enemyManager: {fileID: 0}
+  menuManager: {fileID: 0}
+  mapManager: {fileID: 0}
+  npcManager: {fileID: 0}
+  itemManager: {fileID: 0}
+  player: {fileID: 0}
+  timeManager: {fileID: 0}
   enemies: []
   maxOnScreen: 5
 --- !u!1 &8487493365418068040

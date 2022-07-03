@@ -120,7 +120,7 @@ public class ItemManager : Manager {
                 if (statline[0].ToLower() == "mobility") { newItem.mobility = int.Parse(statline[1].Trim()); }
                 if (statline[0].ToLower() == "firerate") { newItem.fireRate = int.Parse(statline[1].Trim()); }
                 if (statline[0].ToLower() == "projectileSpeed") { newItem.projectileSpeed = int.Parse(statline[1].Trim()); }
-                if (statline[0].ToLower() == "bulletsPerBurst") { newItem.bulletsPerBurst = int.Parse(statline[1].Trim()); }
+                if (statline[0].ToLower() == "bulletsperburst") { newItem.bulletsPerBurst = int.Parse(statline[1].Trim()); }
                 
                 if (statline[0].ToLower() == "staminamax") { newItem.stamina_max = int.Parse(statline[1].Trim()); }
                 if (statline[0].ToLower() == "staminarecharge") { newItem.stamina_recharge = int.Parse(statline[1].Trim()); }

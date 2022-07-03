@@ -124,6 +124,8 @@ public class Equipment : ScriptableObject
         {
             //AddStats(oldItem,-1);
         }
+
+
         CalculateStats();
     }
 
@@ -151,16 +153,16 @@ public class Equipment : ScriptableObject
         }
 
 
-        foreach (Stats el in (Stats[])Enum.GetValues(typeof(Stats)))
-        {
-            if (GetStats().ContainsKey(el) )
-            {
-                GetStatList().Add(new StatClass(el,GetStats()[el]));
+        //foreach (Stats el in (Stats[])Enum.GetValues(typeof(Stats)))
+        //{
+        //    if (GetStats().ContainsKey(el) )
+        //    {
+        //        GetStatList().Add(new StatClass(el,GetStats()[el]));
 
 
-            }
+        //    }
 
-        }
+        //}
 
 
 
@@ -174,6 +176,7 @@ public class Equipment : ScriptableObject
         if (weapon != null) { AddStats(weapon); }
         if (engine != null) { AddStats(engine); }
         if (chasis != null) { AddStats(chasis); }
+
         if (ph_other != null) { AddStats(ph_other); }
     
     }
@@ -250,7 +253,10 @@ public class Equipment : ScriptableObject
         if (bullets == null || bullets.Count == 0)
         { return null; }
 
-        Debug.Log(bullets[bookmark_BulletList].name);
+        if (bookmark_BulletList >= bullets.Count)
+        { bookmark_BulletList = 0; }
+
+       // Debug.Log(bullets[bookmark_BulletList].name);
         return bullets[bookmark_BulletList];
     }
 

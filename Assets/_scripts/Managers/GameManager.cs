@@ -39,11 +39,15 @@ public class GameManager : Manager {
 
         DontDestroyOnLoad(this);
 
+        SetGameState(GameState.menu_OutofGame);
+
         GetObjectiveEvent().AddListener(ObjectiveEvent);
         GetEnemyDeathEvent().AddListener(EnemyDeathEvent);
         GetPlayerDeathEvent().AddListener(PlayerDeathEvent);
 
         SceneManager.sceneLoaded += StartLevel;
+
+        Player().Ship().GetEquipment().GetStatList().Clear();
     }
 
 
@@ -63,7 +67,12 @@ public class GameManager : Manager {
 
 
         }
+        else if (GetGameState() == GameState.menu_OutofGame)
+        {
 
+
+
+        }
 
         ListenToInput();
 

@@ -18,7 +18,7 @@
     public enum PlayerTypes { left, right, observer, test, neutral, enemy }
 
 
-    public enum GameState { playing, inOverTime, rest, upgradeScreen, lobby, playersdead, bonusRound, tutorial, inactive, attractMode }
+    public enum GameState { playing, menu_OutofGame, menu_inGame,rest, upgradeScreen, lobby, playersdead, bonusRound, tutorial, inactive, attractMode }
     public enum GunType { auto, burst, semiauto, shotgun, spread, laser }
 
 
@@ -66,7 +66,10 @@ public enum ItemTypes
     resource
 }
 
+
 public enum BulletType { basic, missile, lance, boomerang, spiral, spread,zigzag }
+
+
 
 
 
@@ -86,7 +89,7 @@ public enum Stats
 
     , fireRate
     , projectileSpeed
-    , bulletsPerBurst
+    , bulletsperburst
     , bulletlifetime
 
     , stamina_max

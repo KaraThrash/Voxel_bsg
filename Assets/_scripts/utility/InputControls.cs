@@ -23,12 +23,21 @@ public static class InputControls
     //controller axis as buttons
     public static string dPadVertButton = "DpadVert",dPadHortButton = "DpadHort";
     public static string cameraHorizontal = "4th Axis",cameraVertical = "5th Axis";
+
+
     public static bool dPadVertPressed,dPadHortPressed,vertPressed,hortPressed;
 
     public static KeyCode interactKey = KeyCode.Space, pickupKey = KeyCode.LeftControl, actionKey = KeyCode.RightControl, nextKey = KeyCode.E, previousKey = KeyCode.Q, dPadDownKey = KeyCode.DownArrow;
     public static KeyCode menuKey = KeyCode.Return;
 
+    private static float tracker_lastTimeDPadHortPressed;
+    private static float tracker_lastTimeDPadVertPressed;
+
+    private static float tracker_lastTimeLeftTriggerPressed;
+    private static float tracker_lastTimeRightTriggerPressed;
+
     private static float deadtime = 0.5f, deadClock; //holding an axis while using as a button
+
     private static bool rightTriggerPressed, leftTriggerPressed;
 
 
@@ -43,7 +52,7 @@ public static class InputControls
         {
             rightTriggerPressed = false;
         }
-
+        
     }
 
     public static bool CheckButtonPressed(Buttons _button)
@@ -219,22 +228,27 @@ public static class InputControls
 
     public static bool DpadHortAsButton()
     {
-        if (dPadHortPressed == false && (Input.GetAxis(dPadHortButton) != 0))
+        if (Input.GetAxis(dPadHortButton) != 0)
         {
-            deadClock = deadtime;
-            dPadHortPressed = true;
-            return true;
+            if (Time.time - tracker_lastTimeDPadHortPressed > deadtime)
+            {
+                tracker_lastTimeDPadHortPressed = Time.time;
+                return true;
+            }
         }
         return false;
     }
 
     public static bool DpadVertAsButton()
     {
-        if (dPadVertPressed == false && Input.GetAxis(dPadVertButton) != 0)
+        if (Input.GetAxis(dPadVertButton) != 0)
         {
-            deadClock = deadtime;
-            dPadVertPressed = true;
-            return true;
+            if (Time.time - tracker_lastTimeDPadVertPressed > deadtime)
+            {
+                tracker_lastTimeDPadVertPressed = Time.time;
+                return true;
+            }
+            
         }
         return false;
     }

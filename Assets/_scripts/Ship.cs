@@ -168,7 +168,7 @@ public class Ship : Actor
         }
         else
         {
-            if (PrimaryEngine())
+            if (PrimaryEngine() && PrimaryEngine().throttle_A != 0)
             { 
                 transform.rotation = Quaternion.Slerp(transform.rotation, PrimaryEngine().GetTargetRotation(), PrimaryEngine().RotationAcceleration());
 
@@ -475,20 +475,24 @@ public class Ship : Actor
     {
         if (PrimaryEngine())
         {
-            PrimaryEngine().STAT_Power(GetEquipment().speed);
+            PrimaryEngine().STAT_Power(GetEquipment().GetStats()[Stats.speed]);
+            PrimaryEngine().STAT_PowerSecondary(GetEquipment().GetStats()[Stats.mobility]);
+
+
+
         }
 
         if (PrimaryWeapon())
         {
 
-            PrimaryWeapon().STAT_Power(GetEquipment().projectileSpeed);
+            PrimaryWeapon().STAT_Power(GetEquipment().GetStats()[Stats.projectileSpeed]);
 
-            PrimaryWeapon().BurstBulletCount(GetEquipment().bulletsPerBurst);
-            PrimaryWeapon().STAT_CooldownTime(GetEquipment().fireRate);
+            PrimaryWeapon().BurstBulletCount(GetEquipment().GetStats()[Stats.bulletsperburst]);
+            PrimaryWeapon().STAT_CooldownTime(GetEquipment().GetStats()[Stats.fireRate]);
 
             if (PrimaryWeapon().bullet)
             {
-                PrimaryWeapon().bullet.GetComponent<Bullet>().Damage(GetEquipment().damage);
+               // PrimaryWeapon().bullet.GetComponent<Bullet>().Damage(GetEquipment().damage);
             }
             
         }
