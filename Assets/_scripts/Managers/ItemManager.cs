@@ -167,13 +167,18 @@ public class ItemManager : Manager {
                 }
                 else
                 {
-                    newItem.GetStats()[EnumGroups.StatsFromString(statline[0])] = int.Parse(statline[1].Trim());
-                    newItem.GetStatList().Add(new StatClass(EnumGroups.StatsFromString(statline[0]), int.Parse(statline[1].Trim())));
+                    newItem.GetStats()[EnumGroups.StatsFromString(statline[0])] = float.Parse(statline[1].Trim());
+                   // newItem.GetStatList().Add(new StatClass(EnumGroups.StatsFromString(statline[0]), int.Parse(statline[1].Trim())));
                 }
             }
         }
 
         if (newItem.referenceID.Length <= 1) { newItem.referenceID = newItem.name; }
+
+        foreach (Stats el in (Stats[])Enum.GetValues(typeof(Stats)))
+        {
+            newItem.GetStatList().Add(new StatClass(el, newItem.GetStats()[el]));
+        }
 
         Debug.Log("new Item: " + newItem.ToString());
 

@@ -11,6 +11,11 @@ public class Player : MonoBehaviour {
     public bool camControlsRotation;
 
 
+    public void Start()
+    {
+        Ship().GetEquipment().ResetItems();
+    }
+
     public void InitForLevel()
     {
 
@@ -19,6 +24,13 @@ public class Player : MonoBehaviour {
             Ship().gameObject.SetActive(true);
             Ship().Hitpoints(1);
             Ship().CanAct(true);
+
+
+            if (GameManager().FleetManager())
+            {
+                Ship().GetEquipment().CalculateStats();
+                Ship().ApplyFleetStats(GameManager().FleetManager());
+            }
 
         }
         if (GetCamera())

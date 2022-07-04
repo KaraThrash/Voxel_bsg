@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -113,7 +114,23 @@ public class Ship : Actor
 
     private ShipInput shipInput;
 
-    
+    [SerializeField]
+    public Dictionary<Stats, float> statMap;
+
+    public Dictionary<Stats, float> GetStats()
+    {
+        if (statMap == null)
+        {
+            statMap = new Dictionary<Stats, float>();
+
+            foreach (Stats el in (Stats[])Enum.GetValues(typeof(Stats)))
+            {
+                statMap.Add(el, GameConstants.DefaultStatValue_Ship(el));
+            }
+        }
+        return statMap;
+    }
+
 
     public ShipInput ShipInput() 
     {
@@ -126,7 +143,11 @@ public class Ship : Actor
     // Start is called before the first frame update
     void Start()
     {
-        if (GetEquipment()) { GetEquipment().ResetItems(); }
+        if (GetEquipment())
+        {
+           // GetEquipment().ResetItems();
+        }
+
         AddSystems();
     }
 
@@ -460,7 +481,7 @@ public class Ship : Actor
 
         GetEquipment().SetItem(_item);
 
-        UpdateStats();
+     //   UpdateStats();
 
     }
 
@@ -470,6 +491,7 @@ public class Ship : Actor
          equipment = _equipment;
          
     }
+
 
     public void UpdateStats()
     {
@@ -487,7 +509,7 @@ public class Ship : Actor
 
             PrimaryWeapon().STAT_Power(GetEquipment().GetStats()[Stats.projectileSpeed]);
 
-            PrimaryWeapon().BurstBulletCount(GetEquipment().GetStats()[Stats.bulletsperburst]);
+            PrimaryWeapon().BurstBulletCount(Mathf.FloorToInt(GetEquipment().GetStats()[Stats.bulletsperburst]));
             PrimaryWeapon().STAT_CooldownTime(GetEquipment().GetStats()[Stats.fireRate]);
 
             if (PrimaryWeapon().bullet)
@@ -499,14 +521,59 @@ public class Ship : Actor
     }
 
 
-    public void UpdateShipPartStats()
+
+
+
+    public void ApplyFleetStats(FleetManager _fleetManager)
     {
-        // if (PrimaryWeapon() != null)
-        // { PrimaryWeapon().STAT_Power(); }
+
         if (GetEquipment() == null) { return; }
 
+
+        foreach (Stats el in (Stats[])Enum.GetValues(typeof(Stats)))
+        {
+            //set the ships stats to the values according to just the items equipped
+            GetStats()[el] = GetEquipment().GetStats()[el];
+            if (GetStats()[el] == 0)
+            { GetStats()[el] = GameConstants.DefaultStatValue_Ship(el); }
+
+            //modify the stats based on the fleet
+            //if (_fleetManager.GetStats().ContainsKey(el) && _fleetManager.GetStats()[el] != 0)
+            //{
+            //    if (GetStats().ContainsKey(el) )
+            //    {
+
+            //        if ( GetStats()[el] == 0)
+            //        { GetStats()[el] = GameConstants.DefaultStatValue_Ship(el); }
+
+            //            //apply as a % increase to the value
+            //            if (el == Stats.speed || el == Stats.mobility || el == Stats.armor || el == Stats.damage
+            //             || el == Stats.fireRate || el == Stats.stamina_max)
+            //        {
+            //            GetStats()[el] = GetStats()[el] + (GetStats()[el] * _fleetManager.GetStats()[el]);
+            //        }
+
+            //        //apply as a flat addition to the ship's stats
+            //        else if (el == Stats.backpack_slots || el == Stats.bulletsperburst )
+            //        {
+            //            GetStats()[el] = GetStats()[el] + ( _fleetManager.GetStats()[el]);
+            //        }
+
+
+            //    }
+           // }
+
+        }
+        
+
+
+        
+
         if (PrimaryEngine() != null)
-        { PrimaryEngine().STAT_Power(GetEquipment().speed); }
+        { 
+            //WOW FUCK YOU PAST ME
+           // PrimaryEngine().STAT_Power(GetEquipment().speed);
+        }
 
         if (Chasis() != null)
         { Chasis().STAT_Power(GetEquipment().armor); }

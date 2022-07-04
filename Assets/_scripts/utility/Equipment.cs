@@ -40,23 +40,25 @@ public class Equipment : ScriptableObject
     public List<Item> storage;
 
     [SerializeField]
-    public Dictionary<Stats, int> statMap;
+    public Dictionary<Stats, float> statMap;
 
     public List<StatClass> statList;
 
-    public Dictionary<Stats, int> GetStats()
+    public Dictionary<Stats, float> GetStats()
     {
         if (statMap == null)
         {
-            statMap = new Dictionary<Stats, int>();
+            statMap = new Dictionary<Stats, float>();
 
             foreach (Stats el in (Stats[])Enum.GetValues(typeof(Stats)))
             {
-                statMap.Add(el, 0);
+                statMap.Add(el, GameConstants.DefaultStatValue_Ship(el));
             }
         }
         return statMap;
     }
+
+
 
     public List<StatClass> GetStatList()
     {
@@ -66,7 +68,7 @@ public class Equipment : ScriptableObject
 
             foreach (Stats el in (Stats[])Enum.GetValues(typeof(Stats)))
             {
-                statList.Add(new StatClass(el, 0));
+                statList.Add(new StatClass(el, GameConstants.DefaultStatValue_Ship(el)));
             }
         }
         return statList;
@@ -76,6 +78,11 @@ public class Equipment : ScriptableObject
 
     public void ResetItems()
     {
+        foreach (Stats el in (Stats[])Enum.GetValues(typeof(Stats)))
+        {
+            GetStats()[el] = GameConstants.DefaultStatValue_Ship(el);
+        }
+
         weapon = null;
         engine = null;
         chasis = null;
@@ -131,20 +138,19 @@ public class Equipment : ScriptableObject
 
     public void CalculateStats()
     {
-        if (statMap != null)
-        {
+        
             foreach (Stats el in (Stats[])Enum.GetValues(typeof(Stats)))
             {
                 if (GetStats().ContainsKey(el))
                 {
-                    GetStats()[el] = 1;
+                    GetStats()[el] = GameConstants.DefaultStatValue_Ship(el);
 
 
                 }
 
             }
 
-        }
+        
 
         if (GetStatList() != null)
         {
@@ -287,5 +293,27 @@ public class Equipment : ScriptableObject
         { storage = new List<Item>(); }
         return storage;
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public void ApplyFleetStatModifications(FleetManager _fleet)
+    { 
+    
+
+    }
+
+
+
+
 
 }

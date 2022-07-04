@@ -6,6 +6,7 @@ public class Manager : MonoBehaviour
 {
     private GameManager gameManager;
     public EnemyManager enemyManager;
+    public FleetManager fleetManager;
     // public PlayerManager playerManager;
     public Menus menuManager;
     public MapManager mapManager;
@@ -30,6 +31,16 @@ public class Manager : MonoBehaviour
         }
         return enemyManager;
     }
+
+    public FleetManager FleetManager()
+    {
+        if (fleetManager == null)
+        {
+            fleetManager = FindObjectOfType<FleetManager>();
+        }
+        return fleetManager;
+    }
+
 
     public ItemManager ItemManager()
     {

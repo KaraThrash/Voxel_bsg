@@ -8,8 +8,8 @@ using UnityEngine;
 public class StatClass
 {
     public Stats stat;
-    public int value;
-    public StatClass(Stats _stat, int _value)
+    public float value;
+    public StatClass(Stats _stat, float _value)
     {
         stat = _stat;
         value = _value;
@@ -56,15 +56,15 @@ public class Item
     public string stats;
 
     [SerializeField]
-    public Dictionary<Stats,int> statMap;
+    public Dictionary<Stats,float> statMap;
 
     public List<StatClass> statList;
 
-    public Dictionary<Stats, int> GetStats()
+    public Dictionary<Stats, float> GetStats()
     {
         if (statMap == null)
         {
-            statMap = new Dictionary<Stats, int>();
+            statMap = new Dictionary<Stats, float>();
 
             foreach (Stats el in (Stats[])Enum.GetValues(typeof(Stats)))
             {
@@ -80,10 +80,7 @@ public class Item
         {
             statList = new List<StatClass>();
 
-            foreach (Stats el in (Stats[])Enum.GetValues(typeof(Stats)))
-            {
-                statList.Add(new StatClass(el,0));
-            }
+           
         }
         return statList;
     }

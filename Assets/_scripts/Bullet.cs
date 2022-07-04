@@ -92,7 +92,7 @@ public class Bullet : Actor
 
     public void Launch(Ship _ship)
     {
-        Dictionary<Stats, int> stats = _ship.GetEquipment().GetStats();
+        Dictionary<Stats, float> stats = _ship.GetEquipment().GetStats();
         Item bulletStats = _ship.GetEquipment().GetBullet();
 
         float pwr = 1;

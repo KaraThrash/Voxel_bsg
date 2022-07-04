@@ -103,6 +103,19 @@ NPCs:
 
 Fleet: 
     Acts like a talent tree to confer benefits, generate or hold resources for the player. Lost if the ship is destroyed.
+
+    Resources:
+        -food: 
+            --getting a [food] is added immeditately when returned to the fleet
+            --not having enough has negative effects after a jump [time unit]
+        -fuel:
+            --can be found as raw material which must be refined at a variable efficency
+            --not having enough prevents actions from being taken or gives consequences to using actions [e.g. losing ships]
+        Morale:
+            --alters the quality of other fleet/talent affects
+            --doesnt need to be [stored]
+        Pop: possibly not needed
+            -- is the hitpoints of the fleet
     Talent tree:
         -Generate or hold resources.
         -Provides stat improvements.
