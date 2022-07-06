@@ -179,7 +179,7 @@ public class EngineBasic : EngineBase
 
     public override void CollideWithEnviroment(Collision collision)
     {
-        lockoutTimer = GameConstants.systemStun;
+        lockoutTimer = GameConstants.SYSTEM_STUN;
         SetSystemState(SystemState.locked);
     }
 

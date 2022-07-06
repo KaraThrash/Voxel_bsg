@@ -6,37 +6,154 @@ using UnityEngine.UI;
 
 public class WorldTime : Manager
 {
+
+    public TimeType primaryTimeElement;
+
   public Text clockText,fleetJumpReadiness;
   public GameObject joinAttackButton,fleetJumpButton;
   public int totalTimePassed,currentMinutes;
   public int fleetJumpTimeIncrements,timeBetweenAttacks = 180; //FTL spools at slow/avg/fast per ship and player can risky jump || leave ships behind
   public float timeUntilAttack,timeSinceLastJump,timerate;
   public bool trackTime;//time stands still in menus
+
+    //Note:    public enum TimeType { time, playerInput, ftlJumps, distanceTraveled, manualControl, realtime, menuScreens }
+
+
+
+    public TimeStamp previousTimeStamp;
+
+    private float timer;
+
+
     // Start is called before the first frame update
     void Start()
     {
-
+        previousTimeStamp = MakeTimeStamp();
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (GameManager().GetGameState() == GameState.playing)
+        {
+            timer += Time.deltaTime;
+            if (timer > 1)
+            {
+                timer = 0;
+                TimeAdvance(TimeType.time,1);
 
-      //NOTE: always track time?
-      //not when in battle
+                if (MenuManager().TEXT_clock)
+                {
+                    MenuManager().TEXT_clock.text = GetTimeElement(primaryTimeElement)  + " : " + primaryTimeElement.ToString() ;
+                }
 
+            }
+        }
 
         TrackTime();
 
 
+    }
 
-      // if(trackTime == true)
-      // {
-      //   TrackTime();
-      //
-      // }
+
+    public float tracker_time;
+    public float tracker_menu;
+    public float tracker_ftlJumps;
+    public float tracker_playerInputs;
+    public float tracker_distanceTraveled;
+
+
+    public void TimeAdvance(TimeType _time,float _value=1.0f)
+    {
+
+        if (_time == TimeType.time)
+        { tracker_time += _value; }
+        else if (_time == TimeType.playerInput)
+        { tracker_playerInputs++; }
+        else if (_time == TimeType.ftlJumps)
+        { tracker_ftlJumps++; }
+        else if (_time == TimeType.menuScreens)
+        { tracker_menu++; }
+        else if (_time == TimeType.distanceTraveled)
+        { tracker_distanceTraveled+= _value; }
+
 
     }
+
+    public bool CheckForAttack()
+    {
+        if (primaryTimeElement == TimeType.time)
+        {
+            if (tracker_time - previousTimeStamp.time > GameConstants.TIME_BETWEEN_ATTACKS) { return true; }
+        }
+        else if (primaryTimeElement == TimeType.playerInput)
+        {
+            if (tracker_playerInputs - previousTimeStamp.playerInputs > GameConstants.INPUT_BETWEEN_ATTACKS) { return true; }
+        }
+        else if (primaryTimeElement == TimeType.ftlJumps)
+        {
+            if (tracker_ftlJumps - previousTimeStamp.ftlJumps > GameConstants.JUMPS_BETWEEN_ATTACKS) { return true; }
+        }
+        else if (primaryTimeElement == TimeType.menuScreens)
+        {
+            if (tracker_menu - previousTimeStamp.menu > GameConstants.MENU_BETWEEN_ATTACKS) { return true; }
+        }
+        else if (primaryTimeElement == TimeType.distanceTraveled)
+        {
+            if (tracker_distanceTraveled - previousTimeStamp.distanceTraveled > GameConstants.DISTANCE_BETWEEN_ATTACKS) { return true; }
+        }
+
+        return false;
+    }
+
+    public float GetTimeElement(TimeType _time)
+    {
+
+        if (_time == TimeType.time)
+        { return tracker_time; }
+        else if (_time == TimeType.playerInput)
+        { return tracker_playerInputs; }
+        else if (_time == TimeType.ftlJumps)
+        { return tracker_ftlJumps; }
+        else if (_time == TimeType.menuScreens)
+        { return tracker_menu; }
+        else if (_time == TimeType.distanceTraveled)
+        { return tracker_distanceTraveled; }
+
+        return -1;
+    }
+
+    public float GetTimeElement(TimeStamp _stamp, TimeType _time)
+    {
+
+        if (_time == TimeType.time)
+        { return tracker_time; }
+        else if (_time == TimeType.playerInput)
+        { return tracker_playerInputs; }
+        else if (_time == TimeType.ftlJumps)
+        { return tracker_ftlJumps; }
+        else if (_time == TimeType.menuScreens)
+        { return tracker_menu; }
+        else if (_time == TimeType.distanceTraveled)
+        { return tracker_distanceTraveled; }
+
+        return -1;
+    }
+
+    public TimeStamp MakeTimeStamp()
+    {
+        TimeStamp stamp = new TimeStamp();
+
+        stamp.time = tracker_time;
+        stamp.menu = tracker_menu;
+        stamp.ftlJumps = tracker_ftlJumps;
+        stamp.playerInputs = tracker_playerInputs;
+        stamp.distanceTraveled = tracker_distanceTraveled;
+
+        return stamp;
+    }
+
+
 
 
 
@@ -46,6 +163,7 @@ public class WorldTime : Manager
       timeSinceLastJump = 0;
       SetClockText();
     }
+
     public void SetInMenu(bool isinmenu)
     {
       trackTime = !isinmenu;
@@ -125,4 +243,19 @@ public class WorldTime : Manager
       }else{timerate = 1;}
 
     }
+
+
+
+
+
+}
+
+
+public class TimeStamp
+{
+    public float time;
+    public float menu;
+    public float ftlJumps;
+    public float playerInputs;
+    public float distanceTraveled;
 }

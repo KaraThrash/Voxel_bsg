@@ -76,4 +76,14 @@ public class Manager : MonoBehaviour
         }
         return player;
     }
+
+    public WorldTime TimeManager()
+    {
+        if (timeManager == null)
+        {
+            timeManager = FindObjectOfType<WorldTime>();
+        }
+        return timeManager;
+    }
+
 }

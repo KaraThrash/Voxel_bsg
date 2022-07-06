@@ -5,11 +5,21 @@ using UnityEngine;
 public static class GameConstants 
 {
     //default time that controls are locked out from events like collisions with the enviroment or taking damage
-    public static float systemStun = 0.2f;
+    public static float SYSTEM_STUN = 0.2f;
 
-    public static float playerFocalLength = 15.0f;
+    public static float FOCAL_LENGTH = 15.0f;
 
-    public static bool typeA = false;// manually control the ship rotation, the camera focuses in front of the ship
+    public static bool TYPE_A = false;// manually control the ship rotation, the camera focuses in front of the ship
+
+
+
+    public static float TIME_BETWEEN_ATTACKS = 153.0f;
+    public static float INPUT_BETWEEN_ATTACKS = 33;
+    public static float MENU_BETWEEN_ATTACKS = 33;
+    public static float JUMPS_BETWEEN_ATTACKS = 3;
+    public static float DISTANCE_BETWEEN_ATTACKS = 33;
+
+
 
 
 
@@ -38,7 +48,7 @@ public static class GameConstants
         { return 1; }
         if (_stat == Stats.stamina_rechargeLockout)
         { return 0.1f; }
-        if (_stat == Stats.backpack_slots)
+        if (_stat == Stats.storage)
         { return 1; }
         if (_stat == Stats.pointValue)
         { return 1; }
@@ -77,7 +87,7 @@ public static class GameConstants
         { return 1; }
         if (_stat == Stats.stamina_rechargeLockout)
         { return 0.1f; }
-        if (_stat == Stats.backpack_slots)
+        if (_stat == Stats.storage)
         { return 1; }
         if (_stat == Stats.pointValue)
         { return 1; }

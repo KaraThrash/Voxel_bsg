@@ -21,6 +21,7 @@ public class Menus : Manager {
 
 
     public Transform parent_inventoryChoiceButtons;
+    public Transform parent_fleetShips;
 
     //the text is the only thing updated, the buttons
     //the buttons pass an int that references the saved list
@@ -30,12 +31,17 @@ public class Menus : Manager {
     public Text TEXT_itemChoiceStatDisplay;
     public Text TEXT_equipmentTotals;
 
+    public Text TEXT_fleetChoiceStatDisplay;
+    public Text TEXT_fleetTotals;
+
 
     public Text TEXT_playerStamina;
     public Text TEXT_playerHitPoints;
 
     public Text TEXT_bulletEquipped;
     public Text TEXT_consumableEquipped;
+
+    public Text TEXT_clock;
 
     public Button button_weapon;
     public Button button_chasis;
@@ -45,6 +51,7 @@ public class Menus : Manager {
 
 
     private GameObject currentOpenMenu;
+
     private int bookmark_itemList;
 
 
@@ -52,6 +59,9 @@ public class Menus : Manager {
     public void StartInGame( )
     {
         DisableMenus();
+
+        
+
         if (MenuInGameUI())
         { MenuInGameUI().gameObject.SetActive(true); }
     }
@@ -72,10 +82,15 @@ public class Menus : Manager {
     {
         if (MenuInGameUI())
         { MenuInGameUI().gameObject.SetActive(false); }
+
         if (MenuBase())
         { MenuBase().gameObject.SetActive(false); }
+
         if (MenuDeathChoice())
         { MenuDeathChoice().gameObject.SetActive(false); }
+
+        if (menu_equip )
+        { menu_equip.gameObject.SetActive(false); }
 
         if (screen_pause)
         { screen_pause.gameObject.SetActive(false); }
@@ -101,6 +116,8 @@ public class Menus : Manager {
             { screen_pause.gameObject.SetActive(false); }
             else { screen_pause.gameObject.SetActive(true); }
         }
+
+        TimeManager().TimeAdvance(TimeType.menuScreens,1);
     }
 
 
@@ -117,6 +134,7 @@ public class Menus : Manager {
     public void EnableFTLMenu()
     {
         DisableMenus();
+
         if (menu_FTL) 
         {
             menu_FTL.gameObject.SetActive(true);
@@ -131,7 +149,17 @@ public class Menus : Manager {
         {
             currentOpenMenu.SetActive(false);
         }
-        
+
+        if (parent_pauseMenus)
+        {
+            foreach (Transform el in parent_pauseMenus)
+            {
+                if (el.gameObject != _menu)
+                { el.gameObject.SetActive(false); }
+                
+            }
+        }
+
         if (_menu)
         {
                 currentOpenMenu = _menu;
@@ -296,6 +324,63 @@ public class Menus : Manager {
 
         TEXT_equipmentTotals.text = tempString;
     }
+
+
+
+
+
+
+    public void ButtonEvent_ExpandShipDetails(int _ship)
+    {
+        //sends an int that represents the list this menu manager holds
+        // showing which items are currently displayed
+
+        Debug.Log("ButtonEvent_ExpandShipDetails: " + _ship);
+        //if (_ship < CurrentItemChoices().Count && _ship >= 0)
+        //{
+           
+        //    if (CurrentItemChoices()[_ship] != null)
+        //    {
+        //        Player().EquipItem(CurrentItemChoices()[_ship]);
+        //        SetButtonTextToItemEquiped(CurrentItemChoices()[_ship]);
+
+        //    }
+        //}
+
+
+    }
+
+
+    //note: Unity buttons need to use an int not the enum itself
+    //enum ItemTypes { weapon, chasis, engine, usable, ammo,none }
+    public void ButtonEvent_ShowFleetShips()
+    {
+        Debug.Log("ButtonEvent_ShowFleetShips: ");
+
+        if (parent_fleetShips && FleetManager())
+        { 
+            
+        }
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

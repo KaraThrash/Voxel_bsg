@@ -182,7 +182,7 @@ public class Ship : Actor
 
         Weapons();
 
-        if (GameConstants.typeA)
+        if (GameConstants.TYPE_A)
         {
             TypeA();
 

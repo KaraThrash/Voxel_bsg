@@ -108,7 +108,7 @@ public class GameManager : Manager {
 
         if (Input.GetKeyDown(KeyCode.Tab))
         {
-            GameConstants.typeA = !GameConstants.typeA;
+            GameConstants.TYPE_A = !GameConstants.TYPE_A;
         }
 
         if (Input.GetKeyDown(KeyCode.Return))

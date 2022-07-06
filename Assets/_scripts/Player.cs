@@ -110,7 +110,7 @@ public class Player : MonoBehaviour {
 
         if (ship != null && GameManager().GetGameState() == GameState.playing)
         {
-            if (GameConstants.typeA)
+            if (GameConstants.TYPE_A)
             {
                 
                 //ship.Act();

@@ -96,6 +96,12 @@ public class ItemManager : Manager {
         {
             VehicleList().Add(_item);
         }
+        if (_item.type == ItemTypes.fleet)
+        {
+             FleetShip newfleetship = new FleetShip(_item);
+             GameManager().FleetManager().AddShip(newfleetship);
+        }
+
     }
 
     public Item ParseToItem(string _line)
@@ -146,7 +152,9 @@ public class ItemManager : Manager {
         string lowerline = _line.ToLower();
 
         string[] text = lowerline.Split(',');
+
         Item newItem = new Item();
+        Dictionary<Stats, float> newStats = new Dictionary<Stats, float>();
 
         foreach (string el in text)
         {

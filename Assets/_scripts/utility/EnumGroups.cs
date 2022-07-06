@@ -18,7 +18,15 @@
     public enum PlayerTypes { left, right, observer, test, neutral, enemy }
 
 
+
+
+    //what to track for the pursuit element: for QoL and ease of use this is a changable option for the player
+    public enum TimeType { time, playerInput, ftlJumps, distanceTraveled, manualControl, realtime, menuScreens }
+
     public enum GameState { playing, menu_OutofGame, menu_inGame,rest, upgradeScreen, lobby, playersdead, bonusRound, tutorial, inactive, attractMode }
+   
+
+
     public enum GunType { auto, burst, semiauto, shotgun, spread, laser }
 
 
@@ -63,7 +71,8 @@ public enum ItemTypes
     engine, usable,
     bullet,none,
     vehicle, // 6
-    resource
+    resource,
+    fleet
 }
 
 
@@ -96,11 +105,20 @@ public enum Stats
     , stamina_cost
     , stamina_rechargeLockout
 
-    , backpack_slots
+    , storage
 
-    , pointValue
+    , pointValue,
+        food, producefood, modifyfoodproduction,
+    fuel, producefuel, modifyfuelproduction,
+    pop, producepop,modifypopproduction
 
+}
+
+
+public enum FleetStats
+{
     
+    storage
 }
 
 
