@@ -28,11 +28,6 @@ public class GameManager : Manager {
     public EnemyEvent event_EnemyDeath;
     public UnityEvent event_PlayerDeath;
 
-    
-
-
- 
-
 
     // Use this for initialization
     void Start () {
@@ -97,13 +92,8 @@ public class GameManager : Manager {
         }
         if (Input.GetKeyDown(KeyCode.RightShift))
         {
-            //Player().InitForLevel();
-            //Player().Ship().transform.position = MapManager().GetMap().GetPlayerSpawnPosition();
-            //MenuManager().StartInGame();
+            ItemManager().DropItem(ItemTypes.currency,1,Player().Ship().MainTransform().position + (Player().Ship().MainTransform().forward * 5));
 
-            //MapManager().GetMap().EnterNewChunk();
-
-            //EnemyManager().StartLevel();
         }
 
         if (Input.GetKeyDown(KeyCode.Tab))
@@ -165,7 +155,7 @@ public class GameManager : Manager {
 
     public void ResetTheClock()
     {
-      timeManager.ResetTheClock();
+      TimeManager().ResetTheClock();
 
 
     }

@@ -5,15 +5,15 @@ using UnityEngine;
 public class Manager : MonoBehaviour
 {
     private GameManager gameManager;
-    public EnemyManager enemyManager;
-    public FleetManager fleetManager;
-    // public PlayerManager playerManager;
-    public Menus menuManager;
-    public MapManager mapManager;
-    public NpcManager npcManager;
-    public ItemManager itemManager;
-    public Player player;
-    public WorldTime timeManager;
+    private EnemyManager enemyManager;
+    private FleetManager fleetManager;
+    // private PlayerManager playerManager;
+    private Menus menuManager;
+    private MapManager mapManager;
+    private NpcManager npcManager;
+    private ItemManager itemManager;
+    private Player player;
+    private WorldTime timeManager;
 
     public GameManager GameManager()
     {

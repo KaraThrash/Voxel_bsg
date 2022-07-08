@@ -333,49 +333,75 @@ public class Menus : Manager {
     {
         Debug.Log("ShowFleetShips: " );
 
+        FleetManager().EndOfTurn();
+
         List<FleetShip> shipList = FleetManager().Ships();
         Debug.Log(shipList.Count);
 
+        if (TEXT_fleetTotals)
+        {
+            string tempstring = "";
+            foreach (Stats el in (Stats[])Enum.GetValues(typeof(Stats)))
+            {
+                if (FleetManager().GetStats()[el] != 0)
+                {
+                    tempstring += "\n " + el.ToString() + " :   " + FleetManager().GetStats()[el];
+                }
+            }
 
-      
+            TEXT_fleetTotals.text = tempstring;
+
+        }
+
 
         int count = 0;
 
-        while (count < shipList.Count && count < parent_fleetShips.childCount)
+        foreach (FleetShip el in shipList)
         {
-            if (parent_fleetShips.GetChild(count).GetComponent<UiFleetshipButton>())
+            if (count < parent_fleetShips.childCount && el.SubType().fleetShipType != FleetShipType.producer)
             {
-                UiFleetshipButton btn = parent_fleetShips.GetChild(count).GetComponent<UiFleetshipButton>();
-                
-                if (shipList[count].GetStats()[Stats.food] != 0)
+                if (parent_fleetShips.GetChild(count).GetComponent<UiFleetshipButton>())
                 {
-                    btn.SetResourceImage(null, "Food");
+                    UiFleetshipButton btn = parent_fleetShips.GetChild(count).GetComponent<UiFleetshipButton>();
+                    btn.SetResourceImage(uiAssets.icon_food, "Food");
+                    //if (shipList[count].GetStats()[Stats.food] != 0)
+                    //{
+                    //    btn.SetResourceImage(uiAssets.icon_food, "Food");
 
-                    btn.SetResourceText(
-                        shipList[count].GetStats()[Stats.food],
-                        shipList[count].GetStats()[Stats.producefood],
-                        shipList[count].GetStats()[Stats.modifyfoodproduction]
-                        );
+                    //    btn.SetResourceText(
+                    //        shipList[count].GetStats()[Stats.food],
+                    //        shipList[count].GetStats()[Stats.producefood],
+                    //        shipList[count].GetStats()[Stats.modifyfoodproduction]
+                    //        );
+                    //}
+                    //else if (shipList[count].GetStats()[Stats.fuel] != 0)
+                    //{
+                    //    btn.SetResourceImage(uiAssets.icon_fuel, "Fuel");
+
+                    //    btn.SetResourceText(
+                    //        shipList[count].GetStats()[Stats.fuel],
+                    //        shipList[count].GetStats()[Stats.producefuel],
+                    //        shipList[count].GetStats()[Stats.modifyfuelproduction]
+                    //        );
+                    //}
+
+                    btn.SetStorageText(el.GetStats()[Stats.storage]);
+                    btn.SetShipNameText(el.name + " " + el.SubType().fleetShipType);
+
+                    count++;
                 }
-                else if (shipList[count].GetStats()[Stats.fuel] != 0)
-                {
-                    btn.SetResourceImage(null, "Fuel");
 
-                    btn.SetResourceText(
-                        shipList[count].GetStats()[Stats.fuel],
-                        shipList[count].GetStats()[Stats.producefuel],
-                        shipList[count].GetStats()[Stats.modifyfuelproduction]
-                        );
-                }
+            }
+            while (count < parent_fleetShips.childCount)
+            {
+                parent_fleetShips.GetChild(count).gameObject.SetActive(false);
 
-                btn.SetStorageText(shipList[count].GetStats()[Stats.storage]);
-                btn.SetShipNameText(shipList[count].name);
+                count++;
             }
 
-            
-
-            count++;
         }
+
+
 
     }
 

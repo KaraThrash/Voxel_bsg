@@ -2,14 +2,52 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PickUp : MonoBehaviour {
-  public ItemManager itemManager;
+public class PickUp : Actor {
+
+
+    public ItemTypes itemType;
+
     public int type;
-    public int value, itemnumber; //if engine speed, if gun attack cooldown
+    public int quantity; //if engine speed, if gun attack cooldown
     public bool playerCache,primaryResource;
+    public bool onMap;
+
+    public MeshRenderer render;
+    public GameObject mainWorldObject;
+
     public Material[] colors; //green,red,blue,yellow
-	// Use this for initialization
-	void Start () {
+
+
+    public void Init(ItemTypes _itemType, int _quantity)
+    {
+        itemType = _itemType;
+        quantity = _quantity;
+
+        onMap = true;
+
+        if (render)
+        {
+            render.material = colors[(int)Random.Range(0, colors.Length)];
+        }
+        else
+        {
+            if (transform.GetChild(0).GetComponent<Renderer>() != null)
+            {
+                transform.GetChild(0).GetComponent<Renderer>().material = colors[(int)Random.Range(0,colors.Length)];
+            }
+        }
+        if (mainWorldObject)
+        {
+            mainWorldObject.SetActive(true);
+        }
+
+
+
+    }
+
+
+    // Use this for initialization
+    void Start () {
 
 	}
 
@@ -18,35 +56,50 @@ public class PickUp : MonoBehaviour {
 
 	}
 
-    public void SetWhichItem(ItemManager newItemManager,int newitemnumber)
+
+
+    public override void ProcessCollisionEnter(Collision collision)
     {
-      itemManager = newItemManager;
-        value = 1;
-        itemnumber = newitemnumber;
-        if(transform.GetChild(0).GetComponent<Renderer>() != null)
+        GetPickedUp();
+    }
+
+    public void GetPickedUp()
+    {
+        onMap = false;
+       transform.parent =  GameManager().ItemManager().Parent_Pickup();
+
+        if (mainWorldObject)
         {
-          transform.GetChild(0).GetComponent<Renderer>().material = colors[1];
-          if (newitemnumber == 7) { transform.GetChild(0).GetComponent<Renderer>().material = colors[0]; }
-          if (newitemnumber == 8) { transform.GetChild(0).GetComponent<Renderer>().material = colors[2]; }
-         // GetComponent<Renderer>().material = colors[Mathf.Abs(newitemnumber) % 3];
+            mainWorldObject.SetActive(false);
         }
+        else { gameObject.SetActive(false); }
+
+    }
+
+
+    public void SetWhichItem(ItemTypes _itemType,int _quantity)
+    {
+        itemType = _itemType;
+        quantity = _quantity;
+
+        if (render)
+        {
+            render.material = colors[0];
+        }
+        else 
+        {
+            if (transform.GetChild(0).GetComponent<Renderer>() != null)
+            {
+                transform.GetChild(0).GetComponent<Renderer>().material = colors[1];
+            }
+        }
+
+        
 
 
     }
 
-    public void SetWhichItem(int newitemnumber = 0, int newvalue = 0, bool isprimaryresource = false)
-    {
-        primaryResource = isprimaryresource;
-        value = newvalue;
-        itemnumber = newitemnumber;
 
-        if (isprimaryresource == true && transform.GetChild(0).GetComponent<Renderer>() != null && colors.Length > newitemnumber)
-        {
-            transform.GetChild(0).GetComponent<Renderer>().material = colors[newitemnumber];
-     
-        }
-
-    }
 
     public void SetAsPlayerCache()
     {

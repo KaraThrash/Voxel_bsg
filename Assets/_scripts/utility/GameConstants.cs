@@ -100,6 +100,29 @@ public static class GameConstants
     }
 
 
+    public static float DefaultStatValue_Fleet(Stats _stat)
+    {
+        if (_stat == Stats.food)
+        { return 1; }
+        if (_stat == Stats.producefood)
+        { return 1; }
+        if (_stat == Stats.modifyfoodproduction)
+        { return 0.01f; }
+        if (_stat == Stats.fuel)
+        { return 1; }
+        if (_stat == Stats.producefuel)
+        { return 1; }
+        if (_stat == Stats.modifyfuelproduction)
+        { return 0.01f; }
+
+
+
+
+
+
+
+        return 0;
+    }
 
 
 }

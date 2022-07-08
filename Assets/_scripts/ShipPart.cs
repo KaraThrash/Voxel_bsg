@@ -64,7 +64,7 @@ public class ShipPart : MonoBehaviour {
             GameObject clone = Instantiate(itemDrop, transform.position, transform.rotation);
             if (clone.GetComponent<PickUp>() != null)
             {
-                clone.GetComponent<PickUp>().SetWhichItem(itemnumber , itemvalue, holdsPrimaryResource);
+               // clone.GetComponent<PickUp>().SetWhichItem(itemnumber , itemvalue, holdsPrimaryResource);
             }
         }
 

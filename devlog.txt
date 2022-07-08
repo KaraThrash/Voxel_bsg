@@ -3,6 +3,19 @@ Battle for the dark star:
 TODO: default item values
 
 
+===
+when an item is dropped the item is represents is set to the assosicated variale that reflects the Item id
+which it then pulls from the master list
+===
+item drops from the itemmanager 
+which has the PARENT_itemdrops
+===
+made key for item ids: how its used - type - # id
+e-g-0 [equipment-gun-#]
+===
+made 'itemsubtype' class to hold the enum values for the different items [fleet ships, equipment etc]
+this way all items have the enum values and can be set without type conversion
+==
 added scriptable object to hold all the images for sprites
 ===
 fleet ship button prefab: for setting the ships name stats, icon etc

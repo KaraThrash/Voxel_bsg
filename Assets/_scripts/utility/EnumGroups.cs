@@ -71,18 +71,41 @@ public enum ItemTypes
     engine, usable,
     bullet,none,
     vehicle, // 6
+    fleet,
     resource,
-    fleet
+    currency
 }
 
 
 public enum BulletType { basic, missile, lance, boomerang, spiral, spread,zigzag }
 
-
+public enum FleetShipType
+{
+    basic, unique, producer, storage, action, booster
+}
 
 
 
 public enum ResourceType { none, currency, food, fuel, morale, pop, raptors, vipers }
+
+
+public class ItemSubType
+{
+
+    public ItemSubType()
+    {
+        bulletType = BulletType.lance;
+        fleetShipType = FleetShipType.storage;
+        resourceType = ResourceType.morale;
+    }
+
+    public BulletType bulletType;
+    public FleetShipType fleetShipType;
+    public ResourceType resourceType;
+
+}
+
+
 
 [System.Serializable]
 public enum Stats
@@ -115,11 +138,7 @@ public enum Stats
 }
 
 
-public enum FleetStats
-{
-    
-    storage
-}
+
 
 
 /// visuals
@@ -296,7 +315,19 @@ public static class EnumGroups
 
     }
 
+    public static FleetShipType FleetShipTypeFromString(string _type)
+    {
 
+        foreach (FleetShipType el in (FleetShipType[])Enum.GetValues(typeof(FleetShipType)))
+        {
+            if (el.ToString().Equals(_type))
+            { return el; }
+        }
+
+
+        return FleetShipType.basic;
+
+    }
 
 
 

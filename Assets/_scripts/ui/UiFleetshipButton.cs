@@ -27,6 +27,7 @@ public class UiFleetshipButton :MonoBehaviour
         foreach (Image el in img_resource)
         {
             el.sprite = _image;
+            el.color = Color.black;
         }
     }
 

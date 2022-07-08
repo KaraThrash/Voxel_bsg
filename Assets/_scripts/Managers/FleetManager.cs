@@ -17,7 +17,7 @@ public class FleetManager : Manager
 
     public float morale;
     public float pop;
-
+    [SerializeField]
     public List<FleetShip> ships;
 
 
@@ -32,7 +32,7 @@ public class FleetManager : Manager
     {
         foreach (Stats el in (Stats[])Enum.GetValues(typeof(Stats)))
         {
-            GetStats()[el] =  GameConstants.DefaultStatValue_Ship(el);
+            GetStats()[el] =  GameConstants.DefaultStatValue_Fleet(el);
         }
 
 
@@ -102,15 +102,17 @@ public class FleetManager : Manager
 
 
 
-
+[SerializeField]
 public class FleetShip : Item
 {
-
+    public FleetShipType fleetShipType;
 
     public FleetShip(Item _item)
     {
         name = _item.name;
         referenceID = _item.referenceID;
+
+        SubType().fleetShipType = _item.SubType().fleetShipType;
 
         foreach (Stats el in (Stats[])Enum.GetValues(typeof(Stats)))
         {

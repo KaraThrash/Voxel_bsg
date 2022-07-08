@@ -21,6 +21,8 @@ public class StatClass
 public class Item 
 {
 
+    
+
     public string name;
     public string referenceID = "";
 
@@ -51,6 +53,19 @@ public class Item
     public int pointValue; // buy/sell value
 
     public int subtype;
+
+    public ItemSubType subtypeClass;
+    public ItemSubType SubType()
+    {
+        if (subtypeClass == null)
+        {
+            subtypeClass = new ItemSubType(); 
+
+
+        }
+
+        return subtypeClass;
+    }
 
     private int count;
 

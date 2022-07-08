@@ -8,9 +8,14 @@ using UnityEngine;
 
 public class ItemManager : Manager {
 
-    private Dictionary<string, Item> masterItemList;
+    public GameObject PREFAB_pickup;
 
-    public List<Item> weapon;
+    public Transform PARENT_pickup;
+    private string parentPickupName = "PARENT_Pickup";
+
+    private Dictionary<string, Item> playerItemList;
+
+    private List<Item> weapon;
     private List<Item> chasis;
     private List<Item> engine;
     private List<Item> usable;
@@ -23,11 +28,41 @@ public class ItemManager : Manager {
 
     }
 
-    public Item GetItem()
+
+
+    public void DropItem(ItemTypes _item,int _quantity, Vector3 _pos)
     {
-        if (masterItemList.Count > 0)
-        { 
-        
+
+        GameObject clone;
+
+        if (Parent_Pickup().childCount > 1 && Parent_Pickup().GetChild(0).GetComponent<PickUp>().onMap == false)
+        {
+            clone = Parent_Pickup().GetChild(0).gameObject;
+        }
+        else 
+        {
+            clone = Instantiate(PREFAB_pickup, _pos,transform.rotation);
+        }
+
+        clone.transform.parent = null;
+        clone.transform.parent = Parent_Pickup();
+        clone.transform.position = _pos;
+        clone.SetActive(true);
+        clone.GetComponent<PickUp>().Init(_item,_quantity);
+    }
+    
+
+ 
+
+
+
+
+
+    public Item GetPlayerItem(string _id)
+    {
+        if (playerItemList.ContainsKey(_id))
+        {
+            return playerItemList[_id];
         }
         return null;
     }
@@ -167,11 +202,19 @@ public class ItemManager : Manager {
                 { newItem.type = EnumGroups.ItemFromString(statline[1].Trim()); }
                 else if (statline[0].ToLower() == "subtype")
                 {
+                    
+
+                    newItem.SubType().bulletType = EnumGroups.BulletTypeFromString(statline[1].Trim());
+                    newItem.SubType().fleetShipType = EnumGroups.FleetShipTypeFromString(statline[1].Trim());
+
                     if (newItem.type == ItemTypes.bullet)
                     {
                         newItem.subtype = (int)EnumGroups.BulletTypeFromString(statline[1].Trim());
                     }
-
+                    if (newItem.type == ItemTypes.fleet)
+                    {
+                        newItem.subtype = (int)EnumGroups.FleetShipTypeFromString(statline[1].Trim());
+                    }
                 }
                 else
                 {
@@ -231,6 +274,32 @@ public class ItemManager : Manager {
       //  float.TryParse(text[0], x);
     }
 
+
+
+
+
+
+    public Transform Parent_Pickup()
+    {
+        if (PARENT_pickup == null)
+        {
+            if (parentPickupName.Length < 1)
+            {
+                parentPickupName = "PARENT_Pickup";// + this.GetType().ToString();
+            }
+
+            GameObject findParent = GameObject.Find(parentPickupName);
+
+
+            if (findParent == null)
+            {
+                PARENT_pickup = new GameObject(parentPickupName).transform;
+            }
+            else { PARENT_pickup = findParent.transform; }
+        }
+
+        return PARENT_pickup;
+    }
 
     public List<Item> WeaponList()
     {
