@@ -93,7 +93,7 @@ public class GameManager : Manager {
 
         if (Input.GetKeyDown(KeyCode.LeftShift))
         {
-            //TravelFromHub(1);
+            MenuManager().ShowFleetShips();
         }
         if (Input.GetKeyDown(KeyCode.RightShift))
         {

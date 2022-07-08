@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class Menus : Manager {
 
- 
+    public UI_scriptable uiAssets;
     public Transform menu_Transform;
     public Transform menu_DeathChoice;
     public Transform menu_InGameUI;
@@ -116,6 +116,8 @@ public class Menus : Manager {
             { screen_pause.gameObject.SetActive(false); }
             else { screen_pause.gameObject.SetActive(true); }
         }
+
+        ShowFleetShips();
 
         TimeManager().TimeAdvance(TimeType.menuScreens,1);
     }
@@ -327,8 +329,55 @@ public class Menus : Manager {
 
 
 
+    public void ShowFleetShips()
+    {
+        Debug.Log("ShowFleetShips: " );
+
+        List<FleetShip> shipList = FleetManager().Ships();
+        Debug.Log(shipList.Count);
 
 
+      
+
+        int count = 0;
+
+        while (count < shipList.Count && count < parent_fleetShips.childCount)
+        {
+            if (parent_fleetShips.GetChild(count).GetComponent<UiFleetshipButton>())
+            {
+                UiFleetshipButton btn = parent_fleetShips.GetChild(count).GetComponent<UiFleetshipButton>();
+                
+                if (shipList[count].GetStats()[Stats.food] != 0)
+                {
+                    btn.SetResourceImage(null, "Food");
+
+                    btn.SetResourceText(
+                        shipList[count].GetStats()[Stats.food],
+                        shipList[count].GetStats()[Stats.producefood],
+                        shipList[count].GetStats()[Stats.modifyfoodproduction]
+                        );
+                }
+                else if (shipList[count].GetStats()[Stats.fuel] != 0)
+                {
+                    btn.SetResourceImage(null, "Fuel");
+
+                    btn.SetResourceText(
+                        shipList[count].GetStats()[Stats.fuel],
+                        shipList[count].GetStats()[Stats.producefuel],
+                        shipList[count].GetStats()[Stats.modifyfuelproduction]
+                        );
+                }
+
+                btn.SetStorageText(shipList[count].GetStats()[Stats.storage]);
+                btn.SetShipNameText(shipList[count].name);
+            }
+
+            
+
+            count++;
+        }
+
+    }
 
     public void ButtonEvent_ExpandShipDetails(int _ship)
     {
@@ -484,6 +533,11 @@ public class Menus : Manager {
         return inventoryChoiceButtonsText;
     }
 
+    public UI_scriptable GetAssets()
+    {
 
+
+        return uiAssets;
+    }
 
 }

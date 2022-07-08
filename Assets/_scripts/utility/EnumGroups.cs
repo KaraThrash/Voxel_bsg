@@ -107,8 +107,8 @@ public enum Stats
 
     , storage
 
-    , pointValue,
-        food, producefood, modifyfoodproduction,
+    , pointValue
+    ,food, producefood, modifyfoodproduction,
     fuel, producefuel, modifyfuelproduction,
     pop, producepop,modifypopproduction
 
