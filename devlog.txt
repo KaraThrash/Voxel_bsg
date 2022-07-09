@@ -1,8 +1,22 @@
 Battle for the dark star:
 
-TODO: default item values
 
+TODO: 'computer' dradis, lock on, [zoom?]
 
+==
+Gameconstants now has methods for setting stats based on item type:
+the item manager passes the item and if the stat is left as 0 it is assigned to the default
+===
+added 'computer' itemtype and 'sensor' stat
+===
+equipment stats are applied by type:
+armor = chasis + (chasis * (weapon + engine))
+damage = weapon + (weapon * (chasis + engine))
+mobility = (engine + (weapon * engine)) * chasis
+damage = (engine + (weapon * engine)) * chasis
+===
+'shipsystem' parent class now checks for ship equipment for its 'stat_power' and secondarypower
+--and checks the stat based on its type: chasis checks for armor,engine for speed-mobility, weapon for damage-firerate
 ===
 when an item is dropped the item is represents is set to the assosicated variale that reflects the Item id
 which it then pulls from the master list

@@ -9,26 +9,28 @@ using UnityEngine;
 public class Equipment : ScriptableObject
 {
 
-    public int armor = 0;
-    public int damage = 0;
-    public int speed = 0;
+    public float armor = 0;
+    public float damage = 0;
+    public float speed = 0;
 
-    public int mobility = 0;
+    public float mobility = 0;
 
-    public int fireRate = 0;
-    public int projectileSpeed = 0;
-    public int bulletsPerBurst = 0;
+    public float fireRate = 0;
+    public float projectileSpeed = 0;
+    public float bulletsPerBurst = 0;
 
 
-    public int stamina_max = 0; //additive: two items of value 1 gives the ship a max stamina of 2
-    public int stamina_recharge = 0;
-    public int stamina_cost = 0;
+    public float stamina_max = 0; //additive: two items of value 1 gives the ship a max stamina of 2
+    public float stamina_recharge = 0;
+    public float stamina_cost = 0;
 
-    public int stamina_rechargeLockout = 0;
+    public float stamina_rechargeLockout = 0;
 
     public Item weapon;
     public Item engine;
     public Item chasis;
+
+    public Item computer;
 
     public Item ph_other;
 
@@ -120,6 +122,11 @@ public class Equipment : ScriptableObject
         {
             GetBulletList().Add(_item);
         }
+        else if (_item.type == ItemTypes.computer)
+        {
+            oldItem = computer;
+            computer = _item;
+        }
         else 
         {
   
@@ -179,12 +186,62 @@ public class Equipment : ScriptableObject
         mobility = 0;
 
 
-        if (weapon != null) { AddStats(weapon); }
-        if (engine != null) { AddStats(engine); }
-        if (chasis != null) { AddStats(chasis); }
+        if (weapon != null)
+        {
+            armor = weapon.GetStats()[Stats.armor];
+            damage = weapon.GetStats()[Stats.damage];
+            mobility = weapon.GetStats()[Stats.mobility];
+            speed = weapon.GetStats()[Stats.speed];
+
+
+            AddStats(weapon);
+        }
+        if (engine != null)
+        {
+            armor += engine.GetStats()[Stats.armor];
+            damage += (damage * engine.GetStats()[Stats.damage]);
+            mobility = engine.GetStats()[Stats.mobility] + (mobility * engine.GetStats()[Stats.mobility]);
+            speed = engine.GetStats()[Stats.speed] + (speed * engine.GetStats()[Stats.speed]);
+
+            AddStats(engine);
+        
+        }
+        if (chasis != null) 
+        {
+
+            armor = chasis.GetStats()[Stats.armor] + (chasis.GetStats()[Stats.armor] * armor);
+            damage += (damage * chasis.GetStats()[Stats.damage]);
+
+            if (chasis.GetStats()[Stats.mobility] != 0)
+            { mobility = (mobility * chasis.GetStats()[Stats.mobility]); }
+
+            if (chasis.GetStats()[Stats.speed] != 0)
+            { speed = (speed * chasis.GetStats()[Stats.speed]); }
+
+            AddStats(chasis);
+        }
+
+        if (computer != null)
+        {
+            armor = armor + (armor * computer.GetStats()[Stats.armor]);
+            damage = damage + (damage * computer.GetStats()[Stats.damage]);
+            mobility = mobility + (mobility * computer.GetStats()[Stats.mobility]);
+            speed = speed + (speed * computer.GetStats()[Stats.speed]);
+
+            AddStats(computer);
+
+        }
+
+
 
         if (ph_other != null) { AddStats(ph_other); }
-    
+
+        GetStats()[Stats.armor] = armor ;
+        GetStats()[Stats.damage] = damage ;
+        GetStats()[Stats.mobility] = mobility ;
+        GetStats()[Stats.speed] = speed ;
+
+
     }
 
     public void AddStats(Item _item,int _subtract=1)

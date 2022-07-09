@@ -71,6 +71,7 @@ public enum ItemTypes
     engine, usable,
     bullet,none,
     vehicle, // 6
+    computer,
     fleet,
     resource,
     currency
@@ -123,6 +124,8 @@ public enum Stats
     , projectileSpeed
     , bulletsperburst
     , bulletlifetime
+
+    , sensor
 
     , stamina_max
     , stamina_cost

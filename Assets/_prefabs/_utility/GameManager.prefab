@@ -658,17 +658,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f87540bfd27aad4ab0c951d5587aeb8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyManager: {fileID: 0}
-  fleetManager: {fileID: 0}
-  menuManager: {fileID: 0}
-  mapManager: {fileID: 0}
-  npcManager: {fileID: 0}
-  itemManager: {fileID: 0}
-  player: {fileID: 0}
-  timeManager: {fileID: 0}
   food: 0
+  produce_food: 0
   storage_food: 0
   fuel: 0
+  produce_fuel: 0
   storage_fuel: 0
   morale: 0
   pop: 0
@@ -1834,15 +1828,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ef7183270962da645adc664c4cbdab7c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyManager: {fileID: 0}
-  fleetManager: {fileID: 0}
-  menuManager: {fileID: 0}
-  mapManager: {fileID: 0}
-  npcManager: {fileID: 0}
-  itemManager: {fileID: 0}
-  player: {fileID: 0}
-  timeManager: {fileID: 0}
-  weapon: []
+  PREFAB_pickup: {fileID: 0}
+  PARENT_pickup: {fileID: 0}
 --- !u!1 &8370050522653930093
 GameObject:
   m_ObjectHideFlags: 0
@@ -1940,14 +1927,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c366cb4cb5de0c4c88079a6a16fc3ad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyManager: {fileID: 0}
-  fleetManager: {fileID: 3821242732476329682}
-  menuManager: {fileID: 0}
-  mapManager: {fileID: 8370050522653930095}
-  npcManager: {fileID: 8370050523096334628}
-  itemManager: {fileID: 8370050522475178014}
-  player: {fileID: 4032432187894812103}
-  timeManager: {fileID: 8370050522919377603}
   gameState: 0
   cam: {fileID: 5063216752589354933}
   imageFade: {fileID: 473961512}
@@ -2006,14 +1985,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 73b829eca1470ae40bdc1daff1eab9bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyManager: {fileID: 0}
-  fleetManager: {fileID: 0}
-  menuManager: {fileID: 0}
-  mapManager: {fileID: 0}
-  npcManager: {fileID: 0}
-  itemManager: {fileID: 0}
-  player: {fileID: 0}
-  timeManager: {fileID: 0}
   currency: 0
   pop: 3
   food: 3
@@ -2071,14 +2042,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c36804d24f0ad864c9b0c86497738598, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyManager: {fileID: 0}
-  fleetManager: {fileID: 0}
-  menuManager: {fileID: 0}
-  mapManager: {fileID: 0}
-  npcManager: {fileID: 0}
-  itemManager: {fileID: 0}
-  player: {fileID: 0}
-  timeManager: {fileID: 0}
+  primaryTimeElement: 0
   clockText: {fileID: 210256402}
   fleetJumpReadiness: {fileID: 272424902}
   joinAttackButton: {fileID: 984656234}
@@ -2091,6 +2055,11 @@ MonoBehaviour:
   timeSinceLastJump: 0
   timerate: 1
   trackTime: 0
+  tracker_time: 0
+  tracker_menu: 0
+  tracker_ftlJumps: 0
+  tracker_playerInputs: 0
+  tracker_distanceTraveled: 0
 --- !u!1 &8370050523096334650
 GameObject:
   m_ObjectHideFlags: 0
@@ -2211,14 +2180,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e1b1173d412eeb4c8a4e78b64994400, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyManager: {fileID: 0}
-  fleetManager: {fileID: 0}
-  menuManager: {fileID: 0}
-  mapManager: {fileID: 0}
-  npcManager: {fileID: 0}
-  itemManager: {fileID: 0}
-  player: {fileID: 0}
-  timeManager: {fileID: 0}
   enemies: []
   maxOnScreen: 5
 --- !u!1 &8487493365418068040

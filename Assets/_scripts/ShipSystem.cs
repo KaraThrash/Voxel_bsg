@@ -20,8 +20,10 @@ public class ShipSystem : MonoBehaviour
 
     [Min(0.01f)]
     public float  STAT_cooldownTime;
+
     public float  STAT_power;
     public float  STAT_powerSecondary;
+
     public float  timer_Cooldown;
 
 
@@ -35,15 +37,96 @@ public class ShipSystem : MonoBehaviour
 
 
     public void STAT_CooldownTime(float _val) { STAT_cooldownTime = _val; }
-    public float STAT_CooldownTime( ) { return STAT_cooldownTime;}
+    public float STAT_CooldownTime( ) 
+    {
+        if (Ship() != null)
+        {
+            if (Ship().GetEquipment() != null)
+            {
+                if (systemType == SystemType.armor)
+                {
+                    return Ship().GetEquipment().GetStats()[Stats.armor];
+
+                }
+                else if (systemType == SystemType.engine)
+                {
+                    return Ship().GetEquipment().GetStats()[Stats.speed];
+
+                }
+                else if (systemType == SystemType.weapon)
+                {
+                    return Ship().GetEquipment().GetStats()[Stats.fireRate];
+
+                }
+
+            }
+
+        }
+        return STAT_cooldownTime;
+    }
 
     public bool OnCooldown() { return timer_Cooldown > 0 || timer_Cooldown == -1 ; }
 
     public void STAT_Power(float _val) { STAT_power = _val; }
-    public float STAT_Power() { return STAT_power; }
+    public float STAT_Power() 
+    {
+        if (Ship() != null)
+        {
+            if (Ship().GetEquipment() != null)
+            {
+                if (systemType == SystemType.armor)
+                {
+                    return Ship().GetEquipment().GetStats()[Stats.armor];
+
+                }
+                else if (systemType == SystemType.engine)
+                {
+                    return Ship().GetEquipment().GetStats()[Stats.speed];
+
+                }
+                else if (systemType == SystemType.weapon)
+                {
+                    return Ship().GetEquipment().GetStats()[Stats.damage];
+
+                }
+
+            }
+
+        }
+
+
+        return STAT_power;
+    }
 
     public void STAT_PowerSecondary(float _val) { STAT_powerSecondary = _val; }
-    public float STAT_PowerSecondary() { return STAT_powerSecondary; }
+    public float STAT_PowerSecondary()
+    {
+        if (Ship() != null)
+        {
+            if (Ship().GetEquipment() != null)
+            {
+                if (systemType == SystemType.armor)
+                {
+                    return Ship().GetEquipment().GetStats()[Stats.armor];
+
+                }
+                else if (systemType == SystemType.engine)
+                {
+                    return Ship().GetEquipment().GetStats()[Stats.mobility];
+
+                }
+                else if (systemType == SystemType.weapon)
+                {
+                    return Ship().GetEquipment().GetStats()[Stats.projectileSpeed];
+
+                }
+
+            }
+
+        }
+
+        return STAT_powerSecondary;
+    }
 
     public void SetActivateKey(KeyCode _key) { activateKey = _key; }
     public void SetActivateButton(string _key) { activateButton = _key; }
@@ -63,7 +146,7 @@ public class ShipSystem : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        if (ship != null && ship.GetComponent<Rigidbody>() != null && GetComponent<Rigidbody>() != null)
+        if (Ship() != null && ship.GetComponent<Rigidbody>() != null && GetComponent<Rigidbody>() != null)
         {
 
            // FixedJoint joint = ship.gameObject.AddComponent<FixedJoint>();
@@ -122,6 +205,30 @@ public class ShipSystem : MonoBehaviour
 
     public float StaminaCost()
     {
+
+        if (Ship() != null)
+        {
+            if (Ship().GetEquipment() != null)
+            {
+                if (systemType == SystemType.armor)
+                {
+                    return Ship().GetEquipment().GetStats()[Stats.armor];
+
+                }
+                else if (systemType == SystemType.engine)
+                {
+                    return Ship().GetEquipment().GetStats()[Stats.mobility];
+
+                }
+                else if (systemType == SystemType.weapon)
+                {
+                    return Ship().GetEquipment().GetStats()[Stats.projectileSpeed];
+
+                }
+
+            }
+
+        }
         return staminaCost;
     }
     public void StaminaCost(float _cost)

@@ -1,9 +1,9 @@
-﻿Name:gun,id:e-g-0,type:weapon,armor:0,damage:5,speed:0,mobility:0,subtype:0,firerate:30,projectileSpeed:12,bulletsPerBurst:3
-Name:engine,type:engine,armor:0,firerate:1,damage:0,speed:5,mobility:0,subtype:0
-Name:chasis,type:chasis,armor:5,damage:0,speed:0,mobility:0,subtype:0
-Name:guntwo,id:gun2,type:weapon,armor:0,damage:15,speed:0,mobility:0,subtype:0,firerate:12,projectileSpeed:55,bulletsPerBurst:3
-Name:enginetwo,type:engine,armor:0,damage:0,speed:15,mobility:0,subtype:0,stamina_max:10
-Name:chasistwo,type:chasis,armor:15,damage:0,speed:0,mobility:0,subtype:0
+﻿Name:gun,id:e-g-0,type:weapon,armor:0,damage:5,speed:0.1,mobility:0.1,subtype:0,firerate:30,projectileSpeed:12,bulletsPerBurst:3
+Name:engine,id:e-e-0,type:engine,armor:0,firerate:1,damage:0.1,speed:5,mobility:15,subtype:0
+Name:chasis,id:e-c-0,type:chasis,armor:5,damage:0,speed:.9,mobility:1.1,subtype:0
+Name:guntwo,id:e-g-1,id:gun2,type:weapon,armor:0,damage:15,speed:0,mobility:0,subtype:0,firerate:12,projectileSpeed:55,bulletsPerBurst:3
+Name:enginetwo,id:e-e-1,type:engine,armor:0,damage:0,speed:15,mobility:0,subtype:0,stamina_max:10
+Name:chasistwo,id:e-c-1,type:chasis,armor:15,damage:0,speed:0,mobility:0,subtype:0
 Name:viper,type:vehicle,armor:0,damage:0,speed:0,mobility:5,subtype:0
 Name:raptor,type:vehicle,armor:5,damage:0,speed:0,mobility:0,subtype:0
 Name:landmaster,type:vehicle,armor:0,damage:5,speed:0,mobility:0,subtype:0
@@ -18,3 +18,4 @@ Name:colonial_one,id:c1,type:fleet,subtype:unique
 Name:fuel_0,id:fs0,type:fleet,fuel:1,producefuel:10,modifyfuelproduction:0.2,subtype:producer
 Name:food_1,id:fs1,type:fleet,food:1,producefood:10,modifyfoodproduction:0.2,subtype:producer
 Name:fleet_ship2,id:fs2,type:fleet,subtype:producer
+Name:cpu0,id:e-c-0,type:computer,sensor:1,subtype:0

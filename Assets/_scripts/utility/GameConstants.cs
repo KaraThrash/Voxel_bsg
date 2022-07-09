@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -52,13 +53,19 @@ public static class GameConstants
         { return 1; }
         if (_stat == Stats.pointValue)
         { return 1; }
-
+        if (_stat == Stats.sensor)
+        { return 0; }
 
 
 
 
         return 0;
     }
+
+
+
+
+
 
 
     public static float DefaultStatValue_Bullet(Stats _stat)
@@ -91,8 +98,99 @@ public static class GameConstants
         { return 1; }
         if (_stat == Stats.pointValue)
         { return 1; }
+        if (_stat == Stats.sensor)
+        { return 0; }
 
 
+
+
+        return 0;
+    }
+
+
+    public static float DefaultStatValue_Engine(Stats _stat)
+    {
+        if (_stat == Stats.speed)
+        { return 1; }
+        if (_stat == Stats.mobility)
+        { return 1; }
+
+        return 0;
+    }
+
+    public static void DefaultStatValue_Engine(Item _item)
+    {
+        if (_item.GetStats()[Stats.speed] == 0)
+        {
+            _item.GetStats()[Stats.speed] = 1;
+        }
+        if (_item.GetStats()[Stats.mobility] == 0)
+        {
+            _item.GetStats()[Stats.mobility] = 1;
+        }
+        
+
+    }
+
+    public static float DefaultStatValue_Weapon(Stats _stat)
+    {
+        if (_stat == Stats.damage)
+        { return 1; }
+        if (_stat == Stats.fireRate)
+        { return 1; }
+        if (_stat == Stats.projectileSpeed)
+        { return 1; }
+        if (_stat == Stats.bulletsperburst)
+        { return 1; }
+
+
+        return 0;
+    }
+
+    public static void DefaultStatValue_Weapon(Item _item)
+    {
+        if (_item.GetStats()[Stats.damage] == 0)
+        {
+            _item.GetStats()[Stats.damage] = 1;
+        }
+        if (_item.GetStats()[Stats.fireRate] == 0)
+        {
+            _item.GetStats()[Stats.fireRate] = 1;
+        }
+        if (_item.GetStats()[Stats.projectileSpeed] == 0)
+        {
+            _item.GetStats()[Stats.projectileSpeed] = 1;
+        }
+        if (_item.GetStats()[Stats.bulletlifetime] == 0)
+        {
+            _item.GetStats()[Stats.bulletlifetime] = 1;
+        }
+        if (_item.GetStats()[Stats.bulletsperburst] == 0)
+        {
+            _item.GetStats()[Stats.bulletsperburst] = 1;
+        }
+        
+        
+        
+        
+        
+
+    }
+
+    public static void DefaultStatValue_Chasis(Item _item)
+    {
+        if (_item.GetStats()[Stats.armor] == 0)
+        {
+            _item.GetStats()[Stats.armor] = 1;
+        }
+
+
+    }
+
+    public static float DefaultStatValue_Chasis(Stats _stat)
+    {
+        if (_stat == Stats.armor)
+        { return 1; }
 
 
 

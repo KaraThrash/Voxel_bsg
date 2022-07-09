@@ -308,7 +308,7 @@ public class Menus : Manager {
 
         foreach (Stats el in (Stats[])Enum.GetValues(typeof(Stats)))
         {
-            if (_equipment.GetStats().ContainsKey(el) )
+            if (_equipment.GetStats().ContainsKey(el) && _equipment.GetStats()[el] != 0)
             {
                 if (el != Stats.none && el != Stats.pointValue)
                 {

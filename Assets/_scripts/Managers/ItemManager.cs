@@ -20,7 +20,8 @@ public class ItemManager : Manager {
     private List<Item> engine;
     private List<Item> usable;
     private List<Item> bullet;
-    private List<Item> vehicles;
+    private List<Item> vehicles; 
+    private List<Item> computers;
 
     public void Start()
     {
@@ -97,6 +98,10 @@ public class ItemManager : Manager {
         {
             return VehicleList();
         }
+        if (_type == ItemTypes.computer)
+        {
+            return ComputerList();
+        }
 
         return WeaponList();
     }
@@ -130,6 +135,10 @@ public class ItemManager : Manager {
         if (_item.type == ItemTypes.vehicle)
         {
             VehicleList().Add(_item);
+        }
+        if (_item.type == ItemTypes.computer)
+        {
+            ComputerList().Add(_item);
         }
         if (_item.type == ItemTypes.fleet)
         {
@@ -215,6 +224,10 @@ public class ItemManager : Manager {
                     {
                         newItem.subtype = (int)EnumGroups.FleetShipTypeFromString(statline[1].Trim());
                     }
+
+
+
+
                 }
                 else
                 {
@@ -226,6 +239,23 @@ public class ItemManager : Manager {
 
         if (newItem.referenceID.Length <= 1) { newItem.referenceID = newItem.name; }
 
+
+        //If a stat that is important for the item to function assign it now
+        if (newItem.type == ItemTypes.chasis)
+        {
+            GameConstants.DefaultStatValue_Chasis(newItem);
+        }
+        else if (newItem.type == ItemTypes.engine)
+        {
+            GameConstants.DefaultStatValue_Engine(newItem);
+        }
+        else if (newItem.type == ItemTypes.weapon)
+        {
+            GameConstants.DefaultStatValue_Weapon(newItem);
+        }
+
+
+        //this is only so the stats are visible in the inspector
         foreach (Stats el in (Stats[])Enum.GetValues(typeof(Stats)))
         {
             newItem.GetStatList().Add(new StatClass(el, newItem.GetStats()[el]));
@@ -245,31 +275,41 @@ public class ItemManager : Manager {
 
     public void ReadSpreadsheet()
     {
-         string data = System.IO.File.ReadAllText("Assets/Resources/Items/readable_itemsheet.csv");
-         string[] lines  = data.Split('\n');
-
-        int count = 0;
-        foreach (string el in lines)
+        string data;
+        try
         {
-            //skip the first header line
-            
-            Item newItem = ALT_ParseToItem(el.Trim().ToLower());
+            data = System.IO.File.ReadAllText("Assets/Resources/Items/readable_itemsheet.csv");
+            string[] lines = data.Split('\n');
 
-            if (newItem != null)
+            int count = 0;
+            foreach (string el in lines)
             {
+                //skip the first header line
 
-                MasterItems.AddNewItem( newItem);
+                Item newItem = ALT_ParseToItem(el.Trim().ToLower());
 
-                AddToListByType(newItem);
+                if (newItem != null)
+                {
 
-                //AddToListByType(newItem);
+                    MasterItems.AddNewItem(newItem);
+
+                    AddToListByType(newItem);
+
+                    //AddToListByType(newItem);
+                }
+                if (count > 0)
+                {
+                }
+
+                count++;
             }
-            if (count > 0)
-            {
-            }
-            
-            count++;
+
         }
+        catch (Exception ex)
+        {
+
+        }
+         
 
       //  float.TryParse(text[0], x);
     }
@@ -339,6 +379,13 @@ public class ItemManager : Manager {
         if (vehicles == null)
         { vehicles = new List<Item>(); }
         return vehicles;
+    }
+
+    public List<Item> ComputerList()
+    {
+        if (computers == null)
+        { computers = new List<Item>(); }
+        return computers;
     }
 
 }
