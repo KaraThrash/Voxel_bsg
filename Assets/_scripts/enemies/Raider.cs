@@ -20,6 +20,7 @@ public class Raider : Enemy
     private Vector3 moveDir;
     private Vector3 lookAt;
 
+
     public override void Act()
     {
 

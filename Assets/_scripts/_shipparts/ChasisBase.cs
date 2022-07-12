@@ -80,6 +80,9 @@ public class ChasisBase : ShipSystem
         // a value of '1' means there is no resistance
 
         Vector3 modifiedForce = _force;
+
+        
+
         //_force +
         modifiedForce = Vector3.Lerp(modifiedForce,  ExternalForce(), 1 - STAT_PowerSecondary());
 
@@ -123,6 +126,9 @@ public class ChasisBase : ShipSystem
     {
         if (externalForceIndicator != null) { externalForceIndicator.enabled = _on; }
     }
+
+
+
 
 
     public bool BelowMinimumMagnitude(Vector3 _force)

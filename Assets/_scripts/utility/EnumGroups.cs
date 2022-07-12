@@ -63,6 +63,9 @@
     public enum UpgradeType { ammo, health, chainsawReward, damage, clipsize, firerate, ammoPickupBonus }
 
     public enum EnemyType { basic, mortar, jetpack, boss }
+
+public enum ActorType { none,enemy,npc,objective }
+
     public enum EnviromentType { space, atmosphere, radiated, sand }
 
 public enum ItemTypes
@@ -119,7 +122,6 @@ public enum Stats
     , speed
 
     , mobility
-
     , fireRate
     , projectileSpeed
     , bulletsperburst
@@ -141,7 +143,7 @@ public enum Stats
 }
 
 
-
+//Name:cpu0,id:e-c-0,type:computer,armor:0,damage:0,speed:0,mobility:0,fireRate:0,projectileSpeed:0,bulletsperburst:0,bulletlifetime:0,sensor:0,stamina_max:0,stamina_cost:0,stamina_rechargeLockout:0,storage:0,pointValue:0,food:0,producefood:0,modifyfoodproduction:0,fuel:0,producefuel:0,modifyfuelproduction:0,pop:0,producepop:0,modifypopproduction:0,subtype:0
 
 
 /// visuals

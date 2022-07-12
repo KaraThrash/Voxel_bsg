@@ -34,7 +34,9 @@ public class Player : MonoBehaviour {
 
         }
         if (GetCamera())
-        { 
+        {
+
+            GetCamera().ZSensitivity = Ship().GetEquipment().GetStats()[Stats.mobility] * 5;
             GetCamera().gameObject.SetActive(true);
         }
 

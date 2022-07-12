@@ -81,16 +81,14 @@ public class Ship : Actor
 {
     public Equipment equipment;
 
-    public Rigidbody rb;
 
     //the engines push the ship 'forward' and combined with the lateral control this transform should be used
     // to apply the force of the engine to the correct forwar: If moving laterally while flying the 'forward' should
     // be slightly off center from camera logically
-    public Transform mainTransform;
+    
 
     public Transform rotationTarget;
 
-    public bool canAct;
 
     public List<ShipSystem> systems;
     
@@ -175,8 +173,9 @@ public class Ship : Actor
         {
             timer_lockOutStaminaRecharge -= Time.deltaTime;
         }
-        else { RechargeStamina(); }
-
+        else { }
+        //NOTE: is the stamina lockout fun?
+        RechargeStamina();
 
         Movement();
 
@@ -189,7 +188,9 @@ public class Ship : Actor
         }
         else
         {
-            if (PrimaryEngine() && PrimaryEngine().throttle_A != 0)
+            if (PrimaryEngine() && PrimaryEngine().throttle_A != 0 ||
+                (rotationTarget.GetComponent<ThirdPersonCamera>() && rotationTarget.GetComponent<ThirdPersonCamera>().rollz != 0)
+                )
             { 
                 transform.rotation = Quaternion.Slerp(transform.rotation, PrimaryEngine().GetTargetRotation(), PrimaryEngine().RotationAcceleration());
 
@@ -281,6 +282,9 @@ public class Ship : Actor
             //Get the engine's intended output
             newVelocity = PrimaryEngine().GetTargetVelocity() * primaryEngine.LinearAcceleration();
             newVelocity += PrimaryEngine().Lateral() * PrimaryEngine().lateralPower;
+
+          //  newVelocity = PrimaryEngine().Check_Min_Velocity(newVelocity);
+
             accel = primaryEngine.LinearAcceleration();
 
         }
@@ -680,13 +684,7 @@ public class Ship : Actor
     }
 
 
-    public Transform MainTransform()
-    {
-        if (mainTransform == null)
-        { return transform; }
-
-        return mainTransform;
-    }
+   
 
   
 

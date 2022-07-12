@@ -11,7 +11,9 @@ public class EngineBase : ShipSystem
     public float lateralPower;
     public float torquePower;
     [Min(0.01f)]
-    public float rate_Acceleration, brakePower, rate_Deceleration; //brake power for manual slow as determined by negative throttle, decelRate is the engines ambient force to return to rest
+    public float rate_Acceleration; 
+    public float  brakePower; 
+    public float  rate_Deceleration; //brake power for manual slow as determined by negative throttle, decelRate is the engines ambient force to return to rest
 
     public float throttle_A, throttle_B;
     public float horizontal, vertical;
@@ -132,12 +134,22 @@ public class EngineBase : ShipSystem
 
 
 
-   
+    public virtual Vector3 Check_Min_Velocity(Vector3 _velocity)
+    {
+        //TODO: check enviroment type
+
+        //if (_velocity.magnitude < 1.1f)
+        //{
+        //    return ship.transform.forward * 11.1f;
+        //}
+
+        return _velocity;
+    }
 
     public virtual Vector3 GetTargetVelocity()
     {
 
-        return forwardVelocity + lateralVelocity + verticalVelocity;
+        return Check_Min_Velocity(forwardVelocity + lateralVelocity + verticalVelocity);
     }
 
     public float LinearAcceleration()

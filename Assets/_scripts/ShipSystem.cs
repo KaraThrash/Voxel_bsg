@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class ShipSystem : MonoBehaviour
 {
-
+    private GameManager gameManager;
     public bool listenForPlayerInput;
 
     public SystemType systemType;
@@ -206,29 +206,29 @@ public class ShipSystem : MonoBehaviour
     public float StaminaCost()
     {
 
-        if (Ship() != null)
-        {
-            if (Ship().GetEquipment() != null)
-            {
-                if (systemType == SystemType.armor)
-                {
-                    return Ship().GetEquipment().GetStats()[Stats.armor];
+        //if (Ship() != null)
+        //{
+        //    if (Ship().GetEquipment() != null)
+        //    {
+        //        if (systemType == SystemType.armor)
+        //        {
+        //            return Ship().GetEquipment().GetStats()[Stats.armor];
 
-                }
-                else if (systemType == SystemType.engine)
-                {
-                    return Ship().GetEquipment().GetStats()[Stats.mobility];
+        //        }
+        //        else if (systemType == SystemType.engine)
+        //        {
+        //            return Ship().GetEquipment().GetStats()[Stats.mobility];
 
-                }
-                else if (systemType == SystemType.weapon)
-                {
-                    return Ship().GetEquipment().GetStats()[Stats.projectileSpeed];
+        //        }
+        //        else if (systemType == SystemType.weapon)
+        //        {
+        //            return Ship().GetEquipment().GetStats()[Stats.projectileSpeed];
 
-                }
+        //        }
 
-            }
+        //    }
 
-        }
+        //}
         return staminaCost;
     }
     public void StaminaCost(float _cost)
@@ -330,7 +330,12 @@ public class ShipSystem : MonoBehaviour
 
     }
 
+    public bool NegativeButtonDown()
+    {
 
+        return InputControls.CheckButtonPressed(negativeButton);
+
+    }
 
     public Ship Ship() { return ship; }
     public void Ship(Ship _type) { ship = _type; }
@@ -340,4 +345,19 @@ public class ShipSystem : MonoBehaviour
 
     public SystemState GetSystemState() { return systemState; }
     public void SetSystemState(SystemState _type) { systemState = _type; }
+
+
+
+
+
+
+    public GameManager GameManager()
+    {
+        if (gameManager == null)
+        { gameManager = FindObjectOfType<GameManager>(); }
+
+        return gameManager;
+    }
+
+
 }

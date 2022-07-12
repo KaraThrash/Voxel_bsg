@@ -6,7 +6,6 @@ using UnityEngine;
 public class LateralThruster : EngineBase
 {
     public Transform rotationTarget;
-    public string hortAxis;
 
 
     public Vector3 boundary, targetPos; //lateral movement in localspace
@@ -42,19 +41,19 @@ public class LateralThruster : EngineBase
 
             targetPos = new Vector3(boundary.x * horizontal, boundary.y * vertical, 0);
             
-            if (horizontal != 0 || vertical != 0)
-            {
-                targetPos = new Vector3(boundary.x * horizontal, boundary.y * vertical, 0);
-            }
+            //if (horizontal != 0 || vertical != 0)
+            //{
+            //    targetPos = new Vector3(boundary.x * horizontal, boundary.y * vertical, 0);
+            //}
 
 
             if (PositiveButton())
             {
-                targetPos = Vector3.zero;
+             //   targetPos = Vector3.zero;
             }
 
 
-            if ((horizontal + vertical) > minValueToIgnoreStaminaCost)
+            if ((Mathf.Abs(horizontal) + Mathf.Abs(vertical)) > minValueToIgnoreStaminaCost)
             {
                 if (ship.CheckStamina(StaminaCost()) == false)
                 {

@@ -9,8 +9,13 @@ public class Actor : MonoBehaviour
     [SerializeField]
 
     private int maxHP = 10;
-
+    public bool canAct;
     public int currentHealth;
+
+
+    public Transform mainTransform;
+    public Rigidbody rb;
+    public Crosshair crosshair;
 
     private Map currentMap;
 
@@ -55,7 +60,11 @@ public class Actor : MonoBehaviour
 
 
 
-
+    public Crosshair GetCrossHair()
+    {
+        //TODO: Centralize prefabs that would need to be spawned if they dont already exist
+        return crosshair;
+    }
 
     public Map Map()
     {
@@ -121,5 +130,25 @@ public class Actor : MonoBehaviour
 
         Destroy(gameObject);
     }
+
+
+    public Transform MainTransform()
+    {
+        if (mainTransform == null)
+        { return transform; }
+
+        return mainTransform;
+    }
+
+    public Rigidbody RB()
+    {
+        if (rb == null)
+        {
+            rb = GetComponent<Rigidbody>();
+        }
+
+        return rb;
+    }
+
 
 }

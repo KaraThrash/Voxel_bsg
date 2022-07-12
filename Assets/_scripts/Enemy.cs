@@ -8,10 +8,10 @@ public class Enemy : Actor
     private EnemyManager enemyManager;
     public Stats_Enemy stats;
     public NpcManager npcManager;
-    public Rigidbody rb;
+
     public Ship ship;
 
-    public bool canAct;
+    
 
     public AiState state;
     private AiState pendingState;
@@ -490,15 +490,7 @@ public class Enemy : Actor
     }
 
 
-    public Rigidbody RB()
-    {
-        if (rb == null)
-        {
-            rb = GetComponent<Rigidbody>();
-        }
-
-        return rb;
-    }
+    
 
     public Ship GetShip()
     {

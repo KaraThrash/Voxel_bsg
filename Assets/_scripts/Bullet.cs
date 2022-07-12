@@ -46,7 +46,7 @@ public class Bullet : Actor
     private Vector3 direction, secondaryDirection, relativeVelocity;
     private Vector3 rotationDirection;
 
-    private Rigidbody rb;
+
     private Rigidbody anchorPoint; //for attacks that are part of the attacker [e.g. lance]
 
     private Collider myCollider;
@@ -653,16 +653,7 @@ public class Bullet : Actor
 
     }
 
-    public Rigidbody RB()
-    {
-        if (rb == null)
-        {
-            rb = GetComponent<Rigidbody>();
-        }
-
-        return rb;
-    }
-
+ 
     public void SetCollider(bool _on)
     {
         if (GetCollider() != null)
