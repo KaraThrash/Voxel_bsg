@@ -69,6 +69,13 @@ public class Map : Manager
 
     public virtual void Init()
     {
+        poi = new List<Map_POI>();
+
+        foreach (Map_POI el in FindObjectsOfType<Map_POI>())
+        {
+            poi.Add(el);
+        }
+
         GameManager().GetObjectiveEvent().AddListener(GameEventListener);
         
     }

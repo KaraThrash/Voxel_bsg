@@ -10,7 +10,7 @@ public class ObjectiveEvent : UnityEvent<InGameEvent>
 
 }
 
-public class Objective : Actor
+public class Objective : Map_POI
 {
     public Transform patrolPoint;
 
@@ -23,6 +23,7 @@ public class Objective : Actor
     public GameObject explosion;
     public UnityEvent onDamageTaken;
     public UnityEvent onDeath;
+
 
 
     // Start is called before the first frame update

@@ -2,14 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Map_POI : MonoBehaviour
+public class Map_POI : Actor
 {
-    public Map map;
 
-    public bool spawnSpot;
-    public bool patrolPoint;
-    public bool objectiveLocation;
 
-    public Map Map()
-    { return map; }
+    public bool isSpawnPoint;
+    public bool isPatrolPoint;
+    public bool isObjective;
+
+
 }

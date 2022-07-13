@@ -16,12 +16,13 @@ public class ComputerSystem : ShipSystem
 
             if (PositiveButtonDown())
             {
-                FindNextClosest(ActorType.enemy);
+                FindClosest(ActorType.enemy);
             }
 
             if (NegativeButtonDown())
             {
-                ClearTarget();
+                FindClosest(ActorType.objective);
+             //   ClearTarget();
             }
         }
     }
@@ -50,7 +51,13 @@ public class ComputerSystem : ShipSystem
         {
             currentTarget.GetCrossHair().SetCamera(cam);
             currentTarget.GetCrossHair().SetActor(currentTarget);
-            currentTarget.GetCrossHair().Init(2);
+
+            float sensorLvl = 2;
+            if (ship.GetEquipment())
+            {
+              //  sensorLvl = ship.GetEquipment().GetStats()[Stats.sensor];
+            }
+            currentTarget.GetCrossHair().Init(sensorLvl);
         }
 
     }
@@ -65,50 +72,77 @@ public class ComputerSystem : ShipSystem
     }
 
 
+    public void FindClosest(ActorType _actorType)
+    {
+
+
+        // Actor[] actorList = FindObjectsOfType<Actor>();
+
+
+        if (_actorType == ActorType.enemy)
+        {
+            if (currentTarget )
+            {
+                if (currentTarget.GetComponent<Enemy>())
+                {
+                    FindNextClosestEnemy();
+
+                }
+                else
+                {
+                    ClearTarget();
+                    FindClosestEnemy();
+                }
+
+            }
+            else
+            {
+                FindClosestEnemy();
+            }
+
+        }
+        else if (_actorType == ActorType.objective)
+        {
+            if (currentTarget )
+            {
+                if (currentTarget && currentTarget.GetComponent<Map_POI>())
+                {
+                    FindNextClosestObjective();
+
+                }
+                else
+                {
+                    ClearTarget();
+                    FindClosestObjective();
+                }
+
+            }
+            else 
+            {
+                FindClosestObjective();
+            }
+        }
+
+
+
+
+    }
 
     public void FindNextClosest(ActorType _actorType)
     {
-        float dist = 0;
-        float mindist = 0;
-        if (currentTarget) { mindist = Vector3.Distance(currentTarget.MainTransform().position, ship.transform.position); }
-        dist = mindist;
-
-        Actor newTarget = currentTarget;
+        
 
         // Actor[] actorList = FindObjectsOfType<Actor>();
         
 
         if (_actorType == ActorType.enemy)
         {
-            List<Enemy> actorList = GameManager().EnemyManager().Enemies();
-
-            foreach (Enemy el in actorList)
-            {
-
-                float newDist = Vector3.Distance(el.MainTransform().position, ship.transform.position);
-
-                if (newTarget == null || (newDist > mindist && newDist <= dist))
-                {
-                    dist = newDist;
-                    newTarget = el;
-                }
-
-            }
-
-            if (newTarget == currentTarget)
-            {
-                ClearTarget();
-            }
-            else
-            {
-                SetTarget(newTarget);
-
-            }
+            FindNextClosestEnemy();
 
         }
         else if (_actorType == ActorType.objective)
         {
-            
+            FindNextClosestObjective();
         }
 
 
@@ -118,5 +152,194 @@ public class ComputerSystem : ShipSystem
 
 
 
+
+
+    public void FindClosestEnemy()
+    {
+        float dist = 100;
+
+
+        Actor newTarget = currentTarget;
+
+        List<Enemy> actorList = GameManager().EnemyManager().Enemies();
+
+        foreach (Enemy el in actorList)
+        {
+            if (newTarget == null)
+            { newTarget = el; }
+            else 
+            {
+                float newDist = Vector3.Distance(el.MainTransform().position, ship.transform.position);
+
+                if ( newDist <= dist)
+                {
+                    dist = newDist;
+                    newTarget = el;
+                }
+            }
+            
+
+        }
+
+      
+            SetTarget(newTarget);
+
+        
+
+    }
+
+
+    public void FindNextClosestEnemy()
+    {
+        float dist = 100;
+        float mindist = 0;
+
+        if (currentTarget)
+        {
+            mindist = Vector3.Distance(currentTarget.MainTransform().position, ship.transform.position);
+        }
+        dist = mindist * 100;
+
+        Actor newTarget = null;
+
+        List<Enemy> actorList = GameManager().EnemyManager().Enemies();
+
+        foreach (Enemy el in actorList)
+        {
+
+            if (newTarget == null)
+            {
+                if (Vector3.Distance(el.MainTransform().position, ship.transform.position) >= mindist)
+                {
+                    newTarget = el;
+                    dist = Vector3.Distance(el.MainTransform().position, ship.transform.position);
+                }
+            }
+            else
+            {
+                float newDist = Vector3.Distance(el.MainTransform().position, ship.transform.position);
+
+                if (newDist > mindist && newDist <= dist)
+                {
+                    dist = newDist;
+                    newTarget = el;
+                }
+            }
+
+
+
+        }
+
+        if (newTarget == currentTarget || newTarget == null)
+        {
+            ClearTarget();
+        }
+        else
+        {
+            SetTarget(newTarget);
+
+        }
+    }
+
+
+
+    public void FindClosestObjective()
+    {
+        float dist = 0;
+
+
+        Actor newTarget = null;
+
+        List<Map_POI> actorList = GameManager().MapManager().GetMap().GetPOIList();
+
+        foreach (Map_POI el in actorList)
+        {
+            if (newTarget == null)
+            {
+                if (el.isObjective)
+                {
+                    newTarget = el;
+                    dist = Vector3.Distance(el.MainTransform().position, ship.transform.position);
+                }
+            }
+            else
+            {
+                float newDist = Vector3.Distance(el.MainTransform().position, ship.transform.position);
+
+                if (el.isObjective &&  newDist < dist)
+                {
+                    dist = newDist;
+                    newTarget = el;
+                }
+            }
+
+            
+
+        }
+
+        if (newTarget == currentTarget)
+        {
+           // ClearTarget();
+        }
+        else
+        {
+            
+
+        }
+        SetTarget(newTarget);
+    }
+
+
+    public void FindNextClosestObjective()
+    {
+        float dist = 100;
+        float mindist = 0;
+
+        if (currentTarget)
+        {
+            mindist = Vector3.Distance(currentTarget.MainTransform().position, ship.transform.position);
+        }
+        dist = mindist * 100;
+
+        Actor newTarget = null;
+
+        List<Map_POI> actorList = GameManager().MapManager().GetMap().GetPOIList();
+
+        foreach (Map_POI el in actorList)
+        {
+
+            if (newTarget == null)
+            {
+                if (el.isObjective && Vector3.Distance(el.MainTransform().position, ship.transform.position) >= mindist)
+                {
+                    newTarget = el;
+                    dist = Vector3.Distance(el.MainTransform().position, ship.transform.position);
+                }
+            }
+            else 
+            {
+                float newDist = Vector3.Distance(el.MainTransform().position, ship.transform.position);
+
+                if (el.isObjective && newDist > mindist && newDist <= dist)
+                {
+                    dist = newDist;
+                    newTarget = el;
+                }
+            }
+
+            
+
+        }
+
+        if (newTarget == currentTarget || newTarget == null)
+        {
+            ClearTarget();
+        }
+        else
+        {
+            SetTarget(newTarget);
+
+        }
+    }
 
 }

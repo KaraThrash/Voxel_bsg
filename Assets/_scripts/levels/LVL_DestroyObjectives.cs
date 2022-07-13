@@ -32,7 +32,7 @@ public class LVL_DestroyObjectives : Map
         {
             foreach (Map_POI el in GetPOIList())
             {
-                if (el.Map() == this && el.spawnSpot)
+                if (el.Map() == this && el.isSpawnPoint)
                 {
                     EnemyManager().SpawnEnemy(prefab_enemy, el.transform);
                 }
