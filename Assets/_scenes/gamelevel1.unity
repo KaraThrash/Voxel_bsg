@@ -14997,7 +14997,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 295244969}
   m_LocalRotation: {x: -0.17754497, y: -0, z: -0, w: 0.9841127}
-  m_LocalPosition: {x: -63.578068, y: 39.4438, z: -350.99667}
+  m_LocalPosition: {x: -63.578068, y: -29.2, z: -303.5}
   m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
   m_Children:
   - {fileID: 1846742259}
@@ -39147,8 +39147,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 744353694}
   m_LocalRotation: {x: -0.07698153, y: -0.025450801, z: 0.10655553, w: 0.9909955}
-  m_LocalPosition: {x: -29.67807, y: 94.8438, z: -241.5}
-  m_LocalScale: {x: 0.19999999, y: 0.20000002, z: 0.20000003}
+  m_LocalPosition: {x: -96.3, y: -38.6, z: -241.5}
+  m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
   m_Children:
   - {fileID: 1788326618}
   - {fileID: 1040469273}
@@ -50277,7 +50277,7 @@ MonoBehaviour:
   map: {fileID: 550636150}
   count: -1
   countmod: 0
-  spawnclock: -1
+  spawnclock: 0
   spawnspeed: 0
   randomspawn: 0
 --- !u!1 &1041803515
@@ -72117,14 +72117,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f8abf23c8f1dd14dbca2b90d49033be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tospawn: {fileID: 2975248877789736478, guid: a62b0544effecc342b781f04d47efddc, type: 3}
+  tospawn: {fileID: 4360376512877454078, guid: 91dfbe2dbdb4d5d4a8e2b6e3b74365fb, type: 3}
   toWatch: {fileID: 0}
   enemyparent: {fileID: 0}
   map: {fileID: 550636150}
-  count: -1
+  count: 10
   countmod: 0
-  spawnclock: -1
-  spawnspeed: 0
+  spawnclock: 0
+  spawnspeed: 5
   randomspawn: 0
 --- !u!1 &1487315523
 GameObject:
@@ -72253,11 +72253,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a67b379af63c18446b431be7b5d6ce10, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  actorType: 0
   isPlayer: 0
   maxHP: 10
   canAct: 0
   currentHealth: 0
   mainTransform: {fileID: 0}
+  dradisIcon: {fileID: 0}
   rb: {fileID: 0}
   crosshair: {fileID: 0}
   bulletType: 0
@@ -104236,8 +104238,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2092371808}
   m_LocalRotation: {x: 0.07664324, y: 0.016434887, z: -0.20902224, w: 0.97476435}
-  m_LocalPosition: {x: -219.57806, y: 59.743805, z: -481.49667}
-  m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
+  m_LocalPosition: {x: -48.5, y: -33.2, z: -221.9}
+  m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
   m_Children:
   - {fileID: 69285179}
   - {fileID: 2025075639}
@@ -106735,6 +106737,80 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7620759939834924174}
   m_Mesh: {fileID: -7814395330007242756, guid: ac1e9ebdee90d6c4e9ff0b04ba135aa1, type: 3}
+--- !u!1001 &789826304671042189
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4360376512764674325, guid: 91dfbe2dbdb4d5d4a8e2b6e3b74365fb,
+        type: 3}
+      propertyPath: externalForceIndicator
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 4360376512877454052, guid: 91dfbe2dbdb4d5d4a8e2b6e3b74365fb,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 4360376512877454052, guid: 91dfbe2dbdb4d5d4a8e2b6e3b74365fb,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -31.039997
+      objectReference: {fileID: 0}
+    - target: {fileID: 4360376512877454052, guid: 91dfbe2dbdb4d5d4a8e2b6e3b74365fb,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 10.36
+      objectReference: {fileID: 0}
+    - target: {fileID: 4360376512877454052, guid: 91dfbe2dbdb4d5d4a8e2b6e3b74365fb,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -2.4554996
+      objectReference: {fileID: 0}
+    - target: {fileID: 4360376512877454052, guid: 91dfbe2dbdb4d5d4a8e2b6e3b74365fb,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4360376512877454052, guid: 91dfbe2dbdb4d5d4a8e2b6e3b74365fb,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4360376512877454052, guid: 91dfbe2dbdb4d5d4a8e2b6e3b74365fb,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4360376512877454052, guid: 91dfbe2dbdb4d5d4a8e2b6e3b74365fb,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4360376512877454052, guid: 91dfbe2dbdb4d5d4a8e2b6e3b74365fb,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4360376512877454052, guid: 91dfbe2dbdb4d5d4a8e2b6e3b74365fb,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4360376512877454052, guid: 91dfbe2dbdb4d5d4a8e2b6e3b74365fb,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4360376512877454078, guid: 91dfbe2dbdb4d5d4a8e2b6e3b74365fb,
+        type: 3}
+      propertyPath: m_Name
+      value: enemy_testType
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 91dfbe2dbdb4d5d4a8e2b6e3b74365fb, type: 3}
 --- !u!33 &920424062558457938
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -112958,11 +113034,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f6daf7b55d2b0e94fb18239134a36625, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  actorType: 0
   isPlayer: 0
   maxHP: 10
   canAct: 0
   currentHealth: 0
   mainTransform: {fileID: 0}
+  dradisIcon: {fileID: 0}
   rb: {fileID: 0}
   crosshair: {fileID: 0}
   itemType: 0
@@ -112986,11 +113064,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a67b379af63c18446b431be7b5d6ce10, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  actorType: 0
   isPlayer: 0
   maxHP: 10
   canAct: 0
   currentHealth: 0
   mainTransform: {fileID: 0}
+  dradisIcon: {fileID: 0}
   rb: {fileID: 0}
   crosshair: {fileID: 0}
   bulletType: 0

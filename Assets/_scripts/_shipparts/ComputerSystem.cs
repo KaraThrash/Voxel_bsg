@@ -5,9 +5,10 @@ using UnityEngine;
 public class ComputerSystem : ShipSystem
 {
     public Transform cam;
+    public Transform dradisSitSpot;
 
     public Actor currentTarget;
-
+    public Transform dradisCenter;
 
     public override void PlayerInput()
     {
@@ -26,7 +27,19 @@ public class ComputerSystem : ShipSystem
             }
         }
     }
+
     public override void Act()
+    {
+        if (on && (ship && ship.CanAct()))
+        {
+            
+            
+
+        }
+    }
+
+
+    public override void Act_Fixed()
     {
         if (on && (ship && ship.CanAct()))
         {
@@ -35,9 +48,59 @@ public class ComputerSystem : ShipSystem
                 currentTarget.GetCrossHair().SetPlacement();
             }
 
-   
+
+
         }
     }
+
+
+
+
+
+    public void DradisPing()
+    {
+
+        List<Enemy> actorList = GameManager().EnemyManager().Enemies();
+
+        foreach (Enemy el in actorList)
+        {
+            if (el.canAct && el.dradisIcon)
+            {
+                el.dradisIcon.gameObject.SetActive(true);
+
+                if (el.dradisIcon.parent != null)
+                { el.dradisIcon.parent = dradisCenter; }
+
+                el.dradisIcon.position = dradisCenter.position + (el.MainTransform().position - cam.position) * 0.001f;
+                el.dradisIcon.rotation = el.MainTransform().rotation ;
+
+
+            }
+            else
+            {
+              
+            }
+
+
+        }
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     public void SetTarget(Actor _newTarget)

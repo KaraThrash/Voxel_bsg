@@ -18,7 +18,8 @@ public class Spawn : MonoBehaviour {
     public float spawnclock;
     public float spawnspeed;
     public bool randomspawn;
-
+    private Transform parent_Enemy;
+    private string enemyParentName = "PARENT_Enemy";
     void Start () {
 
     }
@@ -70,7 +71,7 @@ public class Spawn : MonoBehaviour {
         
 
         GameObject clone = Instantiate(tospawn, transform.position, transform.rotation) as GameObject;
-        clone.transform.parent = enemyparent.transform;
+        clone.transform.parent = EnemyParent().transform;
         clone.SetActive(true);
         return clone;
     }
@@ -80,4 +81,28 @@ public class Spawn : MonoBehaviour {
 
     public GameObject EnemyPrefab()
     { return tospawn; }
+
+
+    public Transform EnemyParent()
+    {
+        if (parent_Enemy == null)
+        {
+            if (enemyParentName.Length < 1)
+            {
+                enemyParentName = "PARENT_Enemy";// + this.GetType().ToString();
+            }
+
+            GameObject findParent = GameObject.Find(enemyParentName);
+
+
+            if (findParent == null)
+            {
+                parent_Enemy = new GameObject(enemyParentName).transform;
+            }
+            else { parent_Enemy = findParent.transform; }
+        }
+
+        return parent_Enemy;
+    }
+
 }

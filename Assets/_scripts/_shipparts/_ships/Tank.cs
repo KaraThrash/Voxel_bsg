@@ -25,7 +25,7 @@ public override void Weapons()
 {
     if (PrimaryWeapon())
     {
-        PrimaryWeapon().Act();
+        PrimaryWeapon().Act_Fixed();
     }
 
 }

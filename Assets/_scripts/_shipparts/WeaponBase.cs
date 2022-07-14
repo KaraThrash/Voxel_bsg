@@ -36,7 +36,7 @@ public class WeaponBase : ShipSystem
         
     }
 
-    public override void Act()
+    public override void Act_Fixed()
     {
 
         if (STAT_cooldownTime < 0.1f) { STAT_cooldownTime = 0.5f; }
@@ -194,7 +194,14 @@ public class WeaponBase : ShipSystem
             if (bullet != null)
             {
                 GameObject clone = Instantiate(bullet, transform.position, transform.rotation);
-                clone.GetComponent<Bullet>().bulletType = (BulletType)Ship().GetEquipment().GetBullet().subtype;
+                if (Ship() != null && Ship().GetEquipment() != null && Ship().GetEquipment().GetBullet() != null)
+                {
+                    clone.GetComponent<Bullet>().bulletType = (BulletType)Ship().GetEquipment().GetBullet().subtype;
+                }
+                else
+                {
+                    clone.GetComponent<Bullet>().bulletType = BulletType.basic;
+                }
                 clone.SetActive(true);
                 clone.GetComponent<Bullet>().Init();
                 clone.GetComponent<Bullet>().Launch(Ship());
@@ -203,8 +210,16 @@ public class WeaponBase : ShipSystem
         else 
         {
             Transform newBullet = BulletParent().GetChild(0);
-            newBullet.GetComponent<Bullet>().bulletType = (BulletType)Ship().GetEquipment().GetBullet().subtype;
-            
+
+            if (Ship() != null && Ship().GetEquipment() != null && Ship().GetEquipment().GetBullet() != null)
+            {
+                newBullet.GetComponent<Bullet>().bulletType = (BulletType)Ship().GetEquipment().GetBullet().subtype;
+            }
+            else
+            {
+                newBullet.GetComponent<Bullet>().bulletType = BulletType.basic;
+            }
+
             newBullet.gameObject.SetActive(true);
             newBullet.GetComponent<Bullet>().Init();
             newBullet.position = transform.position;

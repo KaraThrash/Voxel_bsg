@@ -5,6 +5,9 @@ using UnityEngine;
 public class Actor : MonoBehaviour
 {
     private GameManager gameManager;
+
+    public ActorType actorType;
+
     public bool isPlayer = false;
     [SerializeField]
 
@@ -14,8 +17,12 @@ public class Actor : MonoBehaviour
 
 
     public Transform mainTransform;
+
+    public Transform dradisIcon;
+
     public Rigidbody rb;
     public Crosshair crosshair;
+    
 
     private Map currentMap;
 
@@ -131,6 +138,13 @@ public class Actor : MonoBehaviour
         Destroy(gameObject);
     }
 
+
+
+    public ActorType ActorType()
+    { return actorType; }
+
+    public void ActorType(ActorType _type)
+    { actorType = _type; }
 
     public Transform MainTransform()
     {

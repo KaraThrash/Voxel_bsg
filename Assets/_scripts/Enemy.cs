@@ -181,7 +181,11 @@ public class Enemy : Actor
     public void Init()
     {
         GetSubID();
-        EnemyManager().AddEnemyToList(this);
+        if (EnemyManager())
+        { 
+            EnemyManager().AddEnemyToList(this);
+
+        }
 
         if (AttackTarget() == null || GetShip() == null)
         {
@@ -422,7 +426,10 @@ public class Enemy : Actor
     {
         if (attackTarget == null)
         {
-            attackTarget = GameManager().Player().Ship().transform;
+            if (GameManager() && GameManager().Player())
+            {
+                attackTarget = GameManager().Player().Ship().transform;
+            }
         }
 
         return attackTarget;

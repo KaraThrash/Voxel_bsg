@@ -40,7 +40,7 @@ public class EnemyPolarith : Enemy
             float secondaryFacing = Vector3.Angle(ShipTransform().forward, (AttackTarget().position - ShipTransform().position).normalized);
             if (secondaryFacing < Stats().angleTolerance)
             {
-                if (gun != null) { gun.Act(); }
+                if (gun != null) { gun.Act_Fixed(); }
             }
             else { if (gun != null) { gun.Deactivate(); } }
         }

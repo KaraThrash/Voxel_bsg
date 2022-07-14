@@ -196,6 +196,15 @@ public class Equipment : ScriptableObject
 
             AddStats(weapon);
         }
+        else
+        {
+            GetStats()[Stats.projectileSpeed] = 125;
+            GetStats()[Stats.fireRate] = 0.5f;
+            GetStats()[Stats.damage] = 1;
+
+        }
+
+
         if (engine != null)
         {
             armor += engine.GetStats()[Stats.armor];
@@ -206,6 +215,20 @@ public class Equipment : ScriptableObject
             AddStats(engine);
         
         }
+        else
+        {
+            mobility = 15 + (mobility * 15);
+            speed = 15 + (speed * 15);
+
+
+            GetStats()[Stats.speed] = 5;
+            GetStats()[Stats.mobility] = 5;
+    
+
+        }
+
+
+
         if (chasis != null) 
         {
 

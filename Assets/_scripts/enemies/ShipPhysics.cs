@@ -72,7 +72,7 @@ public class ShipPhysics : EngineBase
 
    
 
-    public override void Act()
+    public override void Act_Fixed()
     {
         if (GetSystemState() == SystemState.on)
         {

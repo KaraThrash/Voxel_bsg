@@ -281,10 +281,6 @@ public class GameManager : Manager {
 
 
 
-
-
-
-
     public void SetGameState(GameState _state)
     { gameState = _state; }
     public GameState GetGameState()

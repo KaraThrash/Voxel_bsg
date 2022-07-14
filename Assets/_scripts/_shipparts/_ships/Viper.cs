@@ -32,7 +32,7 @@ public class Viper : Ship
     {
         if (PrimaryWeapon())
         {
-            PrimaryWeapon().Act();
+            PrimaryWeapon().Act_Fixed();
         }
 
     }

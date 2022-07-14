@@ -189,12 +189,13 @@ public class Ship : Actor
         else
         {
             if (PrimaryEngine() && PrimaryEngine().throttle_A != 0 ||
-                (rotationTarget.GetComponent<ThirdPersonCamera>() && rotationTarget.GetComponent<ThirdPersonCamera>().rollz != 0)
+                (rotationTarget.GetComponent<ThirdPersonCamera>() 
+                && rotationTarget.GetComponent<ThirdPersonCamera>().rollz != 0)
                 )
             { 
-                transform.rotation = Quaternion.Slerp(transform.rotation, PrimaryEngine().GetTargetRotation(), PrimaryEngine().RotationAcceleration());
 
             }
+                transform.rotation = Quaternion.Slerp(transform.rotation, PrimaryEngine().GetTargetRotation(), PrimaryEngine().RotationAcceleration());
 
         }
 
@@ -260,7 +261,7 @@ public class Ship : Actor
     {
         if (PrimaryWeapon())
         {
-            PrimaryWeapon().Act();
+            PrimaryWeapon().Act_Fixed();
         }
 
     }

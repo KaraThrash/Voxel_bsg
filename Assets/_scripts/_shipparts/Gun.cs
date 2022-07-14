@@ -30,7 +30,7 @@ public class Gun : ShipSystem
         
     }
 
-    public override void Act()
+    public override void Act_Fixed()
     {
 
 

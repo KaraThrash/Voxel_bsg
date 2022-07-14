@@ -5,8 +5,12 @@ using UnityEngine;
 public class Player : MonoBehaviour {
 
     private GameManager gameManager;
+
+
     public Ship ship;
     public ThirdPersonCamera cam;
+
+    public Dradis dradis;
 
     public bool camControlsRotation;
 
@@ -200,11 +204,19 @@ public class Player : MonoBehaviour {
 
 
 
+
+
+
+
+
     public void EnemyDeathEvent(Enemy _enemy)
     {
 
 
     }
+
+
+
 
 
 
@@ -223,6 +235,12 @@ public class Player : MonoBehaviour {
     {
 
         return cam;
+    }
+
+
+    public Dradis Dradis()
+    {
+        return dradis;
     }
 
     public GameManager GameManager()

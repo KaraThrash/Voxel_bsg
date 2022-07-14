@@ -111,7 +111,7 @@ public class ChasisBase : ShipSystem
     }
 
 
-    public override void Act()
+    public override void Act_Fixed()
     {
         if (ExternalForce() != Vector3.zero)
         {

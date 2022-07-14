@@ -283,7 +283,7 @@ public class Raider : Enemy
 
     public override void Attacking()
     {
-        if (gun != null) { gun.Act(); }
+        if (gun != null) { gun.Act_Fixed(); }
 
         movementControls.Speed = 0;
         movementControls.Torque = 0;

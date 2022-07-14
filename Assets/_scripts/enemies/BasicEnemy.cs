@@ -201,8 +201,13 @@ public class BasicEnemy : Enemy
             else
             {
                 distPast = AttackTarget().forward * Stats().closeRange;
-                FocusObject().position = AttackTarget().position - distPast;
+
+                if (AttackTarget().GetComponent<Rigidbody>())
+                { distPast = AttackTarget().GetComponent<Rigidbody>().velocity; }
+
+                FocusObject().position = AttackTarget().position + distPast;
                 State(AiState.moving); 
+
             }
 
             if (GetShip().PrimaryWeapon())
@@ -248,7 +253,7 @@ public class BasicEnemy : Enemy
 
         if (GetShip().PrimaryWeapon())
         {
-            float secondaryFacing = Vector3.Angle(ShipTransform().forward, (AttackTarget().position - ShipTransform().position).normalized);
+            float secondaryFacing = Vector3.Angle(ShipTransform().forward, (FocusObject().position - ShipTransform().position).normalized);
             if (secondaryFacing < Stats().angleTolerance)
             {
                 if (gun != null) { gun.Activate(); }
@@ -292,7 +297,7 @@ public class BasicEnemy : Enemy
 
     public override void Attacking()
     {
-        if (gun != null) { gun.Act(); }
+        if (gun != null) { gun.Act_Fixed(); }
 
         movementControls.Speed = 0;
         movementControls.Torque = 0;

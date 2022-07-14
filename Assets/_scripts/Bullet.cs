@@ -92,8 +92,7 @@ public class Bullet : Actor
 
     public void Launch(Ship _ship)
     {
-        Dictionary<Stats, float> stats = _ship.GetEquipment().GetStats();
-        Item bulletStats = _ship.GetEquipment().GetBullet();
+        
 
         float pwr = 1;
         float acc = 0;
@@ -105,14 +104,18 @@ public class Bullet : Actor
         current_acceleration = 1;
 
 
-        if (bulletStats == null)
+        if (_ship.GetEquipment() == null || _ship.GetEquipment().GetBullet() == null)
         {
            
             rotSpeed = 1;
+            pwr = 30;
+            dmg = 0;
         }
         else
         {
-             pwr = stats[Stats.projectileSpeed];
+            Dictionary<Stats, float> stats = _ship.GetEquipment().GetStats();
+            Item bulletStats = _ship.GetEquipment().GetBullet();
+            pwr = stats[Stats.projectileSpeed];
             pwr = (pwr / 100) * bulletStats.GetStats()[Stats.projectileSpeed];
             pwr += bulletStats.GetStats()[Stats.projectileSpeed];
 
