@@ -109,7 +109,7 @@ public class Bullet : Actor
            
             rotSpeed = 1;
             pwr = 30;
-            dmg = 0;
+            dmg = 1;
         }
         else
         {

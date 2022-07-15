@@ -70,6 +70,8 @@ public class ShipSystem : MonoBehaviour
     public void STAT_Power(float _val) { STAT_power = _val; }
     public float STAT_Power() 
     {
+        
+
         if (Ship() != null)
         {
             if (Ship().GetEquipment() != null)

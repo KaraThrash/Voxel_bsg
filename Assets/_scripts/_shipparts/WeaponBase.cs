@@ -39,7 +39,7 @@ public class WeaponBase : ShipSystem
     public override void Act_Fixed()
     {
 
-        if (STAT_cooldownTime < 0.1f) { STAT_cooldownTime = 0.5f; }
+        if (STAT_cooldownTime < 0.1f) { STAT_cooldownTime = 0.1f; }
 
 
         if (GetGunType() == GunType.auto)

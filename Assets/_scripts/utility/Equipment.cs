@@ -199,7 +199,7 @@ public class Equipment : ScriptableObject
         else
         {
             GetStats()[Stats.projectileSpeed] = 125;
-            GetStats()[Stats.fireRate] = 0.5f;
+            GetStats()[Stats.fireRate] = 0.1f;
             GetStats()[Stats.damage] = 1;
 
         }
@@ -217,12 +217,12 @@ public class Equipment : ScriptableObject
         }
         else
         {
-            mobility = 15 + (mobility * 15);
-            speed = 15 + (speed * 15);
+            mobility = 1 + (mobility * 1);
+            speed = 5 + (speed * 5);
 
 
             GetStats()[Stats.speed] = 5;
-            GetStats()[Stats.mobility] = 5;
+            GetStats()[Stats.mobility] = 1;
     
 
         }

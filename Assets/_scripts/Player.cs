@@ -44,6 +44,23 @@ public class Player : MonoBehaviour {
             GetCamera().gameObject.SetActive(true);
         }
 
+        if (Ship().PrimaryEngine())
+        {
+            Ship().PrimaryEngine().STAT_Power(Ship().GetEquipment().GetStats()[Stats.speed]);
+            Ship().PrimaryEngine().STAT_PowerSecondary(Ship().GetEquipment().GetStats()[Stats.mobility]);
+        }
+
+        if (Ship().SecondaryEngine())
+        {
+            Ship().SecondaryEngine().STAT_Power(Ship().GetEquipment().GetStats()[Stats.mobility]);
+            Ship().SecondaryEngine().STAT_PowerSecondary(Ship().GetEquipment().GetStats()[Stats.mobility]);
+        }
+
+        if (Ship().PrimaryWeapon())
+        {
+            Ship().PrimaryWeapon().STAT_CooldownTime(Ship().GetEquipment().GetStats()[Stats.fireRate]);
+        }
+
     }
 
 

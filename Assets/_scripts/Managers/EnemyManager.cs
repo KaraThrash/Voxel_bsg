@@ -59,6 +59,21 @@ public class EnemyManager : Manager
        
     }
 
+    public void SpawnEnemy(GameObject _enemy, Transform _spot,SubID _subid)
+    {
+        if (EnemyParent().childCount >= maxOnScreen)
+        { return; }
+
+        Enemy enemy = Instantiate(_enemy, _spot.position, _spot.rotation).GetComponent<Enemy>();
+        enemy.transform.parent = EnemyParent();
+
+        enemy.AttackTarget(playerShip);
+        enemy.SetStance(Stance.aggressive);
+        enemy.subid = _subid;
+
+    }
+
+
 
     public void StartLevel()
     {

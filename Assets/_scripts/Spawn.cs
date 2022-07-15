@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Spawn : MonoBehaviour {
+public class Spawn :  Map_POI
+{
 
     public GameObject tospawn;
 

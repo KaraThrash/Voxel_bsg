@@ -30,7 +30,7 @@ public class LateralThruster : EngineBase
 
     }
 
-    public override void Act_Fixed()
+    public override void Act()
     {
 
    
@@ -40,6 +40,9 @@ public class LateralThruster : EngineBase
 
 
             targetPos = new Vector3(boundary.x * horizontal, boundary.y * vertical, 0);
+            targetPos = boundary.x * horizontal * rotationTarget.right;
+            targetPos += boundary.y * vertical * rotationTarget.up;
+            targetPos += ship.transform.position;
             
             //if (horizontal != 0 || vertical != 0)
             //{
@@ -57,7 +60,7 @@ public class LateralThruster : EngineBase
             {
                 if (ship.CheckStamina(StaminaCost()) == false)
                 {
-                    targetPos = Vector3.zero;
+                    targetPos = ship.transform.position;// Vector3.zero;
                 }
                 else 
                 {
@@ -65,16 +68,15 @@ public class LateralThruster : EngineBase
                 }
             }
 
-            if (Vector3.Distance(ActOn().localPosition, targetPos) < Time.deltaTime * STAT_Power())
+            if (Vector3.Distance(ActOn().position, targetPos) < Time.deltaTime )
             {
-                ActOn().localPosition = targetPos;
+                ActOn().position = targetPos;
 
             }
             else 
             {
-                ActOn().localPosition = Vector3.Lerp(ActOn().localPosition, targetPos, Time.deltaTime * STAT_Power());
+                ActOn().position = Vector3.Lerp(ActOn().position, targetPos, Time.deltaTime * STAT_PowerSecondary());
             }
-
 
 
 
@@ -86,11 +88,13 @@ public class LateralThruster : EngineBase
             else
             {
 
-                Vector3 fwdVector = (rotationTarget.position + (rotationTarget.forward * focalDepth)) - ActOn().position;
+                Vector3 fwdVector = (rotationTarget.position + (rotationTarget.forward * focalDepth)) - ship.transform.position;
                 ActOn().transform.rotation = Quaternion.LookRotation((rotationTarget.position + fwdVector) - ActOn().position, rotationTarget.up);
             }
 
-            
+
+
+
 
         }
 

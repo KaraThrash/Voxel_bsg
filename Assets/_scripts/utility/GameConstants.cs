@@ -35,7 +35,7 @@ public static class GameConstants
         if (_stat == Stats.mobility)
         { return 1; }
         if (_stat == Stats.fireRate)
-        { return 1; }
+        { return 0; }
         if (_stat == Stats.projectileSpeed)
         { return 1; }
         if (_stat == Stats.bulletsperburst)
@@ -80,7 +80,7 @@ public static class GameConstants
         if (_stat == Stats.mobility)
         { return 1; }
         if (_stat == Stats.fireRate)
-        { return 1; }
+        { return 0; }
         if (_stat == Stats.projectileSpeed)
         { return 1; }
         if (_stat == Stats.bulletsperburst)
@@ -137,7 +137,7 @@ public static class GameConstants
         if (_stat == Stats.damage)
         { return 1; }
         if (_stat == Stats.fireRate)
-        { return 1; }
+        { return 0.2f; }
         if (_stat == Stats.projectileSpeed)
         { return 1; }
         if (_stat == Stats.bulletsperburst)
@@ -155,7 +155,7 @@ public static class GameConstants
         }
         if (_item.GetStats()[Stats.fireRate] == 0)
         {
-            _item.GetStats()[Stats.fireRate] = 1;
+            _item.GetStats()[Stats.fireRate] = 0.2f;
         }
         if (_item.GetStats()[Stats.projectileSpeed] == 0)
         {

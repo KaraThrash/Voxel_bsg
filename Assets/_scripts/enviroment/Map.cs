@@ -22,7 +22,7 @@ public class Map : Manager
     public float gravityStrength;
     public float mapRadius;
  
-    private List<Map_POI> poi;
+    protected List<Map_POI> poi;
 
 
 
@@ -58,12 +58,21 @@ public class Map : Manager
 
     public void Start()
     {
-        Init();
+        if (GameManager())
+        { 
+            Init();
+
+        }
     }
 
-    public void Update()
+    public void FixedUpdate()
     {
-        ActiveMap();
+        if (GameManager())
+        {
+            ActiveMap();
+
+        }
+        
     }
 
 

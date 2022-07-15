@@ -192,10 +192,10 @@ public class Ship : Actor
                 (rotationTarget.GetComponent<ThirdPersonCamera>() 
                 && rotationTarget.GetComponent<ThirdPersonCamera>().rollz != 0)
                 )
-            { 
+            {
+                transform.rotation = Quaternion.Slerp(transform.rotation, PrimaryEngine().GetTargetRotation(), PrimaryEngine().RotationAcceleration());
 
             }
-                transform.rotation = Quaternion.Slerp(transform.rotation, PrimaryEngine().GetTargetRotation(), PrimaryEngine().RotationAcceleration());
 
         }
 
