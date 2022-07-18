@@ -32,8 +32,39 @@ public class Player : MonoBehaviour {
 
             if (GameManager().FleetManager())
             {
+                if (Ship().GetEquipment().weapon == null)
+                {
+
+                    if (GameManager().ItemManager().WeaponList().Count > 0)
+                    {
+                        Ship().GetEquipment().weapon = GameManager().ItemManager().WeaponList()[0];
+                    }
+                }
+
+                if (Ship().GetEquipment().engine == null)
+                {
+
+                    if (GameManager().ItemManager().EngineList().Count > 0)
+                    {
+                        Ship().GetEquipment().engine = GameManager().ItemManager().EngineList()[0];
+                    }
+                }
+
+                if (Ship().GetEquipment().chasis == null)
+                {
+
+                    if (GameManager().ItemManager().ChasisList().Count > 0)
+                    {
+                        Ship().GetEquipment().chasis = GameManager().ItemManager().ChasisList()[0];
+                    }
+                }
+
+
                 Ship().GetEquipment().CalculateStats();
-                Ship().ApplyFleetStats(GameManager().FleetManager());
+               // Ship().ApplyFleetStats(GameManager().FleetManager());
+
+
+
             }
 
         }
@@ -41,6 +72,8 @@ public class Player : MonoBehaviour {
         {
 
             GetCamera().ZSensitivity = Ship().GetEquipment().GetStats()[Stats.mobility] * 5;
+            GetCamera().XSensitivity = Ship().GetEquipment().GetStats()[Stats.mobility] * 5;
+            GetCamera().YSensitivity = Ship().GetEquipment().GetStats()[Stats.mobility] * 5;
             GetCamera().gameObject.SetActive(true);
         }
 
@@ -69,6 +102,8 @@ public class Player : MonoBehaviour {
         if (Ship() && Ship().CanAct())
         {
             InputListen();
+
+            
 
             if (Ship().Hitpoints() <= 0)
             {

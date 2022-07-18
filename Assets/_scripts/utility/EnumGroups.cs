@@ -116,6 +116,7 @@ public enum Stats
 {
     none
     , armor
+        , stability
 
     , damage
 

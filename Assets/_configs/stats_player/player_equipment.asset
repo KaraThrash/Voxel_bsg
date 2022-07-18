@@ -12,10 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0e07885b6b6dc4f479522c964a5b8811, type: 3}
   m_Name: player_equipment
   m_EditorClassIdentifier: 
+  useDefaultItems: 0
   armor: 0
   damage: 5.5
-  speed: 5.5
-  mobility: 2.2
+  speed: 16.5
+  mobility: 27.5
   fireRate: 0
   projectileSpeed: 0
   bulletsPerBurst: 0
@@ -120,9 +121,9 @@ MonoBehaviour:
     - stat: 2
       value: 0.1
     - stat: 3
-      value: 5
+      value: 15
     - stat: 4
-      value: 2
+      value: 25
     - stat: 5
       value: 0
     - stat: 6

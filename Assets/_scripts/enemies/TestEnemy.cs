@@ -3,7 +3,7 @@
 
 public class TestEnemy : Enemy
 {
-    public ShipSystem gun;
+    public WeaponBase gun;
 
     public GameObject effect_Explosion;
 
@@ -17,6 +17,50 @@ public class TestEnemy : Enemy
     private Vector3 lookAt_Position;
 
 
+
+    public override void Init()
+    {
+        GetSubID();
+        if (EnemyManager())
+        {
+            EnemyManager().AddEnemyToList(this);
+
+        }
+
+        if (AttackTarget() == null || GetShip() == null)
+        {
+            AttackTarget(EnemyManager().AttackTarget());
+
+        }
+
+
+        moveTo_Position = transform.position + transform.forward * stats.closeRange;
+        lookAt_Position = transform.position + transform.forward * stats.closeRange;
+
+
+        //FocusObject().position = Map().GetNextPatrolPoint(count_patrolPoint);
+        FocusObject().position = AttackTarget().position;
+
+
+        State(AiState.attacking);
+
+
+        if (Stats())
+        {
+            if (gun != null)
+            {
+                gun.bulletsPerBurst = Stats().bulletsPerBurst;
+                gun.STAT_CooldownTime( Stats().firerate);
+                gun.burstTime =  Stats().timeBetweenBursts;
+            }
+
+        }
+
+        stateTime = 5;
+        brainTime = 12;
+        timer_Brain = brainTime;
+        directionChangeSpeed = 12;
+    }
 
 
     public override void Act()
@@ -42,11 +86,13 @@ public class TestEnemy : Enemy
             return;
 
         }
+        SetEngineParticles();
 
 
 
 
-      
+
+
 
         timer_State -= Time.deltaTime;
 
@@ -180,8 +226,12 @@ public class TestEnemy : Enemy
 
         if (Vector3.Distance(moveTo_Position, ShipTransform().position) > Stats().closeRange)
         { 
-        RB().velocity = Vector3.Lerp(RB().velocity, newVel * Stats().engineThrottle, Stats().accelerate * Time.deltaTime);
-
+            
+            float facingAngle = Vector3.Angle(ShipTransform().forward, (lookAt_Position - ShipTransform().position).normalized);
+            if (facingAngle < Stats().angleTolerance)
+            {
+                RB().velocity = Vector3.Lerp(RB().velocity, newVel * Stats().engineThrottle, Stats().accelerate * Time.deltaTime);
+            }
         }
 
         float pwr = Time.deltaTime * Stats().torquePower;

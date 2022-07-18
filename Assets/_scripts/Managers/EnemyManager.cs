@@ -69,6 +69,7 @@ public class EnemyManager : Manager
 
         enemy.AttackTarget(playerShip);
         enemy.SetStance(Stance.aggressive);
+        enemy.SetStance(Stance.aggressive);
         enemy.subid = _subid;
 
     }

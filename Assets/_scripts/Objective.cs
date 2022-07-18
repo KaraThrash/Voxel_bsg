@@ -21,6 +21,9 @@ public class Objective : Map_POI
     private string SHADER_color = "Color_796B3B6";
 
     public GameObject explosion;
+    public ParticleSystem visual_bulletImpact;
+
+
     public UnityEvent onDamageTaken;
     public UnityEvent onDeath;
 
@@ -49,6 +52,8 @@ public class Objective : Map_POI
 
         if (Hitpoints() > 0 )
         {
+           
+
             //NOTE: just color is not enough of an indicator [i.e. shape/texture]
             UpdateColor(Color.Lerp(defaultColor, deadColor, PercentHealth()));
         }

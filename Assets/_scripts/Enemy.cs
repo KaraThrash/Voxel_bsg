@@ -20,6 +20,8 @@ public class Enemy : Actor
 
     public Transform attackTarget;
     public Transform focusObject; //the object the polarith AI is trying to move towards. Use Polarith for general navigating, and set polarith to zero for specific actions
+    public ParticleSystem visual_engineParticles;
+
 
     public float hp;
     [SerializeField]
@@ -34,7 +36,7 @@ public class Enemy : Actor
     public bool alert;
 
 
-    private float brainTime, stateTime; //brain time for checking if the enemy responds to an external condition [e.g. player being in their line of fire], state time for state specific holds
+    protected float brainTime, stateTime; //brain time for checking if the enemy responds to an external condition [e.g. player being in their line of fire], state time for state specific holds
     protected float directionChangeSpeed; // how quickly this enemy changes the direction they want to go
 
 
@@ -67,6 +69,17 @@ public class Enemy : Actor
 
         return focusObject;
     }
+
+
+    public void SetEngineParticles()
+    {
+        if (visual_engineParticles)
+        {
+            visual_engineParticles.startLifetime = 1 + (0.1f *RB().velocity.magnitude);
+        }
+    
+    }
+
 
     /// 
     /// 
@@ -178,7 +191,7 @@ public class Enemy : Actor
     }
 
 
-    public void Init()
+    public virtual void Init()
     {
         GetSubID();
         if (EnemyManager())

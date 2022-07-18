@@ -216,11 +216,6 @@ public class GameManager : Manager {
 
 
 
-
-
-
-
-
     public void EnemyDeathEvent(Enemy _enemy)
     {
         Debug.Log("EnemyDeathEvent: ");

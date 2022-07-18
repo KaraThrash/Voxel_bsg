@@ -86,6 +86,11 @@ public class ThirdPersonOrbitCam : MonoBehaviour
 
 		Quaternion aimRotation = Quaternion.Euler(-angleV, angleH, 0);
 		Quaternion camYRotation = Quaternion.Euler(0, -angleH, 0);
+
+
+		if (transform.up.y < 0)
+		{ aimRotation = Quaternion.Euler(-angleV, -angleH, 0); }
+
 		cam.rotation = aimRotation;
 
 		//if(playerControl.IsAiming())

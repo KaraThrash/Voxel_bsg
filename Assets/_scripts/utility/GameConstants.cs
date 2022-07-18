@@ -10,6 +10,11 @@ public static class GameConstants
 
     public static float FOCAL_LENGTH = 15.0f;
 
+
+
+    public static float BULLET_SPEED = 30.0f;
+    public static float BULLET_DAMAGE = 1.0f;
+
     public static bool TYPE_A = false;// manually control the ship rotation, the camera focuses in front of the ship
 
 
@@ -35,7 +40,7 @@ public static class GameConstants
         if (_stat == Stats.mobility)
         { return 1; }
         if (_stat == Stats.fireRate)
-        { return 0; }
+        { return 0.2f; }
         if (_stat == Stats.projectileSpeed)
         { return 1; }
         if (_stat == Stats.bulletsperburst)
@@ -80,7 +85,7 @@ public static class GameConstants
         if (_stat == Stats.mobility)
         { return 1; }
         if (_stat == Stats.fireRate)
-        { return 0; }
+        { return 0.2f; }
         if (_stat == Stats.projectileSpeed)
         { return 1; }
         if (_stat == Stats.bulletsperburst)

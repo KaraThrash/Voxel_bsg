@@ -12,6 +12,7 @@ public class ShipSystem : MonoBehaviour
     public SystemState systemState;
 
     public Ship ship;
+    public Enemy myEnemy;
   
 
     public Rigidbody rbTarget;
@@ -78,7 +79,7 @@ public class ShipSystem : MonoBehaviour
             {
                 if (systemType == SystemType.armor)
                 {
-                    return Ship().GetEquipment().GetStats()[Stats.armor];
+                    return Ship().GetEquipment().GetStats()[Stats.armor] * 0.1f;
 
                 }
                 else if (systemType == SystemType.engine)
@@ -109,7 +110,7 @@ public class ShipSystem : MonoBehaviour
             {
                 if (systemType == SystemType.armor)
                 {
-                    return Ship().GetEquipment().GetStats()[Stats.armor];
+                    return Ship().GetEquipment().GetStats()[Stats.stability] * 0.1f;
 
                 }
                 else if (systemType == SystemType.engine)
@@ -349,6 +350,9 @@ public class ShipSystem : MonoBehaviour
 
     public Ship Ship() { return ship; }
     public void Ship(Ship _type) { ship = _type; }
+
+    public Enemy MyEnemy() { return myEnemy; }
+    public void Enemy(Enemy _type) { myEnemy = _type; }
 
     public SystemType GetSystemType() { return systemType; }
     public void SetSystemType(SystemType _type) {  systemType = _type; }

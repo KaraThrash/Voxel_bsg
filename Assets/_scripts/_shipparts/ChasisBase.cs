@@ -60,13 +60,14 @@ public class ChasisBase : ShipSystem
     {
         if (Ship() && Ship().Hitpoints() <= 0) { return; }
         timer -= Time.deltaTime;
-        if ( timer <= 0)
+        if (timer <= 0)
         {
             externalForce = Vector3.zero;
             SetVisualIndicator(false);
 
         }
-        externalForce = Vector3.Lerp(ExternalForce(), Vector3.zero, Time.deltaTime * externalForceDecay);
+        else { externalForce = Vector3.Lerp(ExternalForce(), Vector3.zero, Time.deltaTime * STAT_PowerSecondary()); }
+        
     }
 
 
@@ -81,12 +82,16 @@ public class ChasisBase : ShipSystem
 
         Vector3 modifiedForce = _force;
 
-        
+        if (ExternalForce().magnitude > minMagnitude)
+        {
+            modifiedForce = Vector3.Lerp(modifiedForce, ExternalForce(), 1 - STAT_PowerSecondary());
+
+        }
 
         //_force +
-        modifiedForce = Vector3.Lerp(modifiedForce,  ExternalForce(), 1 - STAT_PowerSecondary());
 
-        return Vector3.Lerp(modifiedForce, _force + ExternalForce(), 1);
+
+        return modifiedForce;// _force + ExternalForce();// modifiedForce;// Vector3.Lerp(modifiedForce, _force + ExternalForce(), 1);
     }
 
 
@@ -101,7 +106,7 @@ public class ChasisBase : ShipSystem
     public override void CollideWithEnviroment(Collision collision)
     {
         //ExternalForce(Vector3.Reflect(collision.contacts[0].point - (transform.position), collision.contacts[0].normal).normalized, Ship().GetVelocity().magnitude * 1.2f);
-        ExternalForce( ((transform.position - collision.contacts[0].point).normalized + Ship().GetVelocity().normalized) * ( Ship().GetVelocity().magnitude * 1.2f));
+        ExternalForce( ((transform.position - collision.contacts[0].point).normalized + Ship().GetVelocity().normalized) * ( 1 + (Ship().GetVelocity().magnitude * 1.2f)));
     }
 
     public override int DamageFromCollision(Collision collision)

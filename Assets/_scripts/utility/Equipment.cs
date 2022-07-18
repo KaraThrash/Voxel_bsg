@@ -8,7 +8,7 @@ using UnityEngine;
 
 public class Equipment : ScriptableObject
 {
-
+    public bool useDefaultItems;
     public float armor = 0;
     public float damage = 0;
     public float speed = 0;
@@ -145,19 +145,55 @@ public class Equipment : ScriptableObject
 
     public void CalculateStats()
     {
-        
-            foreach (Stats el in (Stats[])Enum.GetValues(typeof(Stats)))
+
+        foreach (Stats el in (Stats[])Enum.GetValues(typeof(Stats)))
+        {
+            if (GetStats().ContainsKey(el))
             {
-                if (GetStats().ContainsKey(el))
-                {
-                    GetStats()[el] = GameConstants.DefaultStatValue_Ship(el);
+                GetStats()[el] = GameConstants.DefaultStatValue_Ship(el);
 
-
-                }
 
             }
 
-        
+        }
+
+
+        if (useDefaultItems && weapon == null)
+        {
+            return;
+
+          
+        }
+
+        if (useDefaultItems && weapon == null)
+        {
+            GetStats()[Stats.armor] = 5;
+            GetStats()[Stats.damage] = 1;
+            GetStats()[Stats.mobility] = 1;
+            GetStats()[Stats.speed] = 113;
+            GetStats()[Stats.fireRate] = 0.2f;
+            GetStats()[Stats.sensor] = 1;
+            GetStats()[Stats.stamina_max] = 11;
+
+            Item defaultBullet = new Item();
+
+            defaultBullet.type = ItemTypes.bullet;
+            defaultBullet.subtypeClass.bulletType = BulletType.basic;
+
+            defaultBullet.GetStats()[Stats.damage] = 1;
+            defaultBullet.GetStats()[Stats.bulletlifetime] = 10;
+            defaultBullet.GetStats()[Stats.projectileSpeed] = 15;
+            defaultBullet.GetStats()[Stats.speed] = 1;
+            defaultBullet.GetStats()[Stats.mobility] = 1;
+
+            GetBulletList().Add(defaultBullet);
+
+            return;
+        }
+
+
+
+
 
         if (GetStatList() != null)
         {

@@ -109,6 +109,8 @@ public class Ship : Actor
     public Vector3 velocityTarget;
 
     public UiShipDisplay uiDisplay;
+    public ParticleSystem visual_engineParticles;
+
 
     private ShipInput shipInput;
 
@@ -129,6 +131,19 @@ public class Ship : Actor
         return statMap;
     }
 
+
+    public void SetEngineParticles()
+    {
+        if (visual_engineParticles)
+        {
+           // visual_engineParticles.emission.rateOverTime.set(1);// = 1 + (0.4f * RB().velocity.magnitude);
+            var em = visual_engineParticles.emission;
+          //  em.enabled = true;
+
+            em.rateOverTime = 1 + (0.4f * RB().velocity.magnitude);
+        }
+
+    }
 
     public ShipInput ShipInput() 
     {
@@ -193,10 +208,13 @@ public class Ship : Actor
                 && rotationTarget.GetComponent<ThirdPersonCamera>().rollz != 0)
                 )
             {
-                transform.rotation = Quaternion.Slerp(transform.rotation, PrimaryEngine().GetTargetRotation(), PrimaryEngine().RotationAcceleration());
+                //transform.rotation = Quaternion.Slerp(transform.rotation, PrimaryEngine().GetTargetRotation(), PrimaryEngine().RotationAcceleration());
+               
 
             }
+            Quaternion newrot = Quaternion.LookRotation((rotationTarget.position + rotationTarget.forward * 10) - transform.position, rotationTarget.up);
 
+            transform.rotation = Quaternion.Slerp(transform.rotation, newrot, PrimaryEngine().RotationAcceleration());
         }
 
 
@@ -282,9 +300,18 @@ public class Ship : Actor
         {
             //Get the engine's intended output
             newVelocity = PrimaryEngine().GetTargetVelocity() * primaryEngine.LinearAcceleration();
-            newVelocity += PrimaryEngine().Lateral() * PrimaryEngine().lateralPower;
 
-          //  newVelocity = PrimaryEngine().Check_Min_Velocity(newVelocity);
+            if(SecondaryEngine())
+            {
+                float strafeSpeed = 1;
+                if (SecondaryEngine().STAT_Power() != 0)
+                { strafeSpeed = SecondaryEngine().STAT_PowerSecondary() / SecondaryEngine().STAT_Power(); }
+
+                newVelocity += SecondaryEngine().Lateral() * strafeSpeed;
+
+            }
+
+            //  newVelocity = PrimaryEngine().Check_Min_Velocity(newVelocity);
 
             accel = primaryEngine.LinearAcceleration();
 
@@ -308,6 +335,8 @@ public class Ship : Actor
         }
 
         RB().velocity = newVelocity;
+
+        SetEngineParticles();
 
         if (PrimaryEngine())
         {

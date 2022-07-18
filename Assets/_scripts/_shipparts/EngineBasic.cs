@@ -47,9 +47,17 @@ public class EngineBasic : EngineBase
         }
         else
         {
+
+            lockoutTimer -= Time.deltaTime;
+
+            if (lockoutTimer<= 0)
+            {
+                SetSystemState(SystemState.on);
+            }
+
             if (current_Acceleration > 0)
             {
-                Accelerate(0);
+              //  Accelerate(0);
             }
 
         }
@@ -114,6 +122,8 @@ public class EngineBasic : EngineBase
 
     public override Vector3 Lateral()
     {
+
+
         return (Ship().Right() * horizontal) + (Ship().Up() * vertical);
         //return new Vector3(ActOn().localPosition.x, ActOn().localPosition.y,0);
 

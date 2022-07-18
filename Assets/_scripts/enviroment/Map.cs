@@ -22,6 +22,9 @@ public class Map : Manager
     public float gravityStrength;
     public float mapRadius;
  
+
+
+
     protected List<Map_POI> poi;
 
 
@@ -105,7 +108,7 @@ public class Map : Manager
 
         foreach (SpawnSpot el in CurrentChunk().GetStartPositions())
         {
-            GameManager().EnemyManager().SpawnEnemy(el.prefab_Enemy,el.transform);
+            GameManager().EnemyManager().SpawnEnemy(prefab_enemy, el.transform);
         }
     }
 

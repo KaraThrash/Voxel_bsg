@@ -104,12 +104,12 @@ public class Bullet : Actor
         current_acceleration = 1;
 
 
-        if (_ship.GetEquipment() == null || _ship.GetEquipment().GetBullet() == null)
+        if (_ship == null || _ship.GetEquipment() == null || _ship.GetEquipment().GetBullet() == null)
         {
            
             rotSpeed = 1;
-            pwr = 30;
-            dmg = 1;
+            pwr = GameConstants.BULLET_SPEED;
+            dmg = GameConstants.BULLET_DAMAGE;
         }
         else
         {
@@ -204,20 +204,40 @@ public class Bullet : Actor
         SetCollider(true);
     }
 
-    public void Launch(float _power = 1)
+    public void Launch(Stats_Enemy _stats)
     {
-        RB().isKinematic = false;
-        lifeTime = LifeTimeMax();
-        //move to the bottom of the child list [bullets are selected from the first child '0']
-        transform.parent = null;
-        transform.parent = BulletParent();
 
+
+        currentRotSpeed = 0;
+        current_acceleration = 1;
+
+
+
+        lifeTime = _stats.bulletLifeTime;
+        eventTimestamp = -1;
+
+
+        if (lifeTime < 1) { lifeTime = 1; }
+
+        speed = _stats.bulletSpeed;
+
+
+
+        Damage(Mathf.FloorToInt(_stats.gunDamage));
+
+        rotationDirection = Vector3.zero;
+        direction = transform.forward;
 
         if (bulletType == BulletType.basic)
         {
-            RB().velocity = transform.forward * _power;
+            RB().velocity = transform.forward * speed;
         }
         else if (bulletType == BulletType.boomerang)
+        {
+
+
+        }
+        else if (bulletType == BulletType.missile)
         {
 
         }
@@ -225,11 +245,30 @@ public class Bullet : Actor
         {
 
         }
+        else if (bulletType == BulletType.lance)
+        {
+
+        }
+        else if (bulletType == BulletType.spiral)
+        {
+
+        }
+        else if (bulletType == BulletType.zigzag)
+        {
+
+            direction = transform.forward + transform.right;
+            rotationDirection = transform.forward - transform.right;
+
+            eventIncrement = lifeTime * 0.1f;
+            eventTimestamp = lifeTime - (eventIncrement * 0.5f);
+
+        }
         else
         {
-            RB().velocity = transform.forward * _power;
+            RB().velocity = transform.forward * speed;
         }
 
+        gameObject.name = "Bullet_" + bulletType;
 
         SetCollider(true);
     }
@@ -516,6 +555,7 @@ public class Bullet : Actor
         GetComponent<Collider>().enabled = false;
 
         PlaceExplosion();
+
 
         _actor.TakeDamage(Damage());
 
