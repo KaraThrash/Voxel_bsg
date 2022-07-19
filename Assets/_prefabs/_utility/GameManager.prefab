@@ -174,7 +174,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1379030054846874853
 Transform:
   m_ObjectHideFlags: 0
@@ -355,7 +355,7 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.3
-  far clip plane: 500
+  far clip plane: 1400
   field of view: 90
   orthographic: 0
   orthographic size: 5
@@ -6468,8 +6468,8 @@ MonoBehaviour:
   inputbufferforlockon: 0
   flyspeed: 5
   distanceToCatchPlayer: 3
-  XSensitivity: 150
-  YSensitivity: 150
+  XSensitivity: 100
+  YSensitivity: 100
   ZSensitivity: 50
   clampVerticalRotation: 0
   MinimumX: -90

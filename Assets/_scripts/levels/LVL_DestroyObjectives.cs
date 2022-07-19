@@ -30,6 +30,10 @@ public class LVL_DestroyObjectives : Map
         }
 
         GameManager().GetObjectiveEvent().AddListener(GameEventListener);
+
+        count_enemyLeftToSpawn = 3;
+        Spawn();
+
         if (interval_spawnEvent > 0)
         {
             
@@ -94,11 +98,11 @@ public class LVL_DestroyObjectives : Map
                 EnemyManager().SpawnEnemy(prefab_enemy, el.transform, newsubid);
                 timer_timeBetweenSpawn = interval_timeBetweenSpawn;
                 count_enemyLeftToSpawn--;
-                return;
+              //  return;
             }
 
-            if (timer_timeBetweenSpawn > 0)
-            { break; }
+            //if (timer_timeBetweenSpawn > 0)
+            //{ break; }
 
 
             //el.SpawnOne();

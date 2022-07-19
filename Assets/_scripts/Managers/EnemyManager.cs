@@ -78,11 +78,15 @@ public class EnemyManager : Manager
 
     public void StartLevel()
     {
-        if (Enemies() == null) { return; }
+        if (Enemies() == null || Enemies().Count == 0) { return; }
 
         foreach (Enemy el in Enemies())
         {
-            el.canAct = true;
+            if (el)
+            { 
+                el.canAct = true;
+
+            }
         }
     }
 

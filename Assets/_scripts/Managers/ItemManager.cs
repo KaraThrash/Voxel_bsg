@@ -278,8 +278,10 @@ public class ItemManager : Manager {
         string data;
         try
         {
-            data = System.IO.File.ReadAllText("Assets/Resources/Items/readable_itemsheet.csv");
-            string[] lines = data.Split('\n');
+            //   data = System.IO.File.ReadAllText("Assets/Resources/Items/readable_itemsheet.csv");
+
+            var loadedData = Resources.Load<TextAsset>("Items/readable_itemsheet");
+            string[] lines = loadedData.ToString().Split('\n');
 
             int count = 0;
             foreach (string el in lines)

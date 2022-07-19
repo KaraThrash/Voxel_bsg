@@ -17,6 +17,9 @@ public class TestEnemy : Enemy
     private Vector3 lookAt_Position;
 
 
+    public MeshRenderer render;
+    public Material moveColor;
+    public Material attackColor;
 
     public override void Init()
     {
@@ -39,7 +42,7 @@ public class TestEnemy : Enemy
 
 
         //FocusObject().position = Map().GetNextPatrolPoint(count_patrolPoint);
-        FocusObject().position = AttackTarget().position;
+        FocusObject().position = moveTo_Position;// AttackTarget().position;
 
 
         State(AiState.attacking);
@@ -155,6 +158,35 @@ public class TestEnemy : Enemy
 
         }
 
+
+
+        RaycastHit hit;
+        if (Physics.Raycast(MainTransform().position, AttackTarget().position - MainTransform().position, out hit))
+        {
+            if (hit.transform != AttackTarget())
+            {
+                Vector3 newpos = GameManager().MapManager().GetMap().GetClosestPatrolPoint(MainTransform().position + (MainTransform().forward * stats.closeRange));
+
+                moveTo_Position = newpos;
+                lookAt_Position = newpos;
+
+
+
+                if (render && moveColor)
+                {
+                    render.material = moveColor;
+                }
+
+                return;
+            }
+            else
+            {
+                if (render && attackColor)
+                {
+                    render.material = attackColor;
+                }
+            }
+        }
 
 
         if (GetSubID() == SubID.A)

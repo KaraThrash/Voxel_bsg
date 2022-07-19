@@ -98,8 +98,16 @@ public class GameManager : Manager {
 
         if (Input.GetKeyDown(KeyCode.Tab))
         {
-            GameConstants.TYPE_A = !GameConstants.TYPE_A;
+            GameManager().TravelFromHub(1);
+            //GameConstants.TYPE_A = !GameConstants.TYPE_A;
         }
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Application.Quit();
+            //GameConstants.TYPE_A = !GameConstants.TYPE_A;
+        }
+
 
         if (Input.GetKeyDown(KeyCode.Return))
         {

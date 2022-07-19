@@ -244,6 +244,13 @@ public class Menus : Manager {
     //enum ItemTypes { weapon, chasis, engine, usable, ammo,none }
     public void ButtonEvent_ShowEquipOptions(int _itemType)
     {
+
+        if (ItemManager().WeaponList().Count == 0)
+        {
+            ItemManager().ReadSpreadsheet();
+        }
+
+
         Debug.Log("ButtonEvent_ShowEquipOptions: " + (ItemTypes)_itemType);
         //when the player selects an equipment slot populate the choices based on which
         //slot was clicked: The buttons are set in editor to pass an int (0..N)

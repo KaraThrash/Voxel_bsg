@@ -42,6 +42,37 @@ public class Map : Manager
         return Vector3.zero;
     }
 
+    public Vector3 GetClosestPatrolPoint(Vector3 _from)
+    {
+        Vector3 closestPoint = _from + Vector3.one;
+
+        if (parent_PatrolPoints != null)
+        {
+            if (parent_PatrolPoints.childCount > 0 )
+            {
+                closestPoint =  parent_PatrolPoints.GetChild(0).position;
+            }
+        }
+
+        foreach (Transform el in parent_PatrolPoints)
+        {
+            RaycastHit hit;
+            if ( ! Physics.Raycast(_from, el.position - _from, out hit))
+            {
+                if (Vector3.Distance(el.position, _from) < Vector3.Distance(_from, closestPoint))
+                { closestPoint = el.position; }
+            }
+
+        }
+
+
+        return closestPoint;
+    }
+
+
+
+
+
     public List<Map_POI> GetPOIList()
     {
         if (poi == null || poi.Count == 0)
