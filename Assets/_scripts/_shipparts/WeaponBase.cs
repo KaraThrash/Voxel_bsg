@@ -301,40 +301,42 @@ public class WeaponBase : ShipSystem
         {
             return;
         }
-
-        if (BulletParent().childCount == 0 || BulletParent().GetChild(0).gameObject.activeSelf)
+        foreach (Transform el in  gunParent)
         {
-            if (bullet != null)
+            if (BulletParent().childCount == 0 || BulletParent().GetChild(0).gameObject.activeSelf)
             {
-                GameObject clone = Instantiate(bullet, transform.position, transform.rotation);
+                if (bullet != null)
+                {
+                    GameObject clone = Instantiate(bullet, el.position, el.rotation);
 
                     clone.GetComponent<Bullet>().bulletType = MyEnemy().Stats().bulletType;
-                
-        
-                clone.SetActive(true);
-                clone.GetComponent<Bullet>().Init();
-                clone.GetComponent<Bullet>().Launch(MyEnemy().Stats());
-            }
-        }
-        else
-        {
-            Transform newBullet = BulletParent().GetChild(0);
 
-            if (Ship() != null && Ship().GetEquipment() != null && Ship().GetEquipment().GetBullet() != null)
-            {
-                newBullet.GetComponent<Bullet>().bulletType = (BulletType)Ship().GetEquipment().GetBullet().subtype;
+
+                    clone.SetActive(true);
+                    clone.GetComponent<Bullet>().Init();
+                    clone.GetComponent<Bullet>().Launch(MyEnemy().Stats());
+                }
             }
             else
             {
-                newBullet.GetComponent<Bullet>().bulletType = BulletType.basic;
+                Transform newBullet = BulletParent().GetChild(0);
+
+                if (MyEnemy() != null && MyEnemy().Stats() != null)
+                {
+                    newBullet.GetComponent<Bullet>().bulletType = MyEnemy().Stats().bulletType;
+                }
+                else
+                {
+                    newBullet.GetComponent<Bullet>().bulletType = BulletType.basic;
+                }
+
+                newBullet.gameObject.SetActive(true);
+                newBullet.GetComponent<Bullet>().Init();
+                newBullet.position = el.position;
+                newBullet.rotation = el.rotation;
+                newBullet.GetComponent<Bullet>().Launch(MyEnemy().Stats());
+
             }
-
-            newBullet.gameObject.SetActive(true);
-            newBullet.GetComponent<Bullet>().Init();
-            newBullet.position = transform.position;
-            newBullet.rotation = transform.rotation;
-            newBullet.GetComponent<Bullet>().Launch(Ship());
-
         }
 
     }

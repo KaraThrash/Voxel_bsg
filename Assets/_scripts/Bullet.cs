@@ -180,6 +180,10 @@ public class Bullet : Actor
         {
 
         }
+        else if (bulletType == BulletType.large)
+        {
+            transform.localScale = new Vector3(1,1,1); ;
+        }
         else if (bulletType == BulletType.spiral)
         {
             rotationDirection = -_ship.MainTransform().right - _ship.MainTransform().up;
@@ -248,6 +252,10 @@ public class Bullet : Actor
         else if (bulletType == BulletType.lance)
         {
 
+        }
+        else if (bulletType == BulletType.large)
+        {
+            transform.localScale = new Vector3(1, 1, 1); ;
         }
         else if (bulletType == BulletType.spiral)
         {

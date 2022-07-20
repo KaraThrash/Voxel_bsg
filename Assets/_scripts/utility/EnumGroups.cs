@@ -81,7 +81,7 @@ public enum ItemTypes
 }
 
 
-public enum BulletType { basic, missile, lance, boomerang, spiral, spread,zigzag }
+public enum BulletType { basic, missile, lance,large, boomerang, spiral, spread,zigzag }
 
 public enum FleetShipType
 {

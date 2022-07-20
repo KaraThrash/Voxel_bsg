@@ -28,6 +28,7 @@ public class Stats_Enemy : ScriptableObject
 
     public GunType guntype;
     public BulletType bulletType;
+  
 
     public int bulletsPerBurst;
     public float bulletLifeTime;
