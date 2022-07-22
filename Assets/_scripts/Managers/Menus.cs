@@ -37,6 +37,7 @@ public class Menus : Manager {
 
     public Text TEXT_playerStamina;
     public Text TEXT_playerHitPoints;
+    public Text TEXT_playerCurrency;
 
     public Text TEXT_bulletEquipped;
     public Text TEXT_consumableEquipped;
@@ -488,6 +489,14 @@ public class Menus : Manager {
         if (TEXT_playerHitPoints)
         {
             SetText(TEXT_playerHitPoints, TurnNumberIntoBar(_value));
+        }
+    }
+
+    public void Set_PlayerCurrency(float _value = 0)
+    {
+        if (TEXT_playerCurrency)
+        {
+            SetText(TEXT_playerCurrency, _value.ToString());
         }
     }
 

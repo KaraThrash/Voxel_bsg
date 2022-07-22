@@ -53,26 +53,45 @@ public class TestEnemy : Enemy
             if (gun != null)
             {
                 gun.bulletsPerBurst = Stats().bulletsPerBurst;
-                gun.STAT_CooldownTime( Stats().firerate);
-                gun.burstTime =  Stats().timeBetweenBursts;
+                gun.STAT_CooldownTime(Stats().firerate);
+                gun.burstTime = Stats().timeBetweenBursts;
             }
 
+
+            stateTime = Stats().makeDecisionTime;
+            brainTime = Stats().makeDecisionTime;
+            timer_Brain = Stats().makeDecisionTime;
+            directionChangeSpeed = 12;
+            SetHitpoints(1);
+
+        }
+        else
+        {
+            stateTime = 5;
+            brainTime = 12;
+            timer_Brain = brainTime;
+            directionChangeSpeed = 12;
         }
 
-        stateTime = 5;
-        brainTime = 12;
-        timer_Brain = brainTime;
-        directionChangeSpeed = 12;
+        
     }
 
 
     public override void Act()
     {
+        if (Hitpoints() <= 0)
+        {
+            Dying();
+            return;
 
+        }
 
         if (AttackTarget() == null) { return; }
 
         if (timer_Brain > 0) { timer_Brain -= Time.deltaTime; }
+
+
+      
 
         if (GetShip().Chasis() && GetShip().Chasis().ExternalForce() != Vector3.zero)
         {
@@ -83,12 +102,7 @@ public class TestEnemy : Enemy
             return;
         }
 
-        if (ship.Hitpoints() <= 0)
-        {
-            Dying();
-            return;
-
-        }
+      
         SetEngineParticles();
 
 
@@ -142,7 +156,7 @@ public class TestEnemy : Enemy
     public override void MakeDecision()
     {
 
-        if (ship.Hitpoints() <= 0)
+        if (Hitpoints() <= 0)
         {
 
             if (effect_Explosion != null)
@@ -152,41 +166,60 @@ public class TestEnemy : Enemy
                 effect_Explosion.SetActive(true);
             }
 
-            ship.Die();
+           Die();
 
             return;
 
         }
 
-
+        bool canSee = false;
 
         RaycastHit hit;
-        if (Physics.Raycast(MainTransform().position, AttackTarget().position - MainTransform().position, out hit))
+        if (Physics.SphereCast(MainTransform().position, 1.5f,AttackTarget().position - MainTransform().position, out hit))
         {
-            if (hit.transform != AttackTarget())
+            if (hit.transform == AttackTarget())
             {
-                Vector3 newpos = GameManager().MapManager().GetMap().GetClosestPatrolPoint(MainTransform().position + (MainTransform().forward * stats.closeRange));
-
-                moveTo_Position = newpos;
-                lookAt_Position = newpos;
-
-
-
-                if (render && moveColor)
-                {
-                    render.material = moveColor;
-                }
-
-                return;
-            }
-            else
-            {
-                if (render && attackColor)
-                {
-                    render.material = attackColor;
-                }
+                
+                canSee = true;
             }
         }
+
+        if (canSee == false && AttackTarget().GetComponent<Ship>()  )
+        {
+            if ( Physics.Raycast(MainTransform().position, AttackTarget().GetComponent<Ship>().MainTransform().position - MainTransform().position, out hit))
+            {
+                canSee = true;
+
+                
+
+
+            }
+        }
+
+
+        if (canSee)
+        {
+            if (render && attackColor)
+            {
+                render.material = attackColor;
+            }
+        }
+        else
+        {
+            Vector3 newpos = GameManager().MapManager().GetMap().GetClosestPatrolPoint(MainTransform().position + (MainTransform().forward * stats.closeRange));
+
+            moveTo_Position = newpos;
+            lookAt_Position = newpos;
+
+
+
+            if (render && moveColor)
+            {
+                render.material = moveColor;
+            }
+            return;
+        }
+
 
 
         if (GetSubID() == SubID.A)

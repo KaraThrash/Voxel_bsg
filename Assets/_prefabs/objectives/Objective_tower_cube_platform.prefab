@@ -462,6 +462,7 @@ MonoBehaviour:
   deadColor: {r: 1, g: 1, b: 1, a: 0}
   meshRenderer: {fileID: 3116999358214217410}
   explosion: {fileID: 0}
+  visual_bulletImpact: {fileID: 0}
   onDamageTaken:
     m_PersistentCalls:
       m_Calls: []
@@ -594,9 +595,9 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 25797aa0b5337284f857145f1708bcb5, type: 2}
-  - {fileID: 2100000, guid: 86b8465f81f00944fa492ea674de0c59, type: 2}
-  - {fileID: 2100000, guid: 25797aa0b5337284f857145f1708bcb5, type: 2}
+  - {fileID: 2100000, guid: 8d8347df6bc178b4d993581d6a5c6461, type: 2}
+  - {fileID: 2100000, guid: c852eaa8bba635645b05aeeb4319e584, type: 2}
+  - {fileID: 2100000, guid: 8d8347df6bc178b4d993581d6a5c6461, type: 2}
   - {fileID: 2100000, guid: a3ba5bd618b8d6c4a9c7a2858c4dd4b7, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
@@ -969,7 +970,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &6545827554422033252
 Transform:
   m_ObjectHideFlags: 0

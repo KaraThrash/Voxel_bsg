@@ -78,7 +78,8 @@ public class GameManager : Manager {
     {
         if (Input.GetKeyDown(KeyCode.M))
         {
-            GetObjectiveEvent().Invoke(InGameEvent.fleetShipLost);
+           // GetObjectiveEvent().Invoke(InGameEvent.fleetShipLost);
+            GetEnemyDeathEvent().Invoke(EnemyManager().EnemyManager().Enemies()[0]);
         }
 
         if (Input.GetKeyDown(KeyCode.N))
@@ -204,7 +205,7 @@ public class GameManager : Manager {
 
 
 
-    public void StartLevel(Scene scene, LoadSceneMode mode)
+    public  void  StartLevel(Scene scene, LoadSceneMode mode)
     {
         if (GetGameState() == GameState.playing)
         {

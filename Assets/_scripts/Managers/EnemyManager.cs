@@ -76,6 +76,31 @@ public class EnemyManager : Manager
 
 
 
+    public void EnemyDie(Enemy _enemy)
+    {
+        GameManager().GetEnemyDeathEvent().Invoke(_enemy);
+
+        if (MapManager() && MapManager().currentMap) 
+        {
+            
+        }
+
+        Destroy(_enemy.gameObject);
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
     public void StartLevel()
     {
         if (Enemies() == null || Enemies().Count == 0) { return; }

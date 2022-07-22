@@ -6951,7 +6951,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ef7183270962da645adc664c4cbdab7c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PREFAB_pickup: {fileID: 0}
+  PREFAB_pickup: {fileID: 3940810697245535918, guid: f3b01594d6c0734478f1dbc9637d5d1e,
+    type: 3}
   PARENT_pickup: {fileID: 0}
 --- !u!1 &8370050522653930093
 GameObject:
@@ -7588,6 +7589,11 @@ PrefabInstance:
       objectReference: {fileID: 801932234}
     - target: {fileID: 1344418568136499713, guid: b1a32c6543bddf24382092912da222c0,
         type: 3}
+      propertyPath: TEXT_playerCurrency
+      value: 
+      objectReference: {fileID: 9341276}
+    - target: {fileID: 1344418568136499713, guid: b1a32c6543bddf24382092912da222c0,
+        type: 3}
       propertyPath: TEXT_playerHitPoints
       value: 
       objectReference: {fileID: 628380671}
@@ -7710,6 +7716,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_AnchoredPosition.x
       value: -20
+      objectReference: {fileID: 0}
+    - target: {fileID: 8739078406632117415, guid: b1a32c6543bddf24382092912da222c0,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9218974102820665577, guid: b1a32c6543bddf24382092912da222c0,
         type: 3}

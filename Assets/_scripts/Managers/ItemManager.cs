@@ -36,7 +36,7 @@ public class ItemManager : Manager {
 
         GameObject clone;
 
-        if (Parent_Pickup().childCount > 1 && Parent_Pickup().GetChild(0).GetComponent<PickUp>().onMap == false)
+        if (Parent_Pickup().childCount > 1 && Parent_Pickup().GetChild(0).gameObject.activeSelf == false)
         {
             clone = Parent_Pickup().GetChild(0).gameObject;
         }

@@ -159,6 +159,14 @@ public class Map : Manager
     }
 
 
+    public virtual void EnemyDeathEventListener(Enemy _enemy)
+    {
+
+        
+
+
+    }
+
     public virtual void GameEventListener(InGameEvent _event)
     {
 

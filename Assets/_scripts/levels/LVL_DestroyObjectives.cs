@@ -29,7 +29,15 @@ public class LVL_DestroyObjectives : Map
             poi.Add(el);
         }
 
+        foreach (Enemy el in FindObjectsOfType<Enemy>())
+        {
+            el.AttackTarget(GameManager().Player().ship.transform);
+        }
+
+
+
         GameManager().GetObjectiveEvent().AddListener(GameEventListener);
+        GameManager().GetEnemyDeathEvent().AddListener(EnemyDeathEventListener);
 
         count_enemyLeftToSpawn = 3;
         Spawn();
@@ -110,7 +118,25 @@ public class LVL_DestroyObjectives : Map
     }
 
 
+    public override void EnemyDeathEventListener(Enemy _enemy)
+    {
 
+        if (_enemy)
+        {
+            //TODO: items specific to area
+
+
+            if (ItemManager())
+            {
+                ItemManager().DropItem(ItemTypes.currency,10,_enemy.MainTransform().position);
+
+            }
+
+        }
+    
+
+
+    }
 
     public override void GameEventListener(InGameEvent _event)
     {

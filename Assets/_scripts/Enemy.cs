@@ -481,10 +481,9 @@ public class Enemy : Actor
     {
 
        
-        if (npcManager != null)
+        if (EnemyManager())
         {
-            // npcManager.NPCkilled(GetComponent<Enemy>());
-
+            EnemyManager().EnemyDie(this);
         }
 
     }
@@ -532,7 +531,7 @@ public class Enemy : Actor
     {
         if (subid == SubID.none)
         {
-            subid = (SubID)Random.Range(1, 6);
+           // subid = (SubID)Random.Range(1, 6);
         }
         return subid;
     }

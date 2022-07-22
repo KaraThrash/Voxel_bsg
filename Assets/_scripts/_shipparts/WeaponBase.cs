@@ -301,42 +301,39 @@ public class WeaponBase : ShipSystem
         {
             return;
         }
+
+
+        if (gunParent == null)
+        {
+            
+            return;
+        }
+
+
         foreach (Transform el in  gunParent)
         {
+            GameObject newBullet = null;
+
             if (BulletParent().childCount == 0 || BulletParent().GetChild(0).gameObject.activeSelf)
             {
                 if (bullet != null)
                 {
-                    GameObject clone = Instantiate(bullet, el.position, el.rotation);
-
-                    clone.GetComponent<Bullet>().bulletType = MyEnemy().Stats().bulletType;
-
-
-                    clone.SetActive(true);
-                    clone.GetComponent<Bullet>().Init();
-                    clone.GetComponent<Bullet>().Launch(MyEnemy().Stats());
+                    newBullet = Instantiate(bullet, el.position, el.rotation);
                 }
+
             }
             else
             {
-                Transform newBullet = BulletParent().GetChild(0);
-
-                if (MyEnemy() != null && MyEnemy().Stats() != null)
-                {
-                    newBullet.GetComponent<Bullet>().bulletType = MyEnemy().Stats().bulletType;
-                }
-                else
-                {
-                    newBullet.GetComponent<Bullet>().bulletType = BulletType.basic;
-                }
-
-                newBullet.gameObject.SetActive(true);
-                newBullet.GetComponent<Bullet>().Init();
-                newBullet.position = el.position;
-                newBullet.rotation = el.rotation;
-                newBullet.GetComponent<Bullet>().Launch(MyEnemy().Stats());
-
+                newBullet = BulletParent().GetChild(0).gameObject;
             }
+
+            newBullet.GetComponent<Bullet>().bulletType = MyEnemy().Stats().bulletType;
+            newBullet.transform.position = el.position;
+            newBullet.transform.rotation = el.rotation;
+
+            newBullet.SetActive(true);
+            newBullet.GetComponent<Bullet>().Init();
+            newBullet.GetComponent<Bullet>().Launch(MyEnemy().Stats());
         }
 
     }

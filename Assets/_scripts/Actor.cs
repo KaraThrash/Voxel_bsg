@@ -95,7 +95,11 @@ public class Actor : MonoBehaviour
     }
 
 
+    public void SetHitpoints(int _hp)
+    {
+        currentHealth = _hp;
 
+    }
 
     public void Hitpoints(int _change)
     {

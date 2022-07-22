@@ -516,11 +516,12 @@ public class Bullet : Actor
     {
 
         
-        if (collision.gameObject.GetComponent<Ship>() != null)
-        {
-            HitShip(collision.gameObject.GetComponent<Ship>(), collision.contacts[0].point);
-        }
-        else if (collision.gameObject.GetComponent<Actor>() != null)
+        //if (collision.gameObject.GetComponent<Ship>() != null)
+        //{
+        //    HitShip(collision.gameObject.GetComponent<Ship>(), collision.contacts[0].point);
+        //}
+        //else 
+        if (collision.gameObject.GetComponent<Actor>() != null)
         {
             HitActor(collision.gameObject.GetComponent<Actor>(), collision.contacts[0].point);
         }
@@ -538,11 +539,13 @@ public class Bullet : Actor
     public override void ProcessTriggerEnter(Collider collision)
     {
 
-        if (collision.gameObject.GetComponent<Ship>() != null)
-        {
-            HitShip(collision.gameObject.GetComponent<Ship>(), collision.ClosestPoint(transform.position));
-        }
-        else if (collision.gameObject.GetComponent<Actor>() != null)
+        //if (collision.gameObject.GetComponent<Ship>() != null)
+        //{
+        //    HitShip(collision.gameObject.GetComponent<Ship>(), collision.ClosestPoint(transform.position));
+        //}
+        //else 
+        
+        if (collision.gameObject.GetComponent<Actor>() != null)
         {
             HitActor(collision.gameObject.GetComponent<Actor>(), collision.ClosestPoint(transform.position));
         }

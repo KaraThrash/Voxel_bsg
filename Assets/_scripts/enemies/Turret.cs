@@ -22,10 +22,14 @@ public class Turret : Enemy
     public MeshRenderer render;
     public Material moveColor;
     public Material attackColor;
+    public Material outOfRangeColor;
 
-    public  void Start()
+
+
+    public override void  Init()
     {
         GetSubID();
+
         if (EnemyManager())
         {
             EnemyManager().AddEnemyToList(this);
@@ -35,7 +39,7 @@ public class Turret : Enemy
         if (AttackTarget() == null || GetShip() == null)
         {
           //  AttackTarget(EnemyManager().AttackTarget());
-            AttackTarget(FocusObject());
+          //  AttackTarget(FocusObject());
 
         }
 
@@ -44,9 +48,11 @@ public class Turret : Enemy
         lookAt_Position = transform.position + transform.forward * stats.closeRange;
 
 
-        //FocusObject().position = Map().GetNextPatrolPoint(count_patrolPoint);
-        FocusObject().position = moveTo_Position;// AttackTarget().position;
-
+        //a boss turret is the dradis dish that controls the group
+        if (GetSubID() == SubID.none || GetSubID() == SubID.Boss)
+        {
+            FocusObject().position = moveTo_Position;
+        }
 
         State(AiState.attacking);
 
@@ -59,13 +65,20 @@ public class Turret : Enemy
                 gun.STAT_CooldownTime(Stats().firerate);
                 gun.burstTime = Stats().timeBetweenBursts;
             }
-
+            stateTime = Stats().makeDecisionTime;
+            brainTime = Stats().makeDecisionTime;
+            timer_Brain = Stats().makeDecisionTime;
+            directionChangeSpeed = 12;
+        }
+        else
+        {
+            stateTime = 5;
+            brainTime = 12;
+            timer_Brain = brainTime;
+            directionChangeSpeed = 12;
         }
 
-        stateTime = 5;
-        brainTime = 12;
-        timer_Brain = brainTime;
-        directionChangeSpeed = 12;
+    
     }
 
 
@@ -104,7 +117,38 @@ public class Turret : Enemy
             return;
         }
 
-        Idle();
+        if (GetSubID() == SubID.Boss  )
+        {
+            if (State() == AiState.attacking)
+            {
+                DradisDish();
+            }
+            else
+            {
+                MainTransform().Rotate(0,  Stats().torquePower * 10 * Time.deltaTime, 0);
+            }
+        }
+        else
+        {
+            Idle();
+
+
+            if (State() == AiState.attacking)
+            {
+                if (Vector3.Angle(head_turret.forward, focusObject.position - head_turret.position) <= Stats().angleTolerance)
+                {
+                    if (gun != null) { gun.Activate(); }
+
+                }
+                else { if (gun != null) { gun.Deactivate(); } }
+            }
+            else
+            {
+               // focusObject.position = MainTransform().position + MainTransform().right;
+            }
+            
+        }
+        
 
         //if (GetShip().PrimaryWeapon())
         //{
@@ -116,12 +160,7 @@ public class Turret : Enemy
         //     else { if (gun != null) { gun.Deactivate(); } }
         //}
 
-        if (Vector3.Angle(head_turret.forward, focusObject.position - head_turret.position) <= Stats().angleTolerance)
-        {
-            if (gun != null) { gun.Activate(); }
-
-        }
-        else { if (gun != null) { gun.Deactivate(); } }
+       
 
 
 
@@ -162,18 +201,43 @@ public class Turret : Enemy
         //}
 
 
+        if (AttackTarget() && DistanceToTarget(AttackTarget()) > Stats().noticePlayerDistance)
+        {
+
+            if (render && outOfRangeColor)
+            { render.material = outOfRangeColor; }
+
+            State(AiState.idle);
+
+            return;
+        }
+        else { State(AiState.attacking); }
+
+
 
         RaycastHit hit;
-        if (Physics.Raycast(MainTransform().position, AttackTarget().position - MainTransform().position, out hit))
+
+        if (Physics.SphereCast(MainTransform().position, 0.5f,AttackTarget().position - MainTransform().position, out hit))
         {
             if (hit.transform != AttackTarget())
             {
-                //Vector3 newpos = GameManager().MapManager().GetMap().GetClosestPatrolPoint(MainTransform().position + (MainTransform().forward * stats.closeRange));
+                if (AttackTarget().GetComponent<Ship>() && Physics.Raycast(MainTransform().position, AttackTarget().GetComponent<Ship>().MainTransform().position - MainTransform().position, out hit))
+                {
+                    if (hit.transform == AttackTarget())
+                    {
+                        if (GetSubID() == SubID.Boss || GetSubID() == SubID.none)
+                        {
+                            FocusObject().position = AttackTarget().position ;
+                        }
 
-                //moveTo_Position = newpos;
-                //lookAt_Position = newpos;
+                        if (render && moveColor)
+                        {
+                            render.material = attackColor;
+                        }
 
-
+                        return;
+                    }
+                }
 
                 if (render && moveColor)
                 {
@@ -184,6 +248,11 @@ public class Turret : Enemy
             }
             else
             {
+                if ( GetSubID() == SubID.none || GetSubID() == SubID.Boss)
+                {
+                    FocusObject().position = AttackTarget().position ;
+                }
+
                 if (render && attackColor)
                 {
                     render.material = attackColor;
@@ -191,8 +260,12 @@ public class Turret : Enemy
             }
         }
 
-
-        FocusObject().position = AttackTarget().position + AttackTarget().forward * Stats().closeRange;
+        //a boss turret is the dradis dish that controls the group
+        if (GetSubID() == SubID.none )
+        {
+            FocusObject().position = AttackTarget().position + AttackTarget().forward * Stats().closeRange;
+        }
+        
 
         if (AttackTarget().GetComponent<Rigidbody>())
         {
@@ -204,39 +277,6 @@ public class Turret : Enemy
             moveTo_Position = AttackTarget().position + AttackTarget().right * Stats().closeRange;
             lookAt_Position = AttackTarget().position + AttackTarget().forward * Stats().closeRange;
         }
-
-
-        //if (GetSubID() == SubID.A)
-        //{
-        //    FocusObject().position = AttackTarget().position;
-        //    moveTo_Position = AttackTarget().position + ((MainTransform().position - AttackTarget().position).normalized * Stats().closeRange);
-
-        //    lookAt_Position = AttackTarget().position;
-        //}
-        //else if (GetSubID() == SubID.B)
-        //{
-        //    FocusObject().position = AttackTarget().position;
-
-        //    if (AttackTarget().GetComponent<Rigidbody>())
-        //    {
-        //        moveTo_Position = AttackTarget().position + AttackTarget().right + AttackTarget().GetComponent<Rigidbody>().velocity + (AttackTarget().right * Stats().closeRange);
-        //        lookAt_Position = AttackTarget().position + AttackTarget().GetComponent<Rigidbody>().velocity * Stats().closeRange;
-        //    }
-        //    else
-        //    {
-        //        moveTo_Position = AttackTarget().position + AttackTarget().right * Stats().closeRange;
-        //        lookAt_Position = AttackTarget().position + AttackTarget().forward * Stats().closeRange;
-        //    }
-
-        //}
-        //else
-        //{
-        //    FocusObject().position = AttackTarget().position;
-        //    moveTo_Position = AttackTarget().position + ((MainTransform().position - AttackTarget().position).normalized * Stats().closeRange);
-        //    moveTo_Position += AttackTarget().up * Random.Range(-1.0f, 1.0f);
-        //    moveTo_Position += AttackTarget().forward * Random.Range(-1.0f, 1.0f);
-        //    lookAt_Position = AttackTarget().position;
-        //}
 
 
 
@@ -286,6 +326,7 @@ public class Turret : Enemy
         }
     }
     public override void TakingDamage() { }
+
     public override void Moving()
     {
 
@@ -358,7 +399,35 @@ public class Turret : Enemy
     }
 
 
+    public void DradisDish()
+    {
+        float xrot = Vector3.SignedAngle(head_turret.forward, AttackTarget().position - head_turret.position, head_turret.right);
+        float yrot = Vector3.SignedAngle(MainTransform().forward, AttackTarget().position - MainTransform().position, MainTransform().up);
 
+
+        if (Vector3.Angle(MainTransform().up, AttackTarget().position - MainTransform().position) <= Stats().angleTolerance)
+        {
+
+
+            yrot = 0;
+
+        }
+
+        if (Vector3.Angle(MainTransform().forward, AttackTarget().position - head_turret.position) + (xrot * Stats().torquePower * Time.deltaTime) > Stats().rangeVarience)
+        {
+            xrot = 0;
+
+        }
+
+        if (Vector3.Angle(head_turret.forward, AttackTarget().position - head_turret.position) <= Stats().angleTolerance)
+        {
+            xrot = 0;
+
+        }
+
+        head_turret.Rotate(xrot * Stats().torquePower * Time.deltaTime, 0, 0);
+        MainTransform().Rotate(0, yrot * Stats().torquePower * Time.deltaTime, 0);
+    }
 
 }
 

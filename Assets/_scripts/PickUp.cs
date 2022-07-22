@@ -25,9 +25,32 @@ public class PickUp : Actor {
 
         onMap = true;
 
-        if (render)
+        if (render && colors.Length > 3)
         {
             render.material = colors[(int)Random.Range(0, colors.Length)];
+
+            Material[] newMats = new Material[4];
+
+            if (_itemType == ItemTypes.currency)
+            {
+                newMats[0] = colors[0];
+                newMats[1] = colors[1];
+                newMats[2] = colors[2];
+                newMats[3] = colors[3];
+
+
+
+            }
+            else
+            {
+                newMats[1] = colors[0];
+                newMats[2] = colors[1];
+                newMats[3] = colors[2];
+                newMats[0] = colors[2];
+            }
+
+            render.materials = newMats;
+
         }
         else
         {
@@ -60,13 +83,28 @@ public class PickUp : Actor {
 
     public override void ProcessCollisionEnter(Collision collision)
     {
+        //  GetPickedUp();
         GetPickedUp();
     }
+
+    public override void ProcessTriggerEnter(Collider collision)
+    {
+        GetPickedUp();
+        if (collision.GetComponent<Ship>() && collision.GetComponent<Ship>().isPlayer)
+        { 
+         
+
+        }
+
+    }
+
 
     public void GetPickedUp()
     {
         onMap = false;
-       transform.parent =  GameManager().ItemManager().Parent_Pickup();
+        //transform.parent =  GameManager().ItemManager().Parent_Pickup();
+
+        GameManager().FleetManager().GainResource(Stats.pointValue,quantity);
 
         if (mainWorldObject)
         {
@@ -74,6 +112,7 @@ public class PickUp : Actor {
         }
         else { gameObject.SetActive(false); }
 
+        
     }
 
 

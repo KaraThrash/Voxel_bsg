@@ -68,6 +68,26 @@ public class FleetManager : Manager
 
     }
 
+
+
+
+
+
+    public void GainResource(Stats _resource,float _quantity)
+    {
+        GetStats()[_resource] += _quantity;
+
+        if (_resource == Stats.pointValue)
+        {
+            MenuManager().Set_PlayerCurrency(GetStats()[_resource]);
+        }
+    }
+
+
+
+
+
+
     public List<FleetShip> Ships()
     {
         if (ships == null)
