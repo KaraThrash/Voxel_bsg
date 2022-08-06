@@ -134,7 +134,10 @@ public class WeaponBase : ShipSystem
 
     public override void Activate()
     {
-
+        if (on)
+        {
+            return;
+        }
 
         if (GetGunType() == GunType.burst)
         {
@@ -305,8 +308,8 @@ public class WeaponBase : ShipSystem
 
         if (gunParent == null)
         {
-            
-            return;
+            gunParent = transform;
+            //return;
         }
 
 

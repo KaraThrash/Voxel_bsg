@@ -44,6 +44,11 @@ public class Menus : Manager {
 
     public Text TEXT_clock;
 
+    public Text TEXT_food;
+    public Text TEXT_fuel;
+    public Text TEXT_pop;
+
+
     public Button button_weapon;
     public Button button_chasis;
     public Button button_engine;
@@ -451,7 +456,29 @@ public class Menus : Manager {
 
 
 
+    public void Set_ResourceText(Dictionary<Stats, float> _value)
+    {
 
+
+
+        if (TEXT_fuel)
+        {
+            SetText(TEXT_fuel, _value[Stats.fuel].ToString());
+        }
+
+        if (TEXT_food)
+        {
+            SetText(TEXT_food, _value[Stats.food].ToString());
+        }
+
+        if (TEXT_pop)
+        {
+            SetText(TEXT_pop, _value[Stats.pop].ToString());
+        }
+
+  
+
+    }
 
 
 

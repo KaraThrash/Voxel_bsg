@@ -15,6 +15,8 @@ public class PickUp : Actor {
     public MeshRenderer render;
     public GameObject mainWorldObject;
 
+    public ParticleSystem particle_AfterPickup;
+
     public Material[] colors; //green,red,blue,yellow
 
 
@@ -75,7 +77,23 @@ public class PickUp : Actor {
 	}
 
 	// Update is called once per frame
-	void Update () {
+	void FixedUpdate () {
+
+        if (onMap)
+        {
+            if (GameManager() != null && GameManager().Player().ship)
+            {
+                if (Vector3.Distance(GameManager().Player().ship.transform.position, transform.position) <= GameConstants.PICKUP_RANGE)
+                {
+                    GetPickedUp();
+                }
+                else
+                {
+                    RB().velocity = Vector3.Lerp(RB().velocity, (GameManager().Player().ship.transform.position - transform.position), Time.deltaTime);
+                 //   RB().AddForce((GameManager().Player().ship.transform.position - transform.position).normalized * Time.deltaTime  );
+                }
+            }
+        }
 
 	}
 
@@ -84,12 +102,13 @@ public class PickUp : Actor {
     public override void ProcessCollisionEnter(Collision collision)
     {
         //  GetPickedUp();
-        GetPickedUp();
+
     }
 
     public override void ProcessTriggerEnter(Collider collision)
     {
-        GetPickedUp();
+      //  GetPickedUp();
+
         if (collision.GetComponent<Ship>() && collision.GetComponent<Ship>().isPlayer)
         { 
          
@@ -99,12 +118,24 @@ public class PickUp : Actor {
     }
 
 
+
+  
+
+
     public void GetPickedUp()
     {
         onMap = false;
         //transform.parent =  GameManager().ItemManager().Parent_Pickup();
 
         GameManager().FleetManager().GainResource(Stats.pointValue,quantity);
+
+        if (particle_AfterPickup)
+        {
+            particle_AfterPickup.transform.parent = null ;
+            particle_AfterPickup.transform.position = transform.position;
+
+            particle_AfterPickup.Play();
+        }
 
         if (mainWorldObject)
         {
@@ -127,7 +158,7 @@ public class PickUp : Actor {
         }
         else 
         {
-            if (transform.GetChild(0).GetComponent<Renderer>() != null)
+            if (transform.childCount > 0 && transform.GetChild(0).GetComponent<Renderer>() != null)
             {
                 transform.GetChild(0).GetComponent<Renderer>().material = colors[1];
             }

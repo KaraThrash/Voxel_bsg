@@ -42,7 +42,7 @@ public class ResourceManager : Manager {
         currency = _points;
         UpdateCurrencyText(currency.ToString());
     }
-    public void SpendCurrency(int _amount)
+    public void UpdateSCurrency(int _amount)
     {  
         currency += _amount;
         UpdateCurrencyText(currency.ToString());
@@ -133,8 +133,8 @@ public class ResourceManager : Manager {
     public void EnemyDeathEvent(Enemy _enemy)
     {
         if (_enemy.Stats() != null)
-        { SpendCurrency(-_enemy.Stats().pointValue); }
-        else { SpendCurrency(-1); }
+        { UpdateSCurrency(_enemy.Stats().pointValue); }
+        else { UpdateSCurrency(1); }
 
     }
 

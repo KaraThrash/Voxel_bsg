@@ -15,6 +15,9 @@ public static class GameConstants
     public static float BULLET_SPEED = 30.0f;
     public static float BULLET_DAMAGE = 1.0f;
 
+
+    public static float PICKUP_RANGE = 5.0f;
+
     public static bool TYPE_A = false;// manually control the ship rotation, the camera focuses in front of the ship
 
 
@@ -203,25 +206,42 @@ public static class GameConstants
     }
 
 
-    public static float DefaultStatValue_Fleet(Stats _stat)
+    public static float DefaultStatValue_Fleet(Item _item)
     {
-        if (_stat == Stats.food)
-        { return 1; }
-        if (_stat == Stats.producefood)
-        { return 1; }
-        if (_stat == Stats.modifyfoodproduction)
-        { return 0.01f; }
-        if (_stat == Stats.fuel)
-        { return 1; }
-        if (_stat == Stats.producefuel)
-        { return 1; }
-        if (_stat == Stats.modifyfuelproduction)
-        { return 0.01f; }
+     
 
-
-
-
-
+        if (_item.GetStats()[Stats.food] == 0)
+        {
+            _item.GetStats()[Stats.food] = 10;
+        }
+        else if (_item.GetStats()[Stats.producefood] == 0)
+        {
+            _item.GetStats()[Stats.producefood] = -1;
+        }
+        else if (_item.GetStats()[Stats.fuel] == 0)
+        {
+            _item.GetStats()[Stats.fuel] = 10;
+        }
+        else if (_item.GetStats()[Stats.producefuel] == 0)
+        {
+            _item.GetStats()[Stats.producefuel] = -1;
+        }
+        else if (_item.GetStats()[Stats.pop] == 0)
+        {
+            _item.GetStats()[Stats.pop] = 1;
+        }
+        else if (_item.GetStats()[Stats.modifyfoodproduction] == 0)
+        {
+            _item.GetStats()[Stats.modifyfoodproduction] = 1;
+        }
+        else if (_item.GetStats()[Stats.modifyfuelproduction] == 0)
+        {
+            _item.GetStats()[Stats.modifyfuelproduction] = 1;
+        }
+        //else if (_item.GetStats()[Stats.producepop] == 0)
+        //{
+        //    _item.GetStats()[Stats.producepop] = 1;
+        //}
 
 
         return 0;

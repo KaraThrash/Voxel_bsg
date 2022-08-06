@@ -253,8 +253,12 @@ public class ItemManager : Manager {
         {
             GameConstants.DefaultStatValue_Weapon(newItem);
         }
+        else if (newItem.type == ItemTypes.fleet)
+        {
+            GameConstants.DefaultStatValue_Fleet(newItem);
+        }
 
-
+        
         //this is only so the stats are visible in the inspector
         foreach (Stats el in (Stats[])Enum.GetValues(typeof(Stats)))
         {

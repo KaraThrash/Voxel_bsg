@@ -106,6 +106,8 @@ public class Ship : Actor
 
     public ChasisBase chasis;
 
+    public ComputerSystem cpu;
+
     public Vector3 velocityTarget;
 
     public UiShipDisplay uiDisplay;
@@ -380,6 +382,11 @@ public class Ship : Actor
 
     public override void ProcessTriggerEnter(Collider collision)
     {
+        if (isPlayer && collision.GetComponent<PickUp>())
+        {
+            collision.GetComponent<PickUp>().GetPickedUp();
+        }
+
 
     }
 
@@ -644,6 +651,13 @@ public class Ship : Actor
 
         return chasis;
     }
+
+    public ComputerSystem CPU()
+    {
+
+        return cpu;
+    }
+
 
     public Quaternion RotationTarget()
     {

@@ -13,6 +13,7 @@ public class Manager : MonoBehaviour
     private NpcManager npcManager;
     private ItemManager itemManager;
     private Player player;
+    private ResourceManager resourceManager;
     private WorldTime timeManager;
 
     public GameManager GameManager()
@@ -76,6 +77,16 @@ public class Manager : MonoBehaviour
         }
         return player;
     }
+
+    public ResourceManager ResourceManager()
+    {
+        if (resourceManager == null)
+        {
+            resourceManager = FindObjectOfType<ResourceManager>();
+        }
+        return resourceManager;
+    }
+
 
     public WorldTime TimeManager()
     {

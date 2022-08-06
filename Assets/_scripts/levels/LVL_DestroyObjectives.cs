@@ -94,7 +94,7 @@ public class LVL_DestroyObjectives : Map
 
         foreach (Map_POI el in GetPOIList())
         {
-            if (el.Map() == this && el.isSpawnPoint)
+            if (el.Hitpoints() > 0 && el.Map() == this && el.isSpawnPoint)
             {
                 SubID newsubid = SubID.none;
                 if (count_enemyLeftToSpawn % 3 == 0)
@@ -103,6 +103,8 @@ public class LVL_DestroyObjectives : Map
                 { newsubid = SubID.B; }
                 else 
                 { newsubid = SubID.C; }
+
+
                 EnemyManager().SpawnEnemy(prefab_enemy, el.transform, newsubid);
                 timer_timeBetweenSpawn = interval_timeBetweenSpawn;
                 count_enemyLeftToSpawn--;

@@ -121,7 +121,17 @@ public class TestEnemy : Enemy
             return;
         }
 
-        Attacking();
+        if (State() == AiState.attacking)
+        {
+            Attacking();
+        }
+        else if (State() == AiState.moving)
+        {
+            Idle();
+        }
+
+
+        
 
         //if (GetShip().PrimaryWeapon())
         //{
@@ -171,6 +181,17 @@ public class TestEnemy : Enemy
             return;
 
         }
+
+
+        if (State() == AiState.attacking)
+        {
+            State(AiState.moving);
+        }
+        else if (State() == AiState.moving)
+        {
+            State(AiState.attacking);
+        }
+
 
         bool canSee = false;
 
@@ -380,37 +401,14 @@ public class TestEnemy : Enemy
         //  movementControls.Torque = Stats().torquePower;
         // movementControls.Speed = Stats().engineThrottle;
 
-        Quaternion toFace = Quaternion.LookRotation(FocusObject().position - GetShip().transform.position);
-        transform.rotation = Quaternion.Lerp(transform.rotation, toFace, Mathf.Min(Stats().torquePower * Time.deltaTime, 1));
+        Quaternion rot = Quaternion.LookRotation(lookAt_Position - ShipTransform().position, AttackTarget().up);
+ 
 
-        GetShip().transform.position += GetShip().transform.forward * Time.deltaTime * Stats().engineThrottle;
-
-        float dist = Vector3.Distance(focusObject.position, GetShip().transform.position);
-
-        if (dist <= Stats().rangeVarience)
-        {
-            count_PatrolPoint++;
+        float pwr = Time.deltaTime * Stats().torquePower;
+        ShipTransform().rotation = Quaternion.Slerp(ShipTransform().transform.rotation, rot, pwr);
 
 
-            if (patrolTarget != null && patrolTarget.childCount > 0)
-            {
-                if (patrolTarget.childCount <= count_PatrolPoint)
-                { count_PatrolPoint = 0; }
 
-                FocusObject().position = patrolTarget.GetChild(count_PatrolPoint).position;
-
-            }
-            else
-            {
-                FocusObject().position = (GetShip().transform.position - GetShip().transform.forward + GetShip().transform.up);
-            }
-
-
-        }
-        else
-        {
-
-        }
     }
     public override void Dodging() { }
     public override void Fleeing() { }
@@ -425,76 +423,7 @@ public class TestEnemy : Enemy
 
 
 
-    public RangeBand RangeTo()
-    {
-        if (Vector3.Distance(ShipTransform().position, AttackTarget().position) >= Stats().farRange * 2)
-        {
-            return RangeBand.extreme;
-        }
-        else if (Vector3.Distance(ShipTransform().position, AttackTarget().position) < Stats().closeRange * 0.5f)
-        {
-            return RangeBand.melee;
-        }
-        else if (Vector3.Distance(ShipTransform().position, AttackTarget().position) <= Stats().midRange)
-        {
-            return RangeBand.close;
-        }
-        else if (Vector3.Distance(ShipTransform().position, AttackTarget().position) > Stats().closeRange)
-        {
-            return RangeBand.mid;
-        }
 
-        return RangeBand.unknown;
-    }
-
-
-
-    public RangeBand RangeTo(Transform _target)
-    {
-        if (Vector3.Distance(ShipTransform().position, _target.position) >= Stats().farRange * 2)
-        {
-            return RangeBand.extreme;
-        }
-        else if (Vector3.Distance(ShipTransform().position, _target.position) < Stats().closeRange * 0.5f)
-        {
-            return RangeBand.melee;
-        }
-        else if (Vector3.Distance(ShipTransform().position, _target.position) <= Stats().midRange)
-        {
-            return RangeBand.close;
-        }
-        else if (Vector3.Distance(ShipTransform().position, _target.position) > Stats().closeRange)
-        {
-            return RangeBand.mid;
-        }
-
-        return RangeBand.unknown;
-    }
-
-
-    public RangeBand RangeTo(Transform _from, Transform _target)
-    {
-        //for conditions based around another object, like a treasure or fleetship [i.e.:do x when y is close to z]
-        if (Vector3.Distance(_from.position, _target.position) >= Stats().farRange * 2)
-        {
-            return RangeBand.extreme;
-        }
-        else if (Vector3.Distance(_from.position, _target.position) < Stats().closeRange * 0.5f)
-        {
-            return RangeBand.melee;
-        }
-        else if (Vector3.Distance(_from.position, _target.position) <= Stats().midRange)
-        {
-            return RangeBand.close;
-        }
-        else if (Vector3.Distance(_from.position, _target.position) > Stats().closeRange)
-        {
-            return RangeBand.mid;
-        }
-
-
-        return RangeBand.unknown;
-    }
 
 
 

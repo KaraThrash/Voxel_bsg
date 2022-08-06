@@ -10,5 +10,7 @@ public class Map_POI : Actor
     public bool isPatrolPoint;
     public bool isObjective;
 
+    public bool isActive;
+
 
 }

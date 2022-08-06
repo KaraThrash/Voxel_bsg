@@ -15,8 +15,10 @@ Name:zigzagzugzog,id:zzzz,type:bullet,firerate:1,damage:0,speed:5,mobility:55,bu
 Name:bullet6,id:b6,type:bullet,firerate:1,damage:0,speed:5,mobility:55,bulletlifetime:14,projectileSpeed:25,subtype:basic
 Name:missile0,id:mi0,type:bullet,firerate:1,damage:0,speed:5,mobility:55,bulletlifetime:14,projectileSpeed:25,subtype:missile
 Name:colonial_one,id:c1,type:fleet,subtype:unique
-Name:fuel_0,id:fs0,type:fleet,fuel:1,producefuel:10,modifyfuelproduction:0.2,subtype:producer
-Name:food_1,id:fs1,type:fleet,food:1,producefood:10,modifyfoodproduction:0.2,subtype:producer
-Name:fleet_ship2,id:fs2,type:fleet,subtype:producer
+Name:fuel_0,id:fs0,type:fleet,fuel:1,producefuel:2,modifyfuelproduction:0.2,producefood:-5,subtype:producer
+Name:food_1,id:fs1,type:fleet,food:1,producefood:2,modifyfoodproduction:0.2,subtype:producer
+Name:fleet_ship2,id:fs2,type:fleet,producefuel:-1,subtype:producer
+Name:fleet_ship2,id:fs2,type:fleet,producefuel:-1,subtype:producer
+Name:fleet_ship2,id:fs2,type:fleet,producefuel:-1,subtype:producer
 Name:cpu0,id:e-c-0,type:computer,sensor:1,subtype:0
 Name:blank,id:b-b-0,type:none,armor:0,damage:0,speed:0,mobility:0,fireRate:0,projectileSpeed:0,bulletsperburst:0,bulletlifetime:0,sensor:0,stamina_max:0,stamina_cost:0,stamina_rechargeLockout:0,storage:0,pointValue:0,food:0,producefood:0,modifyfoodproduction:0,fuel:0,producefuel:0,modifyfuelproduction:0,pop:0,producepop:0,modifypopproduction:0,subtype:0

@@ -8,9 +8,12 @@ public class FleetManager : Manager
 
 
 
+    public float currency;
+
     public float food;
     public float produce_food;
     public float storage_food;
+
     public float fuel;
     public float produce_fuel;
     public float storage_fuel;
@@ -32,7 +35,7 @@ public class FleetManager : Manager
     {
         foreach (Stats el in (Stats[])Enum.GetValues(typeof(Stats)))
         {
-            GetStats()[el] =  GameConstants.DefaultStatValue_Fleet(el);
+            GetStats()[el] = 0;// GameConstants.DefaultStatValue_Fleet(el);
         }
 
 
@@ -40,7 +43,7 @@ public class FleetManager : Manager
 
         foreach (FleetShip el in ships)
         {
-           
+
             foreach (Stats jay in (Stats[])Enum.GetValues(typeof(Stats)))
             {
                 GetStats()[jay] = GetStats()[jay] + el.GetStats()[jay];
@@ -53,7 +56,16 @@ public class FleetManager : Manager
         fuel = fuel + (GetStats()[Stats.producefuel] + (GetStats()[Stats.producefuel] * GetStats()[Stats.modifyfuelproduction]));
         pop = pop + (GetStats()[Stats.producepop] + (GetStats()[Stats.producepop] * GetStats()[Stats.modifypopproduction]));
 
+        //food = Mathf.Round(food);
+        //fuel = Mathf.Round(fuel);
+        //pop = Mathf.Round(pop);
 
+        GetStats()[Stats.food] = Mathf.Round(food);
+        GetStats()[Stats.fuel] = Mathf.Round(fuel);
+        GetStats()[Stats.pop] = Mathf.Round(pop);
+
+
+        MenuManager().Set_ResourceText(GetStats());
     }
 
 
@@ -79,6 +91,7 @@ public class FleetManager : Manager
 
         if (_resource == Stats.pointValue)
         {
+            currency += _quantity;
             MenuManager().Set_PlayerCurrency(GetStats()[_resource]);
         }
     }
@@ -107,7 +120,8 @@ public class FleetManager : Manager
 
             foreach (Stats el in (Stats[])Enum.GetValues(typeof(Stats)))
             {
-                statMap.Add(el, GameConstants.DefaultStatValue_Ship(el));
+              //  statMap.Add(el, GameConstants.DefaultStatValue_Ship(el));
+                statMap.Add(el, 0);
             }
         }
         return statMap;

@@ -93,7 +93,8 @@ public class GameManager : Manager {
         }
         if (Input.GetKeyDown(KeyCode.RightShift))
         {
-            ItemManager().DropItem(ItemTypes.currency,1,Player().Ship().MainTransform().position + (Player().Ship().MainTransform().forward * 5));
+            //ItemManager().DropItem(ItemTypes.currency,1,Player().Ship().MainTransform().position + (Player().Ship().MainTransform().forward * 5));
+            FleetManager().EndOfTurn();
 
         }
 
