@@ -44,7 +44,7 @@ public class WeaponBase : ShipSystem
 
         if (GetGunType() == GunType.auto)
         {
-            if (PositiveButton())
+            if (PositiveButton() || on)
             {
                 Auto();
             }
@@ -105,6 +105,10 @@ public class WeaponBase : ShipSystem
         {
             FireBullet();
             timer_Cooldown = STAT_CooldownTime();
+        }
+        else 
+        {
+            timer_Cooldown -= Time.deltaTime;
         }
     }
 
@@ -308,8 +312,31 @@ public class WeaponBase : ShipSystem
 
         if (gunParent == null)
         {
-            gunParent = transform;
-            //return;
+
+            GameObject newBullet = null;
+
+            if (BulletParent().childCount == 0 || BulletParent().GetChild(0).gameObject.activeSelf)
+            {
+                if (bullet != null)
+                {
+                    newBullet = Instantiate(bullet, transform.position, transform.rotation);
+                }
+
+            }
+            else
+            {
+                newBullet = BulletParent().GetChild(0).gameObject;
+            }
+
+            newBullet.GetComponent<Bullet>().bulletType = MyEnemy().Stats().bulletType;
+            newBullet.transform.position = transform.position;
+            newBullet.transform.rotation = transform.rotation;
+
+            newBullet.SetActive(true);
+            newBullet.GetComponent<Bullet>().Init();
+            newBullet.GetComponent<Bullet>().Launch(MyEnemy().Stats());
+
+            return;
         }
 
 

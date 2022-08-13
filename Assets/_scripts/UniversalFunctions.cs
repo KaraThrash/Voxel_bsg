@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -34,6 +35,39 @@ public static class UniversalFunctions
         return null;
     }
 
+    //public static Transform FindDeepChildByComponent(this Transform aParent, Type  aName)
+    //{
+    //    Queue<Transform> queue = new Queue<Transform>();
+    //    queue.Enqueue(aParent);
+
+    //    while (queue.Count > 0)
+    //    {
+    //        var c = queue.Dequeue();
+    //        Debug.Log(c.GetType());
+    //        if (c.GetType(aName)  )
+    //            return c;
+    //        foreach (Transform t in c)
+    //            queue.Enqueue(t);
+    //    }
+    //    return null;
+    //}
+
+
+    public static Transform FindDeepChildByActorSubId(this Transform aParent, SubID aName)
+    {
+        Queue<Transform> queue = new Queue<Transform>();
+        queue.Enqueue(aParent);
+        while (queue.Count > 0)
+        {
+            var c = queue.Dequeue();
+            if (c.GetComponent<Actor>() && c.GetComponent<Actor>().GetSubID() == aName)
+                return c;
+            foreach (Transform t in c)
+                queue.Enqueue(t);
+        }
+        return null;
+    }
+
     public static Transform FindDeepChildByTag(this Transform aParent, string aName)
     {
         Queue<Transform> queue = new Queue<Transform>();
@@ -54,6 +88,9 @@ public static class UniversalFunctions
         GetChildrenObject(aParent, _list, _tag);
     }
 
+
+
+
     public static void GetChildrenObject(Transform parent, List<Transform> _list, string _tag)
     {
         for (int i = 0; i < parent.childCount; i++)
@@ -69,6 +106,22 @@ public static class UniversalFunctions
             }
         }
     }
+
+    public static void GetDeepChildren(Transform parent, List<Transform> _list)
+    {
+        for (int i = 0; i < parent.childCount; i++)
+        {
+            Transform child = parent.GetChild(i);
+      
+                _list.Add(child);
+            
+            if (child.childCount > 0)
+            {
+                GetDeepChildren(child, _list);
+            }
+        }
+    }
+
 
 
     public static void RecursiveSetColliderTrigger(Transform _parent, bool _on)

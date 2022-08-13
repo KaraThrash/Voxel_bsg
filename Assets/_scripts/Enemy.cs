@@ -16,7 +16,7 @@ public class Enemy : Actor
     public AiState state;
     private AiState pendingState;
     public Stance stance;
-    public SubID subid;
+
 
     public Transform attackTarget;
     public Transform focusObject; //the object the polarith AI is trying to move towards. Use Polarith for general navigating, and set polarith to zero for specific actions
@@ -527,15 +527,7 @@ public class Enemy : Actor
     public void SetStance(Stance _stance) { stance = _stance; }
 
 
-    public SubID GetSubID() 
-    {
-        if (subid == SubID.none)
-        {
-           // subid = (SubID)Random.Range(1, 6);
-        }
-        return subid;
-    }
-
+  
 
 
 

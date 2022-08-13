@@ -7,7 +7,7 @@ public class Actor : MonoBehaviour
     private GameManager gameManager;
 
     public ActorType actorType;
-
+    public SubID subid;
     public bool isPlayer = false;
     [SerializeField]
 
@@ -149,6 +149,18 @@ public class Actor : MonoBehaviour
 
     public void ActorType(ActorType _type)
     { actorType = _type; }
+
+    public SubID GetSubID()
+    {
+        if (subid == SubID.none)
+        {
+            // subid = (SubID)Random.Range(1, 6);
+        }
+        return subid;
+    }
+
+
+
 
     public Transform MainTransform()
     {

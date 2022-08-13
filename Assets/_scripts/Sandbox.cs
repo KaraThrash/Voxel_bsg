@@ -6,16 +6,37 @@ using UnityEngine;
 
 public class Sandbox : MonoBehaviour
 {
-
+    public bool act;
     public Grades grade;
     public Camera camera;
     public Transform obj,newmapObj, spawnablesToPickFrom;
     public Transform object0, object1;
     public GameObject table;
     public GameObject gameObj,obj0,obj1,obj2,obstacles;
+
+    public List<Actor> childList;
+
     // Start is called before the first frame update
     void Start()
     {
+        if (act)
+        {
+            List<Transform> rndList = new List<Transform>();
+           childList = new List<Actor>();
+
+             UniversalFunctions.GetDeepChildren(transform, rndList);
+
+            foreach (Transform el in rndList)
+            {
+                if (el.GetComponent<Actor>())
+                {
+                    childList.Add(el.GetComponent<Actor>());
+                }
+                Debug.Log(el.name);
+            }
+
+        }
+
         Debug.Log(grade.Passing());
  
 
