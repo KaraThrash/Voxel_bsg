@@ -5,13 +5,13 @@ using UnityEngine;
 public class LVL_DestroyObjectives : Map
 {
     public int interval_spawnEvent;
-    private float timer_spawnEvent;
+    public float timer_spawnEvent;
 
     public int maxEnemyOnScreen;
     public int enemyPerWave;
 
     public int interval_timeBetweenSpawn;
-    private float timer_timeBetweenSpawn;
+    public float timer_timeBetweenSpawn;
 
 
     public int count_enemyLeftToSpawn;

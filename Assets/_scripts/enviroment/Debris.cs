@@ -7,7 +7,7 @@ public class Debris : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Init(transform.position +  transform.up ,5);
+        SetDebrisVelocity(transform.position +  transform.up ,5);
     }
 
     // Update is called once per frame
@@ -17,7 +17,7 @@ public class Debris : MonoBehaviour
     }
 
 
-    public void Init(Vector3 _pointFrom,float _speed)
+    public void SetDebrisVelocity(Vector3 _pointFrom,float _speed)
     {
         foreach (Transform el in transform)
         {

@@ -568,7 +568,7 @@ public class Bullet : Actor
         PlaceExplosion();
 
 
-        _actor.TakeDamage(Damage());
+        _actor.TakeDamage(Damage(),this);
 
         Die();
 

@@ -89,7 +89,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8618146942540358918}
   - component: {fileID: 5528829565681971676}
-  m_Layer: 15
+  m_Layer: 2
   m_Name: Trailobj
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -404,7 +404,7 @@ GameObject:
   - component: {fileID: 8413305280811304134}
   - component: {fileID: 5991731278351560716}
   - component: {fileID: 5198873237157728734}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: craft_cargoB
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -19455,11 +19455,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actorType: 1
+  subid: 1
   isPlayer: 0
   maxHP: 0
   canAct: 1
   currentHealth: 0
-  mainTransform: {fileID: 0}
+  mainTransform: {fileID: 8766203435657439812}
   dradisIcon: {fileID: 172555369728184924}
   rb: {fileID: 8766203435657439813}
   crosshair: {fileID: 6480814421523752559}
@@ -19468,7 +19469,6 @@ MonoBehaviour:
   ship: {fileID: 5635802071367706732}
   state: 5
   stance: 0
-  subid: 1
   attackTarget: {fileID: 0}
   focusObject: {fileID: 8766203436368910565}
   visual_engineParticles: {fileID: 8766203436146892735}
@@ -19478,7 +19478,7 @@ MonoBehaviour:
   gun: {fileID: 8766203435757465360}
   effect_Explosion: {fileID: 0}
   patrolTarget: {fileID: 0}
-  render: {fileID: 0}
+  render: {fileID: 5991731278351560716}
   moveColor: {fileID: 2100000, guid: e71589fdd121c9d449b55640bffc2c54, type: 2}
   attackColor: {fileID: 2100000, guid: 6a8b0e504d7cf634b8527c093accf69b, type: 2}
 --- !u!1 &8766203435694747234
@@ -19529,6 +19529,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actorType: 0
+  subid: 0
   isPlayer: 0
   maxHP: 12
   canAct: 0
@@ -19550,6 +19551,7 @@ MonoBehaviour:
   secondaryEngine: {fileID: 0}
   primaryWeapon: {fileID: 8766203435757465360}
   chasis: {fileID: 8766203435476601269}
+  cpu: {fileID: 0}
   velocityTarget: {x: 0, y: 0, z: 0}
   uiDisplay: {fileID: 0}
   visual_engineParticles: {fileID: 0}

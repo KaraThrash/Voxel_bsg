@@ -46,7 +46,7 @@ public class Objective : Map_POI
         {}
     }
 
-    public override void TakeDamage(int _dmg)
+    public override void TakeDamage(int _dmg, Bullet _bullet)
     {
         Hitpoints(-_dmg);
 

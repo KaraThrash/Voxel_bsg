@@ -446,6 +446,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actorType: 0
+  subid: 0
   isPlayer: 0
   maxHP: 10
   canAct: 0
@@ -457,11 +458,13 @@ MonoBehaviour:
   isSpawnPoint: 0
   isPatrolPoint: 0
   isObjective: 1
+  isActive: 0
   patrolPoint: {fileID: 3116999357755739441}
-  defaultColor: {r: 0, g: 0, b: 0, a: 0}
-  deadColor: {r: 1, g: 1, b: 1, a: 0}
+  defaultColor: {r: 0.76907253, g: 0, b: 1, a: 0}
+  deadColor: {r: 0, g: 0, b: 0, a: 0}
   meshRenderer: {fileID: 3116999358214217410}
-  explosion: {fileID: 0}
+  explosion: {fileID: 4006452548556515020, guid: 0e15e3e20ce7e5446b5b7d200db0beb0,
+    type: 3}
   visual_bulletImpact: {fileID: 0}
   onDamageTaken:
     m_PersistentCalls:
@@ -595,10 +598,10 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 8d8347df6bc178b4d993581d6a5c6461, type: 2}
-  - {fileID: 2100000, guid: c852eaa8bba635645b05aeeb4319e584, type: 2}
-  - {fileID: 2100000, guid: 8d8347df6bc178b4d993581d6a5c6461, type: 2}
-  - {fileID: 2100000, guid: a3ba5bd618b8d6c4a9c7a2858c4dd4b7, type: 2}
+  - {fileID: 2100000, guid: 522bf1dac7a953c47a70f02868ea6dae, type: 2}
+  - {fileID: 2100000, guid: 296cb8c1c91aba74c851351c6f69e9be, type: 2}
+  - {fileID: 2100000, guid: 522bf1dac7a953c47a70f02868ea6dae, type: 2}
+  - {fileID: 2100000, guid: 296cb8c1c91aba74c851351c6f69e9be, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1746,6 +1749,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2463904532492871501, guid: d00203912155c514f8acf9b9a100e409,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2904018412340910923, guid: d00203912155c514f8acf9b9a100e409,
         type: 3}
       propertyPath: m_Name
@@ -1754,7 +1762,7 @@ PrefabInstance:
     - target: {fileID: 2904018412340910923, guid: d00203912155c514f8acf9b9a100e409,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d00203912155c514f8acf9b9a100e409, type: 3}

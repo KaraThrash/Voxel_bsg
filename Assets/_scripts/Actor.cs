@@ -94,6 +94,17 @@ public class Actor : MonoBehaviour
 
     }
 
+    public virtual void TakeDamage(int _dmg,Bullet _bullet)
+    {
+        //apply dmg reduc, external forces, other talents etc
+
+        Hitpoints(-_dmg);
+
+
+
+    }
+
+
 
     public void SetHitpoints(int _hp)
     {
@@ -130,7 +141,7 @@ public class Actor : MonoBehaviour
     public float PercentHealth()
     {
         float current = Hitpoints();
-        float max = Mathf.Clamp(STAT_MaxHP(), 1, 100);
+        float max = Mathf.Clamp(STAT_MaxHP(), 1, 100 );
 
         return current / max;
     }

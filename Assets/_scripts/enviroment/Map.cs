@@ -42,9 +42,9 @@ public class Map : Manager
         return Vector3.zero;
     }
 
-    public Vector3 GetClosestPatrolPoint(Vector3 _from)
+    public Vector3 GetClosestPatrolPoint(Vector3 _from,float _minDistance=1)
     {
-        Vector3 closestPoint = _from + Vector3.one;
+        Vector3 closestPoint = _from + (100 * Vector3.one);
 
         if (parent_PatrolPoints != null)
         {
@@ -57,9 +57,10 @@ public class Map : Manager
         foreach (Transform el in parent_PatrolPoints)
         {
             RaycastHit hit;
-            if ( ! Physics.Raycast(_from, el.position - _from, out hit))
+            if ( ! Physics.Raycast(_from, el.position - _from, out hit, Vector3.Distance(_from, el.position)))
             {
-                if (Vector3.Distance(el.position, _from) < Vector3.Distance(_from, closestPoint))
+                float newdist = Vector3.Distance(el.position, _from);
+                if (newdist < Vector3.Distance(_from, closestPoint) && newdist > _minDistance)
                 { closestPoint = el.position; }
             }
 
