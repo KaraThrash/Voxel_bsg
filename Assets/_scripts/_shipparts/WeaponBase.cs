@@ -7,7 +7,7 @@ public class WeaponBase : ShipSystem
 {
     public GameObject bullet;
     public GunType gunType;
-
+    public List<Bullet_Type> bulletTypes;
     public Transform gunParent; //if the gun has multiple muzzle's
     
 
@@ -393,4 +393,14 @@ public class WeaponBase : ShipSystem
 
     public GunType GetGunType() { return gunType; }
     public void SetGunType(GunType _type) { gunType = _type; }
+
+    public List<Bullet_Type> BulletTypes()
+    {
+        if (bulletTypes == null)
+        {
+            bulletTypes = new List<Bullet_Type>();
+        }
+        return bulletTypes;
+    }
+
 }

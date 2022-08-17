@@ -7,6 +7,8 @@ public class Bullet : Actor
 
     public Bullet_Type bulletType;
 
+    public List<Bullet_Type> bulletTypes;
+
     public float speed, rotSpeed;
     private float currentRotSpeed;
 
@@ -21,7 +23,7 @@ public class Bullet : Actor
     public float lifetimeMax = 10.0f;
     public float  lifeTime;
 
-    private float  eventTimestamp = -1;
+    private float  timestamp_Event = -1;
     private float  eventIncrement = -1;
 
     private float tracker_DirectionChanges = 0;
@@ -57,14 +59,27 @@ public class Bullet : Actor
     private string explosionParentName = "PARENT_Explosion";
 
     public GameObject missileObj;
-    public MeshRenderer renderer;
+    public MeshRenderer render;
 
+
+    protected float pwr = 1;
+    protected float acc = 0.1f;
+    protected float dmg = 0;
+    protected float newLifeTime = 10;
 
     public float LifeTimeMax() { return lifetimeMax; }
     public float Speed() { return speed; }
     public float RotationSpeed() { return rotSpeed; }
     public int Damage() { return damage; }
     public void Damage(int _dmg) {  damage = _dmg; }
+    public List<Bullet_Type> BulletTypes()
+    {
+        if (bulletTypes == null)
+        {
+            bulletTypes = new List<Bullet_Type>();
+        }
+        return bulletTypes;
+    }
     public Bullet_Type BulletType() { return bulletType; }
     public void BulletType(Bullet_Type _type) { bulletType = _type; }
 
@@ -85,11 +100,24 @@ public class Bullet : Actor
     public void Init()
     {
         if (missileObj) { missileObj.SetActive(false); }
-        if (renderer) { renderer.enabled = true ; }
+        if (render) { render.enabled = true ; }
+
+        bulletTypes = new List<Bullet_Type>();
 
         SetCollider(false);
         RB().isKinematic = false;
-        lifeTime = LifeTimeMax();
+
+        //set the stats to default, the specific values are set when launched if the firing ship has equipment
+        pwr = GameConstants.BULLET_SPEED;
+        acc = 0.1f;
+        dmg = GameConstants.BULLET_DAMAGE;
+
+        newLifeTime = LifeTimeMax();
+
+        BulletType(Bullet_Type.basic);
+        BulletTypes().Add(Bullet_Type.basic);
+
+
         //move to the bottom of the child list [bullets are selected from the first child '0']
         transform.parent = null;
         transform.parent = BulletParent();
@@ -99,76 +127,82 @@ public class Bullet : Actor
         current_acceleration = 0;
     }
 
+
+    public void CalculateStats(Ship _ship)
+    {
+
+        Dictionary<Stats, float> stats = _ship.GetEquipment().GetStats();
+        Item bulletStats = _ship.GetEquipment().GetBullet();
+        pwr = stats[Stats.projectileSpeed];
+        pwr = (pwr / 100) * bulletStats.GetStats()[Stats.projectileSpeed];
+        pwr += bulletStats.GetStats()[Stats.projectileSpeed];
+
+
+        dmg = stats[Stats.damage];
+        dmg = (dmg / 100) * bulletStats.GetStats()[Stats.damage];
+        dmg += bulletStats.GetStats()[Stats.damage];
+
+        newLifeTime = stats[Stats.bulletlifetime];
+        newLifeTime = (newLifeTime / 100) * bulletStats.GetStats()[Stats.bulletlifetime];
+        newLifeTime += bulletStats.GetStats()[Stats.bulletlifetime];
+
+        rotSpeed = bulletStats.GetStats()[Stats.mobility];
+
+
+        acc = bulletStats.GetStats()[Stats.speed];
+
+        BulletType((Bullet_Type)bulletStats.subtype);
+        BulletTypes().Add((Bullet_Type)bulletStats.subtype);
+
+
+
+        if (_ship.PrimaryWeapon() && _ship.PrimaryWeapon().BulletTypes().Count > 0)
+        {
+            BulletTypes().AddRange(_ship.PrimaryWeapon().BulletTypes());
+
+        }
+
+        if (_ship.CPU() && _ship.CPU().GetTarget())
+        {
+            SetTarget(_ship.CPU().GetTarget().gameObject);
+
+        }
+
+
+    }
+
+
     public void Launch(Ship _ship)
     {
-        
-
-        float pwr = 1;
-        float acc = 0.1f;
-        float dmg = 0;
-
-        float newLifeTime = LifeTimeMax();
-
-        currentRotSpeed = 0;
-        current_acceleration = 0;
 
 
-        if (_ship == null || _ship.GetEquipment() == null || _ship.GetEquipment().GetBullet() == null)
+
+
+        if (_ship)
         {
-           
-            rotSpeed = 1;
-            pwr = GameConstants.BULLET_SPEED;
-            dmg = GameConstants.BULLET_DAMAGE;
-            BulletType(Bullet_Type.basic);
-        }
-        else
-        {
-            Dictionary<Stats, float> stats = _ship.GetEquipment().GetStats();
-            Item bulletStats = _ship.GetEquipment().GetBullet();
-            pwr = stats[Stats.projectileSpeed];
-            pwr = (pwr / 100) * bulletStats.GetStats()[Stats.projectileSpeed];
-            pwr += bulletStats.GetStats()[Stats.projectileSpeed];
-
-
-             dmg = stats[Stats.damage];
-            dmg = (dmg / 100) * bulletStats.GetStats()[Stats.damage];
-            dmg += bulletStats.GetStats()[Stats.damage];
-
-             newLifeTime = stats[Stats.bulletlifetime];
-            newLifeTime = (newLifeTime / 100) * bulletStats.GetStats()[Stats.bulletlifetime];
-            newLifeTime += bulletStats.GetStats()[Stats.bulletlifetime];
-
-            rotSpeed = bulletStats.GetStats()[Stats.mobility];
-
-            
-            acc = bulletStats.GetStats()[Stats.speed];
-
-            BulletType((Bullet_Type)bulletStats.subtype);
-
-            if (BulletType() == Bullet_Type.missile)
+            if (_ship.GetEquipment())
             {
-                transform.position += _ship.DeploySpot().localPosition;
+                if (_ship.GetEquipment().GetBullet() != null)
+                {
+                    CalculateStats(_ship);
 
+                    if (BulletType() == Bullet_Type.missile)
+                    {
+                        transform.position +=new Vector3(0, _ship.DeploySpot().localPosition.y, _ship.DeploySpot().localPosition.z);
+
+                    }
+                }
             }
-
-
-            if (_ship.CPU() && _ship.CPU().GetTarget())
-            { 
-                SetTarget(_ship.CPU().GetTarget().gameObject);
-
-            }
-
-
-
-
-
         }
+
+      
+
 
         lifeTime = newLifeTime;
-        eventTimestamp = -1;
+        timestamp_Event = -1;
 
 
-        if (lifeTime < 1) { lifeTime = 1; }
+        if (lifeTime == 0 ) { lifeTime = 1; }
 
         speed = pwr;
 
@@ -176,7 +210,6 @@ public class Bullet : Actor
 
         Damage(Mathf.FloorToInt(dmg));
 
-        rotationDirection = Vector3.zero;
         direction = transform.forward;
 
         if (BulletType() == Bullet_Type.basic)
@@ -188,14 +221,19 @@ public class Bullet : Actor
             direction = transform.right;
             rotationDirection = _ship.MainTransform().forward ;
 
-            eventTimestamp = newLifeTime * 0.7f;
+            timestamp_Event = newLifeTime * 0.7f;
             target = _ship.MainTransform().gameObject;
 
         }
         else if (BulletType() == Bullet_Type.missile)
         {
             if (missileObj) { missileObj.SetActive(true); }
-            if (renderer) { renderer.enabled = false; }
+            if (render) { render.enabled = false; }
+
+            direction = (_ship.MainTransform().position - transform.position).normalized;
+
+
+
             SetCollider(false);
             current_acceleration = 0.1f;
             if (acc > 0)
@@ -228,7 +266,7 @@ public class Bullet : Actor
             rotationDirection = transform.forward - transform.right;
 
             eventIncrement = lifeTime * 0.1f;
-            eventTimestamp = lifeTime - (eventIncrement * 0.5f);
+            timestamp_Event = lifeTime - (eventIncrement * 0.5f);
 
         }
         else
@@ -251,7 +289,7 @@ public class Bullet : Actor
 
 
         lifeTime = _stats.bulletLifeTime;
-        eventTimestamp = -1;
+        timestamp_Event = -1;
 
 
         if (lifeTime < 1) { lifeTime = 1; }
@@ -301,7 +339,7 @@ public class Bullet : Actor
             rotationDirection = transform.forward - transform.right;
 
             eventIncrement = lifeTime * 0.1f;
-            eventTimestamp = lifeTime - (eventIncrement * 0.5f);
+            timestamp_Event = lifeTime - (eventIncrement * 0.5f);
 
         }
         else
@@ -389,7 +427,7 @@ public class Bullet : Actor
     {
         RB().velocity = (transform.forward * speed);// + relativeVelocity;
 
-        if (target && eventTimestamp > lifeTime)
+        if (target && timestamp_Event > lifeTime)
         {
             if (currentRotSpeed < rotSpeed)
             {
@@ -423,46 +461,58 @@ public class Bullet : Actor
 
     public void Missile()
     {
-        Vector3 vel = transform.forward * speed * current_acceleration;
 
-        if (current_acceleration < 0.2f)
+        current_acceleration += Time.deltaTime * acceleration;
+
+
+        Vector3 vel = transform.forward * 1 * current_acceleration;
+
+        if (current_acceleration < acceleration * 3)
         {
-            vel +=  -transform.up * speed * (0.21f - current_acceleration);
+            vel += -direction * 1 * ((acceleration * 4) - current_acceleration);
         }
 
         
         
 
 
-        RB().velocity = vel;
+        
 
+        
 
         if (target)
         {
-            if (currentRotSpeed < rotSpeed)
-            {
-                currentRotSpeed += (Time.deltaTime * acceleration);
-                if (currentRotSpeed > rotSpeed)
-                {
-                    currentRotSpeed = rotSpeed;
-                }
-            }
+            currentRotSpeed += (Time.deltaTime * rotSpeed);
+           
 
-            if (current_acceleration < 1)
-            {
-                current_acceleration += Time.deltaTime * acceleration;
+            //if (currentRotSpeed < rotSpeed)
+            //{
 
-                if (current_acceleration > 1)
-                {
-                    currentRotSpeed = 1;
-                }
-            }
+            //    currentRotSpeed += (Time.deltaTime * acceleration);
+            //    if (currentRotSpeed > rotSpeed)
+            //    {
+            //        currentRotSpeed = rotSpeed;
+            //    }
+            //}
+
+            //if (current_acceleration < 1)
+            //{
+
+
+            //    if (current_acceleration > 1)
+            //    {
+            //        current_acceleration = 1;
+            //    }
+            //}
 
             Quaternion targetRotation = Quaternion.LookRotation(target.transform.position - transform.position);
 
             transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, currentRotSpeed * Time.deltaTime);
         }
-       
+
+
+        RB().velocity = vel;
+
     }
 
     public void Missile_Collision(Collision collision)
@@ -507,9 +557,9 @@ public class Bullet : Actor
         RB().velocity = (direction * speed);// + relativeVelocity;
 
 
-        if (eventTimestamp > lifeTime)
+        if (timestamp_Event > lifeTime)
         {
-            eventTimestamp = lifeTime - eventIncrement ;
+            timestamp_Event = lifeTime - eventIncrement ;
 
             Vector3 oldDir = direction;
             direction = rotationDirection;
@@ -786,14 +836,28 @@ public class Bullet : Actor
     }
 
  
-    public void SetCollider(bool _on)
+    public void SetCollider(bool _on,bool _trigger=false)
     {
         if (GetCollider() != null)
         {
             GetCollider().enabled = _on;
+            GetCollider().isTrigger = _trigger;
         }
 
+        foreach (Transform el in MainTransform())
+        {
+            if (el.GetComponent<Collider>())
+            {
+                el.GetComponent<Collider>().enabled = _on; 
+                el.GetComponent<Collider>().isTrigger = _trigger;
+            }
+        }
+
+
     }
+
+
+
 
     public Collider GetCollider()
     {

@@ -119,7 +119,11 @@ public class EnemyManager : Manager
     {
         foreach (Enemy el in Enemies())
         {
-            el.canAct = false;        
+            if (el)
+            { 
+                el.canAct = false;
+
+            }
         }
     }
 
