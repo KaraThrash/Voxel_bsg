@@ -40,6 +40,8 @@ public static class GameConstants
         { return 1; }
         if (_stat == Stats.speed)
         { return 1; }
+        if (_stat == Stats.acceleration)
+        { return 1; }
         if (_stat == Stats.mobility)
         { return 1; }
         if (_stat == Stats.fireRate)

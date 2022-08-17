@@ -107,6 +107,10 @@ public class Ship : Actor
     public ChasisBase chasis;
 
     public ComputerSystem cpu;
+    public Transform itemDeploySpot;
+
+
+
 
     public Vector3 velocityTarget;
 
@@ -542,6 +546,7 @@ public class Ship : Actor
             PrimaryEngine().STAT_PowerSecondary(GetEquipment().GetStats()[Stats.mobility]);
 
 
+            PrimaryEngine().rate_Acceleration = GetEquipment().GetStats()[Stats.acceleration];
 
         }
 
@@ -619,6 +624,21 @@ public class Ship : Actor
         if (Chasis() != null)
         { Chasis().STAT_Power(GetEquipment().armor); }
     }
+
+
+
+
+
+
+    public Transform DeploySpot()
+    {
+        if (itemDeploySpot == null)
+        { return transform; }
+
+        return itemDeploySpot;
+    }
+
+
 
 
 

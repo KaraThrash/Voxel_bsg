@@ -81,7 +81,7 @@ public enum ItemTypes
 }
 
 
-public enum BulletType { basic, missile, lance,large, boomerang, spiral, spread,zigzag }
+public enum Bullet_Type { basic, missile, lance,large, boomerang, spiral, spread,zigzag,bounce }
 
 public enum FleetShipType
 {
@@ -98,12 +98,12 @@ public class ItemSubType
 
     public ItemSubType()
     {
-        bulletType = BulletType.lance;
+        bulletType = Bullet_Type.lance;
         fleetShipType = FleetShipType.storage;
         resourceType = ResourceType.morale;
     }
 
-    public BulletType bulletType;
+    public Bullet_Type bulletType;
     public FleetShipType fleetShipType;
     public ResourceType resourceType;
 
@@ -121,8 +121,10 @@ public enum Stats
     , damage
 
     , speed
+        ,acceleration
 
     , mobility
+
     , fireRate
     , projectileSpeed
     , bulletsperburst
@@ -307,17 +309,17 @@ public static class EnumGroups
 
     }
 
-    public static BulletType BulletTypeFromString(string _type)
+    public static Bullet_Type BulletTypeFromString(string _type)
     {
 
-        foreach (BulletType el in (BulletType[])Enum.GetValues(typeof(BulletType)))
+        foreach (Bullet_Type el in (Bullet_Type[])Enum.GetValues(typeof(Bullet_Type)))
         {
             if (el.ToString().Equals(_type))
             { return el; }
         }
 
 
-        return BulletType.basic;
+        return Bullet_Type.basic;
 
     }
 

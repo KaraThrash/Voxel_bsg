@@ -12,6 +12,7 @@ public class Equipment : ScriptableObject
     public float armor = 0;
     public float damage = 0;
     public float speed = 0;
+    public float acceleration = 0;
 
     public float mobility = 0;
 
@@ -174,11 +175,12 @@ public class Equipment : ScriptableObject
             GetStats()[Stats.fireRate] = 0.2f;
             GetStats()[Stats.sensor] = 1;
             GetStats()[Stats.stamina_max] = 11;
+            GetStats()[Stats.acceleration] = 1;
 
             Item defaultBullet = new Item();
 
             defaultBullet.type = ItemTypes.bullet;
-            defaultBullet.subtypeClass.bulletType = BulletType.basic;
+            defaultBullet.subtypeClass.bulletType = Bullet_Type.basic;
 
             defaultBullet.GetStats()[Stats.damage] = 1;
             defaultBullet.GetStats()[Stats.bulletlifetime] = 10;
@@ -220,7 +222,7 @@ public class Equipment : ScriptableObject
         speed = 0;
         damage = 0;
         mobility = 0;
-
+        acceleration = 0;
 
         if (weapon != null)
         {
@@ -228,7 +230,7 @@ public class Equipment : ScriptableObject
             damage = weapon.GetStats()[Stats.damage];
             mobility = weapon.GetStats()[Stats.mobility];
             speed = weapon.GetStats()[Stats.speed];
-
+            acceleration = weapon.GetStats()[Stats.acceleration];
 
             AddStats(weapon);
         }
@@ -247,6 +249,7 @@ public class Equipment : ScriptableObject
             damage += (damage * engine.GetStats()[Stats.damage]);
             mobility = engine.GetStats()[Stats.mobility] + (mobility * engine.GetStats()[Stats.mobility]);
             speed = engine.GetStats()[Stats.speed] + (speed * engine.GetStats()[Stats.speed]);
+            acceleration = engine.GetStats()[Stats.acceleration] + (acceleration * engine.GetStats()[Stats.acceleration]);
 
             AddStats(engine);
         
@@ -271,6 +274,8 @@ public class Equipment : ScriptableObject
             armor = chasis.GetStats()[Stats.armor] + (chasis.GetStats()[Stats.armor] * armor);
             damage += (damage * chasis.GetStats()[Stats.damage]);
 
+
+
             if (chasis.GetStats()[Stats.mobility] != 0)
             { mobility = (mobility * chasis.GetStats()[Stats.mobility]); }
 
@@ -286,6 +291,7 @@ public class Equipment : ScriptableObject
             damage = damage + (damage * computer.GetStats()[Stats.damage]);
             mobility = mobility + (mobility * computer.GetStats()[Stats.mobility]);
             speed = speed + (speed * computer.GetStats()[Stats.speed]);
+            acceleration = acceleration + (acceleration * computer.GetStats()[Stats.acceleration]);
 
             AddStats(computer);
 
@@ -299,6 +305,7 @@ public class Equipment : ScriptableObject
         GetStats()[Stats.damage] = damage ;
         GetStats()[Stats.mobility] = mobility ;
         GetStats()[Stats.speed] = speed ;
+        GetStats()[Stats.acceleration] = acceleration;
 
 
     }

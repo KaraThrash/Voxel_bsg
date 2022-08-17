@@ -5,7 +5,7 @@ using UnityEngine;
 public class Bullet : Actor
 {
 
-    public BulletType bulletType;
+    public Bullet_Type bulletType;
 
     public float speed, rotSpeed;
     private float currentRotSpeed;
@@ -40,7 +40,7 @@ public class Bullet : Actor
 
     private int toggleValue = 1;
 
-    public bool lance, missile, spray, twinlinked, boomerang, spiral; //toggles on instead of being a projectile
+
     public bool ice;
 
     private Vector3 direction, secondaryDirection, relativeVelocity;
@@ -56,13 +56,17 @@ public class Bullet : Actor
     private Transform explosionParent;
     private string explosionParentName = "PARENT_Explosion";
 
+    public GameObject missileObj;
+    public MeshRenderer renderer;
+
 
     public float LifeTimeMax() { return lifetimeMax; }
     public float Speed() { return speed; }
     public float RotationSpeed() { return rotSpeed; }
     public int Damage() { return damage; }
     public void Damage(int _dmg) {  damage = _dmg; }
-
+    public Bullet_Type BulletType() { return bulletType; }
+    public void BulletType(Bullet_Type _type) { bulletType = _type; }
 
 
     // Use this for initialization
@@ -80,6 +84,9 @@ public class Bullet : Actor
 
     public void Init()
     {
+        if (missileObj) { missileObj.SetActive(false); }
+        if (renderer) { renderer.enabled = true ; }
+
         SetCollider(false);
         RB().isKinematic = false;
         lifeTime = LifeTimeMax();
@@ -88,6 +95,8 @@ public class Bullet : Actor
         transform.parent = BulletParent();
 
         rotationDirection = Vector3.zero;
+        currentRotSpeed = 0;
+        current_acceleration = 0;
     }
 
     public void Launch(Ship _ship)
@@ -95,13 +104,13 @@ public class Bullet : Actor
         
 
         float pwr = 1;
-        float acc = 0;
+        float acc = 0.1f;
         float dmg = 0;
 
         float newLifeTime = LifeTimeMax();
 
         currentRotSpeed = 0;
-        current_acceleration = 1;
+        current_acceleration = 0;
 
 
         if (_ship == null || _ship.GetEquipment() == null || _ship.GetEquipment().GetBullet() == null)
@@ -110,6 +119,7 @@ public class Bullet : Actor
             rotSpeed = 1;
             pwr = GameConstants.BULLET_SPEED;
             dmg = GameConstants.BULLET_DAMAGE;
+            BulletType(Bullet_Type.basic);
         }
         else
         {
@@ -133,6 +143,25 @@ public class Bullet : Actor
             
             acc = bulletStats.GetStats()[Stats.speed];
 
+            BulletType((Bullet_Type)bulletStats.subtype);
+
+            if (BulletType() == Bullet_Type.missile)
+            {
+                transform.position += _ship.DeploySpot().localPosition;
+
+            }
+
+
+            if (_ship.CPU() && _ship.CPU().GetTarget())
+            { 
+                SetTarget(_ship.CPU().GetTarget().gameObject);
+
+            }
+
+
+
+
+
         }
 
         lifeTime = newLifeTime;
@@ -150,11 +179,11 @@ public class Bullet : Actor
         rotationDirection = Vector3.zero;
         direction = transform.forward;
 
-        if (bulletType == BulletType.basic)
+        if (BulletType() == Bullet_Type.basic)
         {
             RB().velocity = transform.forward * pwr;
         }
-        else if (bulletType == BulletType.boomerang)
+        else if (BulletType() == Bullet_Type.boomerang)
         {
             direction = transform.right;
             rotationDirection = _ship.MainTransform().forward ;
@@ -163,32 +192,36 @@ public class Bullet : Actor
             target = _ship.MainTransform().gameObject;
 
         }
-        else if (bulletType == BulletType.missile)
+        else if (BulletType() == Bullet_Type.missile)
         {
+            if (missileObj) { missileObj.SetActive(true); }
+            if (renderer) { renderer.enabled = false; }
+            SetCollider(false);
+            current_acceleration = 0.1f;
             if (acc > 0)
             {
                 //projectiles with no acceleration have a stable constant speec [i.e. current acceleration is 1]
                 acceleration = acc;
-                current_acceleration = 0;
+                current_acceleration = 0.1f;
             }
         }
-        else if (bulletType == BulletType.spread)
+        else if (BulletType() == Bullet_Type.spread)
         {
 
         }
-        else if (bulletType == BulletType.lance)
+        else if (BulletType() == Bullet_Type.lance)
         {
 
         }
-        else if (bulletType == BulletType.large)
+        else if (BulletType() == Bullet_Type.large)
         {
             transform.localScale = new Vector3(1,1,1); ;
         }
-        else if (bulletType == BulletType.spiral)
+        else if (BulletType() == Bullet_Type.spiral)
         {
             rotationDirection = -_ship.MainTransform().right - _ship.MainTransform().up;
         }
-        else if (bulletType == BulletType.zigzag)
+        else if (BulletType() == Bullet_Type.zigzag)
         {
 
             direction = transform.forward + transform.right;
@@ -213,7 +246,7 @@ public class Bullet : Actor
 
 
         currentRotSpeed = 0;
-        current_acceleration = 1;
+        current_acceleration = 0.1f;
 
 
 
@@ -232,36 +265,36 @@ public class Bullet : Actor
         rotationDirection = Vector3.zero;
         direction = transform.forward;
 
-        if (bulletType == BulletType.basic)
+        if (BulletType() == Bullet_Type.basic)
         {
             RB().velocity = transform.forward * speed;
         }
-        else if (bulletType == BulletType.boomerang)
+        else if (BulletType() == Bullet_Type.boomerang)
         {
 
 
         }
-        else if (bulletType == BulletType.missile)
+        else if (BulletType() == Bullet_Type.missile)
         {
 
         }
-        else if (bulletType == BulletType.spread)
+        else if (BulletType() == Bullet_Type.spread)
         {
 
         }
-        else if (bulletType == BulletType.lance)
+        else if (BulletType() == Bullet_Type.lance)
         {
 
         }
-        else if (bulletType == BulletType.large)
+        else if (BulletType() == Bullet_Type.large)
         {
             transform.localScale = new Vector3(1, 1, 1); ;
         }
-        else if (bulletType == BulletType.spiral)
+        else if (BulletType() == Bullet_Type.spiral)
         {
 
         }
-        else if (bulletType == BulletType.zigzag)
+        else if (BulletType() == Bullet_Type.zigzag)
         {
 
             direction = transform.forward + transform.right;
@@ -298,15 +331,23 @@ public class Bullet : Actor
         { lifeTime -= Time.deltaTime; }
         
 
-        if (bulletType == BulletType.boomerang)
+        if (BulletType() == Bullet_Type.boomerang)
         {
             Boomerang();
         }
-        else if (bulletType == BulletType.spiral)
+        else if (BulletType() == Bullet_Type.missile)
+        {
+            Missile();
+        }
+        else if (BulletType() == Bullet_Type.bounce)
+        {
+            
+        }
+        else if (BulletType() == Bullet_Type.spiral)
         {
             Spiral();
         }
-        else if (bulletType == BulletType.zigzag)
+        else if (BulletType() == Bullet_Type.zigzag)
         {
             ZigZag();
         }
@@ -382,15 +423,25 @@ public class Bullet : Actor
 
     public void Missile()
     {
-        RB().velocity = (transform.forward * speed);// + relativeVelocity;
+        Vector3 vel = transform.forward * speed * current_acceleration;
 
+        if (current_acceleration < 0.2f)
+        {
+            vel +=  -transform.up * speed * (0.21f - current_acceleration);
+        }
+
+        
+        
+
+
+        RB().velocity = vel;
 
 
         if (target)
         {
             if (currentRotSpeed < rotSpeed)
             {
-                currentRotSpeed += Time.deltaTime;
+                currentRotSpeed += (Time.deltaTime * acceleration);
                 if (currentRotSpeed > rotSpeed)
                 {
                     currentRotSpeed = rotSpeed;
@@ -563,23 +614,30 @@ public class Bullet : Actor
     public virtual void HitActor(Actor _actor, Vector3 _pos)
     {
 
-        GetComponent<Collider>().enabled = false;
-
         PlaceExplosion();
-
 
         _actor.TakeDamage(Damage(),this);
 
-        Die();
+
+        if (BulletType() == Bullet_Type.bounce)
+        {
+
+        }
+        else
+        {
+            GetComponent<Collider>().enabled = false;
+
+            
+            Die();
+
+        }
 
     }
 
     public virtual void HitShip(Ship _ship, Vector3 _pos)
     {
-
-        GetComponent<Collider>().enabled = false;
-
         PlaceExplosion();
+
 
         if (_ship.Chasis())
         {
@@ -591,7 +649,18 @@ public class Bullet : Actor
 
 
 
-        Die();
+        if (BulletType() == Bullet_Type.bounce)
+        {
+
+        }
+        else
+        {
+            GetComponent<Collider>().enabled = false;
+
+           
+            Die();
+
+        }
 
     }
 
@@ -601,12 +670,21 @@ public class Bullet : Actor
     public void HitEnviroment()
     {
 
-
-        GetComponent<Collider>().enabled = false;
-
         PlaceExplosion();
 
-        Die();
+
+        if (BulletType() == Bullet_Type.bounce)
+        {
+
+        }
+        else
+        {
+            GetComponent<Collider>().enabled = false;
+
+     
+            Die();
+
+        }
 
     }
 

@@ -81,12 +81,14 @@ public class Player : MonoBehaviour {
         {
             Ship().PrimaryEngine().STAT_Power(Ship().GetEquipment().GetStats()[Stats.speed]);
             Ship().PrimaryEngine().STAT_PowerSecondary(Ship().GetEquipment().GetStats()[Stats.mobility]);
+            Ship().PrimaryEngine().rate_Acceleration = Ship().GetEquipment().GetStats()[Stats.acceleration];
         }
 
         if (Ship().SecondaryEngine())
         {
             Ship().SecondaryEngine().STAT_Power(Ship().GetEquipment().GetStats()[Stats.mobility]);
             Ship().SecondaryEngine().STAT_PowerSecondary(Ship().GetEquipment().GetStats()[Stats.mobility]);
+            Ship().SecondaryEngine().rate_Acceleration = Ship().GetEquipment().GetStats()[Stats.acceleration];
         }
 
         if (Ship().PrimaryWeapon())

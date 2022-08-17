@@ -27,7 +27,7 @@ public class Stats_Enemy : ScriptableObject
     public float decelerate = 1;
 
     public GunType guntype;
-    public BulletType bulletType;
+    public Bullet_Type bulletType;
   
 
     public int bulletsPerBurst;

@@ -81,7 +81,7 @@ public class WeaponBase : ShipSystem
 
             if (burstTracker <= 0 )
             {
-                FireBullet();
+                Shoot();
                 burstTracker = burstTime;
                 bulletCount++;
             }
@@ -103,7 +103,7 @@ public class WeaponBase : ShipSystem
 
         if (!OnCooldown())
         {
-            FireBullet();
+            Shoot();
             timer_Cooldown = STAT_CooldownTime();
         }
         else 
@@ -118,7 +118,7 @@ public class WeaponBase : ShipSystem
 
         if (burstTracker >= burstTime)
         {
-            FireBullet();
+            Shoot();
             timer_Cooldown = STAT_CooldownTime();
             burstTracker = 0;
             on = false;
@@ -127,7 +127,7 @@ public class WeaponBase : ShipSystem
 
     public void SemiAuto()
     {
-        FireBullet();
+        Shoot();
 
         if (!on)
         {
@@ -169,7 +169,7 @@ public class WeaponBase : ShipSystem
         else if (GetGunType() == GunType.semiauto)
         {
             // SemiAuto();
-            FireBullet();
+            Shoot();
 
         }
 
@@ -187,7 +187,7 @@ public class WeaponBase : ShipSystem
 
 
 
-    public void FireBullet()
+    public void Shoot()
     {
 
         if (Ship() == null || MyEnemy() != null)
@@ -197,103 +197,95 @@ public class WeaponBase : ShipSystem
         }
 
 
+
+
+
         if (gunParent != null)
         {
-            FireBullet(gunParent);
+            foreach (Transform el in gunParent)
+            {
+                FireBullet(el);
+            }
+
+
             return;
         }
-
-        if (BulletParent().childCount == 0 || BulletParent().GetChild(0).gameObject.activeSelf)
+        else
         {
-            if (bullet != null)
-            {
-                GameObject clone = Instantiate(bullet, transform.position, transform.rotation);
-                if (Ship() != null && Ship().GetEquipment() != null && Ship().GetEquipment().GetBullet() != null)
-                {
-                    clone.GetComponent<Bullet>().bulletType = (BulletType)Ship().GetEquipment().GetBullet().subtype;
-                }
-                else
-                {
-                    clone.GetComponent<Bullet>().bulletType = BulletType.basic;
-                }
-                clone.SetActive(true);
-                clone.GetComponent<Bullet>().Init();
-                clone.GetComponent<Bullet>().Launch(Ship());
-            }
+            FireBullet(transform);
         }
-        else 
-        {
-            Transform newBullet = BulletParent().GetChild(0);
 
-            if (Ship() != null && Ship().GetEquipment() != null && Ship().GetEquipment().GetBullet() != null)
-            {
-                newBullet.GetComponent<Bullet>().bulletType = (BulletType)Ship().GetEquipment().GetBullet().subtype;
-            }
-            else
-            {
-                newBullet.GetComponent<Bullet>().bulletType = BulletType.basic;
-            }
+        //if (BulletParent().childCount == 0 || BulletParent().GetChild(0).gameObject.activeSelf)
+        //{
+        //    if (bullet != null)
+        //    {
+        //        GameObject clone = Instantiate(bullet, transform.position, transform.rotation);
+        //        if (Ship() != null && Ship().GetEquipment() != null && Ship().GetEquipment().GetBullet() != null)
+        //        {
+        //            clone.GetComponent<Bullet>().bulletType = (Bullet_Type)Ship().GetEquipment().GetBullet().subtype;
+        //        }
+        //        else
+        //        {
+        //            clone.GetComponent<Bullet>().bulletType = Bullet_Type.basic;
+        //        }
+        //        clone.SetActive(true);
+        //        clone.GetComponent<Bullet>().Init();
+        //        clone.GetComponent<Bullet>().Launch(Ship());
+        //    }
+        //}
+        //else 
+        //{
+        //    Transform newBullet = BulletParent().GetChild(0);
 
-            newBullet.gameObject.SetActive(true);
-            newBullet.GetComponent<Bullet>().Init();
-            newBullet.position = transform.position;
-            newBullet.rotation = transform.rotation;
-            newBullet.GetComponent<Bullet>().Launch(Ship());
+        //    if (Ship() != null && Ship().GetEquipment() != null && Ship().GetEquipment().GetBullet() != null)
+        //    {
+        //        newBullet.GetComponent<Bullet>().bulletType = (Bullet_Type)Ship().GetEquipment().GetBullet().subtype;
+        //    }
+        //    else
+        //    {
+        //        newBullet.GetComponent<Bullet>().bulletType = Bullet_Type.basic;
+        //    }
 
-        }
+        //    newBullet.gameObject.SetActive(true);
+        //    newBullet.GetComponent<Bullet>().Init();
+        //    newBullet.position = transform.position;
+        //    newBullet.rotation = transform.rotation;
+        //    newBullet.GetComponent<Bullet>().Launch(Ship());
+
+        //}
 
         
     }
 
 
-    public void FireBullet(Transform _guns)
+    public void FireBullet(Transform _gun)
     {
-        if (_guns != null)
+        if (_gun != null)
         {
-            foreach (Transform el in _guns)
+            GameObject newBullet = null;
+
+            if (BulletParent().childCount == 0 || BulletParent().GetChild(0).gameObject.activeSelf)
             {
-                if (BulletParent().childCount == 0 || BulletParent().GetChild(0).gameObject.activeSelf)
+                if (bullet != null)
                 {
-                    if (Ship().GetEquipment().GetBullet() != null && bullet != null)
-                    {
-                        GameObject clone = Instantiate(bullet, el.position, el.rotation);
-                        clone.GetComponent<Bullet>().bulletType = (BulletType)Ship().GetEquipment().GetBullet().subtype;
-
-                        clone.GetComponent<Bullet>().Init();
-                        clone.SetActive(true);
-                        clone.GetComponent<Bullet>().Launch(Ship());
-                    }
-                    else
-                    {
-                        if (bullet != null)
-                        {
-                            GameObject clone = Instantiate(bullet, el.position, el.rotation);
-
-                            clone.GetComponent<Bullet>().Init();
-                            clone.SetActive(true);
-                            clone.GetComponent<Bullet>().Launch(Ship());
-                        }
-                    }
+                    newBullet = Instantiate(bullet, transform.position, transform.rotation);
                 }
-                else
-                {
-                    Transform newBullet = BulletParent().GetChild(0);
 
-                    if (Ship().GetEquipment().GetBullet() != null)
-                    { 
-                        newBullet.GetComponent<Bullet>().bulletType = (BulletType)Ship().GetEquipment().GetBullet().subtype;
-
-                    }
-
-                    newBullet.gameObject.SetActive(true);
-                    newBullet.GetComponent<Bullet>().Init();
-                    newBullet.position = el.position;
-                    newBullet.rotation = el.rotation;
-                    newBullet.GetComponent<Bullet>().Launch(Ship());
-
-                }
             }
-            
+            else
+            {
+                newBullet = BulletParent().GetChild(0).gameObject;
+            }
+
+            if (newBullet == null || newBullet.GetComponent<Bullet>() == null) { return; }
+
+            newBullet.transform.position = _gun.position;
+            newBullet.transform.rotation = _gun.rotation;
+
+            newBullet.SetActive(true);
+            newBullet.GetComponent<Bullet>().Init();
+            newBullet.GetComponent<Bullet>().Launch(Ship());
+
         }
 
         
