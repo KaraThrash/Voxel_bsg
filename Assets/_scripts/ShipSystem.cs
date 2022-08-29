@@ -168,15 +168,21 @@ public class ShipSystem : MonoBehaviour
         {
             PlayerInput();
         }
-
-        Act();
+        if (on && ((ship && ship.CanAct()) || myEnemy != null)  )
+        {
+            Act();
+        }
+        
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
-        Act_Fixed();
-
+        
+        if (on && ((ship && ship.CanAct()) || myEnemy != null))
+        {
+            Act_Fixed();
+        }
         TrackCooldown();
 
    
@@ -194,18 +200,12 @@ public class ShipSystem : MonoBehaviour
 
     public virtual void Act()
     {
-        if (on && (ship && ship.CanAct()))
-        {
-
-        }
+       
     }
 
     public virtual void Act_Fixed()
     {
-        if (on && (ship && ship.CanAct()))
-        {
-            
-        }
+        
     }
 
     public virtual void PlayerInput()

@@ -72,7 +72,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _EmmisTex:
-        m_Texture: {fileID: 2800000, guid: d1756114df874744c9ac5df8773b2b41, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _HeightMap:
@@ -104,7 +104,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _NormalTex:
-        m_Texture: {fileID: 2800000, guid: d1756114df874744c9ac5df8773b2b41, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SpecularColorMap:
@@ -132,12 +132,12 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - HardEdgeAlpha: 0.515
-    - HardEdgeFalloff: 0.375
-    - HardEdgeSize: 0.515
-    - SoftEdgeAlpha: 0.592
-    - SoftEdgeFalloff: 0.592
-    - SoftEdgeSize: 0
+    - HardEdgeAlpha: 1
+    - HardEdgeFalloff: 0.639
+    - HardEdgeSize: 1
+    - SoftEdgeAlpha: 1
+    - SoftEdgeFalloff: 1
+    - SoftEdgeSize: 30
     - _AORemapMax: 1
     - _AORemapMin: 0
     - _ATDistance: 1
@@ -203,7 +203,7 @@ Material:
     - _Ior: 1.5
     - _IridescenceMask: 1
     - _IridescenceThickness: 1
-    - _LightScalar: 4.45
+    - _LightScalar: 6.88
     - _LinkDetailsWithBase: 1
     - _MaterialID: 1
     - _Metallic: 0
@@ -214,7 +214,7 @@ Material:
     - _PPDMinSamples: 5
     - _PPDPrimitiveLength: 1
     - _PPDPrimitiveWidth: 1
-    - _RampLevels: 100
+    - _RampLevels: 88.4
     - _ReceivesSSR: 1
     - _RefractionModel: 0
     - _SSRefractionProjectionModel: 0
@@ -262,13 +262,14 @@ Material:
     m_Colors:
     - HardEdgeColor: {r: 1, g: 1, b: 1, a: 0}
     - SoftEdgeColor: {r: 1, g: 1, b: 1, a: 0.31764707}
+    - Vector4_71B70F27: {r: 0, g: 0, b: 0, a: 0}
     - Vector4_C0D03A45: {r: 1, g: 1, b: 1, a: 1}
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _BaseColorMap_MipInfo: {r: 0, g: 0, b: 0, a: 0}
-    - _Color: {r: 0, g: 0.76483536, b: 1, a: 1}
+    - _Color: {r: 0, g: 0.124279976, b: 1, a: 1}
     - _DiffusionProfileAsset: {r: 0, g: 0, b: 0, a: 0}
     - _DoubleSidedConstants: {r: 1, g: 1, b: -1, a: 0}
-    - _EmissColor: {r: 0.8113208, g: 0.8113208, b: 0.8113208, a: 0}
+    - _EmissColor: {r: 0, g: 0.10351912, b: 0.735849, a: 0}
     - _EmissionColor: {r: 1, g: 1, b: 1, a: 1}
     - _EmissiveColor: {r: 0, g: 0, b: 0, a: 1}
     - _EmissiveColorLDR: {r: 0, g: 0, b: 0, a: 1}

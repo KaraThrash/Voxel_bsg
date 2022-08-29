@@ -43,6 +43,9 @@ public class GameManager : Manager {
         SceneManager.sceneLoaded += StartLevel;
 
         Player().Ship().GetEquipment().GetStatList().Clear();
+
+        MenuManager().EnableFTLMenu();
+
     }
 
 
@@ -185,8 +188,16 @@ public class GameManager : Manager {
     //can be called from the ftl menu screen after a target is selected
     public void TravelFromHub(int dest)
     {
-        SceneManager.LoadScene(dest);
-        SetGameState(GameState.playing);
+        if ( dest >= 0)
+        {
+            SceneManager.LoadScene(dest);
+            SetGameState(GameState.playing);
+        }
+        else 
+        {
+            Debug.LogError("Can't go to that level: Not a valid scene number");
+        }
+        
 
 
     }

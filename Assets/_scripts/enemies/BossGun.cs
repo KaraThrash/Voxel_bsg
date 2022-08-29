@@ -6,10 +6,40 @@ public class BossGun : Enemy
 {
     public WeaponBase gun;
 
+    public Animator anim;
+
     public MeshRenderer render;
+
     public Material deadColor;
 
+    public Collider weakSpotCollider;
 
+    private string AP_open = "open";
+
+    public void ToggleOpenFace()
+    {
+        if (weakSpotCollider == null)
+        { weakSpotCollider = GetComponent<Collider>(); }
+
+        if (weakSpotCollider)
+        {
+            if (weakSpotCollider.enabled)
+            {
+                weakSpotCollider.enabled = false;
+            }
+            else
+            {
+                weakSpotCollider.enabled = true;
+            }
+
+
+
+
+            if (anim)
+            { anim.SetTrigger(AP_open); }
+        }
+    
+    }
 
 
     public override void Init()
@@ -36,7 +66,7 @@ public class BossGun : Enemy
 
 
 
-        Attacking();
+     //   Attacking();
 
         timer_State -= Time.deltaTime;
 

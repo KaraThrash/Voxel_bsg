@@ -190,39 +190,44 @@ public class Ship : Actor
 
     public virtual void Act()
     {
-        if (timer_lockOutStaminaRecharge > 0)
-        {
-            timer_lockOutStaminaRecharge -= Time.deltaTime;
-        }
-        else { }
-        //NOTE: is the stamina lockout fun?
-        RechargeStamina();
 
-        Movement();
-
-        Weapons();
-
-        if (GameConstants.TYPE_A)
-        {
-            TypeA();
-
-        }
-        else
-        {
-            if (PrimaryEngine() && PrimaryEngine().throttle_A != 0 ||
-                (rotationTarget.GetComponent<ThirdPersonCamera>() 
-                && rotationTarget.GetComponent<ThirdPersonCamera>().rollz != 0)
-                )
+       
+            
+            if (timer_lockOutStaminaRecharge > 0)
             {
-                //transform.rotation = Quaternion.Slerp(transform.rotation, PrimaryEngine().GetTargetRotation(), PrimaryEngine().RotationAcceleration());
-               
+                timer_lockOutStaminaRecharge -= Time.deltaTime;
+            }
+            else { }
+
+            //NOTE: is the stamina lockout fun?
+            RechargeStamina();
+
+            Movement();
+
+            Weapons();
+
+            if (GameConstants.TYPE_A)
+            {
+                TypeA();
 
             }
-            Quaternion newrot = Quaternion.LookRotation((rotationTarget.position + rotationTarget.forward * 10) - transform.position, rotationTarget.up);
+            else
+            {
+                if (PrimaryEngine() && PrimaryEngine().throttle_A != 0 ||
+                    (rotationTarget.GetComponent<ThirdPersonCamera>() 
+                    && rotationTarget.GetComponent<ThirdPersonCamera>().rollz != 0)
+                    )
+                {
+                    //transform.rotation = Quaternion.Slerp(transform.rotation, PrimaryEngine().GetTargetRotation(), PrimaryEngine().RotationAcceleration());
+               
 
-            transform.rotation = Quaternion.Slerp(transform.rotation, newrot, PrimaryEngine().RotationAcceleration());
-        }
+                }
+                Quaternion newrot = Quaternion.LookRotation((rotationTarget.position + rotationTarget.forward * 10) - transform.position, rotationTarget.up);
 
+                transform.rotation = Quaternion.Slerp(transform.rotation, newrot, PrimaryEngine().RotationAcceleration());
+            }
+            
+        
 
 
     }

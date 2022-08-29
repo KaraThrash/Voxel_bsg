@@ -138,6 +138,11 @@ public class WeaponBase : ShipSystem
 
     public override void Activate()
     {
+        if ((ship == null || ship.canAct == false) && myEnemy == null)
+        {
+            return;
+        }
+
         if (on)
         {
             return;

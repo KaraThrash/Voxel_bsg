@@ -157,10 +157,23 @@ Movement:
     External forces: Collisions, getting shot, losing stamina, or firing weapons like a rail gun apply external forces that the engine tracks and includes in its calculations.
         --Handled by the engine and modified by the enviroment [high friction, gracity etc]
 
+
+
 Enviroment Levels:
     Enviroment type determine gravity, friction, and ambient forces [e.g.: Sand decreases engine effectiveness increases durability loss]
-
-
+    -> Primary and Secondary objectives:
+        -When primary is completed the level is done.
+        -When secondary is completed the indicated bonus is given [can sometimes reset depending on the bonus type]
+            -> secondary condition resets on the next TURN.
+            [gather resources, destroy more enemy ships, explore for treasure ]
+    -> A level has several states:
+            -Available: the player can travel here and attempt it's objective
+            -Weak: is 'Available' and the enemy is at reduced effectiveness. [less enemies spawn, boss has less hp etc]
+            -Strong: is 'Available' and the enemy is at increased effectiveness. [more enemies spawn, boss has more hp etc]
+            -Undiscovered: Not revealed on the level select screen [Stretch goal: reachable by traveling while in another level]
+    -> Levels can have an Affect on gamestate that occurs at the start of the next 'Turn':
+        - Boost enemies i.e. Make available levels 'Strong' or make 'Weak' levels 'Available'
+        - Destroy civilian ship i.e. the ship the player could have rescued is destroyed and the level no longer available
 
 Objectives: Destroy, protect, contest, discover
 
@@ -303,3 +316,4 @@ Fighter: the ship that the player and enemies fly around in.
 Fleetship: Npcs, confer stats, affects, or hold resources.
 Fleet: Collection of npc ships that work like a talent tree.
 Targets: An objective location, enemy, or item that confers a special bonus.Not Timed version of Events.
+TURN: when the 'clock' reaches zero and the interval effects occur [enemy fleet attacks, resource gathering etc]

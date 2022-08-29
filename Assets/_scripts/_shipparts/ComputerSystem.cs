@@ -264,14 +264,14 @@ public class ComputerSystem : ShipSystem
 
     public void FindNextClosestEnemy()
     {
-        float dist = 100;
+        float dist = 1000;
         float mindist = 0;
 
         if (currentTarget)
         {
             mindist = Vector3.Distance(currentTarget.MainTransform().position, ship.transform.position);
         }
-        dist = mindist * 100;
+        dist = mindist ;
 
         Actor newTarget = null;
 
@@ -285,7 +285,7 @@ public class ComputerSystem : ShipSystem
             {
                 if (newTarget == null)
                 {
-                    if (Vector3.Distance(el.MainTransform().position, ship.transform.position) >= mindist)
+                    if (Vector3.Distance(el.MainTransform().position, ship.transform.position) > mindist)
                     {
                         newTarget = el;
                         dist = Vector3.Distance(el.MainTransform().position, ship.transform.position);
@@ -368,14 +368,14 @@ public class ComputerSystem : ShipSystem
 
     public void FindNextClosestObjective()
     {
-        float dist = 100;
+        float dist = 1000;
         float mindist = 0;
 
         if (currentTarget)
         {
             mindist = Vector3.Distance(currentTarget.MainTransform().position, ship.transform.position);
         }
-        dist = mindist * 100;
+        dist = mindist * 1;
 
         Actor newTarget = null;
 
@@ -386,7 +386,7 @@ public class ComputerSystem : ShipSystem
 
             if (newTarget == null)
             {
-                if (el.isObjective && Vector3.Distance(el.MainTransform().position, ship.transform.position) >= mindist)
+                if (el.isObjective && Vector3.Distance(el.MainTransform().position, ship.transform.position) > mindist)
                 {
                     newTarget = el;
                     dist = Vector3.Distance(el.MainTransform().position, ship.transform.position);

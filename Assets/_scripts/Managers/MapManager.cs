@@ -6,6 +6,8 @@ public class MapManager : MonoBehaviour {
 
     //for switching maps and loading/unloading them
 
+    public List<SO_LevelData> levels;
+
     public Map currentMap;
 
     public Map GetMap()

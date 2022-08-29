@@ -274,6 +274,9 @@ public class Bullet : Actor
             RB().velocity = transform.forward * pwr;
         }
 
+
+
+
         gameObject.name = "Bullet_" + bulletType;
 
         SetCollider(true);

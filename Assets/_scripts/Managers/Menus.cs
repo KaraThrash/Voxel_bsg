@@ -22,11 +22,16 @@ public class Menus : Manager {
 
     public Transform parent_inventoryChoiceButtons;
     public Transform parent_fleetShips;
+    public Transform parent_levelButtons;
 
     //the text is the only thing updated, the buttons
     //the buttons pass an int that references the saved list
     public List<Text> inventoryChoiceButtonsText;
     public List<Item> currentItemChoices;
+    public List<UI_LevelButton> levelButtons;
+
+
+
 
     public Text TEXT_itemChoiceStatDisplay;
     public Text TEXT_equipmentTotals;
@@ -141,12 +146,32 @@ public class Menus : Manager {
 
     public void EnableFTLMenu()
     {
-        DisableMenus();
+       // DisableMenus();
 
         if (menu_FTL) 
         {
             menu_FTL.gameObject.SetActive(true);
         }
+
+        if (MapManager() && MapManager().levels != null)
+        {
+            int count = 0;
+            foreach (UI_LevelButton el in LevelButtons())
+            {
+                if (MapManager().levels.Count > count)
+                {
+                    SO_LevelData levelData = MapManager().levels[count];
+
+                    el.text_levelName.text = levelData.mapName;
+                    el.text_primaryObjective.text = levelData.primaryObjective.ToString() + " " + levelData.primaryObjectiveTarget.ToString();
+                    el.text_secondaryObjective.text = levelData.secondaryOjective.ToString() + " " + levelData.secondaryObjectiveTarget.ToString();
+                }
+                count++;
+            }
+
+        }
+
+
     }
 
     public void ButtonEvent_OpenMenu(GameObject _menu)
@@ -601,6 +626,28 @@ public class Menus : Manager {
         }
         return inventoryChoiceButtonsText;
     }
+
+    public List<UI_LevelButton> LevelButtons()
+    {
+        if (levelButtons == null || levelButtons.Count == 0)
+        {
+            levelButtons = new List<UI_LevelButton>();
+
+            if (parent_levelButtons != null)
+            {
+                foreach (Transform el in parent_levelButtons)
+                {
+                    if (el.GetComponent<UI_LevelButton>())
+                    { 
+                        levelButtons.Add(el.GetComponent<UI_LevelButton>());
+                    }
+                }
+            }
+
+        }
+        return levelButtons;
+    }
+
 
     public UI_scriptable GetAssets()
     {

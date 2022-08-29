@@ -129,9 +129,12 @@ public class TestEnemy : Enemy
         {
             Idle();
         }
+        else if (State() == AiState.adjusting)
+        {
+            Adjusting();
+        }
 
 
-        
 
         //if (GetShip().PrimaryWeapon())
         //{
@@ -372,7 +375,7 @@ public class TestEnemy : Enemy
 
     public override void Adjusting()
     {
-
+        RB().velocity = ShipTransform().forward * Stats().engineThrottle;
 
     }
 

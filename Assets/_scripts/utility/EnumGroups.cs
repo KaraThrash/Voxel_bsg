@@ -91,7 +91,10 @@ public enum FleetShipType
 
 
 public enum ResourceType { none, currency, food, fuel, morale, pop, raptors, vipers }
+public enum Objectives { none, collect,destroy,explore,protect }
 
+
+public enum Level_State { Undiscovered, available,weak,strong,complete };
 
 public class ItemSubType
 {

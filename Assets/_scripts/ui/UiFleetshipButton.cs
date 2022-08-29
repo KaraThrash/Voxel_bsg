@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UiFleetshipButton :MonoBehaviour
+public class UiFleetshipButton : MonoBehaviour
 {
     public Text text_shipname;
     public List<Image> img_resource;

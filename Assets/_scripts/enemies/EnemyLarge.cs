@@ -12,20 +12,16 @@ public class EnemyLarge : Enemy
     private float timer_inView; //track how long the target has been in view
 
     public Transform rotateTransform;
+    public Transform parent_patrolPoints;
 
 
-    private int count_PatrolPoint;
 
     private Vector3 targetVelocity;
 
     private Vector3 moveTo_Position;
     private Vector3 lookAt_Position;
 
-    public BossGun fwdgun0;
-    public BossGun fwdgun1;
-
-    public BossGun reargun0;
-    public BossGun reargun1;
+    public GameObject prefab_enemy;
 
     public List<BossGun> bossGuns;
 
@@ -53,9 +49,14 @@ public class EnemyLarge : Enemy
 
         }
 
+        if (parent_patrolPoints && parent_patrolPoints.childCount > 0)
+        {
+            moveTo_Position = parent_patrolPoints.GetChild(0).position ;
+            lookAt_Position = parent_patrolPoints.GetChild(0).position;
+        }
 
-        moveTo_Position = transform.position + transform.forward * stats.closeRange;
-        lookAt_Position = transform.position + transform.forward * stats.closeRange;
+     //   moveTo_Position = transform.position + transform.forward * stats.closeRange;
+       // lookAt_Position = transform.position + transform.forward * stats.closeRange;
 
 
         //FocusObject().position = Map().GetNextPatrolPoint(count_patrolPoint);
@@ -72,6 +73,12 @@ public class EnemyLarge : Enemy
 
             foreach (BossGun el in Guns())
             {
+
+                if (el.GetSubID() == SubID.A)
+                {
+                    el.ToggleOpenFace();
+
+                }
 
                 el.canAct = true;
                 el.gun.on = true;
@@ -123,9 +130,28 @@ public class EnemyLarge : Enemy
 
         if (State() == AiState.attacking)
         { Attacking(); }
-        else if (State() == AiState.moving) { Moving(); }
+        else if (State() == AiState.moving) 
+        { 
+            //Moving(); 
+        }
         else { Idle(); }
 
+
+        if (parent_patrolPoints && parent_patrolPoints.childCount > count_patrolPoint)
+        {
+            if (Vector3.Distance(moveTo_Position, transform.position) < 1)
+            {
+                count_patrolPoint++;
+                if (count_patrolPoint >= parent_patrolPoints.childCount)
+                { count_patrolPoint = 0; }
+
+                moveTo_Position = parent_patrolPoints.GetChild(count_patrolPoint).position;
+                lookAt_Position = parent_patrolPoints.GetChild(count_patrolPoint).position;
+            }
+
+
+            Moving();
+        }
 
 
 
@@ -156,17 +182,20 @@ public class EnemyLarge : Enemy
       //  MainTransform().rotation = Quaternion.Slerp(ShipTransform().transform.rotation, rot, pwr);
       //  MainTransform().Rotate(MainTransform().right * Stats().torquePower * 2 * Time.deltaTime);
 
-      rotateTransform.Rotate(0,0,  Stats().torquePower * 5 * Time.deltaTime);
+     // rotateTransform.Rotate(0,0,  Stats().torquePower * 5 * Time.deltaTime);
     }
 
     public override void Moving()
     {
 
-        Quaternion rot = Quaternion.LookRotation(AttackTarget().position - ShipTransform().position, AttackTarget().up);
+        Quaternion rot = Quaternion.LookRotation(moveTo_Position - ShipTransform().position, ShipTransform().up);
 
 
         float pwr = Time.deltaTime * Stats().torquePower;
         MainTransform().rotation = Quaternion.Slerp(ShipTransform().transform.rotation, rot, pwr);
+
+        RB().velocity = MainTransform().forward * Stats().engineThrottle ;
+
     }
 
 
@@ -210,73 +239,108 @@ public class EnemyLarge : Enemy
         
 
 
-        float facing = Vector3.Angle(ShipTransform().forward, (AttackTarget().position - ShipTransform().position).normalized);
-        if (facing < Stats().angleTolerance)
-        {
+        //float facing = Vector3.Angle(ShipTransform().forward, (AttackTarget().position - ShipTransform().position).normalized);
+        //if (facing < Stats().angleTolerance)
+        //{
 
-            foreach (BossGun el in Guns())
-            {
+        //    foreach (BossGun el in Guns())
+        //    {
 
-                if (el.GetSubID() == SubID.A)
-                {
-                    el.canAct = true;
-                    el.gun.on = true;
+        //        if (el.GetSubID() == SubID.A)
+        //        {
+        //            el.canAct = true;
+        //            el.gun.on = true;
 
-                }
-                else
-                {
-                    el.canAct = false;
-                    el.gun.on = false;
-                }
+        //        }
+        //        else
+        //        {
+                    
+        //            el.canAct = false;
+        //            el.gun.on = false;
+        //        }
                 
 
-            }
+        //    }
 
 
     
-        }
-        else if (facing > 180 - Stats().angleTolerance)
-        {
-            foreach (BossGun el in Guns())
-            {
+        //}
+        //else if (facing > 180 - Stats().angleTolerance)
+        //{
+        //    foreach (BossGun el in Guns())
+        //    {
 
-                if (el.GetSubID() == SubID.B)
-                {
-                    el.canAct = true;
-                    el.gun.on = true;
+        //        if (el.GetSubID() == SubID.B)
+        //        {
+        //            if (el.Hitpoints() > 0)
+        //            {
+        //                EnemyManager().SpawnEnemy(prefab_enemy, el.gun.transform);
+        //            }
 
-                }
-                else
-                {
-                    el.canAct = false;
-                    el.gun.on = false;
-                }
+        //        }
+        //        else
+        //        {
+        //            el.canAct = false;
+        //            el.gun.on = false;
+        //        }
 
 
-            }
-        }
+        //    }
+        //}
 
 
 
         if (State() == AiState.attacking)
         {
-            State(AiState.idle);
-            timer_State = StateTime() * 3;
+            State(AiState.moving);
+            timer_State = StateTime() * 1;
 
             foreach (BossGun el in Guns())
             {
 
-               
-                    el.canAct = false; 
+                if (el.GetSubID() == SubID.B)
+                {
+                    if (el.Hitpoints() > 0)
+                    {
+                        EnemyManager().SpawnEnemy(prefab_enemy, el.gun.transform);
+                    }
+
+                }
+                else
+                {
+                    el.canAct = false;
                     el.gun.on = false;
-                
+                }
 
 
             }
 
         }
         else if (State() == AiState.idle) { State(AiState.moving); }
-        else { State(AiState.attacking); }
+        else 
+        {
+            foreach (BossGun el in Guns())
+            {
+
+                if (el.GetSubID() == SubID.B)
+                {
+                    if (el.Hitpoints() > 0)
+                    {
+                        EnemyManager().SpawnEnemy(prefab_enemy, el.gun.transform);
+                    }
+
+                }
+                else
+                {
+                    el.canAct = true;
+                    el.gun.on = true;
+                }
+
+
+            }
+            State(AiState.attacking);
+
+        }
     }
 
 
@@ -299,26 +363,26 @@ public class EnemyLarge : Enemy
     public override void Idle()
     {
 
-        Quaternion rot = Quaternion.LookRotation( ShipTransform().position - AttackTarget().position , AttackTarget().up);
+        //Quaternion rot = Quaternion.LookRotation( ShipTransform().position - AttackTarget().position , AttackTarget().up);
 
 
-        float pwr = Time.deltaTime * Stats().accelerate;
-        MainTransform().rotation = Quaternion.Slerp(ShipTransform().transform.rotation, rot, pwr);
+        //float pwr = Time.deltaTime * Stats().accelerate;
+        //MainTransform().rotation = Quaternion.Slerp(ShipTransform().transform.rotation, rot, pwr);
 
 
-        RB().velocity += MainTransform().forward * Stats().decelerate * Time.deltaTime;
+        //RB().velocity += MainTransform().forward * Stats().decelerate * Time.deltaTime;
 
 
 
-        timer_State -= Time.deltaTime;
+        //timer_State -= Time.deltaTime;
 
-        if (timer_State <= 0)
-        {
-            timer_State = StateTime();
+        //if (timer_State <= 0)
+        //{
+        //    timer_State = StateTime();
 
-            MakeDecision();
+        //    MakeDecision();
 
-        }
+        //}
     }
 
 
