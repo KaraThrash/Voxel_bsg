@@ -149,8 +149,8 @@ public class Actor : MonoBehaviour
 
     public virtual void Die()
     {
-
-        Destroy(gameObject);
+        gameObject.SetActive(false);
+        //Destroy(gameObject);
     }
 
 
@@ -176,7 +176,13 @@ public class Actor : MonoBehaviour
     public Transform MainTransform()
     {
         if (mainTransform == null)
-        { return transform; }
+        {
+            if (transform == null)
+            {
+                return null;
+            }
+            return transform;
+        }
 
         return mainTransform;
     }

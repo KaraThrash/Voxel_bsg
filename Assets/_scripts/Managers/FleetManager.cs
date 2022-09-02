@@ -31,7 +31,7 @@ public class FleetManager : Manager
 
 
     //update stats/resources check for end of turn conditions etc [e.g. refine ore to fuel, lose morale from hungar, or pop from starvation]
-    public void EndOfTurn()
+    public void Produce()
     {
         foreach (Stats el in (Stats[])Enum.GetValues(typeof(Stats)))
         {

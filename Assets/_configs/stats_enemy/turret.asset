@@ -13,23 +13,25 @@ MonoBehaviour:
   m_Name: turret
   m_EditorClassIdentifier: 
   pointValue: 55
-  closeRange: 5
-  midRange: 25
-  farRange: 50
-  rangeVarience: 55
+  closeRange: 25
+  midRange: 50
+  farRange: 100
+  rangeVarience: 123
   angleTolerance: 5
   leashDistance: 300
-  noticePlayerDistance: 100
+  noticePlayerDistance: 400
   makeDecisionTime: 3
+  hitPoints: 10
   gunDamage: 1
-  torquePower: 0.2
+  torquePower: 1
   engineThrottle: 7
   accelerate: 3
   decelerate: 0.2
-  guntype: 1
-  bulletType: 3
-  bulletsPerBurst: 1
-  bulletLifeTime: 10
-  bulletSpeed: 44
+  guntype: 0
+  bulletType: 7
+  bulletSize: 0.5
+  bulletsPerBurst: 5
+  bulletLifeTime: 20
+  bulletSpeed: 15
   timeBetweenBursts: 5
-  firerate: 15
+  firerate: 12

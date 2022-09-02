@@ -218,7 +218,16 @@ public class Bullet : Actor
         }
         else if (BulletType() == Bullet_Type.boomerang)
         {
-            direction = transform.right;
+            direction = _ship.MainTransform().right;
+            rotationDirection = _ship.MainTransform().forward;
+
+            if (subid == SubID.A)
+            {
+                direction = -_ship.MainTransform().right;
+                rotationDirection = -_ship.MainTransform().forward;
+            }
+
+            direction = _ship.MainTransform().right;
             rotationDirection = _ship.MainTransform().forward ;
 
             timestamp_Event = newLifeTime * 0.7f;
@@ -298,8 +307,8 @@ public class Bullet : Actor
         if (lifeTime < 1) { lifeTime = 1; }
 
         speed = _stats.bulletSpeed;
-
-
+        bulletType = _stats.bulletType;
+        transform.localScale = new Vector3(_stats.bulletSize, _stats.bulletSize, _stats.bulletSize);
 
         Damage(Mathf.FloorToInt(_stats.gunDamage));
 
@@ -329,7 +338,7 @@ public class Bullet : Actor
         }
         else if (BulletType() == Bullet_Type.large)
         {
-            transform.localScale = new Vector3(1, 1, 1); ;
+            
         }
         else if (BulletType() == Bullet_Type.spiral)
         {
@@ -430,7 +439,7 @@ public class Bullet : Actor
     {
         RB().velocity = (transform.forward * speed);// + relativeVelocity;
 
-        if (target && timestamp_Event > lifeTime)
+        if (target )
         {
             if (currentRotSpeed < rotSpeed)
             {
@@ -440,10 +449,28 @@ public class Bullet : Actor
                     currentRotSpeed = rotSpeed;
                 }
             }
-           
-            Quaternion targetRotation = Quaternion.LookRotation(target.transform.position - transform.position);
 
-            transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, currentRotSpeed * Time.deltaTime);
+            if (timestamp_Event > lifeTime)
+            {
+               
+
+                Quaternion targetRotation = Quaternion.LookRotation((target.transform.position ) - transform.position);
+
+                transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, currentRotSpeed * Time.deltaTime);
+            }
+            else
+            {
+
+                Quaternion targetRotation = Quaternion.LookRotation((target.transform.position + (target.transform.right * 0.7f) ) - transform.position);
+
+                if (subid == SubID.A)
+                {
+                    targetRotation = Quaternion.LookRotation((target.transform.position - (target.transform.right * 0.7f)) - transform.position);
+                }
+                
+
+                transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, currentRotSpeed * Time.deltaTime);
+            }
         }
 
     }

@@ -707,15 +707,6 @@ public class Ship : Actor
     }
 
 
-    public Rigidbody RB()
-    {
-        if (rb == null)
-        {
-            rb = GetComponent<Rigidbody>();
-        }
-
-        return rb;
-    }
 
 
 

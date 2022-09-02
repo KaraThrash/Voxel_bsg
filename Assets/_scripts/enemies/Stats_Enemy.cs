@@ -20,6 +20,7 @@ public class Stats_Enemy : ScriptableObject
     public float  noticePlayerDistance = 50.0f;
     public float  makeDecisionTime = 5.0f;
 
+    public int hitPoints = 1;
     public float gunDamage = 1;
     public float torquePower = 1;
     public float engineThrottle = 1;
@@ -28,7 +29,8 @@ public class Stats_Enemy : ScriptableObject
 
     public GunType guntype;
     public Bullet_Type bulletType;
-  
+
+    public float bulletSize = 1;
 
     public int bulletsPerBurst;
     public float bulletLifeTime;

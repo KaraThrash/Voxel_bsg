@@ -178,7 +178,20 @@ public class Player : MonoBehaviour {
                 
                 //ship.Act();
             }
-            else { cam.PlayerControlled(); }
+            else
+            {
+                if (ship.CPU() && ship.CPU().GetTarget())
+                {
+                    cam.PlayerControlled(ship, ship.CPU().GetTarget());
+             
+                }
+                else
+                {
+                    cam.PlayerControlled(ship);
+                }
+
+                
+            }
 
         }
 

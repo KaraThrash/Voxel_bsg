@@ -85,7 +85,12 @@ public class Objective : Map_POI
             Instantiate(explosion,transform.position,transform.rotation);
         }
 
-        Destroy(gameObject);
+        if (GetCrossHair() != null)
+        {
+            GetCrossHair().StopTargeting();
+        }
+
+        gameObject.SetActive(false); ;
     }
 
 }

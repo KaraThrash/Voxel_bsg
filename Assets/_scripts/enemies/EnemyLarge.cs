@@ -95,7 +95,7 @@ public class EnemyLarge : Enemy
             brainTime = Stats().makeDecisionTime;
             timer_Brain = Stats().makeDecisionTime;
             directionChangeSpeed = 12;
-            SetHitpoints(1);
+            SetHitpoints(Stats().hitPoints);
 
         }
         else
@@ -104,6 +104,7 @@ public class EnemyLarge : Enemy
             brainTime = 12;
             timer_Brain = brainTime;
             directionChangeSpeed = 12;
+            SetHitpoints(10);
         }
 
 

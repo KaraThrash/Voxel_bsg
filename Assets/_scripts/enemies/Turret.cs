@@ -64,11 +64,13 @@ public class Turret : Enemy
                 gun.bulletsPerBurst = Stats().bulletsPerBurst;
                 gun.STAT_CooldownTime(Stats().firerate);
                 gun.burstTime = Stats().timeBetweenBursts;
+                gun.bulletSize = Stats().bulletSize;
             }
             stateTime = Stats().makeDecisionTime;
             brainTime = Stats().makeDecisionTime;
             timer_Brain = Stats().makeDecisionTime;
             directionChangeSpeed = 12;
+            SetHitpoints(Stats().hitPoints);
         }
         else
         {
@@ -76,6 +78,7 @@ public class Turret : Enemy
             brainTime = 12;
             timer_Brain = brainTime;
             directionChangeSpeed = 12;
+            SetHitpoints(10);
         }
 
     
@@ -184,21 +187,23 @@ public class Turret : Enemy
     public override void MakeDecision()
     {
 
-        //if (ship.Hitpoints() <= 0)
-        //{
+        if (ship && GetSubID() != SubID.Boss && ship.Hitpoints() <= 0)
+        {
 
-        //    if (effect_Explosion != null)
-        //    {
-        //        effect_Explosion.transform.parent = null;
-        //        effect_Explosion.transform.position = ship.transform.position;
-        //        effect_Explosion.SetActive(true);
-        //    }
+            if (effect_Explosion != null)
+            {
+                effect_Explosion.transform.parent = null;
+                effect_Explosion.transform.position = ship.transform.position;
+                effect_Explosion.SetActive(true);
+            }
 
-        //    ship.Die();
+            if (gun != null) { gun.Deactivate(); }
 
-        //    return;
+            ship.Die();
 
-        //}
+            return;
+
+        }
 
 
         if (AttackTarget() && DistanceToTarget(AttackTarget()) > Stats().noticePlayerDistance)
@@ -225,9 +230,15 @@ public class Turret : Enemy
                 {
                     if (hit.transform == AttackTarget())
                     {
-                        if (GetSubID() == SubID.Boss || GetSubID() == SubID.none)
+
+                        if ( GetSubID() == SubID.none)
                         {
                             FocusObject().position = AttackTarget().position ;
+                        }
+
+                        if (GetSubID() == SubID.Boss)
+                        {
+                            FocusObject().position = AttackTarget().position + (AttackTarget().forward * AttackTarget().GetComponent<Ship>().RB().velocity.magnitude);
                         }
 
                         if (render && moveColor)
@@ -248,11 +259,18 @@ public class Turret : Enemy
             }
             else
             {
-                if ( GetSubID() == SubID.none || GetSubID() == SubID.Boss)
+                if (GetSubID() == SubID.none)
                 {
-                    FocusObject().position = AttackTarget().position ;
+                    FocusObject().position = AttackTarget().position;
                 }
 
+                if (GetSubID() == SubID.Boss)
+                {
+                    Vector3 newpos = AttackTarget().forward * AttackTarget().GetComponent<Ship>().RB().velocity.magnitude;
+                    newpos *= (Vector3.Distance(transform.position , AttackTarget().position) * 0.1f) / Stats().bulletSpeed ;
+                    newpos += AttackTarget().position;
+                    FocusObject().position = newpos;
+                }
                 if (render && attackColor)
                 {
                     render.material = attackColor;
@@ -263,7 +281,7 @@ public class Turret : Enemy
         //a boss turret is the dradis dish that controls the group
         if (GetSubID() == SubID.none )
         {
-            FocusObject().position = AttackTarget().position + AttackTarget().forward * Stats().closeRange;
+          //  FocusObject().position = AttackTarget().position + AttackTarget().forward * Stats().closeRange;
         }
         
 

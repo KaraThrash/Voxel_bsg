@@ -11,7 +11,6 @@ public class Spawn :  Map_POI
 
     public GameObject enemyparent;
 
-    public Map map;
 
 
     public int count;
@@ -77,8 +76,6 @@ public class Spawn :  Map_POI
         return clone;
     }
 
-    public Map Map()
-    { return map; }
 
     public GameObject EnemyPrefab()
     { return tospawn; }

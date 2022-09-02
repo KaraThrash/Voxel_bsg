@@ -371,7 +371,7 @@ public class Menus : Manager {
     {
         Debug.Log("ShowFleetShips: " );
 
-        FleetManager().EndOfTurn();
+        FleetManager().Produce();
 
         List<FleetShip> shipList = FleetManager().Ships();
         Debug.Log(shipList.Count);

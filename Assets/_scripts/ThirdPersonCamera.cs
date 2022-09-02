@@ -105,7 +105,7 @@ public class ThirdPersonCamera : MonoBehaviour
 
     }
 
-    public void PlayerControlled()
+    public void PlayerControlled(Ship _ship)
     {
         yRot = (Input.GetAxis("Mouse X") * XSensitivity) + (InputControls.CameraHorizontalAxis() * XSensitivity);
         xRot = (Input.GetAxis("Mouse Y") * -YSensitivity) + (InputControls.CameraVerticalAxis() * YSensitivity);
@@ -121,6 +121,27 @@ public class ThirdPersonCamera : MonoBehaviour
         {
             rollz = 1;
         }
+        else
+        {
+
+           
+             
+            //TODO: check if the current map has a dedicated [up] direction
+                if (Mathf.Abs(_ship.transform.forward.y) < 0.2f)
+                { 
+                    float secondaryFacing = Vector3.Angle(transform.up, Vector3.up);
+                    if (secondaryFacing > 15)
+                    {
+                        rollz = -0.02f * Vector3.SignedAngle(transform.up, Vector3.up, _ship.transform.forward);
+                    }
+                }
+               
+            
+
+        }
+
+
+
 
         if (xRot == 0 && yRot == 0 && rollz == 0)
         { }
@@ -211,7 +232,111 @@ public class ThirdPersonCamera : MonoBehaviour
 
     }
 
+    public void PlayerControlled(Ship _ship, Actor _lockedOn)
+    {
+        yRot = (Input.GetAxis("Mouse X") * XSensitivity) + (InputControls.CameraHorizontalAxis() * XSensitivity);
+        xRot = (Input.GetAxis("Mouse Y") * -YSensitivity) + (InputControls.CameraVerticalAxis() * YSensitivity);
 
+
+        rollz = InputControls.RollAxis();
+
+        if (InputControls.PreviousButton())
+        {
+            rollz = -1;
+        }
+        else if (InputControls.NextButton())
+        {
+            rollz = 1;
+        }
+        else
+        {
+
+
+
+            //TODO: check if the current map has a dedicated [up] direction
+            if (Mathf.Abs(_ship.transform.forward.y) < 0.2f)
+            {
+                float secondaryFacing = Vector3.Angle(transform.up, Vector3.up);
+                if (secondaryFacing > 15)
+                {
+                    rollz = -0.02f * Vector3.SignedAngle(transform.up, Vector3.up, _ship.transform.forward);
+                }
+            }
+
+
+
+        }
+
+
+
+
+        if (xRot == 0 && yRot == 0 && rollz == 0)
+        { }
+        else
+        {
+            idleTimer = 0;
+            currentAcc = 0;
+        }
+
+
+
+        if (clampVerticalRotation) { m_CameraTargetRot = ClampRotationAroundXAxis(m_CameraTargetRot); }
+
+
+
+
+        if (smooth)
+        {
+            Quaternion newrot = Quaternion.LookRotation(_lockedOn.MainTransform().position - transform.position);
+
+            if (_lockedOn.GetCrossHair())
+            {
+
+                newrot = Quaternion.LookRotation(_lockedOn.GetCrossHair().GetVelocityLeadPosition() - transform.position);
+
+            }
+
+
+            transform.rotation = Quaternion.Lerp(transform.rotation, newrot, Time.deltaTime * XSensitivity * smoothTime);
+
+            // transform.Rotate(new Vector3(xRot, yRot, -rollz * ZSensitivity) * Time.deltaTime * smoothTime);
+
+
+            if (idleTimer == -2)
+            {
+
+
+                // internalSphere.Rotate(new Vector3(xRot, yRot, -rollz ) * Time.deltaTime * smoothTime);
+            }
+            else
+
+            {
+                if (Vector3.Angle(internalSphere.forward, transform.forward) < angleLimit)
+                {
+                    transform.Rotate(new Vector3(xRot, yRot, -rollz) * Time.deltaTime * smoothTime);
+                }
+                else
+                {
+                    transform.rotation = Quaternion.Lerp(transform.rotation, idleRot, Time.deltaTime * flyspeed * smoothTime);
+                }
+
+                //    internalSphere.localRotation = Quaternion.Lerp(internalSphere.localRotation, Quaternion.identity, Time.deltaTime * flyspeed * smoothTime);
+
+
+
+            }
+
+        }
+        else
+        {
+
+
+        }
+
+
+        UpdateCursorLock();
+
+    }
     public void SetCursorLock(bool value)
     {
         lockCursor = value;

@@ -85,7 +85,7 @@ public class Crosshair : MonoBehaviour
 
         if (velocityLead_Highlight)
         {
-            Vector3 vel_dist = actor.RB().velocity * (Vector3.Distance(actor.MainTransform().position,cam.position) * 0.02f);
+            Vector3 vel_dist = (actor.RB().velocity * 0.02f) * (Vector3.Distance(actor.MainTransform().position,cam.position) * 0.02f);
             velocityLead_Highlight.position = actor.MainTransform().position + actor.RB().velocity + vel_dist ;
             velocityLead_Highlight.LookAt(cam.position);
 
@@ -98,6 +98,30 @@ public class Crosshair : MonoBehaviour
         }
         
     }
+
+
+    public Vector3 GetVelocityLeadPosition()
+    {
+        if (velocityLead_Highlight)
+        {
+
+            if (velocityLead_Highlight.gameObject.activeSelf)
+            {
+
+                return velocityLead_Highlight.position;
+
+
+            }
+            else 
+            {
+                return actor.MainTransform().position;
+            }
+
+        }
+        return actor.MainTransform().position + ((actor.RB().velocity * 0.02f) * (Vector3.Distance(actor.MainTransform().position, cam.position) * 0.02f));
+    }
+
+
     public void StopTargeting()
     {
         if (target_Highlight)

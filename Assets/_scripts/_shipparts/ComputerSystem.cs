@@ -102,6 +102,8 @@ public class ComputerSystem : ShipSystem
 
     public Actor GetTarget()
     {
+        if (currentTarget && currentTarget.Hitpoints() == 0) { currentTarget = null; }
+
         return currentTarget;
     }
 
@@ -231,22 +233,23 @@ public class ComputerSystem : ShipSystem
 
         foreach (Enemy el in actorList)
         {
-            //confirm this is a viable transform
-            if (el == null || el.MainTransform() == null) { }
-            else 
+            if (el != null && el.MainTransform() != null && el.Hitpoints() != 0)
             {
-                if (newTarget == null)
-                { newTarget = el; }
-                else
-                {
-                    float newDist = Vector3.Distance(el.MainTransform().position, ship.transform.position);
-
-                    if (newDist <= dist)
+                //confirm this is a viable transform
+             
+                    if (newTarget == null)
+                    { newTarget = el; }
+                    else
                     {
-                        dist = newDist;
-                        newTarget = el;
+                        float newDist = Vector3.Distance(el.MainTransform().position, ship.transform.position);
+
+                        if (newDist <= dist)
+                        {
+                            dist = newDist;
+                            newTarget = el;
+                        }
                     }
-                }
+                
             }
 
            
@@ -283,25 +286,27 @@ public class ComputerSystem : ShipSystem
             if (el == null || el.MainTransform() == null) { }
             else
             {
-                if (newTarget == null)
-                {
-                    if (Vector3.Distance(el.MainTransform().position, ship.transform.position) > mindist)
+                if (el.MainTransform() != null && el.Hitpoints() != 0)
+                { 
+                    if (newTarget == null)
                     {
-                        newTarget = el;
-                        dist = Vector3.Distance(el.MainTransform().position, ship.transform.position);
+                        if (Vector3.Distance(el.MainTransform().position, ship.transform.position) > mindist)
+                        {
+                            newTarget = el;
+                            dist = Vector3.Distance(el.MainTransform().position, ship.transform.position);
+                        }
+                    }
+                    else
+                    {
+                        float newDist = Vector3.Distance(el.MainTransform().position, ship.transform.position);
+
+                        if (newDist > mindist && newDist <= dist)
+                        {
+                            dist = newDist;
+                            newTarget = el;
+                        }
                     }
                 }
-                else
-                {
-                    float newDist = Vector3.Distance(el.MainTransform().position, ship.transform.position);
-
-                    if (newDist > mindist && newDist <= dist)
-                    {
-                        dist = newDist;
-                        newTarget = el;
-                    }
-                }
-
             }
 
         }
@@ -330,25 +335,28 @@ public class ComputerSystem : ShipSystem
 
         foreach (Map_POI el in actorList)
         {
-            if (newTarget == null)
+            if (el.MainTransform() != null && el.Hitpoints() != 0)
             {
-                if (el.isObjective)
+
+                if (newTarget == null)
                 {
-                    newTarget = el;
-                    dist = Vector3.Distance(el.MainTransform().position, ship.transform.position);
+                    if (el.isObjective)
+                    {
+                        newTarget = el;
+                        dist = Vector3.Distance(el.MainTransform().position, ship.transform.position);
+                    }
+                }
+                else
+                {
+                    float newDist = Vector3.Distance(el.MainTransform().position, ship.transform.position);
+
+                    if (el.isObjective && newDist < dist)
+                    {
+                        dist = newDist;
+                        newTarget = el;
+                    }
                 }
             }
-            else
-            {
-                float newDist = Vector3.Distance(el.MainTransform().position, ship.transform.position);
-
-                if (el.isObjective &&  newDist < dist)
-                {
-                    dist = newDist;
-                    newTarget = el;
-                }
-            }
-
             
 
         }

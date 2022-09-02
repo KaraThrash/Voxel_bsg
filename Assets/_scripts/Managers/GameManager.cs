@@ -29,6 +29,8 @@ public class GameManager : Manager {
     public UnityEvent event_PlayerDeath;
 
 
+
+
     // Use this for initialization
     void Start () {
 
@@ -97,7 +99,7 @@ public class GameManager : Manager {
         if (Input.GetKeyDown(KeyCode.RightShift))
         {
             //ItemManager().DropItem(ItemTypes.currency,1,Player().Ship().MainTransform().position + (Player().Ship().MainTransform().forward * 5));
-            FleetManager().EndOfTurn();
+            FleetManager().Produce();
 
         }
 

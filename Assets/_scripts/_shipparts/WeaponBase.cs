@@ -14,6 +14,10 @@ public class WeaponBase : ShipSystem
     [Min(0.01f)] 
     public float burstTime;
     public float burstTracker;
+    public float bulletSize=0.2f;
+
+
+    private SubID track_bulletSequence; //when alternating with twinlinked assign A/B
 
     private Transform bulletParent;
     private string bulletParentName = "";
@@ -288,9 +292,12 @@ public class WeaponBase : ShipSystem
             newBullet.transform.rotation = _gun.rotation;
 
             newBullet.SetActive(true);
+            newBullet.GetComponent<Bullet>().subid = track_bulletSequence;
             newBullet.GetComponent<Bullet>().Init();
             newBullet.GetComponent<Bullet>().Launch(Ship());
 
+
+            AlternateSubId();
         }
 
         
@@ -332,7 +339,7 @@ public class WeaponBase : ShipSystem
             newBullet.SetActive(true);
             newBullet.GetComponent<Bullet>().Init();
             newBullet.GetComponent<Bullet>().Launch(MyEnemy().Stats());
-
+            newBullet.transform.localScale = Vector3.one * MyEnemy().Stats().bulletSize;
             return;
         }
 
@@ -361,6 +368,7 @@ public class WeaponBase : ShipSystem
             newBullet.SetActive(true);
             newBullet.GetComponent<Bullet>().Init();
             newBullet.GetComponent<Bullet>().Launch(MyEnemy().Stats());
+            newBullet.transform.localScale = Vector3.one * MyEnemy().Stats().bulletSize;
         }
 
     }
@@ -406,6 +414,19 @@ public class WeaponBase : ShipSystem
             bulletTypes = new List<Bullet_Type>();
         }
         return bulletTypes;
+    }
+
+
+    public void AlternateSubId()
+    {
+        if (track_bulletSequence == SubID.A)
+        {
+            track_bulletSequence = SubID.B;
+        }
+        else 
+        {
+            track_bulletSequence = SubID.A;
+        }
     }
 
 }

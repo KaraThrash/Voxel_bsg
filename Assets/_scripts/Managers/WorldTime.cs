@@ -7,7 +7,8 @@ using UnityEngine.UI;
 public class WorldTime : Manager
 {
 
-    public TimeType primaryTimeElement;
+    public TimeType primaryTimeElement; //What the game considers for advancing the 'clock' as default real seconds
+                                        //but for player QoL/Fun other parameters can be used
 
   public Text clockText,fleetJumpReadiness;
   public GameObject joinAttackButton,fleetJumpButton;
@@ -25,13 +26,56 @@ public class WorldTime : Manager
     private float timer;
 
 
-    // Start is called before the first frame update
+    public float tracker_time;
+    public float tracker_menu;
+    public float tracker_ftlJumps;
+    public float tracker_playerInputs;
+    public float tracker_distanceTraveled;
+
+
+
+
+
+
+
+    public void EndOfTurn()
+    {
+        //negative events
+        //followed by enemy fleet attack
+
+
+        EnemyManager().Produce();
+
+
+    }
+
+    public void StartOfTurn()
+    {
+        //preceeded by enemy fleet attack
+        //positive events
+
+        FleetManager().Produce();
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     void Start()
     {
         previousTimeStamp = MakeTimeStamp();
     }
 
-    // Update is called once per frame
+
     void Update()
     {
         if (GameManager().GetGameState() == GameState.playing)
@@ -56,11 +100,6 @@ public class WorldTime : Manager
     }
 
 
-    public float tracker_time;
-    public float tracker_menu;
-    public float tracker_ftlJumps;
-    public float tracker_playerInputs;
-    public float tracker_distanceTraveled;
 
 
     public void TimeAdvance(TimeType _time,float _value=1.0f)

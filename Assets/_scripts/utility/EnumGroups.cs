@@ -10,7 +10,7 @@
         enemyKilled,playerDamaged
 
     }
-    public enum SubID { none, A, B, C, D, E, F, G, Boss } //to create small differences [strafe directions and order for grouping Wings of fighters]
+    public enum SubID { none, A, B, C, D, E, F, G, Boss, Elite, Special } //to create small differences [strafe directions and order for grouping Wings of fighters]
 
 
 
@@ -144,6 +144,7 @@ public enum Stats
     , pointValue
     ,food, producefood, modifyfoodproduction,
     fuel, producefuel, modifyfuelproduction,
+    morale, producemorale, modifymoraleproduction,
     pop, producepop,modifypopproduction
 
 }

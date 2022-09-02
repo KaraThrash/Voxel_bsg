@@ -20,6 +20,16 @@ public class EnemyManager : Manager
     public int maxOnScreen;
 
 
+    public float stat_food;
+    public float stat_fuel;
+    public float stat_morale;
+    public float stat_pop;
+
+    public float produce_food;
+    public float produce_fuel;
+    public float produce_morale;
+    public float produce_pop;
+
     public Transform AttackTarget()
     {
         if (playerShip == null)
@@ -41,6 +51,44 @@ public class EnemyManager : Manager
     {
         
     }
+
+
+
+
+    public void Produce()
+    {
+        stat_food += produce_food;
+        stat_fuel += produce_fuel;
+        stat_morale += produce_morale;
+        stat_pop += produce_pop;
+
+        //MenuManager().Set_ResourceText(GetStats());
+    }
+
+
+
+    public void UpdateStats(Stats _stat, float _value)
+    {
+
+        if (_stat == Stats.food) { stat_food += _value; }
+        else if (_stat == Stats.fuel) { stat_fuel += _value; }
+        else if (_stat == Stats.morale) { stat_morale += _value; }
+        else if (_stat == Stats.pop) { stat_pop += _value; }
+
+    
+    }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -68,7 +116,6 @@ public class EnemyManager : Manager
         enemy.transform.parent = EnemyParent();
 
         enemy.AttackTarget(playerShip);
-        enemy.SetStance(Stance.aggressive);
         enemy.SetStance(Stance.aggressive);
         enemy.subid = _subid;
 
