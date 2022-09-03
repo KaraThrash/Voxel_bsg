@@ -292,6 +292,8 @@ public class WorldTime : Manager
 
 public class TimeStamp
 {
+    public int turnNumber;
+
     public float time;
     public float menu;
     public float ftlJumps;

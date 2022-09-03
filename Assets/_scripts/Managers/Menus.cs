@@ -7,6 +7,7 @@ using UnityEngine.UI;
 public class Menus : Manager {
 
     public UI_scriptable uiAssets;
+
     public Transform menu_Transform;
     public Transform menu_DeathChoice;
     public Transform menu_InGameUI;
@@ -38,6 +39,8 @@ public class Menus : Manager {
 
     public Text TEXT_fleetChoiceStatDisplay;
     public Text TEXT_fleetTotals;
+
+    public Text TEXT_enemyFleetTotals;
 
 
     public Text TEXT_playerStamina;
@@ -477,7 +480,24 @@ public class Menus : Manager {
 
     }
 
+    public void ButtonEvent_ShowEnemyFleetShips()
+    {
+        Debug.Log("ButtonEvent_ShowEnemyFleetShips: ");
 
+        if (TEXT_enemyFleetTotals && EnemyManager())
+        {
+            string newstring = "";
+
+            newstring = 
+                EnemyManager().stat_food.ToString() + " [+" + EnemyManager().produce_food.ToString() + "]\n" 
+            + EnemyManager().stat_fuel.ToString() + " [+" + EnemyManager().produce_fuel.ToString() + "]\n"
+            + EnemyManager().stat_morale.ToString() + " [+" + EnemyManager().produce_morale.ToString() + "]\n"
+            + EnemyManager().stat_pop.ToString() + " [+" + EnemyManager().produce_pop.ToString() + "]";
+
+            TEXT_enemyFleetTotals.text = newstring;
+        }
+
+    }
 
 
 
