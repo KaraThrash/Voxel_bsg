@@ -14,6 +14,8 @@ public class Manager : MonoBehaviour
     private ItemManager itemManager;
     private Player player;
     private ResourceManager resourceManager;
+    public ScrollingText scrollingText;
+
     private WorldTime timeManager;
 
     public GameManager GameManager()
@@ -95,6 +97,15 @@ public class Manager : MonoBehaviour
             timeManager = FindObjectOfType<WorldTime>();
         }
         return timeManager;
+    }
+
+    public ScrollingText ScrollingText()
+    {
+        if (scrollingText == null)
+        {
+            scrollingText = FindObjectOfType<ScrollingText>();
+        }
+        return scrollingText;
     }
 
 }

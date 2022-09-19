@@ -7,6 +7,7 @@ public class Map : Manager
 {
     [SerializeField]
     Transform gravityCenter;
+
     [SerializeField]
     Transform playerSpawn;
 

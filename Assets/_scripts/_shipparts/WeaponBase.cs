@@ -224,45 +224,7 @@ public class WeaponBase : ShipSystem
             FireBullet(transform);
         }
 
-        //if (BulletParent().childCount == 0 || BulletParent().GetChild(0).gameObject.activeSelf)
-        //{
-        //    if (bullet != null)
-        //    {
-        //        GameObject clone = Instantiate(bullet, transform.position, transform.rotation);
-        //        if (Ship() != null && Ship().GetEquipment() != null && Ship().GetEquipment().GetBullet() != null)
-        //        {
-        //            clone.GetComponent<Bullet>().bulletType = (Bullet_Type)Ship().GetEquipment().GetBullet().subtype;
-        //        }
-        //        else
-        //        {
-        //            clone.GetComponent<Bullet>().bulletType = Bullet_Type.basic;
-        //        }
-        //        clone.SetActive(true);
-        //        clone.GetComponent<Bullet>().Init();
-        //        clone.GetComponent<Bullet>().Launch(Ship());
-        //    }
-        //}
-        //else 
-        //{
-        //    Transform newBullet = BulletParent().GetChild(0);
-
-        //    if (Ship() != null && Ship().GetEquipment() != null && Ship().GetEquipment().GetBullet() != null)
-        //    {
-        //        newBullet.GetComponent<Bullet>().bulletType = (Bullet_Type)Ship().GetEquipment().GetBullet().subtype;
-        //    }
-        //    else
-        //    {
-        //        newBullet.GetComponent<Bullet>().bulletType = Bullet_Type.basic;
-        //    }
-
-        //    newBullet.gameObject.SetActive(true);
-        //    newBullet.GetComponent<Bullet>().Init();
-        //    newBullet.position = transform.position;
-        //    newBullet.rotation = transform.rotation;
-        //    newBullet.GetComponent<Bullet>().Launch(Ship());
-
-        //}
-
+  
         
     }
 
@@ -293,6 +255,9 @@ public class WeaponBase : ShipSystem
 
             newBullet.SetActive(true);
             newBullet.GetComponent<Bullet>().subid = track_bulletSequence;
+
+            newBullet.transform.localScale = Vector3.one;
+
             newBullet.GetComponent<Bullet>().Init();
             newBullet.GetComponent<Bullet>().Launch(Ship());
 

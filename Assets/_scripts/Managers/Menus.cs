@@ -34,6 +34,10 @@ public class Menus : Manager {
 
 
 
+    public Text TEXT_primaryOjective;
+    public Text TEXT_primaryOjectiveNumber;
+    public Text TEXT_secondaryObjective;
+
     public Text TEXT_itemChoiceStatDisplay;
     public Text TEXT_equipmentTotals;
 
@@ -120,6 +124,13 @@ public class Menus : Manager {
     }
 
 
+
+
+
+
+
+
+
     public void OpenPauseMenu( )
     {
         DisableMenus();
@@ -135,6 +146,114 @@ public class Menus : Manager {
 
         TimeManager().TimeAdvance(TimeType.menuScreens,1);
     }
+
+
+
+    /// <summary>
+    /// 
+    /// Objective
+    /// 
+    /// </summary>
+
+
+    public void SetText_DisplayObjective(string _objective)
+    {
+        if (TEXT_primaryOjective == null || TEXT_primaryOjectiveNumber == null)
+        {
+            Text[] alltext = FindObjectsOfType<Text>();
+            foreach (Text el in alltext)
+            {
+                if (el.transform.name.ToLower() == "text_primaryobjective")
+                {
+                    TEXT_primaryOjective = el;
+                }
+                else if (el.transform.name.ToLower() == "TEXT_primaryObjective_number")
+                {
+                    TEXT_primaryOjectiveNumber = el;
+                }
+            }
+        
+        }
+
+
+        if (TEXT_primaryOjective == null || TEXT_primaryOjectiveNumber == null)
+        {
+            return;
+
+        }
+
+
+        SetText(TEXT_primaryOjective, _objective);
+        SetText(TEXT_primaryOjectiveNumber, _objective);
+
+
+
+
+
+    }
+
+    public void SetText_DisplayObjective(string _objective, string _objNumber, string _secondary)
+    {
+        if (TEXT_primaryOjective == null || TEXT_secondaryObjective == null || TEXT_primaryOjectiveNumber == null)
+        {
+            Text[] alltext = FindObjectsOfType<Text>();
+            foreach (Text el in alltext)
+            {
+                if (el.transform.name.ToLower() == "text_primaryobjective")
+                {
+                    TEXT_primaryOjective = el;
+                }
+
+                else if (el.transform.name.ToLower() == "text_secondaryobjective")
+                {
+                    TEXT_secondaryObjective = el;
+                }
+                else if (el.transform.name.ToLower() == "text_primaryobjective_number")
+                {
+                    TEXT_primaryOjectiveNumber = el;
+                }
+            }
+
+        }
+
+
+        if (TEXT_primaryOjective == null || TEXT_primaryOjectiveNumber == null)
+        {
+            return;
+
+        }
+
+        
+        SetText(TEXT_primaryOjective, _objective);
+        SetText(TEXT_primaryOjectiveNumber, _objNumber);
+
+
+        if (TEXT_secondaryObjective == null)
+        {
+            return;
+
+        }
+
+        SetText(TEXT_secondaryObjective,_secondary);
+
+    }
+
+
+
+
+
+    /// <summary>
+    /// 
+    /// END Objective
+    /// 
+    /// </summary>
+
+
+
+
+
+
+
 
 
     public void EnableEquipMenu()

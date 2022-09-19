@@ -238,28 +238,32 @@ public class WorldTime : Manager
           if(GameManager().GetGameState() == GameState.playing){clockText.text = currentMinutes.ToString();}
 
 
-
-        if(timeUntilAttack <= 60)
+        if (joinAttackButton)
         {
-              joinAttackButton.active = true;
+            if (timeUntilAttack <= 60)
+            {
+                joinAttackButton.active = true;
 
-              //0 attack occurs, if the player isnt there it auto resolves
-              //cant join a battle in progress [wont make it in time if the clock is already at 0]
-              if(timeUntilAttack <= 0)
-              {
+                //0 attack occurs, if the player isnt there it auto resolves
+                //cant join a battle in progress [wont make it in time if the clock is already at 0]
+                if (timeUntilAttack <= 0)
+                {
+                    joinAttackButton.active = false;
+
+                }
+            }
+            else
+            {
+
                 joinAttackButton.active = false;
+            }
 
-              }
         }
-        else
-        {
 
-            joinAttackButton.active = false;
-        }
-      
-    
 
-      timeSinceLastJump += (Time.deltaTime * timerate);
+
+
+        timeSinceLastJump += (Time.deltaTime * timerate);
 
 
       //todo: make this a bar that fills, or clock that ticks?

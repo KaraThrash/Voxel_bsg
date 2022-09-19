@@ -166,7 +166,7 @@ public class Raider : Enemy
         {
             Explode();
 
-            EnemyManager().GameManager().GetEnemyDeathEvent().Invoke(this);
+           // EnemyManager().GameManager().GetEnemyDeathEvent().Invoke(this);
             ship.Die();
             return;
 

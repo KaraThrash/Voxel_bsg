@@ -21,7 +21,6 @@ public class GameManager : Manager {
     public ThirdPersonCamera cam;
     public FtlImageFade imageFade;
     public GameObject dockMenu;
-    public ScrollingText scrollingText;
     public Text contextText;
 
     public ObjectiveEvent event_Objective;
@@ -242,11 +241,13 @@ public class GameManager : Manager {
     public void EnemyDeathEvent(Enemy _enemy)
     {
         Debug.Log("EnemyDeathEvent: ");
-        
+        ScrollingText().NewLine("Enemy Down");
     }
 
     public EnemyEvent GetEnemyDeathEvent()
     {
+       
+
         if (event_EnemyDeath == null)
         {
             event_EnemyDeath = new EnemyEvent();
@@ -257,6 +258,8 @@ public class GameManager : Manager {
 
     public void PlayerDeathEvent( )
     {
+        ScrollingText().NewLine("You Died");
+
         Debug.Log("PlayerDeathEvent: " );
         //decide to spend a life or restart or return to firelink
         SetGameState(GameState.playersdead);
@@ -274,6 +277,8 @@ public class GameManager : Manager {
 
     public void ObjectiveEvent(InGameEvent _event)
     {
+        ScrollingText().NewLine(_event.ToString());
+
         Debug.Log(_event);
         //throw new NotImplementedException();
 

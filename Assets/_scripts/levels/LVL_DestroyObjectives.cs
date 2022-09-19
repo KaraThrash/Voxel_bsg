@@ -24,9 +24,11 @@ public class LVL_DestroyObjectives : Map
     {
         poi = new List<Map_POI>();
 
+
         foreach (Map_POI el in FindObjectsOfType<Map_POI>())
         {
             poi.Add(el);
+
         }
 
         foreach (Enemy el in FindObjectsOfType<Enemy>())
@@ -34,10 +36,18 @@ public class LVL_DestroyObjectives : Map
             el.AttackTarget(GameManager().Player().ship.transform);
         }
 
-
+        SendObjectiveText();
 
         GameManager().GetObjectiveEvent().AddListener(GameEventListener);
         GameManager().GetEnemyDeathEvent().AddListener(EnemyDeathEventListener);
+
+
+        if (MenuManager())
+        {
+            
+        }
+
+
 
         count_enemyLeftToSpawn = 3;
         Spawn();
@@ -49,6 +59,33 @@ public class LVL_DestroyObjectives : Map
             
         }
     }
+
+
+    public void SendObjectiveText()
+    {
+
+        int totalObjectives = 0;
+
+        foreach (Map_POI el in poi)
+        {
+            if (el.Hitpoints() > 0 && el.isObjective) { totalObjectives++; }
+
+        }
+
+     
+
+        string primaryObject = "Destroy      ";
+      //  primaryObject += totalObjectives.ToString() + " ";
+        primaryObject += "<Diamond>";
+
+
+        string secondaryObject = "";
+
+
+        MenuManager().SetText_DisplayObjective(primaryObject, totalObjectives.ToString() ,secondaryObject);
+
+    }
+
 
 
     public override void ActiveMap()
@@ -142,12 +179,28 @@ public class LVL_DestroyObjectives : Map
 
     public override void GameEventListener(InGameEvent _event)
     {
+        Debug.Log("GameEventListener:   " + _event.ToString());
+
+        
 
         if (_event == InGameEvent.objectiveLost)
         {
-            count_enemyLeftToSpawn = enemyPerWave ;
-            timer_timeBetweenSpawn = interval_timeBetweenSpawn;
-            Spawn();
+            foreach (Map_POI el in GetPOIList())
+            {
+                if (el.Map() == this && el.isSpawnPoint)
+                {
+                    EnemyManager().SpawnEnemy(prefab_enemy, el.transform);
+                }
+
+                //el.SpawnOne();
+            }
+
+            SendObjectiveText();
+
+
+           // count_enemyLeftToSpawn = enemyPerWave ;
+           // timer_timeBetweenSpawn = interval_timeBetweenSpawn;
+           // Spawn();
 
         }
         else if (_event == InGameEvent.enemyKilled)
